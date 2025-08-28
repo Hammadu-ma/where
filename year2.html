@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>High School Videos</title>
+  <style>
+:root{
+  --bg: #0b0f17;
+  --panel: #121826;
+  --panel-2: #0f1522;
+  --text: #e6ebf2;
+  --muted: #9aa8bf;
+  --accent: #6ea8ff;
+  --accent-2: #7ef2c4;
+  --ring: 0 0 0 2px rgba(110,168,255,.35);
+  --radius: 18px;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, "Apple Color Emoji","Segoe UI Emoji";
+  background: radial-gradient(80vw 80vh at 10% -10%, #0f1b2d 0%, #0b0f17 40%),
+              radial-gradient(80vw 80vh at 110% 10%, #101b2a 0%, #0b0f17 40%);
+  color:var(--text);
+}
+.container{max-width:1280px;margin:0 auto;padding:20px}
+
+/* Top bar */
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:50;
+  background:linear-gradient(180deg, rgba(11,15,23,.9), rgba(11,15,23,.6));
+  backdrop-filter: blur(10px);
+}
+.topbar-inner{
+  display:flex;
+  gap:14px;
+  align-items:center;
+  padding:14px 20px;
+  border-radius:0 0 var(--radius) var(--radius);
+  border:1px solid rgba(255,255,255,.05);
+  border-top:none;
+}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.4px}
+.logo-dot{width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-2));box-shadow:0 0 20px rgba(110,168,255,.7)}
+.search{position:relative;flex:1}
+.search input{width:100%;padding:12px 14px 12px 40px;border-radius:999px;border:1px solid rgba(255,255,255,.08);background:var(--panel);color:var(--text);outline:none;transition:.2s}
+.search input:focus{box-shadow:var(--ring);border-color:transparent}
+.search .icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);opacity:.6}
+.filters{display:flex;gap:10px;flex-wrap:wrap}
+select, .chip{appearance:none;background:var(--panel);border:1px solid rgba(255,255,255,.08);color:var(--text);padding:10px 12px;border-radius:12px;cursor:pointer}
+select:focus{outline:none;box-shadow:var(--ring);border-color:transparent}
+
+/* Mobile menu button */
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  background: var(--panel);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 8px;
+}
+.menu-toggle span {
+  width: 20px;
+  height: 2px;
+  background: var(--text);
+  margin: 2px 0;
+  transition: 0.3s;
+  border-radius: 2px;
+}
+.menu-toggle.active span:nth-child(1) {
+  transform: rotate(-45deg) translate(-5px, 5px);
+}
+.menu-toggle.active span:nth-child(2) {
+  opacity: 0;
+}
+.menu-toggle.active span:nth-child(3) {
+  transform: rotate(45deg) translate(-5px, -5px);
+}
+
+/* Mobile search */
+.mobile-search {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg);
+  z-index: 100;
+  padding: 20px;
+  flex-direction: column;
+}
+.mobile-search.active {
+  display: flex;
+}
+.mobile-search-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+.mobile-search-input {
+  width: 100%;
+  padding: 15px 20px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: var(--panel);
+  color: var(--text);
+  font-size: 16px;
+  outline: none;
+}
+.mobile-search-close {
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* Layout */
+.grid{display:grid;grid-template-columns: 3fr 2fr;gap:16px;margin-top:18px}
+@media (max-width: 1000px){.grid{grid-template-columns:1fr}}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+  
+  .topbar-inner {
+    padding: 10px 15px;
+    flex-wrap: wrap;
+  }
+  
+  .menu-toggle {
+    display: flex;
+  }
+  
+  .logo {
+    flex: 1;
+  }
+  
+  .search {
+    display: none;
+  }
+  
+  .filters {
+    display: none;
+    width: 100%;
+    order: 3;
+    margin-top: 10px;
+  }
+  
+  .filters.active {
+    display: flex;
+  }
+  
+  .search-mobile-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: var(--panel);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 10px;
+    cursor: pointer;
+  }
+}
+
+/* Player Card */
+.card{background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.player{position:relative;overflow:hidden}
+.player-header{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.06)}
+.title{font-size:18px;font-weight:700;}
+.meta{font-size:12px;color:var(--muted)}
+.btns{display:flex;gap:8px}
+.btn{background:var(--panel);border:1px solid rgba(255,255,255,.08);color:var(--text);padding:8px 12px;border-radius:12px;cursor:pointer;font-weight:600}
+.btn:hover{filter:brightness(1.1)}
+.video-wrap{position:relative;background:#000;aspect-ratio:16/9}
+.video-wrap iframe, .video-wrap video{position:absolute;inset:0;width:100%;height:100%;border:0}
+.tags{display:flex;gap:8px;flex-wrap:wrap;padding:10px 14px;border-top:1px solid rgba(255,255,255,.06)}
+.tag{font-size:11px;color:#cfe0ff;background:rgba(110,168,255,.12);padding:6px 10px;border-radius:999px;border:1px solid rgba(110,168,255,.3)}
+
+/* Related & Playlists */
+.section{padding:14px}
+.section h3{margin:0 0 10px 0;font-size:16px;opacity:.9}
+.related-list{display:grid;grid-template-columns:repeat(1,minmax(0,1fr));gap:10px;max-height:520px;overflow:auto;padding-right:6px}
+.rel-item{display:grid;grid-template-columns:140px 1fr;gap:10px;align-items:center;background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:8px;cursor:pointer;transition:.15s}
+.rel-item:hover{transform:translateY(-1px);background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02))}
+.thumb{position:relative;width:100%;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#000}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block;opacity:.9}
+.duration{position:absolute;right:6px;bottom:6px;font-size:11px;background:rgba(0,0,0,.6);padding:2px 6px;border-radius:6px}
+.rel-title{font-weight:700}
+.rel-meta{font-size:12px;color:var(--muted);margin-top:4px}
+
+/* Subjects rail */
+.subjects-rail{display:flex;gap:10px;overflow:auto;padding:8px 2px}
+.pill{white-space:nowrap;padding:9px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.08);background:var(--panel-2);cursor:pointer}
+.pill.active{background:linear-gradient(135deg, rgba(110,168,255,.22), rgba(126,242,196,.22));border-color:transparent}
+
+/* Playlists grid */
+.playlist-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+@media (max-width: 1100px){.playlist-grid{grid-template-columns:repeat(3,1fr)}}
+@media (max-width: 800px){.playlist-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width: 560px){.playlist-grid{grid-template-columns:1fr}}
+.card-mini{background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.08);border-radius:16px;overflow:hidden;cursor:pointer;transition:.2s}
+.card-mini:hover{transform:translateY(-2px)}
+.card-mini .thumb{border-radius:0}
+.card-mini .info{padding:10px}
+.info .name{font-weight:700}
+.info .small{font-size:12px;color:var(--muted)}
+
+/* Mini-player when scrolling */
+.miniplayer{position:fixed;right:16px;bottom:16px;width:360px;max-width:90vw;border-radius:14px;overflow:hidden;box-shadow:0 20px 40px rgba(0,0,0,.45);display:none;z-index:60}
+.miniplayer.show{display:block}
+
+/* Simple scrollbar styling */
+::-webkit-scrollbar{height:10px;width:10px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:999px}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ================= SKELETON LOADER ================= */
+.skeleton {
+  background: linear-gradient(90deg,
+    rgba(255,255,255,0.06) 25%,
+    rgba(255,255,255,0.12) 37%,
+    rgba(255,255,255,0.06) 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+  border-radius: 10px;
+}
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+/* Playlist skeleton cards */
+.card-mini.skeleton-card { pointer-events:none; }
+.skeleton-thumb { width:100%; aspect-ratio:16/9; border-radius:0; }
+.skeleton-line { height:14px; margin-top:8px; width:80%; }
+.skeleton-line.short { width:50%; }
+
+/* Related skeleton */
+.rel-item.skeleton-item { grid-template-columns:140px 1fr; }
+.skeleton-rel-thumb { width:100%; aspect-ratio:16/9; }
+.skeleton-rel-line { height:12px; margin-top:6px; width:70%; }
+.skeleton-rel-line.short { width:40%; }
+
+/* Player header skeleton */
+.player-header.skeleton-head { display:flex; flex-direction:column; align-items:flex-start; gap:8px; }
+.skeleton-title { width:60%; height:18px; }
+.skeleton-meta { width:40%; height:12px; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner container">
+      <div class="menu-toggle" id="menuToggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div class="logo"><span class="logo-dot"></span> High School Videos</div>
+      <div class="search">
+        <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm10 2-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+        <input id="search" type="text" placeholder="Search videos, units, subjects… (real-time)" />
+      </div>
+      <div class="search-mobile-btn" id="searchMobileBtn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm10 2-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+      </div>
+      <div class="filters" id="filters">
+        <select id="subjectFilter">
+          <option value="">All Subjects</option>
+        </select>
+        <select id="unitFilter">
+          <option value="">All Units</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile search overlay -->
+  <div class="mobile-search" id="mobileSearch">
+    <div class="mobile-search-header">
+      <button class="mobile-search-close" id="mobileSearchClose">←</button>
+      <input type="text" class="mobile-search-input" placeholder="Search videos, units, subjects…" id="mobileSearchInput">
+    </div>
+    <div class="mobile-search-results" id="mobileSearchResults"></div>
+  </div>
+
+  <div class="container">
+    <!-- Subjects quick rail -->
+    <div class="subjects-rail" id="subjectsRail"></div>
+
+    <div class="grid">
+      <!-- Left: Player & Related -->
+      <div class="card player" id="playerCard">
+        <div class="player-header">
+          <div>
+            <div class="title" id="nowTitle">Select a video</div>
+            <div class="meta" id="nowMeta">Subject • Unit • Duration</div>
+          </div>
+          <div class="btns">
+            <button class="btn" id="miniBtn">Mini</button>
+            <button class="btn" id="fsBtn">Full screen</button>
+          </div>
+        </div>
+        <div class="video-wrap" id="videoWrap">
+          <!-- YouTube iframe injected here -->
+        </div>
+        <div class="tags" id="nowTags"></div>
+        <div class="section">
+          <h3>Related (same Unit & Subject)</h3>
+          <div class="related-list" id="relatedList"></div>
+        </div>
+      </div>
+
+      <!-- Right: Playlists (filtered) -->
+      <div class="card">
+        <div class="section">
+          <h3 id="listTitle">Playlists</h3>
+          <div class="playlist-grid" id="playlistGrid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mini player -->
+  <div class="miniplayer card" id="miniPlayer"></div>
+  <script>
+    // --- Sample catalog: 14 subjects, Units, many videos (YouTube IDs used) ---
+    const SUBJECTS = [
+      "Mathematics","Physics","Chemistry","Biology","English","Civics",
+      "Geography","History","Economics","ICT","Amharic","Afan Oromo",
+      "HPE","Art"
+    ];
+  
+    // Minimal demo thumbnails via https://img.youtube.com
+    function ytThumb(id){ 
+      // If it's a playlist, you can optionally use a placeholder thumbnail
+      return id.startsWith("PL") ? "https://img.youtube.com/vi/BtLyik7oAxc/hqdefault.jpg" : `https://img.youtube.com/vi/${id}/hqdefault.jpg`; 
+    }
+
+    function ytUrl(id){ 
+      // If it starts with "PL", treat as playlist
+      if(id.startsWith("PL")) {
+        return `https://www.youtube.com/embed/videoseries?list=${id}&rel=0&modestbranding=1&autoplay=1`;
+      }
+      return `https://www.youtube.com/embed/${id}?rel=0&modestbranding=1&autoplay=1`; 
+    }
+
+    // Generate sample data
+    let videos = [];
+    let idSeed = 1000;
+    function addVideo({title,subject,unit,yt, duration="10:12"}){
+      videos.push({id: idSeed++, title, subject, unit, yt, duration});
+    }
+
+    // Add sample videos
+    addVideo({
+      title: "Embryology 1",
+      subject: "Mathematics",
+      unit: 1,
+      yt: "BtLyik7oAxc",
+      duration: "12:00"
+    });
+
+    addVideo({
+      title: "Embryology Playlist",
+      subject: "Mathematics",
+      unit: 2,
+      yt: "PLTF9h-T1TcJiNRCzNPen0m4AO6VQZ6YCl",
+      duration: "1:00:00"
+    });
+    
+    addVideo({
+      title: "embryology 1",
+      subject: "ICT",
+      unit: 1,
+      yt: "BtLyik7oAxc",
+      duration: "12:00"
+    });
+    
+    addVideo({
+      title: "dr sung",
+      subject: "Mathematics",
+      unit: 1,
+      yt: "V8RxHtoLVTk",
+      duration: "16:00"
+    });
+    
+    addVideo({
+      title: "Your Playlist Title Here",
+      subject: "Your Subject Here",
+      unit: 1,
+      yt: "PLtpriW2pnN_5MPy17cCxQ30F8D8swlf_c", // Playlist ID
+      duration: "1:00:00" // optional placeholder
+    });
+
+    // Some reusable YouTube IDs for demo
+    const YT_IDS = [];
+  
+    // --- State ---
+    let current = null;
+  
+    // --- Elements ---
+    const subjectFilter = document.getElementById('subjectFilter');
+    const unitFilter = document.getElementById('unitFilter');
+    const playlistGrid = document.getElementById('playlistGrid');
+    const listTitle = document.getElementById('listTitle');
+    const search = document.getElementById('search');
+    const subjectsRail = document.getElementById('subjectsRail');
+    const videoWrap = document.getElementById('videoWrap');
+    const nowTitle = document.getElementById('nowTitle');
+    const nowMeta = document.getElementById('nowMeta');
+    const nowTags = document.getElementById('nowTags');
+    const relatedList = document.getElementById('relatedList');
+    const fsBtn = document.getElementById('fsBtn');
+    const miniBtn = document.getElementById('miniBtn');
+    const miniPlayer = document.getElementById('miniPlayer');
+    const playerCard = document.getElementById('playerCard');
+    const menuToggle = document.getElementById('menuToggle');
+    const filters = document.getElementById('filters');
+    const searchMobileBtn = document.getElementById('searchMobileBtn');
+    const mobileSearch = document.getElementById('mobileSearch');
+    const mobileSearchClose = document.getElementById('mobileSearchClose');
+    const mobileSearchInput = document.getElementById('mobileSearchInput');
+    const mobileSearchResults = document.getElementById('mobileSearchResults');
+
+    // Mobile menu toggle
+    menuToggle.addEventListener('click', () => {
+      menuToggle.classList.toggle('active');
+      filters.classList.toggle('active');
+    });
+
+    // Mobile search functionality
+    searchMobileBtn.addEventListener('click', () => {
+      mobileSearch.classList.add('active');
+      mobileSearchInput.focus();
+    });
+
+    mobileSearchClose.addEventListener('click', () => {
+      mobileSearch.classList.remove('active');
+    });
+
+    mobileSearchInput.addEventListener('input', () => {
+      const query = mobileSearchInput.value.trim().toLowerCase();
+      if (query.length < 2) {
+        mobileSearchResults.innerHTML = '<div class="rel-meta">Type at least 2 characters to search</div>';
+        return;
+      }
+      
+      const results = videos.filter(v => 
+        v.title.toLowerCase().includes(query) || 
+        v.subject.toLowerCase().includes(query) || 
+        String(v.unit).includes(query)
+      ).slice(0, 10);
+      
+      if (results.length === 0) {
+        mobileSearchResults.innerHTML = '<div class="rel-meta">No results found</div>';
+        return;
+      }
+      
+      mobileSearchResults.innerHTML = results.map(v => `
+        <div class="rel-item" data-id="${v.id}">
+          <div class="thumb">
+            <img src="${ytThumb(v.yt)}" alt="${v.title}"/>
+            <div class="duration">${v.duration}</div>
+          </div>
+          <div>
+            <div class="rel-title">${v.title}</div>
+            <div class="rel-meta">${v.subject} • Unit ${v.unit}</div>
+          </div>
+        </div>
+      `).join('');
+      
+      mobileSearchResults.querySelectorAll('.rel-item').forEach(el => {
+        el.addEventListener('click', () => {
+          const id = Number(el.getAttribute('data-id'));
+          const v = videos.find(x => x.id === id);
+          if (v) {
+            play(v);
+            mobileSearch.classList.remove('active');
+          }
+        });
+      });
+    });
+
+    // Populate filters
+    SUBJECTS.forEach(s => {
+      const opt = document.createElement('option'); 
+      opt.value = s; 
+      opt.textContent = s; 
+      subjectFilter.appendChild(opt);
+    });
+    
+    function populateUnits(){
+      const units = [...new Set(videos.map(v => v.unit))].sort((a, b) => a - b);
+      unitFilter.innerHTML = '<option value="">All Units</option>' + units.map(u => `<option value="${u}">Unit ${u}</option>`).join('');
+    }
+    
+    populateUnits();
+
+    // Subjects quick rail
+    function renderSubjectsRail(activeSubject = ""){
+      subjectsRail.innerHTML = '';
+      const all = document.createElement('div');
+      all.className = 'pill' + (activeSubject === '' ? ' active' : '');
+      all.textContent = 'All';
+      all.onclick = () => { 
+        subjectFilter.value = ''; 
+        updateAndRender(); 
+      };
+      subjectsRail.appendChild(all);
+      
+      SUBJECTS.forEach(s => {
+        const el = document.createElement('div');
+        el.className = 'pill' + (s === activeSubject ? ' active' : '');
+        el.textContent = s;
+        el.onclick = () => { 
+          subjectFilter.value = s; 
+          updateAndRender(); 
+        };
+        subjectsRail.appendChild(el);
+      });
+    }
+
+    // Filtering logic
+    function getFiltered(){
+      const q = search.value.trim().toLowerCase();
+      const s = subjectFilter.value;
+      const u = unitFilter.value;
+      return videos.filter(v => {
+        const okS = !s || v.subject === s;
+        const okU = !u || String(v.unit) === String(u);
+        const okQ = !q || (v.title.toLowerCase().includes(q) || v.subject.toLowerCase().includes(q) || String(v.unit) === q);
+        return okS && okU && okQ;
+      });
+    }
+
+    // --- Skeleton Rendering ---
+    function renderSkeletonGrid(count = 8){
+      playlistGrid.innerHTML = Array.from({length: count}).map(() => `
+        <div class="card-mini skeleton-card">
+          <div class="thumb skeleton skeleton-thumb"></div>
+          <div class="info">
+            <div class="skeleton skeleton-line"></div>
+            <div class="skeleton skeleton-line short"></div>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    function renderSkeletonRelated(count = 6){
+      relatedList.innerHTML = Array.from({length: count}).map(() => `
+        <div class="rel-item skeleton-item">
+          <div class="thumb skeleton skeleton-rel-thumb"></div>
+          <div>
+            <div class="skeleton skeleton-rel-line"></div>
+            <div class="skeleton skeleton-rel-line short"></div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Render playlists grid
+    function renderGrid(){
+      const items = getFiltered();
+      listTitle.textContent = `Playlists (${items.length})`;
+      playlistGrid.innerHTML = items.map(v => `
+        <div class="card-mini" data-id="${v.id}">
+          <div class="thumb"><img src="${ytThumb(v.yt)}" alt="${v.title}"/></div>
+          <div class="info">
+            <div class="name">${v.title}</div>
+            <div class="small">${v.subject} • Unit ${v.unit} • ${v.duration}</div>
+          </div>
+        </div>
+      `).join('');
+
+      playlistGrid.querySelectorAll('.card-mini').forEach(card => {
+        card.addEventListener('click', () => {
+          const id = Number(card.getAttribute('data-id'));
+          const vid = videos.find(x => x.id === id);
+          if (vid) play(vid);
+        });
+      });
+    }
+
+    // Play in main player
+    function play(v){
+      current = v;
+      nowTitle.textContent = v.title;
+      nowMeta.textContent = `${v.subject} • Unit ${v.unit} • ${v.duration}`;
+      nowTags.innerHTML = `<span class="tag">${v.subject}</span><span class="tag">Unit ${v.unit}</span>`;
+      videoWrap.innerHTML = `<iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen src="${ytUrl(v.yt)}" title="${v.title}"></iframe>`;
+      renderRelated();
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+
+    function renderRelated(){
+      if (!current){ 
+        relatedList.innerHTML = '<div class="rel-meta">Select a video to see related lessons.</div>'; 
+        return; 
+      }
+      
+      const rel = videos.filter(v => v.id !== current.id && v.subject === current.subject && v.unit === current.unit).slice(0, 16);
+      relatedList.innerHTML = rel.map(v => `
+        <div class="rel-item" data-id="${v.id}">
+          <div class="thumb">
+            <img src="${ytThumb(v.yt)}" alt="${v.title}"/>
+            <div class="duration">${v.duration}</div>
+          </div>
+          <div>
+            <div class="rel-title">${v.title}</div>
+            <div class="rel-meta">${v.subject} • Unit ${v.unit}</div>
+          </div>
+        </div>
+      `).join('');
+      
+      relatedList.querySelectorAll('.rel-item').forEach(el => {
+        el.addEventListener('click', () => {
+          const id = Number(el.getAttribute('data-id'));
+          const v = videos.find(x => x.id === id);
+          if (v) play(v);
+        });
+      });
+    }
+
+    // Fullscreen control
+    fsBtn.addEventListener('click', () => {
+      const el = playerCard;
+      if (!document.fullscreenElement) { 
+        el.requestFullscreen?.(); 
+      } else { 
+        document.exitFullscreen?.(); 
+      }
+    });
+
+    // Mini-player
+    function showMini(){
+      if (!current) return;
+      miniPlayer.classList.add('show');
+      miniPlayer.innerHTML = `
+        <div class="player-header" style="padding:8px 10px">
+          <div style="font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:240px">${current.title}</div>
+          <button class="btn" style="padding:6px 10px" id="miniClose">×</button>
+        </div>
+        <div class="video-wrap" style="aspect-ratio:16/9">
+          <iframe allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen src="${ytUrl(current.yt)}" title="${current.title}"></iframe>
+        </div>`;
+      document.getElementById('miniClose').onclick = hideMini;
+      miniPlayer.onclick = () => { 
+        hideMini(); 
+        window.scrollTo({top: 0, behavior: 'smooth'}); 
+      };
+    }
+    
+    function hideMini(){ 
+      miniPlayer.classList.remove('show'); 
+      miniPlayer.innerHTML = ''; 
+    }
+    
+    miniBtn.addEventListener('click', () => miniPlayer.classList.contains('show') ? hideMini() : showMini());
+
+    // Events
+    subjectFilter.addEventListener('change', () => { 
+      renderSubjectsRail(subjectFilter.value); 
+      updateAndRender(); 
+    });
+    
+    unitFilter.addEventListener('change', updateAndRender);
+    search.addEventListener('input', updateAndRender);
+
+    function updateAndRender(){ 
+      renderGrid(); 
+      renderRelated(); 
+      renderSubjectsRail(subjectFilter.value); 
+    }
+
+    // --- Init: Show skeletons, then real content ---
+    renderSkeletonGrid();
+    renderSkeletonRelated();
+    
+    setTimeout(() => {
+      renderSubjectsRail('');
+      renderGrid();
+      if (videos[0]) play(videos[0]);
+    }, 800); // skeleton delay
+  </script>  
+</body>
+</html>
