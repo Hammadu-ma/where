@@ -1,144 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CineLearn — Learn Smart from Grade 9 to University</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-<style>
-  body {
-    margin:0;
-    font-family:'Montserrat', sans-serif;
-    background:#15152b;
-    color:#e6e6ff;
-    line-height:1.5;
-  }
-  a { text-decoration:none; color:inherit; }
-  header {
-    display:flex; justify-content:space-between; align-items:center;
-    padding:12px 20px; background:#15152b; box-shadow:0 4px 8px rgba(0,0,0,0.3);
-    position:sticky; top:0; z-index:10;
-  }
-  .logo { font-family:'Orbitron', sans-serif; font-weight:700; font-size:22px; color:#8a2be2; }
-  nav ul { display:flex; list-style:none; gap:12px; }
-  nav a { padding:8px 12px; border-radius:8px; transition:0.3s; }
-  nav a:hover, nav a.active { background:#1d1d3a; }
-  .user-actions button { margin-left:8px; padding:8px 16px; border:none; border-radius:8px; cursor:pointer; transition:0.3s; }
-  .login { background:#15152b; color:#e6e6ff; }
-  .signup { background:#8a2be2; color:white; }
-  main { max-width:1000px; margin:20px auto; padding:0 12px; }
-  .hero { display:flex; gap:20px; flex-wrap:wrap; padding:20px; background:#15152b; border-radius:12px; box-shadow:0 4px 8px rgba(0,0,0,0.3); }
-  .hero-content { flex:1; min-width:280px; }
-  .hero h1 { font-family:'Orbitron', sans-serif; font-size:2rem; margin-bottom:10px; color:#8a2be2; }
-  .hero p { margin-bottom:12px; }
-  .cta-button { display:inline-block; padding:10px 20px; margin-right:8px; background:#8a2be2; color:white; border-radius:8px; transition:0.3s; }
-  .cta-button:hover { background:#ff7b25; }
-  .hero-image { flex:1; min-width:200px; background:#1d1d3a; border-radius:12px; display:flex; justify-content:center; align-items:center; height:150px; color:#8a2be2; }
-  .section { margin:40px 0; }
-  .section-title { text-align:center; font-family:'Orbitron', sans-serif; font-size:1.8rem; margin-bottom:20px; color:#8a2be2; }
-  .features { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:20px; }
-  .feature-card { background:#15152b; border-radius:12px; padding:20px; text-align:center; box-shadow:0 4px 8px rgba(0,0,0,0.3); transition:0.3s; }
-  .feature-card:hover { transform:translateY(-3px); box-shadow:0 8px 16px rgba(0,0,0,0.5); }
-  .feature-icon { font-size:30px; margin-bottom:10px; color:#8a2be2; }
-  .newsletter { background:#8a2be2; color:white; padding:20px; border-radius:12px; text-align:center; margin:40px 0; }
-  .newsletter input { padding:10px; border:none; border-radius:8px 0 0 8px; width:60%; max-width:250px; }
-  .newsletter button { padding:10px; border:none; border-radius:0 8px 8px 0; background:#ff7b25; color:white; cursor:pointer; }
-  footer { background:#15152b; color:#e6e6ff; padding:20px; text-align:center; margin-top:40px; border-radius:12px; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CineLearn - Modern Hub</title>
+  <style>
+    /* === Base Reset === */
+    * {margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', sans-serif;}
+    body {
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4, #fbc2eb, #f6d365, #fda085);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      color:#333;
+    }
+    @keyframes gradientBG {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+
+    /* === Neomorphism Style === */
+    .neo {
+      background: #fff3f3;
+      border-radius: 20px;
+      box-shadow: 7px 7px 15px #d9c9c9, -7px -7px 15px #ffffff;
+      transition: all 0.3s ease;
+    }
+    .neo:hover {
+      box-shadow: 4px 4px 8px #d9c9c9, -4px -4px 8px #ffffff;
+      transform: translateY(-4px);
+    }
+
+    /* === Navbar === */
+    nav {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:15px 25px;
+      position:sticky; top:0; z-index:1000;
+      background:rgba(255,255,255,0.2);
+      backdrop-filter: blur(12px);
+      border-radius:0 0 20px 20px;
+    }
+    nav .logo {
+      font-size:1.5rem; font-weight:bold; color:#d62828;
+    }
+    nav ul {
+      display:flex; gap:20px; list-style:none;
+    }
+    nav ul li a {
+      text-decoration:none; color:#333; font-weight:500; padding:8px 14px;
+      border-radius:12px;
+      transition:0.3s;
+    }
+    nav ul li a:hover {
+      background:rgba(255,255,255,0.6);
+      color:#d62828;
+    }
+    .menu-btn {
+      display:none; font-size:1.6rem; cursor:pointer;
+    }
+
+    /* === Hero Section === */
+    .hero {
+      text-align:center; padding:80px 20px;
+    }
+    .hero h1 {
+      font-size:2.8rem; color:#e63946;
+    }
+    .hero p {
+      margin-top:15px; font-size:1.2rem; color:#444;
+    }
+
+    /* === Content Grid === */
+    .grid {
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap:20px; padding:40px;
+    }
+    .card {
+      padding:20px;
+      text-align:center;
+    }
+    .card img {
+      width:100%; border-radius:15px; margin-bottom:12px;
+    }
+    .card h3 {color:#d62828; margin-bottom:10px;}
+
+    /* === Responsive Nav (Mobile) === */
+    @media(max-width:768px){
+      nav ul {
+        position:fixed; top:70px; right:-100%;
+        flex-direction:column; background:#fff3f3;
+        width:200px; height:100vh; padding:40px 20px;
+        border-radius:20px 0 0 20px;
+        transition:0.4s;
+      }
+      nav ul.show { right:0; }
+      .menu-btn { display:block; }
+    }
+  </style>
 </head>
 <body>
-<header>
-  <div class="logo"><i class="fas fa-rocket"></i> CineLearn</div>
-  <nav>
+
+  <!-- Navbar -->
+  <nav class="neo">
+    <div class="logo">🎬 CineLearn</div>
     <ul>
-      <li><a href="#grades" class="active">Grades</a></li>
-      <li><a href="#university">University</a></li>
-      <li><a href="#subjects">Subjects</a></li>
-      <li><a href="#about">About</a></li>
+      <li><a href="#">Home</a></li>
+      <li><a href="#">Videos</a></li>
+      <li><a href="#">Books</a></li>
+      <li><a href="#">Sheets</a></li>
+      <li><a href="#">Contact</a></li>
     </ul>
+    <div class="menu-btn">☰</div>
   </nav>
-  <div class="user-actions">
-    <button class="login">Login</button>
-    <button class="signup">Sign Up</button>
-  </div>
-</header>
 
-<main>
+  <!-- Hero Section -->
   <section class="hero">
-    <div class="hero-content">
-      <h1>Learn Smarter — From Grade 9 to University</h1>
-      <p>All your video lessons, books, and study sheets in one fast, beautiful place.</p>
-      <a class="cta-button" href="#grades">Browse Grades</a>
-      <a class="cta-button" href="grade9.html">Open Grade 9</a>
-    </div>
-    <div class="hero-image">Linear Equations Crash Course</div>
+    <h1>Learn Smart, Anywhere 📚</h1>
+    <p>Explore videos, books, and study guides — all in one modern hub.</p>
   </section>
 
-  <section class="section" id="grades">
-    <h2 class="section-title">Choose Your Grade</h2>
-    <div class="features">
-      <div class="feature-card">
-        <div class="feature-icon"><i class="fas fa-book"></i></div>
-        <h3>Grade 9</h3>
-        <p>All core subjects — videos, books, sheets.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon"><i class="fas fa-book"></i></div>
-        <h3>Grade 10</h3>
-        <p>All core subjects — videos, books, sheets.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon"><i class="fas fa-book"></i></div>
-        <h3>Grade 11</h3>
-        <p>All core subjects — videos, books, sheets.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon"><i class="fas fa-book"></i></div>
-        <h3>Grade 12</h3>
-        <p>All core subjects — videos, books, sheets.</p>
-      </div>
+  <!-- Cards -->
+  <section class="grid">
+    <div class="card neo">
+      <img src="https://picsum.photos/400/220?random=1" alt="">
+      <h3>Video Lessons</h3>
+      <p>Watch modern tutorials with related recommendations.</p>
+    </div>
+    <div class="card neo">
+      <img src="https://picsum.photos/400/220?random=2" alt="">
+      <h3>Books & PDFs</h3>
+      <p>Read, download, and enjoy curated learning materials.</p>
+    </div>
+    <div class="card neo">
+      <img src="https://picsum.photos/400/220?random=3" alt="">
+      <h3>Study Sheets</h3>
+      <p>Quick sheets & summaries for fast revision.</p>
+    </div>
+    <div class="card neo">
+      <img src="https://picsum.photos/400/220?random=4" alt="">
+      <h3>Community</h3>
+      <p>Share knowledge, tips, and study strategies.</p>
     </div>
   </section>
 
-  <section class="section" id="university">
-    <h2 class="section-title">University Years</h2>
-    <div class="features">
-      <div class="feature-card">
-        <div class="feature-icon"><i class="fas fa-graduation-cap"></i></div>
-        <h3>Year 1</h3>
-        <p>Core university subjects and resources.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon"><i class="fas fa-graduation-cap"></i></div>
-        <h3>Year 2</h3>
-        <p>Core university subjects and resources.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon"><i class="fas fa-graduation-cap"></i></div>
-        <h3>Year 3</h3>
-        <p>Core university subjects and resources.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon"><i class="fas fa-graduation-cap"></i></div>
-        <h3>Year 4</h3>
-        <p>Core university subjects and resources.</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" id="subjects">
-    <h2 class="section-title">Popular Subjects</h2>
-    <div class="features">
-      <div class="feature-card">
-        <div class="feature-icon"><i class="fas fa-atom"></i></div>
-        <h3>Chemistry</h3>
-        <p>Video lessons and study sheets.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon"><i class="fas fa-calculator"></i></div>
-        <h3>Math</h3>
-        <p>Video lessons and study sheets.</p>
-      </div>
-      <div class="feature-card">
-        <div class
+  <script>
+    // Responsive Navbar Toggle
+    const menuBtn = document.querySelector('.menu-btn');
+    const navLinks = document.querySelector('nav ul');
+    menuBtn.addEventListener('click', ()=> {
+      navLinks.classList.toggle('show');
+    });
+  </script>
+</body>
+</html>
