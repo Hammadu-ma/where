@@ -3,26 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cine Learn - Educational Platform</title>
+    <title>Cine Learn | Immersive Educational Platform</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Orbitron:wght@600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-dark: #1a1a2e;
-            --primary-bg: #232339;
-            --primary-shadow: #0f0f1a;
-            --primary-light: #2d2d49;
+            --primary-dark: #0a0a1a;
+            --primary-bg: #15152b;
+            --primary-shadow: #070711;
+            --primary-light: #1d1d3a;
             --accent-purple: #8a2be2;
             --accent-red: #ff4d4d;
             --accent-orange: #ff7b25;
+            --accent-blue: #4361ee;
             --text-color: #e6e6ff;
             --transition: all 0.3s ease;
+            --gradient: linear-gradient(135deg, var(--accent-purple), var(--accent-orange));
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Montserrat', sans-serif;
         }
 
         body {
@@ -33,6 +36,33 @@
             flex-direction: column;
             padding: 20px;
             line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.15;
+        }
+
+        .background-animation span {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--gradient);
+            opacity: 0.5;
+            animation: float 15s linear infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.5; }
+            90% { opacity: 0.3; }
+            100% { transform: translateY(-1000%) rotate(720deg); opacity: 0; }
         }
 
         /* Header & Navigation */
@@ -47,6 +77,13 @@
             box-shadow: 8px 8px 16px var(--primary-shadow), 
                         -8px -8px 16px var(--primary-light);
             position: relative;
+            z-index: 10;
+            animation: slideDown 0.8s ease;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         .logo {
@@ -56,11 +93,13 @@
             font-size: 28px;
             font-weight: 700;
             color: var(--accent-purple);
-            text-shadow: 0 0 5px rgba(138, 43, 226, 0.5);
+            text-shadow: 0 0 10px rgba(138, 43, 226, 0.7);
+            font-family: 'Orbitron', sans-serif;
         }
 
         .logo i {
             font-size: 32px;
+            filter: drop-shadow(0 0 5px var(--accent-purple));
         }
 
         nav ul {
@@ -79,18 +118,39 @@
             box-shadow: 5px 5px 10px var(--primary-shadow), 
                         -5px -5px 10px var(--primary-light);
             transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        nav a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient);
+            transition: var(--transition);
+            z-index: -1;
+            opacity: 0;
+        }
+
+        nav a:hover::before, nav a.active::before {
+            left: 0;
+            opacity: 1;
         }
 
         nav a:hover, nav a.active {
-            box-shadow: inset 5px 5px 10px var(--primary-shadow), 
-                        inset -5px -5px 10px var(--primary-light);
-            color: var(--accent-purple);
+            color: white;
+            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);
+            transform: translateY(-3px);
         }
 
         .hamburger {
             display: none;
             flex-direction: column;
             cursor: pointer;
+            z-index: 100;
         }
 
         .hamburger span {
@@ -114,6 +174,23 @@
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-actions button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: var(--transition);
+        }
+
+        .user-actions button:hover::before {
+            left: 100%;
         }
 
         .login {
@@ -124,13 +201,15 @@
         }
 
         .signup {
-            background: var(--accent-purple);
+            background: var(--gradient);
             color: white;
-            box-shadow: 5px 5px 10px var(--primary-shadow);
+            box-shadow: 5px 5px 15px var(--primary-shadow),
+                        0 0 10px rgba(138, 43, 226, 0.5);
         }
 
         .user-actions button:hover {
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 7px 7px 20px var(--primary-shadow);
         }
 
         /* Hero Section */
@@ -143,32 +222,60 @@
             background: var(--primary-bg);
             box-shadow: 8px 8px 16px var(--primary-shadow), 
                         -8px -8px 16px var(--primary-light);
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 1s ease;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(138, 43, 226, 0.1) 0%, transparent 70%);
+            animation: pulse 15s infinite linear;
+        }
+
+        @keyframes pulse {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .hero-content {
             flex: 1;
             padding-right: 40px;
+            z-index: 2;
         }
 
         .hero h1 {
-            font-size: 3.2rem;
+            font-size: 3.5rem;
             margin-bottom: 20px;
             line-height: 1.2;
             background: linear-gradient(135deg, var(--accent-purple), var(--accent-orange));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
         .hero p {
             font-size: 1.2rem;
             margin-bottom: 30px;
             line-height: 1.6;
+            max-width: 90%;
         }
 
         .cta-button {
             display: inline-block;
             padding: 15px 35px;
-            background: var(--accent-purple);
+            background: var(--gradient);
             color: white;
             text-decoration: none;
             font-weight: 600;
@@ -176,6 +283,23 @@
             box-shadow: 5px 5px 15px var(--primary-shadow),
                         0 0 10px rgba(138, 43, 226, 0.5);
             transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: var(--transition);
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
         }
 
         .cta-button:hover {
@@ -189,6 +313,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            z-index: 2;
         }
 
         .hero-image-placeholder {
@@ -197,7 +322,8 @@
             border-radius: 25px;
             background: linear-gradient(145deg, var(--primary-light), var(--primary-bg));
             box-shadow: 20px 20px 60px var(--primary-shadow), 
-                        -20px -20px 60px var(--primary-light);
+                        -20px -20px 60px var(--primary-light),
+                        inset 0 0 20px rgba(138, 43, 226, 0.2);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -206,14 +332,60 @@
             font-weight: 600;
             flex-direction: column;
             gap: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-image-placeholder::before {
+            content: '';
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background: conic-gradient(transparent, transparent, transparent, var(--accent-purple));
+            animation: rotate 4s linear infinite;
+        }
+
+        .hero-image-placeholder::after {
+            content: '';
+            position: absolute;
+            inset: 3px;
+            background: linear-gradient(145deg, var(--primary-light), var(--primary-bg));
+            border-radius: 22px;
+        }
+
+        .hero-image-placeholder i, 
+        .hero-image-placeholder span {
+            z-index: 1;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         /* Content Sections */
         .section-title {
             text-align: center;
-            font-size: 2.2rem;
+            font-size: 2.5rem;
             margin: 50px 0 30px;
             color: var(--text-color);
+            font-family: 'Orbitron', sans-serif;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--gradient);
+            border-radius: 2px;
         }
 
         .features {
@@ -231,6 +403,34 @@
                         -8px -8px 16px var(--primary-light);
             transition: var(--transition);
             text-align: center;
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 1s ease;
+            animation-fill-mode: backwards;
+        }
+
+        .feature-card:nth-child(1) { animation-delay: 0.1s; }
+        .feature-card:nth-child(2) { animation-delay: 0.2s; }
+        .feature-card:nth-child(3) { animation-delay: 0.3s; }
+        .feature-card:nth-child(4) { animation-delay: 0.4s; }
+        .feature-card:nth-child(5) { animation-delay: 0.5s; }
+        .feature-card:nth-child(6) { animation-delay: 0.6s; }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradient);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: var(--transition);
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
         }
 
         .feature-card:hover {
@@ -246,12 +446,19 @@
             border-radius: 50%;
             background: var(--primary-bg);
             box-shadow: 7px 7px 14px var(--primary-shadow), 
-                        -7px -7px 14px var(--primary-light);
+                        -7px -7px 14px var(--primary-light),
+                        inset 0 0 15px rgba(138, 43, 226, 0.2);
             display: flex;
             justify-content: center;
             align-items: center;
             color: var(--accent-purple);
             font-size: 30px;
+            transition: var(--transition);
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: rotateY(180deg);
+            color: var(--accent-orange);
         }
 
         .feature-card h3 {
@@ -262,6 +469,82 @@
 
         .feature-card p {
             color: var(--text-color);
+        }
+
+        /* Testimonials */
+        .testimonials {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 60px;
+            overflow-x: auto;
+            padding: 20px 0;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-purple) var(--primary-bg);
+        }
+
+        .testimonial-card {
+            min-width: 300px;
+            padding: 25px;
+            border-radius: 20px;
+            background: var(--primary-bg);
+            box-shadow: 8px 8px 16px var(--primary-shadow), 
+                        -8px -8px 16px var(--primary-light);
+            transition: var(--transition);
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 12px 12px 24px var(--primary-shadow), 
+                        -12px -12px 24px var(--primary-light);
+        }
+
+        .testimonial-content {
+            font-style: italic;
+            margin-bottom: 20px;
+            position: relative;
+            padding: 0 20px;
+        }
+
+        .testimonial-content::before,
+        .testimonial-content::after {
+            content: '"';
+            font-size: 50px;
+            color: var(--accent-purple);
+            opacity: 0.3;
+            position: absolute;
+        }
+
+        .testimonial-content::before {
+            top: -20px;
+            left: -10px;
+        }
+
+        .testimonial-content::after {
+            bottom: -40px;
+            right: -10px;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .author-details h4 {
+            color: var(--accent-orange);
+            margin-bottom: 5px;
         }
 
         /* Footer */
@@ -275,6 +558,18 @@
             display: flex;
             justify-content: space-between;
             flex-wrap: wrap;
+            position: relative;
+            overflow: hidden;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradient);
         }
 
         .footer-col {
@@ -287,6 +582,19 @@
             font-size: 1.2rem;
             margin-bottom: 20px;
             color: var(--accent-purple);
+            position: relative;
+            display: inline-block;
+        }
+
+        .footer-col h4::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 30px;
+            height: 3px;
+            background: var(--accent-orange);
+            border-radius: 2px;
         }
 
         .footer-col ul {
@@ -301,10 +609,12 @@
             text-decoration: none;
             color: var(--text-color);
             transition: var(--transition);
+            display: inline-block;
         }
 
         .footer-col a:hover {
             color: var(--accent-orange);
+            transform: translateX(5px);
         }
 
         .copyright {
@@ -316,10 +626,61 @@
             width: 100%;
         }
 
+        /* Newsletter */
+        .newsletter {
+            background: var(--gradient);
+            padding: 40px;
+            border-radius: 20px;
+            margin: 40px 0;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(138, 43, 226, 0.3);
+        }
+
+        .newsletter h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        .newsletter p {
+            margin-bottom: 20px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .newsletter-form {
+            display: flex;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .newsletter-form input {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px 0 0 10px;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .newsletter-form button {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 0 10px 10px 0;
+            background: var(--primary-dark);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .newsletter-form button:hover {
+            background: var(--accent-orange);
+        }
+
         /* Responsive Design */
         @media (max-width: 1024px) {
             .hero h1 {
-                font-size: 2.5rem;
+                font-size: 2.8rem;
             }
         }
 
@@ -332,6 +693,10 @@
             .hero-content {
                 padding-right: 0;
                 margin-bottom: 30px;
+            }
+            
+            .hero p {
+                max-width: 100%;
             }
             
             nav ul {
@@ -375,7 +740,7 @@
             }
             
             .hero h1 {
-                font-size: 2rem;
+                font-size: 2.2rem;
             }
             
             .hero p {
@@ -385,6 +750,17 @@
             .user-actions {
                 width: 100%;
                 justify-content: center;
+            }
+
+            .newsletter-form {
+                flex-direction: column;
+            }
+
+            .newsletter-form input,
+            .newsletter-form button {
+                border-radius: 10px;
+                margin-bottom: 10px;
+                width: 100%;
             }
         }
 
@@ -403,12 +779,46 @@
             }
             
             .section-title {
+                font-size: 2rem;
+            }
+
+            .hero h1 {
                 font-size: 1.8rem;
             }
         }
+        .feature-card {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none; /* remove underline */
+    color: inherit;        /* inherit text color */
+    transition: var(--transition);
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 12px 12px 24px var(--primary-shadow), 
+                -12px -12px 24px var(--primary-light);
+}
+
+.feature-card h3, .feature-card p {
+    pointer-events: none; /* so text/icons don't block link */
+}
     </style>
 </head>
 <body>
+    <!-- Animated Background -->
+    <div class="background-animation">
+        <span style="width: 30px; height: 30px; left: 10%; animation-delay: 0s;"></span>
+        <span style="width: 20px; height: 20px; left: 20%; animation-delay: 2s;"></span>
+        <span style="width: 50px; height: 50px; left: 30%; animation-delay: 4s;"></span>
+        <span style="width: 70px; height: 70px; left: 40%; animation-delay: 6s;"></span>
+        <span style="width: 35px; height: 35px; left: 50%; animation-delay: 8s;"></span>
+        <span style="width: 60px; height: 60px; left: 60%; animation-delay: 10s;"></span>
+        <span style="width: 25px; height: 25px; left: 70%; animation-delay: 12s;"></span>
+        <span style="width: 40px; height: 40px; left: 80%; animation-delay: 14s;"></span>
+        <span style="width: 55px; height: 55px; left: 90%; animation-delay: 16s;"></span>
+    </div>
+    
     <header>
         <div class="logo">
             <i class="fas fa-play-circle"></i>
@@ -440,9 +850,9 @@
     
     <section class="hero">
         <div class="hero-content">
-            <h1>Transform Your Learning Experience With Multimedia Education</h1>
-            <p>Cine Learn combines the power of video, interactive books, and practical worksheets to create an immersive learning journey tailored for the modern student.</p>
-            <a href="#" class="cta-button">Start Learning Now</a>
+            <h1>Transform Your Learning Experience With Immersive Education</h1>
+            <p>Cine Learn combines the power of video, interactive books, and practical worksheets to create an immersive learning journey tailored for the modern student. Experience education like never before with our cutting-edge platform.</p>
+            <a href="#" class="cta-button">Start Learning Now <i class="fas fa-arrow-right"></i></a>
         </div>
         
         <div class="hero-image">
@@ -455,15 +865,23 @@
     
     <h2 class="section-title">Explore Our Learning Resources</h2>
     
-    <div class="features">
-        <div class="feature-card">
-            <div class="feature-icon">
-                <i class="fas fa-video"></i>
-            </div>
-            <h3>Video Lessons</h3>
-            <p>Engaging video content created by experts to help you visualize complex concepts and accelerate your learning.</p>
+<div class="features">
+    <a href="videos.html" class="feature-card">
+        <div class="feature-icon">
+            <i class="fas fa-video"></i>
         </div>
-        
+        <h3>Video Lessons</h3>
+        <p>Engaging video content created by experts to help you visualize complex concepts and accelerate your learning.</p>
+    </a>
+    
+        <div class="features">
+    <a href="grade9.html" class="feature-card">
+        <div class="feature-icon">
+            <i class="fas fa-video"></i>
+        </div>
+        <h3>GRADE 9</h3>
+        <p>exclusive video content created by experts to help you visualize complex concepts and accelerate your learning.</p>
+    </a>
         <div class="feature-card">
             <div class="feature-icon">
                 <i class="fas fa-book"></i>
@@ -506,6 +924,58 @@
             <p>Monitor your learning journey with detailed analytics and personalized recommendations for improvement.</p>
         </div>
     </div>
+
+    <div class="newsletter">
+        <h3>Stay Updated with Cine Learn</h3>
+        <p>Subscribe to our newsletter to receive the latest updates, new course alerts, and exclusive learning tips.</p>
+        <form class="newsletter-form">
+            <input type="email" placeholder="Enter your email address">
+            <button type="submit">Subscribe</button>
+        </form>
+    </div>
+    
+    <h2 class="section-title">What Our Students Say</h2>
+    
+    <div class="testimonials">
+        <div class="testimonial-card">
+            <div class="testimonial-content">
+                Cine Learn has completely transformed how I study. The video lessons are engaging and the worksheets help reinforce what I've learned.
+            </div>
+            <div class="testimonial-author">
+                <div class="author-avatar">JD</div>
+                <div class="author-details">
+                    <h4>John Doe</h4>
+                    <p>Science Student</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="testimonial-card">
+            <div class="testimonial-content">
+                The interactive books are a game-changer! I can visualize complex concepts in ways I never thought possible.
+            </div>
+            <div class="testimonial-author">
+                <div class="author-avatar">SM</div>
+                <div class="author-details">
+                    <h4>Sarah Miller</h4>
+                    <p>Mathematics Major</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="testimonial-card">
+            <div class="testimonial-content">
+                As a visual learner, the video resources on Cine Learn have helped me understand topics that I struggled with for years.
+            </div>
+            <div class="testimonial-author">
+                <div class="author-avatar">AJ</div>
+                <div class="author-details">
+                    <h4>Alex Johnson</h4>
+                    <p>Art Student</p>
+                </div>
+            </div>
+        </div>
+    </div>
     
     <footer>
         <div class="footer-col">
@@ -521,7 +991,7 @@
         <div class="footer-col">
             <h4>Resources</h4>
             <ul>
-                <li><a href="#">Videos</a></li>
+                <li><a href="videos">Videos</a></li>
                 <li><a href="#">Books</a></li>
                 <li><a href="#">Worksheets</a></li>
                 <li><a href="#">Blogs</a></li>
@@ -560,8 +1030,6 @@
         
         hamburger.addEventListener('click', () => {
             nav.classList.toggle('active');
-            
-            // Animate hamburger to X
             hamburger.classList.toggle('active');
         });
         
@@ -571,6 +1039,41 @@
                 nav.classList.remove('active');
                 hamburger.classList.remove('active');
             }
+        });
+
+        // Create animated background elements
+        const backgroundAnimation = document.querySelector('.background-animation');
+        for (let i = 0; i < 15; i++) {
+            const span = document.createElement('span');
+            const size = Math.random() * 50 + 10;
+            const left = Math.random() * 100;
+            const delay = Math.random() * 18;
+            
+            span.style.width = `${size}px`;
+            span.style.height = `${size}px`;
+            span.style.left = `${left}%`;
+            span.style.animationDelay = `${delay}s`;
+            
+            backgroundAnimation.appendChild(span);
+        }
+
+        // Add scroll animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const featureCards = document.querySelectorAll('.feature-card');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animationPlayState = 'running';
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.2 });
+            
+            featureCards.forEach(card => {
+                card.style.animationPlayState = 'paused';
+                observer.observe(card);
+            });
         });
     </script>
 </body>
