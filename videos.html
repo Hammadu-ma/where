@@ -4,423 +4,883 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>CineLearn — Learn Smart from Grade 9 to University</title>
-  <meta name="description" content="An ultra-modern learning hub for Ethiopian students: navigate quickly to Grade 9–12 and University years. Fast, responsive, and beautiful."/>
+  <meta name="description" content="An ultra-modern learning hub for Ethiopian students: navigate quickly to Grade 9–12 and University years. Fast, responsive, and beautiful." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    :root{
-      --bg:#070b12;
-      --bg-2:#0b1220;
-      --panel:#0f1726;
-      --panel-2:#0b1322;
-      --text:#e7ecf4;
-      --muted:#9fb0c9;
-      --accent:#6ea8ff;
-      --accent-2:#7ef2c4;
-      --warning:#ffd166;
-      --ring:0 0 0 2px rgba(110,168,255,.35);
-      --radius:20px;
-      --shadow:0 20px 60px rgba(0,0,0,.45);
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; font-family:Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial;
-      color:var(--text);
-      background:
-        radial-gradient(80vw 80vh at 10% -10%, #0f1b2d 0%, var(--bg) 45%),
-        radial-gradient(80vw 80vh at 110% 10%, #101b2a 0%, var(--bg) 45%);
-      overflow-x:hidden;
-    }
+    :root {  
+      --primary-dark: #0a0a1a;  
+      --primary-bg: #15152b;  
+      --primary-shadow: #070711;  
+      --primary-light: #1d1d3a;  
+      --accent-purple: #8a2be2;  
+      --accent-red: #ff4d4d;  
+      --accent-orange: #ff7b25;  
+      --accent-blue: #4361ee;  
+      --text-color: #e6e6ff;  
+      --transition: all 0.3s ease;  
+      --gradient: linear-gradient(135deg, var(--accent-purple), var(--accent-orange));  
+    }  
 
-    /* Animated aurora background */
-    .aurora{position:fixed;inset:-20vmax;z-index:-1;filter:blur(60px);opacity:.55;}
-    .aurora::before,.aurora::after{
-      content:""; position:absolute; inset:0;
-      background:conic-gradient(from 180deg at 50% 50%, rgba(110,168,255,.55), rgba(126,242,196,.45), rgba(110,168,255,.55));
-      mix-blend-mode:screen; animation:spin 36s linear infinite;
-      transform-origin:50% 50%; border-radius:50%;
-    }
-    .aurora::after{animation-duration:48s; animation-direction:reverse; opacity:.7}
-    @keyframes spin{to{transform:rotate(1turn)}}
+    * {  
+      margin: 0;  
+      padding: 0;  
+      box-sizing: border-box;  
+      font-family: 'Montserrat', sans-serif;  
+    }  
 
-    .container{max-width:1200px; margin:0 auto; padding:20px}
+    body {  
+      background-color: var(--primary-bg);  
+      color: var(--text-color);  
+      min-height: 100vh;  
+      display: flex;  
+      flex-direction: column;  
+      padding: 20px;  
+      line-height: 1.6;  
+      overflow-x: hidden;  
+    }  
 
-    /* Header + nav */
-    header{position:sticky; top:0; z-index:50; backdrop-filter:blur(10px);
-      background:linear-gradient(180deg, rgba(7,11,18,.9), rgba(7,11,18,.6));
-      border-bottom:1px solid rgba(255,255,255,.06);
-    }
-    .nav{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 20px}
-    .brand{display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.4px}
-    .dot{width:12px;height:12px;border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent-2)); box-shadow:0 0 24px rgba(110,168,255,.8)}
-    .nav-links{display:flex; gap:14px; align-items:center}
-    .nav a{color:var(--text); text-decoration:none; font-weight:600; padding:10px 12px; border-radius:10px; opacity:.9}
-    .nav a:hover{background:rgba(255,255,255,.06)}
+    .background-animation {  
+      position: fixed;  
+      top: 0;  
+      left: 0;  
+      width: 100%;  
+      height: 100%;  
+      z-index: -1;  
+      opacity: 0.15;  
+    }  
 
-    /* Hamburger */
-    .hamburger{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;cursor:pointer;border:1px solid rgba(255,255,255,.08);background:var(--panel);}
-    .hamburger .bar{width:22px;height:2px;background:#cfe0ff;position:relative;transition:.25s}
-    .hamburger .bar::before,.hamburger .bar::after{content:"";position:absolute;left:0;width:22px;height:2px;background:#cfe0ff;transition:.25s}
-    .hamburger .bar::before{top:-7px}.hamburger .bar::after{top:7px}
-    .hamburger.active .bar{background:transparent}
-    .hamburger.active .bar::before{top:0;transform:rotate(45deg)}
-    .hamburger.active .bar::after{top:0;transform:rotate(-45deg)}
+    .background-animation span {  
+      position: absolute;  
+      border-radius: 50%;  
+      background: var(--gradient);  
+      opacity: 0.5;  
+      animation: float 15s linear infinite;  
+    }  
 
-    /* Drawer */
-    .drawer{position:fixed; inset:0 0 0 auto; width:min(320px,92vw); background:linear-gradient(180deg, rgba(15,23,38,1), rgba(11,19,34,1)); border-left:1px solid rgba(255,255,255,.08); box-shadow:var(--shadow); transform:translateX(102%); transition:.25s; z-index:60}
-    .drawer.show{transform:translateX(0)}
-    .drawer header{position:sticky;top:0;background:transparent;border:none}
-    .drawer .menu{display:grid; gap:8px; padding:16px}
-    .drawer .menu a{padding:12px 14px; border-radius:12px; background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02)); border:1px solid rgba(255,255,255,.08)}
+    @keyframes float {  
+      0% { transform: translateY(0) rotate(0deg); opacity: 0; }  
+      10% { opacity: 0.5; }  
+      90% { opacity: 0.3; }  
+      100% { transform: translateY(-1000%) rotate(720deg); opacity: 0; }  
+    }  
 
-    /* Hero */
-    .hero{display:grid; grid-template-columns: 1.3fr 1fr; gap:18px; align-items:center; padding:28px 20px 18px}
-    @media(max-width: 980px){.hero{grid-template-columns:1fr}}
-    .hero h1{font-size: clamp(28px, 4vw, 48px); line-height:1.05; margin:0 0 10px 0}
-    .hero p{color:var(--muted); margin:0 0 16px 0}
+    #splash-screen {  
+      position: fixed;  
+      top: 0;  
+      left: 0;  
+      width: 100%;  
+      height: 100%;  
+      background: linear-gradient(135deg, #1a1a2b, #000000);  
+      display: flex;  
+      justify-content: center;  
+      align-items: center;  
+      z-index: 9999;  
+      animation: fadeOut 1s ease forwards;  
+      animation-delay: 3s;  
+    }  
 
-    .cta-row{display:flex; gap:10px; flex-wrap:wrap}
-    .btn{appearance:none; border:none; cursor:pointer; font-weight:800; padding:12px 16px; border-radius:14px; color:#07111f}
-    .btn.primary{background:linear-gradient(135deg, var(--accent), var(--accent-2)); box-shadow:0 12px 30px rgba(110,168,255,.35)}
-    .btn.ghost{background:transparent; color:var(--text); border:1px solid rgba(255,255,255,.15)}
-    .meta-row{display:flex; gap:14px; flex-wrap:wrap; margin-top:10px; color:#cfe0ff; font-size:14px}
+    .splash-content {  
+      text-align: center;  
+      color: white;  
+    }  
 
-    /* Search */
-    .searchbox{position:relative; margin-top:12px}
-    .searchbox input{width:100%; background:var(--panel); border:1px solid rgba(255,255,255,.08); color:var(--text); padding:14px 16px 14px 42px; border-radius:14px; outline:none}
-    .searchbox input:focus{box-shadow:var(--ring); border-color:transparent}
-    .searchbox svg{position:absolute; left:12px; top:50%; transform:translateY(-50%); opacity:.6}
+    .splash-logo {  
+      width: 120px;  
+      animation: bounce 2s infinite;  
+    }  
 
-    /* Card grid */
-    .section{padding:10px 20px 28px}
-    .section h2{margin:0 0 14px 0; font-size:22px}
-    .grid{display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:14px}
-    @media(max-width:1100px){.grid{grid-template-columns:repeat(3,1fr)}}
-    @media(max-width:780px){.grid{grid-template-columns:repeat(2,1fr)}}
-    @media(max-width:520px){.grid{grid-template-columns:1fr}}
+    .splash-title {  
+      font-size: 28px;  
+      margin-top: 15px;  
+      letter-spacing: 2px;  
+      animation: fadeIn 2s;  
+    }  
 
-    .card{
-      position:relative; overflow:hidden; border-radius:18px; cursor:pointer; transition:.25s;
-      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-      border:1px solid rgba(255,255,255,.08); box-shadow:0 10px 30px rgba(0,0,0,.25);
-      min-height:140px; display:flex; flex-direction:column; justify-content:space-between;
-    }
-    .card:hover{transform:translateY(-3px)}
-    .card .ink{position:absolute; inset:-20%; background:conic-gradient(from 210deg at 50% 50%, rgba(110,168,255,.15), rgba(126,242,196,.08), rgba(110,168,255,.15)); filter:blur(40px); animation:float 12s ease-in-out infinite}
-    @keyframes float{ 0%,100%{transform:translate(0,0) rotate(0)} 50%{transform:translate(6%, -4%) rotate(6deg)} }
+    .loading-bar {  
+      margin-top: 20px;  
+      width: 150px;  
+      height: 6px;  
+      border-radius: 3px;  
+      background: rgba(255, 255, 255, 0.2);  
+      overflow: hidden;  
+      position: relative;  
+    }  
 
-    .card .content{position:relative; padding:16px}
-    .badge{display:inline-flex; align-items:center; gap:8px; font-size:12px; color:#cfe0ff; padding:6px 10px; border-radius:999px; border:1px solid rgba(110,168,255,.35); background:rgba(110,168,255,.08)}
-    .title{font-weight:800; font-size:18px; margin-top:8px}
-    .muted{font-size:12px; color:var(--muted)}
+    .loading-bar::before {  
+      content: "";  
+      position: absolute;  
+      width: 50%;  
+      height: 100%;  
+      background: #ffcc00;  
+      animation: loading 1.5s infinite linear;  
+    }  
 
-    .card .footer{display:flex; align-items:center; justify-content:space-between; gap:8px; padding:12px 16px; border-top:1px solid rgba(255,255,255,.06)}
-    .go{font-weight:800; color:#07111f; background:linear-gradient(135deg, var(--accent), var(--accent-2)); padding:10px 12px; border-radius:12px}
+    @keyframes bounce {  
+      0%, 100% { transform: translateY(0); }  
+      50% { transform: translateY(-12px); }  
+    }  
 
-    /* Footer */
-    footer{padding:26px 20px; border-top:1px solid rgba(255,255,255,.06); background:linear-gradient(180deg, rgba(7,11,18,.6), rgba(7,11,18,.9))}
-    .foot{display:grid; grid-template-columns:1.5fr 1fr 1fr; gap:16px}
-    @media(max-width:880px){.foot{grid-template-columns:1fr}}
-    .mutelist{display:grid; gap:8px}
-    .mutelist a{color:var(--muted); text-decoration:none}
-    .mutelist a:hover{color:#cfe0ff}
+    @keyframes loading {  
+      0% { left: -50%; }  
+      100% { left: 100%; }  
+    }  
 
-    /* Utility */
-    .hide-mobile{display:block}
-    .show-mobile{display:none}
-    @media(max-width:860px){.hide-mobile{display:none}.show-mobile{display:block}}
+    @keyframes fadeOut {  
+      to { opacity: 0; visibility: hidden; }  
+    }  
 
-    /* Focus ring for buttons/links */
-    a:focus, button:focus{outline:none; box-shadow:var(--ring)}
+    header {  
+      display: flex;  
+      justify-content: space-between;  
+      align-items: center;  
+      padding: 20px 30px;  
+      margin-bottom: 40px;  
+      border-radius: 20px;  
+      background: var(--primary-bg);  
+      box-shadow: 8px 8px 16px var(--primary-shadow), -8px -8px 16px var(--primary-light);  
+      position: sticky;  
+      top: 0;  
+      z-index: 10;  
+      animation: slideDown 0.8s ease;  
+    }  
+
+    @keyframes slideDown {  
+      from { transform: translateY(-100px); opacity: 0; }  
+      to { transform: translateY(0); opacity: 1; }  
+    }  
+
+    .logo {  
+      display: flex;  
+      align-items: center;  
+      gap: 15px;  
+      font-size: 28px;  
+      font-weight: 700;  
+      color: var(--accent-purple);  
+      text-shadow: 0 0 10px rgba(138, 43, 226, 0.7);  
+      font-family: 'Orbitron', sans-serif;  
+    }  
+
+    .logo i {  
+      font-size: 32px;  
+      filter: drop-shadow(0 0 5px var(--accent-purple));  
+    }  
+
+    nav ul {  
+      display: flex;  
+      list-style: none;  
+      gap: 20px;  
+    }  
+
+    nav a {  
+      text-decoration: none;  
+      color: var(--text-color);  
+      font-weight: 600;  
+      padding: 10px 15px;  
+      border-radius: 15px;  
+      background: var(--primary-bg);  
+      box-shadow: 5px 5px 10px var(--primary-shadow), -5px -5px 10px var(--primary-light);  
+      transition: var(--transition);  
+      position: relative;  
+      overflow: hidden;  
+    }  
+
+    nav a::before {  
+      content: '';  
+      position: absolute;  
+      top: 0;  
+      left: -100%;  
+      width: 100%;  
+      height: 100%;  
+      background: var(--gradient);  
+      transition: var(--transition);  
+      z-index: -1;  
+      opacity: 0;  
+    }  
+
+    nav a:hover::before, nav a.active::before {  
+      left: 0;  
+      opacity: 1;  
+    }  
+
+    nav a:hover, nav a.active {  
+      color: white;  
+      box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);  
+      transform: translateY(-3px);  
+    }  
+
+    .hamburger {  
+      display: none;  
+      flex-direction: column;  
+      cursor: pointer;  
+      z-index: 100;  
+    }  
+
+    .hamburger span {  
+      width: 25px;  
+      height: 3px;  
+      background: var(--text-color);  
+      margin: 2px 0;  
+      border-radius: 3px;  
+      transition: var(--transition);  
+    }  
+
+    .user-actions {  
+      display: flex;  
+      gap: 15px;  
+    }  
+
+    .user-actions button {  
+      border: none;  
+      padding: 10px 20px;  
+      border-radius: 15px;  
+      font-weight: 600;  
+      cursor: pointer;  
+      transition: var(--transition);  
+      position: relative;  
+      overflow: hidden;  
+    }  
+
+    .user-actions button::before {  
+      content: '';  
+      position: absolute;  
+      top: 0;  
+      left: -100%;  
+      width: 100%;  
+      height: 100%;  
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);  
+      transition: var(--transition);  
+    }  
+
+    .user-actions button:hover::before {  
+      left: 100%;  
+    }  
+
+    .login {  
+      background: var(--primary-bg);  
+      box-shadow: 5px 5px 10px var(--primary-shadow), -5px -5px 10px var(--primary-light);  
+      color: var(--text-color);  
+    }  
+
+    .signup {  
+      background: var(--gradient);  
+      color: white;  
+      box-shadow: 5px 5px 15px var(--primary-shadow), 0 0 10px rgba(138, 43, 226, 0.5);  
+    }  
+
+    .user-actions button:hover {  
+      transform: translateY(-3px);  
+      box-shadow: 7px 7px 20px var(--primary-shadow);  
+    }  
+
+    .hero {  
+      display: flex;  
+      align-items: center;  
+      padding: 40px;  
+      margin-bottom: 50px;  
+      border-radius: 30px;  
+      background: var(--primary-bg);  
+      box-shadow: 8px 8px 16px var(--primary-shadow), -8px -8px 16px var(--primary-light);  
+      position: relative;  
+      overflow: hidden;  
+      animation: fadeIn 1s ease;  
+    }  
+
+    .hero::before {  
+      content: '';  
+      position: absolute;  
+      top: -50%;  
+      right: -50%;  
+      width: 100%;  
+      height: 200%;  
+      background: radial-gradient(circle, rgba(138, 43, 226, 0.1) 0%, transparent 70%);  
+      animation: pulse 15s infinite linear;  
+    }  
+
+    @keyframes pulse {  
+      0% { transform: rotate(0deg); }  
+      100% { transform: rotate(360deg); }  
+    }  
+
+    @keyframes fadeIn {  
+      from { opacity: 0; transform: translateY(20px); }  
+      to { opacity: 1; transform: translateY(0); }  
+    }  
+
+    .hero-content {  
+      flex: 1;  
+      padding-right: 40px;  
+      z-index: 2;  
+    }  
+
+    .hero h1 {  
+      font-size: 3.5rem;  
+      margin-bottom: 20px;  
+      line-height: 1.2;  
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-orange));  
+      -webkit-background-clip: text;  
+      -webkit-text-fill-color: transparent;  
+      font-family: 'Orbitron', sans-serif;  
+      text-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);  
+    }  
+
+    .hero p {  
+      font-size: 1.2rem;  
+      margin-bottom: 30px;  
+      line-height: 1.6;  
+      max-width: 90%;  
+    }  
+
+    .cta-button {  
+      display: inline-block;  
+      padding: 15px 35px;  
+      background: var(--gradient);  
+      color: white;  
+      text-decoration: none;  
+      font-weight: 600;  
+      border-radius: 20px;  
+      box-shadow: 5px 5px 15px var(--primary-shadow), 0 0 10px rgba(138, 43, 226, 0.5);  
+      transition: var(--transition);  
+      position: relative;  
+      overflow: hidden;  
+    }  
+
+    .cta-button::before {  
+      content: '';  
+      position: absolute;  
+      top: 0;  
+      left: -100%;  
+      width: 100%;  
+      height: 100%;  
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);  
+      transition: var(--transition);  
+    }  
+
+    .cta-button:hover::before {  
+      left: 100%;  
+    }  
+
+    .cta-button:hover {  
+      transform: translateY(-3px);  
+      box-shadow: 7px 7px 20px var(--primary-shadow), 0 0 15px rgba(138, 43, 226, 0.7);  
+    }  
+
+    .hero-image {  
+      flex: 1;  
+      display: flex;  
+      justify-content: center;  
+      align-items: center;  
+      z-index: 2;  
+    }  
+
+    .hero-image-placeholder {  
+      width: 100%;  
+      height: 350px;  
+      border-radius: 25px;  
+      background: linear-gradient(145deg, var(--primary-light), var(--primary-bg));  
+      box-shadow: 20px 20px 60px var(--primary-shadow), -20px -20px 60px var(--primary-light), inset 0 0 20px rgba(138, 43, 226, 0.2);  
+      display: flex;  
+      justify-content: center;  
+      align-items: center;  
+      color: var(--accent-purple);  
+      font-size: 1.5rem;  
+      font-weight: 600;  
+      flex-direction: column;  
+      gap: 15px;  
+      position: relative;  
+      overflow: hidden;  
+    }  
+
+    .hero-image-placeholder::before {  
+      content: '';  
+      position: absolute;  
+      width: 150%;  
+      height: 150%;  
+      background: conic-gradient(transparent, transparent, transparent, var(--accent-purple));  
+      animation: rotate 4s linear infinite;  
+    }  
+
+    .hero-image-placeholder::after {  
+      content: '';  
+      position: absolute;  
+      inset: 3px;  
+      background: linear-gradient(145deg, var(--primary-light), var(--primary-bg));  
+      border-radius: 22px;  
+    }  
+
+    .hero-image-placeholder i, .hero-image-placeholder span {  
+      z-index: 1;  
+    }  
+
+    @keyframes rotate {  
+      0% { transform: rotate(0deg); }  
+      100% { transform: rotate(360deg); }  
+    }  
+
+    .section-title {  
+      text-align: center;  
+      font-size: 2.5rem;  
+      margin: 50px 0 30px;  
+      color: var(--text-color);  
+      font-family: 'Orbitron', sans-serif;  
+      position: relative;  
+      display: inline-block;  
+      left: 50%;  
+      transform: translateX(-50%);  
+    }  
+
+    .section-title::after {  
+      content: '';  
+      position: absolute;  
+      bottom: -10px;  
+      left: 50%;  
+      transform: translateX(-50%);  
+      width: 100px;  
+      height: 4px;  
+      background: var(--gradient);  
+      border-radius: 2px;  
+    }  
+
+    .features {  
+      display: grid;  
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));  
+      gap: 30px;  
+      margin-bottom: 60px;  
+    }  
+
+    .feature-card {  
+      padding: 30px;  
+      border-radius: 20px;  
+      background: var(--primary-bg);  
+      box-shadow: 8px 8px 16px var(--primary-shadow), -8px -8px 16px var(--primary-light);  
+      transition: var(--transition);  
+      text-align: center;  
+      position: relative;  
+      overflow: hidden;  
+      animation: fadeIn 1s ease;  
+      animation-fill-mode: backwards;  
+    }  
+
+    .feature-card:nth-child(1) { animation-delay: 0.1s; }  
+    .feature-card:nth-child(2) { animation-delay: 0.2s; }  
+    .feature-card:nth-child(3) { animation-delay: 0.3s; }  
+    .feature-card:nth-child(4) { animation-delay: 0.4s; }  
+
+    .feature-card::before {  
+      content: '';  
+      position: absolute;  
+      top: 0;  
+      left: 0;  
+      width: 100%;  
+      height: 5px;  
+      background: var(--gradient);  
+      transform: scaleX(0);  
+      transform-origin: left;  
+      transition: var(--transition);  
+    }  
+
+    .feature-card:hover::before {  
+      transform: scaleX(1);  
+    }  
+
+    .feature-card:hover {  
+      transform: translateY(-5px);  
+      box-shadow: 12px 12px 24px var(--primary-shadow), -12px -12px 24px var(--primary-light);  
+    }  
+
+    .feature-icon {  
+      width: 80px;  
+      height: 80px;  
+      margin: 0 auto 20px;  
+      border-radius: 50%;  
+      background: var(--primary-bg);  
+      box-shadow: 7px 7px 14px var(--primary-shadow), -7px -7px 14px var(--primary-light), inset 0 0 15px rgba(138, 43, 226, 0.2);  
+      display: flex;  
+      justify-content: center;  
+      align-items: center;  
+      color: var(--accent-purple);  
+      font-size: 30px;  
+      transition: var(--transition);  
+    }  
+
+    .feature-card:hover .feature-icon {  
+      transform: rotateY(180deg);  
+      color: var(--accent-orange);  
+    }  
+
+    .feature-card h3 {  
+      font-size: 1.5rem;  
+      margin-bottom: 15px;  
+      color: var(--accent-orange);  
+    }  
+
+    .feature-card p {  
+      color: var(--text-color);  
+    }  
+
+    .newsletter {  
+      background: var(--gradient);  
+      padding: 40px;  
+      border-radius: 20px;  
+      margin: 40px 0;  
+      text-align: center;  
+      box-shadow: 0 10px 30px rgba(138, 43, 226, 0.3);  
+    }  
+
+    .newsletter h3 {  
+      font-size: 1.8rem;  
+      margin-bottom: 15px;  
+    }  
+
+    .newsletter p {  
+      margin-bottom: 20px;  
+      max-width: 600px;  
+      margin-left: auto;  
+      margin-right: auto;  
+    }  
+
+    .newsletter-form {  
+      display: flex;  
+      max-width: 500px;  
+      margin: 0 auto;  
+    }  
+
+    .newsletter-form input {  
+      flex: 1;  
+      padding: 15px;  
+      border: none;  
+      border-radius: 10px 0 0 10px;  
+      background: rgba(255, 255, 255, 0.9);  
+    }  
+
+    .newsletter-form button {  
+      padding: 15px 25px;  
+      border: none;  
+      border-radius: 0 10px 10px 0;  
+      background: var(--primary-dark);  
+      color: white;  
+      font-weight: 600;  
+      cursor: pointer;  
+      transition: var(--transition);  
+    }  
+
+    .newsletter-form button:hover {  
+      background: var(--accent-orange);  
+    }  
+
+    footer {  
+      margin-top: auto;  
+      padding: 40px;  
+      border-radius: 20px;  
+      background: var(--primary-bg);  
+      box-shadow: 8px 8px 16px var(--primary-shadow), -8px -8px 16px var(--primary-light);  
+      display: flex;  
+      justify-content: space-between;  
+      flex-wrap: wrap;  
+      position: relative;  
+      overflow: hidden;  
+    }  
+
+    footer::before {  
+      content: '';  
+      position: absolute;  
+      top: 0;  
+      left: 0;  
+      width: 100%;  
+      height: 5px;  
+      background: var(--gradient);  
+    }  
+
+    .footer-col {  
+      flex: 1;  
+      min-width: 200px;  
+      margin-bottom: 20px;  
+    }  
+
+    .footer-col h4 {  
+      font-size: 1.2rem;  
+      margin-bottom: 20px;  
+      color: var(--accent-purple);  
+      position: relative;  
+      display: inline-block;  
+    }  
+
+    .footer-col h4::after {  
+      content: '';  
+      position: absolute;  
+      bottom: -5px;  
+      left: 0;  
+      width: 30px;  
+      height: 3px;  
+      background: var(--accent-orange);  
+      border-radius: 2px;  
+    }  
+
+    .footer-col ul {  
+      list-style: none;  
+    }  
+
+    .footer-col ul li {  
+      margin-bottom: 10px;  
+    }  
+
+    .footer-col a {  
+      text-decoration: none;  
+      color: var(--text-color);  
+      transition: var(--transition);  
+      display: inline-block;  
+    }  
+
+    .footer-col a:hover {  
+      color: var(--accent-orange);  
+      transform: translateX(5px);  
+    }  
+
+    .copyright {  
+      text-align: center;  
+      padding: 20px;  
+      margin-top: 30px;  
+      font-size: 0.9rem;  
+      opacity: 0.8;  
+      width: 100%;  
+    }  
+
+    @media (max-width: 1024px) {  
+      .hero h1 {  
+        font-size: 2.8rem;  
+      }  
+    }  
+
+    @media (max-width: 900px) {  
+      .hero {  
+        flex-direction: column;  
+        text-align: center;  
+      }  
+
+      .hero-content {  
+        padding-right: 0;  
+        margin-bottom: 30px;  
+      }  
+
+      .hero p {  
+        max-width: 100%;  
+      }  
+
+      nav ul {  
+        gap: 15px;  
+      }  
+    }  
+
+    @media (max-width: 768px) {  
+      header {  
+        flex-direction: column;  
+        gap: 20px;  
+        padding: 20px;  
+      }  
+
+      .hamburger {  
+        display: flex;  
+      }  
+
+      nav ul {  
+        display: none;  
+      }  
+
+      nav.active ul {  
+        display: flex;  
+        flex-direction: column;  
+        gap: 10px;  
+        width: 100%;  
+      }  
+    }  
   </style>
 </head>
 <body>
-  <div class="aurora" aria-hidden="true"></div>
-  <header>
-    <nav class="nav container" aria-label="Main navigation">
-      <a href="#" class="brand" aria-label="CineLearn Home">
-        <span class="dot"></span>
-        <span>CineVideoLearn</span>
-      </a>
-      <div class="nav-links hide-mobile">
-        <a href="#grades">Grades</a>
-        <a href="#university">University</a>
-        <a href="#subjects">Subjects</a>
-        <a href="#about">About</a>
-      </div>
-      <button class="hamburger show-mobile" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="drawer">
-        <span class="bar"></span>
-      </button>
-    </nav>
-  </header>
+  <!-- Background Animation -->
+  <div class="background-animation">
+    <span style="width: 50px; height: 50px; top: 20%; left: 30%;"></span>
+    <span style="width: 30px; height: 30px; top: 60%; left: 80%;"></span>
+    <span style="width: 70px; height: 70px; top: 80%; left: 10%;"></span>
+  </div>
 
-  <!-- Drawer / mobile menu -->
-  <aside class="drawer" id="drawer" aria-hidden="true">
-    <div class="nav container" style="padding:14px 16px">
-      <div class="brand"><span class="dot"></span><span>CineLearn</span></div>
-      <button class="hamburger active" id="closeDrawer" aria-label="Close menu"><span class="bar"></span></button>
-    </div>
-    <div class="menu">
-      <a href="#grades" onclick="closeDrawer()">Grades</a>
-      <a href="#university" onclick="closeDrawer()">University</a>
-      <a href="#subjects" onclick="closeDrawer()">Subjects</a>
-      <a href="#about" onclick="closeDrawer()">About</a>
-      <a href="grade9.html" onclick="closeDrawer()">Go to Grade 9</a>
-    </div>
-  </aside>
-
-  <main>
-    <!-- Hero -->
-    <section class="hero container" id="home">
-      <div>
-        <h1>Learn smarter — <span style="background:linear-gradient(135deg,var(--accent),var(--accent-2)); -webkit-background-clip:text; background-clip:text; color:transparent">from Grade 9 to University</span></h1>
-        <p>All your video lessons, books, and study sheets in one ultra-fast, beautiful place. Pick your grade and start learning instantly.</p>
-
-        <div class="searchbox" role="search">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm10 2-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
-          <input id="globalSearch" type="text" placeholder="Search subjects, topics, or videos…" aria-label="Global search"/>
-        </div>
-
-        <div class="cta-row" style="margin-top:14px">
-          <a class="btn primary" href="#grades">Browse Grades</a>
-          <a class="btn ghost" href="grade9.html">Open Grade 9</a>
-        </div>
-
-        <div class="meta-row">
-          <span>🔥 Fresh content weekly</span>
-          <span>⚡ Fast & responsive</span>
-          <span>🎯 Ethiopia-ready</span>
-        </div>
-      </div>
-      <div aria-hidden="true">
-        <!-- Simple showcase card -->
-        <div class="card" style="min-height:280px">
-          <div class="ink"></div>
-          <div class="content">
-            <span class="badge">Featured · Mathematics</span>
-            <div class="title">Linear Equations Crash Course</div>
-            <div class="muted">Video • 12 min · Grade 9</div>
-          </div>
-          <div class="footer">
-            <div class="muted">Master the basics in minutes</div>
-            <a class="go" href="grade9.html">Watch</a>
-          </div>
-        </div>
-      </div>
-    </section>
 
     <!-- Grades -->
-    <section class="section container" id="grades">
-      <h2>Choose Your Grade</h2>
-      <div class="grid" role="list">
-        <!-- Grade 9 -->
-        <a class="card" role="listitem" href="grade9.html">
-          <div class="ink"></div>
-          <div class="content">
-            <span class="badge">Start here</span>
-            <div class="title">Grade 9</div>
-            <div class="muted">Videos • Books • Sheets</div>
-          </div>
-          <div class="footer">
-            <div class="muted">All core subjects</div>
-            <span class="go">Enter</span>
-          </div>
-        </a>
-        <!-- Grade 10 -->
-        <a class="card" role="listitem" href="grade10.html">
-          <div class="ink"></div>
-          <div class="content">
-            <span class="badge">Exam focused</span>
-            <div class="title">Grade 10</div>
-            <div class="muted">Prep for National Exam</div>
-          </div>
-          <div class="footer">
-            <div class="muted">Updated past papers</div>
-            <span class="go">Enter</span>
-          </div>
-        </a>
-        <!-- Grade 11 -->
-        <a class="card" role="listitem" href="grade11.html">
-          <div class="ink"></div>
-          <div class="content">
-            <span class="badge">STEM + Social</span>
-            <div class="title">Grade 11</div>
-            <div class="muted">Advanced topics • Labs</div>
-          </div>
-          <div class="footer">
-            <div class="muted">Tracked progress</div>
-            <span class="go">Enter</span>
-          </div>
-        </a>
-        <!-- Grade 12 -->
-        <a class="card" role="listitem" href="grade12.html">
-          <div class="ink"></div>
-          <div class="content">
-            <span class="badge">Final year</span>
-            <div class="title">Grade 12</div>
-            <div class="muted">University-ready content</div>
-          </div>
-          <div class="footer">
-            <div class="muted">Mock exams & tips</div>
-            <span class="go">Enter</span>
-          </div>
-        </a>
-      </div>
+    <section class="section container" id="grades" aria-labelledby="grades-title">
+      <h2 class="section-title" id="grades-title">Choose Your Grade</h2>
+      <div class="features" role="list" id="grades-grid"></div>
     </section>
 
     <!-- University -->
-    <section class="section container" id="university">
-      <h2>University Years</h2>
-      <div class="grid" role="list">
-        <a class="card" role="listitem" href="uni-year1.html">
-          <div class="ink"></div>
-          <div class="content">
-            <span class="badge">Foundations</span>
-            <div class="title">Year 1</div>
-            <div class="muted">Common courses & skills</div>
-          </div>
-          <div class="footer">
-            <div class="muted">Math • Chemistry • ICT</div>
-            <span class="go">Enter</span>
-          </div>
-        </a>
-        <a class="card" role="listitem" href="uni-year2.html">
-          <div class="ink"></div>
-          <div class="content">
-            <span class="badge">Core</span>
-            <div class="title">Year 2</div>
-            <div class="muted">Discipline pathways</div>
-          </div>
-          <div class="footer">
-            <div class="muted">Labs • Projects</div>
-            <span class="go">Enter</span>
-          </div>
-        </a>
-        <a class="card" role="listitem" href="uni-year3.html">
-          <div class="ink"></div>
-          <div class="content">
-            <span class="badge">Advanced</span>
-            <div class="title">Year 3</div>
-            <div class="muted">Specialized modules</div>
-          </div>
-          <div class="footer">
-            <div class="muted">Tutorials • Notes</div>
-            <span class="go">Enter</span>
-          </div>
-        </a>
-        <a class="card" role="listitem" href="uni-year4plus.html">
-          <div class="ink"></div>
-          <div class="content">
-            <span class="badge">Capstone</span>
-            <div class="title">Year 4+</div>
-            <div class="muted">Research & internships</div>
-          </div>
-          <div class="footer">
-            <div class="muted">Guides • Templates</div>
-            <span class="go">Enter</span>
-          </div>
-        </a>
+    <section class="section container" id="university" aria-labelledby="uni-title">
+      <h2 class="section-title" id="uni-title">University Years</h2>
+      <div class="features" role="list" id="uni-grid"></div>
+    </section>
+
+    <!-- Popular Subjects -->
+    <section class="section container" id="subjects" aria-labelledby="subjects-title">
+      <h2 class="section-title" id="subjects-title">Popular Subjects</h2>
+      <div class="features" role="list" id="subjects-grid"></div>
+    </section>
+
+    <!-- Why CineLearn -->
+    <section class="section container" id="about" aria-labelledby="about-title">
+      <h2 class="section-title" id="about-title">Why CineLearn?</h2>
+      <div class="features">
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+          <h3>Instant Navigation</h3>
+          <p>Jump between grades and topics with zero friction.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-bullseye"></i></div>
+          <h3>Exam-ready Content</h3>
+          <p>Curated videos and past papers aligned with the curriculum.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-mobile-alt"></i></div>
+          <h3>Looks Great Everywhere</h3>
+          <p>From low-end phones to desktop. Smooth interactions, low data usage.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-sync-alt"></i></div>
+          <h3>Updated Weekly</h3>
+          <p>New lessons and playlists keep your learning journey exciting.</p>
+        </div>
       </div>
     </section>
 
-    <!-- Quick Subjects (optional showcase) -->
-    <section class="section container" id="subjects">
-      <h2>Popular Subjects</h2>
-      <div class="grid">
-        <a class="card" href="grade9.html#math"><div class="ink"></div><div class="content"><span class="badge">Math</span><div class="title">Algebra • Geometry</div><div class="muted">Short videos • Worksheets</div></div><div class="footer"><div class="muted">Boost your speed</div><span class="go">Open</span></div></a>
-        <a class="card" href="grade9.html#chem"><div class="ink"></div><div class="content"><span class="badge">Chemistry</span><div class="title">Organic • Inorganic</div><div class="muted">Reactions • Labs</div></div><div class="footer"><div class="muted">Clear explanations</div><span class="go">Open</span></div></a>
-        <a class="card" href="grade9.html#bio"><div class="ink"></div><div class="content"><span class="badge">Biology</span><div class="title">Cells • Genetics</div><div class="muted">Animations • Quizzes</div></div><div class="footer"><div class="muted">Understand deeply</div><span class="go">Open</span></div></a>
-        <a class="card" href="grade9.html#eng"><div class="ink"></div><div class="content"><span class="badge">English</span><div class="title">Grammar • Reading</div><div class="muted">Practice sets</div></div><div class="footer"><div class="muted">Improve fast</div><span class="go">Open</span></div></a>
-      </div>
-    </section>
-
-    <!-- About / CTA -->
-    <section class="section container" id="about">
-      <h2>Why CineLearn?</h2>
-      <div class="grid">
-        <div class="card"><div class="ink"></div><div class="content"><span class="badge">⚡ Fast</span><div class="title">Instant navigation</div><div class="muted">Jump between grades and topics with zero friction. Modern UI, minimal clicks.</div></div></div>
-        <div class="card"><div class="ink"></div><div class="content"><span class="badge">🎯 Focused</span><div class="title">Exam-ready content</div><div class="muted">Curated videos, notes, and past papers aligned with the Ethiopian curriculum.</div></div></div>
-        <div class="card"><div class="ink"></div><div class="content"><span class="badge">📱 Responsive</span><div class="title">Looks great everywhere</div><div class="muted">From low-end phones to desktop. Smooth interactions, low data usage.</div></div></div>
-        <div class="card"><div class="ink"></div><div class="content"><span class="badge">🔔 Fresh</span><div class="title">Updated weekly</div><div class="muted">New lessons and playlists keep your learning journey exciting.</div></div></div>
-      </div>
-      <div class="cta-row" style="margin-top:14px">
-        <a class="btn primary" href="#grades">Start Learning</a>
-        <a class="btn ghost" href="grade9.html">Open Grade 9</a>
-      </div>
-    </section>
-  </main>
+    
 
   <footer>
-    <div class="container foot">
-      <div>
-        <div class="brand" style="margin-bottom:8px"><span class="dot"></span><span>CineLearn</span></div>
-        <div class="muted">Made for students in Ethiopia — clean, fast, and focused on what matters.</div>
-      </div>
-      <div>
-        <div class="muted" style="margin-bottom:6px">Explore</div>
-        <div class="mutelist">
-          <a href="#grades">Grades 9–12</a>
-          <a href="#university">University Years</a>
-          <a href="#subjects">Popular Subjects</a>
-        </div>
-      </div>
-      <div>
-        <div class="muted" style="margin-bottom:6px">Quick Links</div>
-        <div class="mutelist">
-          <a href="grade9.html">Go to Grade 9</a>
-          <a href="#about">About</a>
-          <a href="#home">Back to top</a>
-        </div>
-      </div>
+    <div class="footer-col">
+      <h4>CineLearn</h4>
+      <p>Made for students in Ethiopia — clean, fast, and focused on what matters.</p>
     </div>
+    <div class="footer-col">
+      <h4>Explore</h4>
+      <ul>
+        <li><a href="#grades">Grades 9–12</a></li>
+        <li><a href="#university">University Years</a></li>
+        <li><a href="#subjects">Popular Subjects</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="grade9.html">Go to Grade 9</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#home">Back to top</a></li>
+      </ul>
+    </div>
+    <div class="copyright">© 2025 CineLearn. All rights reserved.</div>
   </footer>
 
   <script>
-    // Hamburger + drawer
+    // Hamburger menu
     const hamburger = document.getElementById('hamburger');
-    const drawer = document.getElementById('drawer');
-    const closeDrawerBtn = document.getElementById('closeDrawer');
-
-    function openDrawer(){ drawer.classList.add('show'); hamburger.classList.add('active'); hamburger.setAttribute('aria-expanded','true'); drawer.setAttribute('aria-hidden','false'); }
-    function closeDrawer(){ drawer.classList.remove('show'); hamburger.classList.remove('active'); hamburger.setAttribute('aria-expanded','false'); drawer.setAttribute('aria-hidden','true'); }
-
-    hamburger?.addEventListener('click', ()=>{
-      if(drawer.classList.contains('show')) closeDrawer(); else openDrawer();
+    let open = false;
+    hamburger?.addEventListener('click', () => {
+      open = !open;
+      hamburger.classList.toggle('active', open);
+      hamburger.setAttribute('aria-expanded', String(open));
+      document.querySelector('nav').classList.toggle('active', open);
     });
-    closeDrawerBtn?.addEventListener('click', closeDrawer);
 
-    // Fake global search navigation (client-side demo)
+    // Data for cards
+    const grades = [
+      {id:'grade9', title:'Grade 9', tag:'Start here', meta:'Videos • Books • Sheets', hint:'All core subjects'},
+      {id:'grade10', title:'Grade 10', tag:'Exam focused', meta:'Prep for National Exam', hint:'Updated past papers'},
+      {id:'grade11', title:'Grade 11', tag:'STEM + Social', meta:'Advanced topics • Labs', hint:'Tracked progress'},
+      {id:'grade12', title:'Grade 12', tag:'Final year', meta:'University-ready content', hint:'Mock exams & tips'}
+    ];
+
+    const unis = [
+      {id:'y1', title:'Year 1', tag:'Foundations', meta:'Common courses & skills', hint:'Math • Chemistry • ICT'},
+      {id:'y2', title:'Year 2', tag:'Core', meta:'Discipline pathways', hint:'Labs • Projects'},
+      {id:'y3', title:'Year 3', tag:'Advanced', meta:'Specialized modules', hint:'Tutorials • Notes'},
+      {id:'y4', title:'Year 4+', tag:'Capstone', meta:'Research & internships', hint:'Guides • Templates'}
+    ];
+
+    const subjects = [
+      {id:'math', title:'Algebra • Geometry', tag:'Math', meta:'Short videos • Worksheets', hint:'Boost your speed'},
+      {id:'chem', title:'Organic • Inorganic', tag:'Chemistry', meta:'Reactions • Labs', hint:'Clear explanations'},
+      {id:'bio', title:'Cells • Genetics', tag:'Biology', meta:'Animations • Quizzes', hint:'Understand deeply'},
+      {id:'eng', title:'Grammar • Reading', tag:'English', meta:'Practice sets', hint:'Improve fast'}
+    ];
+
+    // Create skeleton card
+    function createSkeletonCard() {
+      const el = document.createElement('div');
+      el.className = 'feature-card';
+      el.innerHTML = `
+        <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(145deg, var(--primary-light), var(--primary-bg));margin:0 auto 20px;"></div>
+        <div style="width:80%;height:18px;border-radius:8px;background:linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.06), rgba(255,255,255,0.03));margin-bottom:8px;"></div>
+        <div style="width:40%;height:14px;border-radius:8px;background:linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.06), rgba(255,255,255,0.03));"></div>
+      `;
+      return el;
+    }
+
+    // Render skeletons
+    const gradesGrid = document.getElementById('grades-grid');
+    const uniGrid = document.getElementById('uni-grid');
+    const subjectsGrid = document.getElementById('subjects-grid');
+
+    function renderSkeletons(container, count = 4) {
+      container.innerHTML = '';
+      for (let i = 0; i < count; i++) container.appendChild(createSkeletonCard());
+    }
+
+    renderSkeletons(gradesGrid, 4);
+    renderSkeletons(uniGrid, 4);
+    renderSkeletons(subjectsGrid, 4);
+
+    // Generate real card
+    function makeCard(item, hrefPrefix) {
+      const a = document.createElement('a');
+      a.className = 'feature-card';
+      a.href = `${hrefPrefix}-${item.id}.html` || '#';
+      a.setAttribute('role', 'listitem');
+      a.innerHTML = `
+        <div class="feature-icon"><i class="fas fa-book"></i></div>
+        <h3>${item.title}</h3>
+        <p>${item.meta}</p>
+      `;
+      return a;
+    }
+
+    function populateGrid(container, items, prefix) {
+      container.innerHTML = '';
+      items.forEach(it => {
+        const card = makeCard(it, prefix);
+        container.appendChild(card);
+      });
+    }
+
+    // Populate grids after delay
+    setTimeout(() => {
+      populateGrid(gradesGrid, grades, 'grade');
+      populateGrid(uniGrid, unis, 'uni');
+      populateGrid(subjectsGrid, subjects, 'subject');
+    }, 850);
+
+    // Search functionality
     const field = document.getElementById('globalSearch');
-    field?.addEventListener('keydown', (e)=>{
-      if(e.key==='Enter'){
+    field?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
         const q = field.value.trim().toLowerCase();
-        if(!q) return;
-        // Simple routing idea: if query contains a grade, go to that page.
-        if(/grade\s*9|g9|nine/.test(q)) window.location.href='grade9.html';
-        else if(/grade\s*10|g10|ten/.test(q)) window.location.href='grade10.html';
-        else if(/grade\s*11|g11|eleven/.test(q)) window.location.href='grade11.html';
-        else if(/grade\s*12|g12|twelve/.test(q)) window.location.href='grade12.html';
-        else if(/year\s*1|y1|first\s*year/.test(q)) window.location.href='uni-year1.html';
-        else if(/year\s*2|y2|second\s*year/.test(q)) window.location.href='uni-year2.html';
-        else if(/year\s*3|y3|third\s*year/.test(q)) window.location.href='uni-year3.html';
+        if (!q) return;
+        if (/grade\s?9|g9|nine/.test(q)) window.location.href = 'grade9.html';
+        else if (/grade\s?10|g10|ten/.test(q)) window.location.href = 'grade10.html';
+        else if (/grade\s?11|g11|eleven/.test(q)) window.location.href = 'grade11.html';
+        else if (/grade\s?12|g12|twelve/.test(q)) window.location.href = 'grade12.html';
+        else if (/year\s?1|y1|first\syear/.test(q)) window.location.href = 'uni-year1.html';
+        else if (/year\s?2|y2|second\syear/.test(q)) window.location.href = 'uni-year2.html';
+        else if (/year\s?3|y3|third\syear/.test(q)) window.location.href = 'uni-year3.html';
         else window.location.hash = '#subjects';
       }
-    });
-
-    // Small parallax on hero card
-    const heroCard = document.querySelector('.hero .card');
-    heroCard?.addEventListener('mousemove', (e)=>{
-      const r = heroCard.getBoundingClientRect();
-      const dx = (e.clientX - r.left) / r.width - .5;
-      const dy = (e.clientY - r.top) / r.height - .5;
-      heroCard.style.transform = `translateY(-2px) rotateX(${dy*3}deg) rotateY(${dx*-3}deg)`;
-    });
-    heroCard?.addEventListener('mouseleave', ()=>{
-      heroCard.style.transform = 'translateY(0)';
     });
   </script>
 </body>
 </html>
-
