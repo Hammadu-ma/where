@@ -6,6 +6,8 @@
     <title>Cine Learn | Immersive Educational Platform</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Orbitron:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#1a1a2b">
     <style>
         :root {
             --primary-dark: #0a0a1a;
@@ -1075,6 +1077,13 @@
                 observer.observe(card);
             });
         });
+        if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(reg => console.log('Service Worker registered', reg))
+      .catch(err => console.log('Service Worker registration failed', err));
+  });
+        }
     </script>
 </body>
 </html>
