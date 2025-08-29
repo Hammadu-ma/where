@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline 😔</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #89f7fe, #66a6ff);
+      overflow: hidden;
+    }
+
+    .container {
+      text-align: center;
+      color: #fff;
+      animation: fadeIn 1.5s ease-in-out;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      animation: bounce 2s infinite;
+    }
+
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+      opacity: 0;
+      animation: fadeInText 2s forwards 1s;
+    }
+
+    a {
+      display: inline-block;
+      padding: 12px 30px;
+      font-size: 1rem;
+      text-decoration: none;
+      color: #66a6ff;
+      background: #fff;
+      border-radius: 50px;
+      transition: transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    a:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    }
+
+    /* Animations */
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes fadeInText {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Floating clouds */
+    .cloud {
+      position: absolute;
+      top: 20%;
+      width: 150px;
+      height: 80px;
+      background: rgba(255,255,255,0.6);
+      border-radius: 50%;
+      animation: floatCloud 20s linear infinite;
+    }
+
+    .cloud:nth-child(2) {
+      top: 40%;
+      width: 200px;
+      height: 100px;
+      animation-duration: 25s;
+      animation-delay: 5s;
+    }
+
+    @keyframes floatCloud {
+      0% { transform: translateX(-200px); }
+      100% { transform: translateX(120vw); }
+    }
+  </style>
+</head>
+<body>
+  <div class="cloud"></div>
+  <div class="cloud"></div>
+
+  <div class="container">
+    <h1>😔 Oops! You're Offline</h1>
+    <p>Looks like your connection is lost. Don't worry, you can still enjoy the cached pages!</p>
+    <a href="index.html">Go Back Home</a>
+  </div>
+</body>
+</html>
