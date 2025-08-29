@@ -5,6 +5,7 @@ const urlsToCache = [
   'script.js',
   'icon-192.png',
   'icon-512.png'
+  'offline.html'
 ];
 
 // Install Service Worker and cache files
