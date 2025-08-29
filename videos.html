@@ -9,6 +9,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Dynamic prefetch links for faster navigation -->
+  <link rel="prefetch" href="grade9.html">
+  <link rel="prefetch" href="grade10.html">
+  <link rel="prefetch" href="grade11.html">
+  <link rel="prefetch" href="grade12.html">
+  <link rel="prefetch" href="uni-year1.html">
+  <link rel="prefetch" href="uni-year2.html">
+  <link rel="prefetch" href="uni-year3.html">
+  <link rel="prefetch" href="uni-year4.html">
   <style>
     :root {  
       --primary-dark: #0a0a1a;  
@@ -37,9 +46,20 @@
       min-height: 100vh;  
       display: flex;  
       flex-direction: column;  
-      padding: 20px;  
-      line-height: 1.6;  
+      padding: 12px;  
+      line-height: 1.5;  
       overflow-x: hidden;  
+      transition: opacity 0.3s ease; /* For page transition */ 
+    }  
+
+    body.navigating {  
+      opacity: 0; /* Fade out during navigation */ 
+    }  
+
+    .container {  
+      max-width: 1000px;  
+      margin: 0 auto;  
+      padding: 12px;  
     }  
 
     .background-animation {  
@@ -49,22 +69,22 @@
       width: 100%;  
       height: 100%;  
       z-index: -1;  
-      opacity: 0.15;  
+      opacity: 0.1;  
     }  
 
     .background-animation span {  
       position: absolute;  
       border-radius: 50%;  
       background: var(--gradient);  
-      opacity: 0.5;  
-      animation: float 15s linear infinite;  
+      opacity: 0.4;  
+      animation: float 12s linear infinite;  
     }  
 
     @keyframes float {  
       0% { transform: translateY(0) rotate(0deg); opacity: 0; }  
-      10% { opacity: 0.5; }  
-      90% { opacity: 0.3; }  
-      100% { transform: translateY(-1000%) rotate(720deg); opacity: 0; }  
+      10% { opacity: 0.4; }  
+      90% { opacity: 0.2; }  
+      100% { transform: translateY(-800%) rotate(720deg); opacity: 0; }  
     }  
 
     #splash-screen {  
@@ -78,8 +98,8 @@
       justify-content: center;  
       align-items: center;  
       z-index: 9999;  
-      animation: fadeOut 1s ease forwards;  
-      animation-delay: 3s;  
+      animation: fadeOut 0.8s ease forwards;  
+      animation-delay: 2s;  
     }  
 
     .splash-content {  
@@ -88,22 +108,22 @@
     }  
 
     .splash-logo {  
-      width: 120px;  
-      animation: bounce 2s infinite;  
+      width: 80px;  
+      animation: bounce 1.8s infinite;  
     }  
 
     .splash-title {  
-      font-size: 28px;  
-      margin-top: 15px;  
-      letter-spacing: 2px;  
-      animation: fadeIn 2s;  
+      font-size: 22px;  
+      margin-top: 10px;  
+      letter-spacing: 1.5px;  
+      animation: fadeIn 1.5s;  
     }  
 
     .loading-bar {  
-      margin-top: 20px;  
-      width: 150px;  
-      height: 6px;  
-      border-radius: 3px;  
+      margin-top: 15px;  
+      width: 120px;  
+      height: 4px;  
+      border-radius: 2px;  
       background: rgba(255, 255, 255, 0.2);  
       overflow: hidden;  
       position: relative;  
@@ -115,12 +135,12 @@
       width: 50%;  
       height: 100%;  
       background: #ffcc00;  
-      animation: loading 1.5s infinite linear;  
+      animation: loading 1.2s infinite linear;  
     }  
 
     @keyframes bounce {  
       0%, 100% { transform: translateY(0); }  
-      50% { transform: translateY(-12px); }  
+      50% { transform: translateY(-8px); }  
     }  
 
     @keyframes loading {  
@@ -136,52 +156,53 @@
       display: flex;  
       justify-content: space-between;  
       align-items: center;  
-      padding: 20px 30px;  
-      margin-bottom: 40px;  
-      border-radius: 20px;  
+      padding: 12px 20px;  
+      margin-bottom: 20px;  
+      border-radius: 12px;  
       background: var(--primary-bg);  
-      box-shadow: 8px 8px 16px var(--primary-shadow), -8px -8px 16px var(--primary-light);  
+      box-shadow: 4px 4px 8px var(--primary-shadow), -4px -4px 8px var(--primary-light);  
       position: sticky;  
       top: 0;  
       z-index: 10;  
-      animation: slideDown 0.8s ease;  
+      animation: slideDown 0.6s ease;  
     }  
 
     @keyframes slideDown {  
-      from { transform: translateY(-100px); opacity: 0; }  
+      from { transform: translateY(-50px); opacity: 0; }  
       to { transform: translateY(0); opacity: 1; }  
     }  
 
     .logo {  
       display: flex;  
       align-items: center;  
-      gap: 15px;  
-      font-size: 28px;  
+      gap: 8px;  
+      font-size: 22px;  
       font-weight: 700;  
       color: var(--accent-purple);  
-      text-shadow: 0 0 10px rgba(138, 43, 226, 0.7);  
+      text-shadow: 0 0 8px rgba(138, 43, 226, 0.6);  
       font-family: 'Orbitron', sans-serif;  
     }  
 
     .logo i {  
-      font-size: 32px;  
-      filter: drop-shadow(0 0 5px var(--accent-purple));  
+      font-size: 24px;  
+      filter: drop-shadow(0 0 4px var(--accent-purple));  
     }  
 
     nav ul {  
       display: flex;  
       list-style: none;  
-      gap: 20px;  
+      gap: 12px;  
     }  
 
     nav a {  
       text-decoration: none;  
       color: var(--text-color);  
       font-weight: 600;  
-      padding: 10px 15px;  
-      border-radius: 15px;  
+      font-size: 14px;  
+      padding: 8px 12px;  
+      border-radius: 10px;  
       background: var(--primary-bg);  
-      box-shadow: 5px 5px 10px var(--primary-shadow), -5px -5px 10px var(--primary-light);  
+      box-shadow: 3px 3px 6px var(--primary-shadow), -3px -3px 6px var(--primary-light);  
       transition: var(--transition);  
       position: relative;  
       overflow: hidden;  
@@ -207,36 +228,65 @@
 
     nav a:hover, nav a.active {  
       color: white;  
-      box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);  
-      transform: translateY(-3px);  
+      box-shadow: 0 3px 10px rgba(138, 43, 226, 0.3);  
+      transform: translateY(-2px);  
     }  
 
-    .hamburger {  
+    .menu-icon {  
       display: none;  
-      flex-direction: column;  
+      width: 32px;  
+      height: 32px;  
       cursor: pointer;  
       z-index: 100;  
+      position: relative;  
+      transition: var(--transition);  
     }  
 
-    .hamburger span {  
-      width: 25px;  
-      height: 3px;  
+    .menu-icon span {  
+      display: block;  
+      width: 20px;  
+      height: 2px;  
       background: var(--text-color);  
-      margin: 2px 0;  
-      border-radius: 3px;  
-      transition: var(--transition);  
+      position: absolute;  
+      left: 6px;  
+      transition: all 0.4s ease; /* Smoother transition */ 
+      border-radius: 2px;  
+    }  
+
+    .menu-icon span:nth-child(1) { top: 8px; }  
+    .menu-icon span:nth-child(2) { top: 15px; }  
+    .menu-icon span:nth-child(3) { top: 22px; }  
+
+    .menu-icon.active span:nth-child(1) {  
+      top: 15px;  
+      transform: rotate(45deg) scale(1.2);  
+    }  
+
+    .menu-icon.active span:nth-child(2) {  
+      opacity: 0;  
+      transform: scale(0);  
+    }  
+
+    .menu-icon.active span:nth-child(3) {  
+      top: 15px;  
+      transform: rotate(-45deg) scale(1.2);  
+    }  
+
+    .menu-icon.active {  
+      background: radial-gradient(circle, rgba(138, 43, 226, 0.2) 0%, transparent 70%); /* Glowing effect */ 
     }  
 
     .user-actions {  
       display: flex;  
-      gap: 15px;  
+      gap: 8px;  
     }  
 
     .user-actions button {  
       border: none;  
-      padding: 10px 20px;  
-      border-radius: 15px;  
+      padding: 8px 16px;  
+      border-radius: 10px;  
       font-weight: 600;  
+      font-size: 14px;  
       cursor: pointer;  
       transition: var(--transition);  
       position: relative;  
@@ -260,32 +310,32 @@
 
     .login {  
       background: var(--primary-bg);  
-      box-shadow: 5px 5px 10px var(--primary-shadow), -5px -5px 10px var(--primary-light);  
+      box-shadow: 3px 3px 6px var(--primary-shadow), -3px -3px 6px var(--primary-light);  
       color: var(--text-color);  
     }  
 
     .signup {  
       background: var(--gradient);  
       color: white;  
-      box-shadow: 5px 5px 15px var(--primary-shadow), 0 0 10px rgba(138, 43, 226, 0.5);  
+      box-shadow: 3px 3px 10px var(--primary-shadow), 0 0 8px rgba(138, 43, 226, 0.4);  
     }  
 
     .user-actions button:hover {  
-      transform: translateY(-3px);  
-      box-shadow: 7px 7px 20px var(--primary-shadow);  
+      transform: translateY(-2px);  
+      box-shadow: 5px 5px 12px var(--primary-shadow);  
     }  
 
     .hero {  
       display: flex;  
       align-items: center;  
-      padding: 40px;  
-      margin-bottom: 50px;  
-      border-radius: 30px;  
+      padding: 20px;  
+      margin-bottom: 30px;  
+      border-radius: 16px;  
       background: var(--primary-bg);  
-      box-shadow: 8px 8px 16px var(--primary-shadow), -8px -8px 16px var(--primary-light);  
+      box-shadow: 4px 4px 8px var(--primary-shadow), -4px -4px 8px var(--primary-light);  
       position: relative;  
       overflow: hidden;  
-      animation: fadeIn 1s ease;  
+      animation: fadeIn 0.8s ease;  
     }  
 
     .hero::before {  
@@ -295,8 +345,8 @@
       right: -50%;  
       width: 100%;  
       height: 200%;  
-      background: radial-gradient(circle, rgba(138, 43, 226, 0.1) 0%, transparent 70%);  
-      animation: pulse 15s infinite linear;  
+      background: radial-gradient(circle, rgba(138, 43, 226, 0.08) 0%, transparent 70%);  
+      animation: pulse 12s infinite linear;  
     }  
 
     @keyframes pulse {  
@@ -305,43 +355,44 @@
     }  
 
     @keyframes fadeIn {  
-      from { opacity: 0; transform: translateY(20px); }  
+      from { opacity: 0; transform: translateY(15px); }  
       to { opacity: 1; transform: translateY(0); }  
     }  
 
     .hero-content {  
       flex: 1;  
-      padding-right: 40px;  
+      padding-right: 20px;  
       z-index: 2;  
     }  
 
     .hero h1 {  
-      font-size: 3.5rem;  
-      margin-bottom: 20px;  
+      font-size: 2.5rem;  
+      margin-bottom: 12px;  
       line-height: 1.2;  
       background: linear-gradient(135deg, var(--accent-purple), var(--accent-orange));  
       -webkit-background-clip: text;  
       -webkit-text-fill-color: transparent;  
       font-family: 'Orbitron', sans-serif;  
-      text-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);  
+      text-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);  
     }  
 
     .hero p {  
-      font-size: 1.2rem;  
-      margin-bottom: 30px;  
-      line-height: 1.6;  
-      max-width: 90%;  
+      font-size: 1rem;  
+      margin-bottom: 20px;  
+      line-height: 1.5;  
+      max-width: 95%;  
     }  
 
     .cta-button {  
       display: inline-block;  
-      padding: 15px 35px;  
+      padding: 10px 24px;  
       background: var(--gradient);  
       color: white;  
       text-decoration: none;  
       font-weight: 600;  
-      border-radius: 20px;  
-      box-shadow: 5px 5px 15px var(--primary-shadow), 0 0 10px rgba(138, 43, 226, 0.5);  
+      font-size: 14px;  
+      border-radius: 12px;  
+      box-shadow: 3px 3px 10px var(--primary-shadow), 0 0 8px rgba(138, 43, 226, 0.4);  
       transition: var(--transition);  
       position: relative;  
       overflow: hidden;  
@@ -354,7 +405,7 @@
       left: -100%;  
       width: 100%;  
       height: 100%;  
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);  
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);  
       transition: var(--transition);  
     }  
 
@@ -363,8 +414,8 @@
     }  
 
     .cta-button:hover {  
-      transform: translateY(-3px);  
-      box-shadow: 7px 7px 20px var(--primary-shadow), 0 0 15px rgba(138, 43, 226, 0.7);  
+      transform: translateY(-2px);  
+      box-shadow: 5px 5px 12px var(--primary-shadow), 0 0 10px rgba(138, 43, 226, 0.6);  
     }  
 
     .hero-image {  
@@ -377,18 +428,18 @@
 
     .hero-image-placeholder {  
       width: 100%;  
-      height: 350px;  
-      border-radius: 25px;  
+      height: 200px;  
+      border-radius: 16px;  
       background: linear-gradient(145deg, var(--primary-light), var(--primary-bg));  
-      box-shadow: 20px 20px 60px var(--primary-shadow), -20px -20px 60px var(--primary-light), inset 0 0 20px rgba(138, 43, 226, 0.2);  
+      box-shadow: 10px 10px 30px var(--primary-shadow), -10px -10px 30px var(--primary-light), inset 0 0 15px rgba(138, 43, 226, 0.15);  
       display: flex;  
       justify-content: center;  
       align-items: center;  
       color: var(--accent-purple);  
-      font-size: 1.5rem;  
+      font-size: 1.2rem;  
       font-weight: 600;  
       flex-direction: column;  
-      gap: 15px;  
+      gap: 10px;  
       position: relative;  
       overflow: hidden;  
     }  
@@ -399,15 +450,15 @@
       width: 150%;  
       height: 150%;  
       background: conic-gradient(transparent, transparent, transparent, var(--accent-purple));  
-      animation: rotate 4s linear infinite;  
+      animation: rotate 3s linear infinite;  
     }  
 
     .hero-image-placeholder::after {  
       content: '';  
       position: absolute;  
-      inset: 3px;  
+      inset: 2px;  
       background: linear-gradient(145deg, var(--primary-light), var(--primary-bg));  
-      border-radius: 22px;  
+      border-radius: 14px;  
     }  
 
     .hero-image-placeholder i, .hero-image-placeholder span {  
@@ -421,8 +472,8 @@
 
     .section-title {  
       text-align: center;  
-      font-size: 2.5rem;  
-      margin: 50px 0 30px;  
+      font-size: 2rem;  
+      margin: 30px 0 20px;  
       color: var(--text-color);  
       font-family: 'Orbitron', sans-serif;  
       position: relative;  
@@ -434,33 +485,35 @@
     .section-title::after {  
       content: '';  
       position: absolute;  
-      bottom: -10px;  
+      bottom: -8px;  
       left: 50%;  
       transform: translateX(-50%);  
-      width: 100px;  
-      height: 4px;  
+      width: 80px;  
+      height: 3px;  
       background: var(--gradient);  
       border-radius: 2px;  
     }  
 
     .features {  
       display: grid;  
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));  
-      gap: 30px;  
-      margin-bottom: 60px;  
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));  
+      gap: 20px;  
+      margin-bottom: 40px;  
     }  
 
     .feature-card {  
-      padding: 30px;  
-      border-radius: 20px;  
+      padding: 20px;  
+      border-radius: 16px;  
       background: var(--primary-bg);  
-      box-shadow: 8px 8px 16px var(--primary-shadow), -8px -8px 16px var(--primary-light);  
+      box-shadow: 4px 4px 8px var(--primary-shadow), -4px -4px 8px var(--primary-light);  
       transition: var(--transition);  
       text-align: center;  
       position: relative;  
       overflow: hidden;  
-      animation: fadeIn 1s ease;  
+      animation: fadeIn 0.8s ease;  
       animation-fill-mode: backwards;  
+      perspective: 1000px; /* For 3D effect */ 
+      cursor: pointer;  
     }  
 
     .feature-card:nth-child(1) { animation-delay: 0.1s; }  
@@ -468,13 +521,67 @@
     .feature-card:nth-child(3) { animation-delay: 0.3s; }  
     .feature-card:nth-child(4) { animation-delay: 0.4s; }  
 
+    .feature-card-inner {  
+      position: relative;  
+      width: 100%;  
+      height: 100%;  
+      transition: transform 0.6s;  
+      transform-style: preserve-3d;  
+    }  
+
+    .feature-card:hover .feature-card-inner {  
+      transform: rotateY(180deg); /* Flip on hover */ 
+    }  
+
+    .feature-card-front, .feature-card-back {  
+      position: absolute;  
+      width: 50%;  
+      height: 6%;  
+      backface-visibility: hidden;  
+      display: flex;  
+      flex-direction: column;  
+      justify-content: center;  
+      align-items: center;  
+      padding: 2px;  
+      border-radius: 14ppx;  
+      background: var(--primary-bg);  
+    }  
+
+    .feature-card-back {  
+      transform: rotateY(180deg);  
+      background: var(--gradient);  
+      color: white;  
+      box-shadow: 0 0 15px rgba(138, 43, 226, 0.5); /* Glowing effect */ 
+    }  
+
+    .feature-card-back p {  
+      font-size: 0.9rem;  
+      margin-bottom: 100px;  
+    }  
+
+    .feature-card-back .cta {  
+      padding: 23px 16px;  
+      background: var(--primary-dark);  
+      color: var(--text-color);  
+      border-radius: 8px;  
+      text-decoration: none;  
+      font-weight: 600;  
+      font-size: 14px;  
+      transition: var(--transition);  
+    }  
+
+    .feature-card-back .cta:hover {  
+      background: var(--accent-orange);  
+      transform: scale(1.05);  
+    }  
+
     .feature-card::before {  
       content: '';  
       position: absolute;  
       top: 0;  
       left: 0;  
       width: 100%;  
-      height: 5px;  
+      height: 4px;  
       background: var(--gradient);  
       transform: scaleX(0);  
       transform-origin: left;  
@@ -486,82 +593,85 @@
     }  
 
     .feature-card:hover {  
-      transform: translateY(-5px);  
-      box-shadow: 12px 12px 24px var(--primary-shadow), -12px -12px 24px var(--primary-light);  
+      transform: translateY(-3px);  
+      box-shadow: 8px 8px 16px var(--primary-shadow), -8px -8px 16px var(--primary-light);  
     }  
 
     .feature-icon {  
-      width: 80px;  
-      height: 80px;  
-      margin: 0 auto 20px;  
+      width: 60px;  
+      height: 60px;  
+      margin: 0 auto 12px;  
       border-radius: 50%;  
       background: var(--primary-bg);  
-      box-shadow: 7px 7px 14px var(--primary-shadow), -7px -7px 14px var(--primary-light), inset 0 0 15px rgba(138, 43, 226, 0.2);  
+      box-shadow: 5px 5px 10px var(--primary-shadow), -5px -5px 10px var(--primary-light), inset 0 0 10px rgba(138, 43, 226, 0.15);  
       display: flex;  
       justify-content: center;  
       align-items: center;  
       color: var(--accent-purple);  
-      font-size: 30px;  
+      font-size: 24px;  
       transition: var(--transition);  
     }  
 
     .feature-card:hover .feature-icon {  
-      transform: rotateY(180deg);  
       color: var(--accent-orange);  
     }  
 
     .feature-card h3 {  
-      font-size: 1.5rem;  
-      margin-bottom: 15px;  
+      font-size: 1.2rem;  
+      margin-bottom: 10px;  
       color: var(--accent-orange);  
     }  
 
     .feature-card p {  
+      font-size: 0.9rem;  
       color: var(--text-color);  
     }  
 
     .newsletter {  
       background: var(--gradient);  
-      padding: 40px;  
-      border-radius: 20px;  
-      margin: 40px 0;  
+      padding: 20px;  
+      border-radius: 16px;  
+      margin: 20px 0;  
       text-align: center;  
-      box-shadow: 0 10px 30px rgba(138, 43, 226, 0.3);  
+      box-shadow: 0 8px 20px rgba(138, 43, 226, 0.25);  
     }  
 
     .newsletter h3 {  
-      font-size: 1.8rem;  
-      margin-bottom: 15px;  
+      font-size: 1.5rem;  
+      margin-bottom: 10px;  
     }  
 
     .newsletter p {  
-      margin-bottom: 20px;  
-      max-width: 600px;  
+      font-size: 0.9rem;  
+      margin-bottom: 15px;  
+      max-width: 500px;  
       margin-left: auto;  
       margin-right: auto;  
     }  
 
     .newsletter-form {  
       display: flex;  
-      max-width: 500px;  
+      max-width: 400px;  
       margin: 0 auto;  
     }  
 
     .newsletter-form input {  
       flex: 1;  
-      padding: 15px;  
+      padding: 12px;  
       border: none;  
-      border-radius: 10px 0 0 10px;  
+      border-radius: 8px 0 0 8px;  
       background: rgba(255, 255, 255, 0.9);  
+      font-size: 14px;  
     }  
 
     .newsletter-form button {  
-      padding: 15px 25px;  
+      padding: 12px 20px;  
       border: none;  
-      border-radius: 0 10px 10px 0;  
+      border-radius: 0 8px 8px 0;  
       background: var(--primary-dark);  
       color: white;  
       font-weight: 600;  
+      font-size: 14px;  
       cursor: pointer;  
       transition: var(--transition);  
     }  
@@ -572,10 +682,10 @@
 
     footer {  
       margin-top: auto;  
-      padding: 40px;  
-      border-radius: 20px;  
+      padding: 20px;  
+      border-radius: 16px;  
       background: var(--primary-bg);  
-      box-shadow: 8px 8px 16px var(--primary-shadow), -8px -8px 16px var(--primary-light);  
+      box-shadow: 4px 4px 8px var(--primary-shadow), -4px -4px 8px var(--primary-light);  
       display: flex;  
       justify-content: space-between;  
       flex-wrap: wrap;  
@@ -589,19 +699,19 @@
       top: 0;  
       left: 0;  
       width: 100%;  
-      height: 5px;  
+      height: 4px;  
       background: var(--gradient);  
     }  
 
     .footer-col {  
       flex: 1;  
-      min-width: 200px;  
-      margin-bottom: 20px;  
+      min-width: 160px;  
+      margin-bottom: 12px;  
     }  
 
     .footer-col h4 {  
-      font-size: 1.2rem;  
-      margin-bottom: 20px;  
+      font-size: 1rem;  
+      margin-bottom: 12px;  
       color: var(--accent-purple);  
       position: relative;  
       display: inline-block;  
@@ -610,12 +720,12 @@
     .footer-col h4::after {  
       content: '';  
       position: absolute;  
-      bottom: -5px;  
+      bottom: -4px;  
       left: 0;  
-      width: 30px;  
-      height: 3px;  
+      width: 24px;  
+      height: 2px;  
       background: var(--accent-orange);  
-      border-radius: 2px;  
+      border-radius: 1px;  
     }  
 
     .footer-col ul {  
@@ -623,88 +733,251 @@
     }  
 
     .footer-col ul li {  
-      margin-bottom: 10px;  
+      margin-bottom: 8px;  
     }  
 
     .footer-col a {  
       text-decoration: none;  
       color: var(--text-color);  
+      font-size: 0.9rem;  
       transition: var(--transition);  
       display: inline-block;  
     }  
 
     .footer-col a:hover {  
       color: var(--accent-orange);  
-      transform: translateX(5px);  
+      transform: translateX(3px);  
     }  
 
     .copyright {  
       text-align: center;  
-      padding: 20px;  
-      margin-top: 30px;  
-      font-size: 0.9rem;  
-      opacity: 0.8;  
+      padding: 12px;  
+      margin-top: 20px;  
+      font-size: 0.8rem;  
+      opacity: 0.7;  
       width: 100%;  
     }  
 
+    .searchbox {  
+      position: relative;  
+      margin-top: 12px;  
+    }  
+
+    .searchbox input {  
+      width: 100%;  
+      padding: 10px 12px 10px 36px;  
+      border: none;  
+      border-radius: 10px;  
+      background: var(--primary-dark);  
+      color: var(--text-color);  
+      font-size: 14px;  
+      transition: var(--transition);  
+    }  
+
+    .searchbox input:focus {  
+      box-shadow: 0 0 0 2px var(--accent-purple);  
+      outline: none;  
+    }  
+
+    .searchbox i {  
+      position: absolute;  
+      left: 12px;  
+      top: 50%;  
+      transform: translateY(-50%);  
+      color: var(--text-color);  
+      opacity: 0.7;  
+      font-size: 14px;  
+    }  
+
+    /* Responsive Design */ 
     @media (max-width: 1024px) {  
       .hero h1 {  
-        font-size: 2.8rem;  
+        font-size: 2rem;  
+      }  
+
+      .hero-image-placeholder {  
+        height: 180px;  
+      }  
+
+      .features {  
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));  
       }  
     }  
 
-    @media (max-width: 900px) {  
+    @media (max-width: 768px) {  
+      header {  
+        flex-wrap: wrap;  
+        gap: 12px;  
+        padding: 12px;  
+      }  
+
+      .logo {  
+        font-size: 20px;  
+      }  
+
+      .user-actions {  
+        flex: 1;  
+        justify-content: flex-end;  
+      }  
+
+      .menu-icon {  
+        display: block;  
+      }  
+
+      nav {  
+        display: none;  
+        width: 100%;  
+      }  
+
+      nav.active {  
+        display: block;  
+      }  
+
+      nav ul {  
+        flex-direction: column;  
+        gap: 10px;  
+        background: var(--primary-bg);  
+        padding: 12px;  
+        border-radius: 10px;  
+        box-shadow: 4px 4px 8px var(--primary-shadow), -4px -4px 8px var(--primary-light);  
+      }  
+
       .hero {  
         flex-direction: column;  
         text-align: center;  
+        padding: 16px;  
       }  
 
       .hero-content {  
         padding-right: 0;  
-        margin-bottom: 30px;  
+        margin-bottom: 20px;  
       }  
 
       .hero p {  
         max-width: 100%;  
       }  
 
-      nav ul {  
-        gap: 15px;  
+      .newsletter-form {  
+        flex-direction: column;  
+        gap: 10px;  
+      }  
+
+      .newsletter-form input {  
+        border-radius: 8px;  
+      }  
+
+      .newsletter-form button {  
+        border-radius: 8px;  
+      }  
+
+      .feature-card:hover .feature-card-inner {  
+        transform: none; /* Disable flip on mobile for better UX */ 
+      }  
+
+      .feature-card-back {  
+        display: none; /* Hide back face on mobile */ 
       }  
     }  
 
-    @media (max-width: 768px) {  
-      header {  
-        flex-direction: column;  
-        gap: 20px;  
-        padding: 20px;  
+    @media (max-width: 480px) {  
+      .hero h1 {  
+        font-size: 1.8rem;  
       }  
 
-      .hamburger {  
-        display: flex;  
+      .section-title {  
+        font-size: 1.6rem;  
       }  
 
-      nav ul {  
-        display: none;  
+      .feature-card {  
+        padding: 16px;  
       }  
 
-      nav.active ul {  
-        display: flex;  
-        flex-direction: column;  
-        gap: 10px;  
-        width: 100%;  
+      .feature-icon {  
+        width: 50px;  
+        height: 50px;  
+        font-size: 20px;  
+      }  
+
+      .cta-button {  
+        padding: 8px 20px;  
+        font-size: 13px;  
+      }  
+
+      .footer-col {  
+        min-width: 100%;  
       }  
     }  
   </style>
 </head>
 <body>
-  <!-- Background Animation -->
-  <div class="background-animation">
-    <span style="width: 50px; height: 50px; top: 20%; left: 30%;"></span>
-    <span style="width: 30px; height: 30px; top: 60%; left: 80%;"></span>
-    <span style="width: 70px; height: 70px; top: 80%; left: 10%;"></span>
+  <!-- Splash Screen -->
+  <div id="splash-screen">
+    <div class="splash-content">
+      <img class="splash-logo" src="logo.png" alt="CineLearn Logo">
+      <h1 class="splash-title">CineLearn</h1>
+      <div class="loading-bar"></div>
+    </div>
   </div>
 
+  <!-- Background Animation -->
+  <div class="background-animation">
+    <span style="width: 40px; height: 40px; top: 20%; left: 30%;"></span>
+    <span style="width: 25px; height: 25px; top: 60%; left: 80%;"></span>
+    <span style="width: 50px; height: 50px; top: 80%; left: 10%;"></span>
+  </div>
+
+  <header class="container">
+    <div class="logo">
+      <i class="fas fa-rocket"></i>
+      <span>CineLearn</span>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="#grades" class="active">Grades</a></li>
+        <li><a href="#university">University</a></li>
+        <li><a href="#subjects">Subjects</a></li>
+        <li><a href="#about">About</a></li>
+      </ul>
+    </nav>
+    <div class="user-actions">
+      <button class="login">Login</button>
+      <button class="signup">Sign Up</button>
+    </div>
+    <button class="menu-icon" id="menu-icon" aria-label="Toggle menu" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section class="hero container" id="home" aria-labelledby="hero-title">
+      <div class="hero-content">
+        <div class="eyebrow" aria-hidden="true">🔥 Fresh · Ethiopia-ready</div>
+        <h1 id="hero-title">Learn smarter — <span>from Grade 9 to University</span></h1>
+        <p>All your video lessons, books, and study sheets in one ultra-fast, beautiful place. Pick your grade and start learning instantly.</p>
+        <div class="searchbox" role="search" aria-label="Search the site">
+          <i class="fas fa-search"></i>
+          <input id="globalSearch" type="text" placeholder="Search subjects, topics, or videos…" aria-label="Global search"/>
+        </div>
+        <div class="cta-row" style="margin-top:12px; display: flex; gap: 8px; flex-wrap: wrap;">
+          <a class="cta-button" href="#grades">Browse Grades</a>
+          <a class="cta-button" href="grade9.html">Open Grade 9</a>
+        </div>
+        <div class="meta-row" style="margin-top:8px; display: flex; gap: 10px; flex-wrap: wrap; font-size: 13px;">
+          <span>⚡ Fast & responsive</span>
+          <span>🎯 Exam-ready</span>
+          <span>📱 Low-data friendly</span>
+        </div>
+      </div>
+      <div class="hero-image">
+        <div class="hero-image-placeholder">
+          <i class="fas fa-play"></i>
+          <span>Linear Equations Crash Course</span>
+        </div>
+      </div>
+    </section>
 
     <!-- Grades -->
     <section class="section container" id="grades" aria-labelledby="grades-title">
@@ -729,31 +1002,76 @@
       <h2 class="section-title" id="about-title">Why CineLearn?</h2>
       <div class="features">
         <div class="feature-card">
-          <div class="feature-icon"><i class="fas fa-bolt"></i></div>
-          <h3>Instant Navigation</h3>
-          <p>Jump between grades and topics with zero friction.</p>
+          <div class="feature-card-inner">
+            <div class="feature-card-front">
+              <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+              <h3>Instant Navigation</h3>
+              <p>Jump between grades and topics with zero friction.</p>
+            </div>
+            <div class="feature-card-back">
+              <p>Seamless and intuitive browsing experience.</p>
+              <a href="#grades" class="cta">Explore Now</a>
+            </div>
+          </div>
         </div>
         <div class="feature-card">
-          <div class="feature-icon"><i class="fas fa-bullseye"></i></div>
-          <h3>Exam-ready Content</h3>
-          <p>Curated videos and past papers aligned with the curriculum.</p>
+          <div class="feature-card-inner">
+            <div class="feature-card-front">
+              <div class="feature-icon"><i class="fas fa-bullseye"></i></div>
+              <h3>Exam-ready Content</h3>
+              <p>Curated videos and past papers aligned with the curriculum.</p>
+            </div>
+            <div class="feature-card-back">
+              <p>Prepare effectively with tailored resources.</p>
+              <a href="#subjects" class="cta">Start Studying</a>
+            </div>
+          </div>
         </div>
         <div class="feature-card">
-          <div class="feature-icon"><i class="fas fa-mobile-alt"></i></div>
-          <h3>Looks Great Everywhere</h3>
-          <p>From low-end phones to desktop. Smooth interactions, low data usage.</p>
+          <div class="feature-card-inner">
+            <div class="feature-card-front">
+              <div class="feature-icon"><i class="fas fa-mobile-alt"></i></div>
+              <h3>Looks Great Everywhere</h3>
+              <p>From low-end phones to desktop. Smooth interactions, low data usage.</p>
+            </div>
+            <div class="feature-card-back">
+              <p>Optimized for all devices, even low-data networks.</p>
+              <a href="#home" class="cta">Learn Anywhere</a>
+            </div>
+          </div>
         </div>
         <div class="feature-card">
-          <div class="feature-icon"><i class="fas fa-sync-alt"></i></div>
-          <h3>Updated Weekly</h3>
-          <p>New lessons and playlists keep your learning journey exciting.</p>
+          <div class="feature-card-inner">
+            <div class="feature-card-front">
+              <div class="feature-icon"><i class="fas fa-sync-alt"></i></div>
+              <h3>Updated Weekly</h3>
+              <p>New lessons and playlists keep your learning journey exciting.</p>
+            </div>
+            <div class="feature-card-back">
+              <p>Fresh content added regularly.</p>
+              <a href="#subjects" class="cta">Discover New</a>
+            </div>
+          </div>
         </div>
+      </div>
+      <div class="cta-row" style="margin-top:12px; display: flex; gap: 8px; flex-wrap: wrap;">
+        <a class="cta-button" href="#grades">Start Learning</a>
+        <a class="cta-button" href="grade9.html">Open Grade 9</a>
       </div>
     </section>
 
-    
+    <!-- Newsletter -->
+    <section class="newsletter container">
+      <h3>Stay Updated</h3>
+      <p>Join our newsletter for the latest lessons, exam tips, and updates tailored for Ethiopian students.</p>
+      <form class="newsletter-form">
+        <input type="email" placeholder="Enter your email" aria-label="Email address">
+        <button type="submit">Subscribe</button>
+      </form>
+    </section>
+  </main>
 
-  <footer>
+  <footer class="container">
     <div class="footer-col">
       <h4>CineLearn</h4>
       <p>Made for students in Ethiopia — clean, fast, and focused on what matters.</p>
@@ -778,36 +1096,44 @@
   </footer>
 
   <script>
-    // Hamburger menu
-    const hamburger = document.getElementById('hamburger');
+    // Smooth navigation with fade effect
+    function navigateWithTransition(url) {
+      document.body.classList.add('navigating');
+      setTimeout(() => {
+        window.location.href = url;
+      }, 300); // Match CSS transition duration
+    }
+
+    // Menu icon toggle
+    const menuIcon = document.getElementById('menu-icon');
     let open = false;
-    hamburger?.addEventListener('click', () => {
+    menuIcon?.addEventListener('click', () => {
       open = !open;
-      hamburger.classList.toggle('active', open);
-      hamburger.setAttribute('aria-expanded', String(open));
+      menuIcon.classList.toggle('active', open);
+      menuIcon.setAttribute('aria-expanded', String(open));
       document.querySelector('nav').classList.toggle('active', open);
     });
 
-    // Data for cards
+    // Data for cards with explicit URLs
     const grades = [
-      {id:'grade9', title:'Grade 9', tag:'Start here', meta:'Videos • Books • Sheets', hint:'All core subjects'},
-      {id:'grade10', title:'Grade 10', tag:'Exam focused', meta:'Prep for National Exam', hint:'Updated past papers'},
-      {id:'grade11', title:'Grade 11', tag:'STEM + Social', meta:'Advanced topics • Labs', hint:'Tracked progress'},
-      {id:'grade12', title:'Grade 12', tag:'Final year', meta:'University-ready content', hint:'Mock exams & tips'}
+      { id: 'grade9', title: 'Grade 9', tag: 'Start here', meta: 'Videos • Books • Sheets', hint: 'All core subjects', url: 'grade9.html' },
+      { id: 'grade10', title: 'Grade 10', tag: 'Exam focused', meta: 'Prep for National Exam', hint: 'Updated past papers', url: 'grade10.html' },
+      { id: 'grade11', title: 'Grade 11', tag: 'STEM + Social', meta: 'Advanced topics • Labs', hint: 'Tracked progress', url: 'grade11.html' },
+      { id: 'grade12', title: 'Grade 12', tag: 'Final year', meta: 'University-ready content', hint: 'Mock exams & tips', url: 'grade12.html' }
     ];
 
     const unis = [
-      {id:'y1', title:'Year 1', tag:'Foundations', meta:'Common courses & skills', hint:'Math • Chemistry • ICT'},
-      {id:'y2', title:'Year 2', tag:'Core', meta:'Discipline pathways', hint:'Labs • Projects'},
-      {id:'y3', title:'Year 3', tag:'Advanced', meta:'Specialized modules', hint:'Tutorials • Notes'},
-      {id:'y4', title:'Year 4+', tag:'Capstone', meta:'Research & internships', hint:'Guides • Templates'}
+      { id: 'y1', title: 'Year 1', tag: 'Foundations', meta: 'Common courses & skills', hint: 'Math • Chemistry • ICT', url: 'uni-year1.html' },
+      { id: 'y2', title: 'Year 2', tag: 'Core', meta: 'Discipline pathways', hint: 'Labs • Projects', url: 'uni-year2.html' },
+      { id: 'y3', title: 'Year 3', tag: 'Advanced', meta: 'Specialized modules', hint: 'Tutorials • Notes', url: 'uni-year3.html' },
+      { id: 'y4', title: 'Year 4+', tag: 'Capstone', meta: 'Research & internships', hint: 'Guides • Templates', url: 'uni-year4.html' }
     ];
 
     const subjects = [
-      {id:'math', title:'Algebra • Geometry', tag:'Math', meta:'Short videos • Worksheets', hint:'Boost your speed'},
-      {id:'chem', title:'Organic • Inorganic', tag:'Chemistry', meta:'Reactions • Labs', hint:'Clear explanations'},
-      {id:'bio', title:'Cells • Genetics', tag:'Biology', meta:'Animations • Quizzes', hint:'Understand deeply'},
-      {id:'eng', title:'Grammar • Reading', tag:'English', meta:'Practice sets', hint:'Improve fast'}
+      { id: 'math', title: 'Algebra • Geometry', tag: 'Math', meta: 'Short videos • Worksheets', hint: 'Boost your speed', url: 'subject-math.html' },
+      { id: 'chem', title: 'Organic • Inorganic', tag: 'Chemistry', meta: 'Reactions • Labs', hint: 'Clear explanations', url: 'subject-chem.html' },
+      { id: 'bio', title: 'Cells • Genetics', tag: 'Biology', meta: 'Animations • Quizzes', hint: 'Understand deeply', url: 'subject-bio.html' },
+      { id: 'eng', title: 'Grammar • Reading', tag: 'English', meta: 'Practice sets', hint: 'Improve fast', url: 'subject-eng.html' }
     ];
 
     // Create skeleton card
@@ -815,9 +1141,9 @@
       const el = document.createElement('div');
       el.className = 'feature-card';
       el.innerHTML = `
-        <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(145deg, var(--primary-light), var(--primary-bg));margin:0 auto 20px;"></div>
-        <div style="width:80%;height:18px;border-radius:8px;background:linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.06), rgba(255,255,255,0.03));margin-bottom:8px;"></div>
-        <div style="width:40%;height:14px;border-radius:8px;background:linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.06), rgba(255,255,255,0.03));"></div>
+        <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(145deg, var(--primary-light), var(--primary-bg));margin:0 auto 12px;"></div>
+        <div style="width:80%;height:16px;border-radius:8px;background:linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.06), rgba(255,255,255,0.03));margin-bottom:8px;"></div>
+        <div style="width:40%;height:12px;border-radius:8px;background:linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.06), rgba(255,255,255,0.03));"></div>
       `;
       return el;
     }
@@ -836,48 +1162,66 @@
     renderSkeletons(uniGrid, 4);
     renderSkeletons(subjectsGrid, 4);
 
-    // Generate real card
-    function makeCard(item, hrefPrefix) {
+    // Generate real card with 3D flip effect
+    function makeCard(item) {
       const a = document.createElement('a');
       a.className = 'feature-card';
-      a.href = `${hrefPrefix}-${item.id}.html` || '#';
+      a.href = item.url || '#';
       a.setAttribute('role', 'listitem');
+      a.setAttribute('aria-label', `Navigate to ${item.title}`);
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        navigateWithTransition(item.url);
+      });
       a.innerHTML = `
-        <div class="feature-icon"><i class="fas fa-book"></i></div>
-        <h3>${item.title}</h3>
-        <p>${item.meta}</p>
+        <div class="feature-card-inner">
+          <div class="feature-card-front">
+            <div class="feature-icon"><i class="fas fa-book"></i></div>
+            <h3>${item.title}</h3>
+            <p>${item.meta}</p>
+          </div>
+          <div class="feature-card-back">
+            <p>${item.hint}</p>
+            <span class="cta">Explore ${item.title}</span>
+          </div>
+        </div>
       `;
       return a;
     }
 
-    function populateGrid(container, items, prefix) {
+    function populateGrid(container, items) {
       container.innerHTML = '';
       items.forEach(it => {
-        const card = makeCard(it, prefix);
+        const card = makeCard(it);
         container.appendChild(card);
       });
     }
 
     // Populate grids after delay
     setTimeout(() => {
-      populateGrid(gradesGrid, grades, 'grade');
-      populateGrid(uniGrid, unis, 'uni');
-      populateGrid(subjectsGrid, subjects, 'subject');
+      populateGrid(gradesGrid, grades);
+      populateGrid(uniGrid, unis);
+      populateGrid(subjectsGrid, subjects);
     }, 850);
 
-    // Search functionality
+    // Search functionality with enhanced matching
     const field = document.getElementById('globalSearch');
     field?.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         const q = field.value.trim().toLowerCase();
         if (!q) return;
-        if (/grade\s?9|g9|nine/.test(q)) window.location.href = 'grade9.html';
-        else if (/grade\s?10|g10|ten/.test(q)) window.location.href = 'grade10.html';
-        else if (/grade\s?11|g11|eleven/.test(q)) window.location.href = 'grade11.html';
-        else if (/grade\s?12|g12|twelve/.test(q)) window.location.href = 'grade12.html';
-        else if (/year\s?1|y1|first\syear/.test(q)) window.location.href = 'uni-year1.html';
-        else if (/year\s?2|y2|second\syear/.test(q)) window.location.href = 'uni-year2.html';
-        else if (/year\s?3|y3|third\syear/.test(q)) window.location.href = 'uni-year3.html';
+        if (/grade\s?9|g9|nine/.test(q)) navigateWithTransition('grade9.html');
+        else if (/grade\s?10|g10|ten/.test(q)) navigateWithTransition('grade10.html');
+        else if (/grade\s?11|g11|eleven/.test(q)) navigateWithTransition('grade11.html');
+        else if (/grade\s?12|g12|twelve/.test(q)) navigateWithTransition('grade12.html');
+        else if (/year\s?1|y1|first\syear/.test(q)) navigateWithTransition('uni-year1.html');
+        else if (/year\s?2|y2|second\syear/.test(q)) navigateWithTransition('uni-year2.html');
+        else if (/year\s?3|y3|third\syear/.test(q)) navigateWithTransition('uni-year3.html');
+        else if (/year\s?4|y4|fourth\syear|capstone/.test(q)) navigateWithTransition('uni-year4.html');
+        else if (/math|algebra|geometry/.test(q)) navigateWithTransition('subject-math.html');
+        else if (/chem|chemistry/.test(q)) navigateWithTransition('subject-chem.html');
+        else if (/bio|biology/.test(q)) navigateWithTransition('subject-bio.html');
+        else if (/eng|english/.test(q)) navigateWithTransition('subject-eng.html');
         else window.location.hash = '#subjects';
       }
     });
