@@ -335,133 +335,105 @@ select:focus{outline:none;box-shadow:var(--ring);border-color:transparent}
   </div>
 
   <!-- Mini player -->
-  <div class="miniplayer card" id="miniPlayer"></div>
-  <script>
-    // --- Sample catalog: 14 subjects, Units, many videos (YouTube IDs used) ---
-    const SUBJECTS = [
-      "Mathematics","Physics","Chemistry","Biology","English","Civics",
-      "Geography","History","Economics","ICT","Amharic","Afan Oromo",
-      "HPE","Art"
-    ];
-  
-    // Minimal demo thumbnails via https://img.youtube.com
-    function ytThumb(id){ 
-      // If it's a playlist, you can optionally use a placeholder thumbnail
-      return id.startsWith("PL") ? "https://img.youtube.com/vi/BtLyik7oAxc/hqdefault.jpg" : `https://img.youtube.com/vi/${id}/hqdefault.jpg`; 
-    }
+<div class="miniplayer card" id="miniPlayer"></div>
 
-    function ytUrl(id){ 
-      // If it starts with "PL", treat as playlist
-      if(id.startsWith("PL")) {
-        return `https://www.youtube.com/embed/videoseries?list=${id}&rel=0&modestbranding=1&autoplay=1`;
-      }
-      return `https://www.youtube.com/embed/${id}?rel=0&modestbranding=1&autoplay=1`; 
-    }
+<!-- Video catalog -->
+<div id="videoCatalog" style="display:flex; flex-wrap:wrap; gap:15px; margin-top:20px;"></div>
 
-    // Generate sample data
-    let videos = [];
-    let idSeed = 1000;
-    function addVideo({title,subject,unit,yt, duration="10:12"}){
-      videos.push({id: idSeed++, title, subject, unit, yt, duration});
-    }
+<script>
+// --- Subjects (for reference) ---
+const SUBJECTS = [
+  "Mathematics","Physics","Chemistry","Biology","English","Civics",
+  "Geography","History","Economics","ICT","Amharic","Afan Oromo",
+  "HPE","Art"
+];
 
-    // Add sample videos
-    addVideo({
-      title: "Types of chemical reactions",
-      subject: "Chemistry",
-      unit: 1,
-      yt: "nhnebJas19A",
-      duration: "8:06"
-    });
+// --- YouTube helpers ---
+// Thumbnail generator
+function ytThumb(id){   
+  return id.startsWith("PL") 
+    ? "https://img.youtube.com/vi/BtLyik7oAxc/hqdefault.jpg" 
+    : `https://img.youtube.com/vi/${id}/hqdefault.jpg`;   
+}  
 
-    addVideo({
-      title: "balancing chemical equations",
-      subject: "Chemistry",
-      unit: 1,
-      yt: "e_C-V5vJv80",
-      duration: "20:52"
-    });
-    
-    addVideo({
-      title: "Organic introduction",
-      subject: "Chemistry",
-      unit: 6,
-      yt: "PmvLB5dIEp8",
-      duration: "12:00"
-    });
-    
-    addVideo({
-      title: "Introduction to chemical reactions",
-      subject: "Chemistry",
-      unit: 1,
-      yt: "NRCn8z8gb1w",
-      duration: "2:28"
-    });
-    
-    addVideo({
-      title: "Oxidation and reduction reactions",
-      subject: "Chemistry",
-      unit: 1,
-      yt: "OCZK3BG9fCU", // Playlist ID
-      duration: "12:21" // optional placeholder
-    });
-    addVideo({
-      title: "Oxidation and reduction reactions",
-      subject: "Chemistry",
-      unit: 1,
-      yt: "OCZK3BG9fCU", // Playlist ID
-      duration: "12:21" // optional placeholder
-    });
-    addVideo({
-      title: "Oxidation and reduction reactions",
-      subject: "Chemistry",
-      unit: 1,
-      yt: "OCZK3BG9fCU", // Playlist ID
-      duration: "12:21" // optional placeholder
-    });
-    addVideo({
-      title: "Oxidation and reduction reactions",
-      subject: "Chemistry",
-      unit: 1,
-      yt: "OCZK3BG9fCU", // Playlist ID
-      duration: "12:21" // optional placeholder
-    });
-    addVideo({
-      title: "Oxidation and reduction reactions",
-      subject: "Chemistry",
-      unit: 1,
-      yt: "OCZK3BG9fCU", // Playlist ID
-      duration: "12:21" // optional placeholder
-    });
-    addVideo({
-      title: "Oxidation and reduction reactions",
-      subject: "Chemistry",
-      unit: 1,
-      yt: "OCZK3BG9fCU", // Playlist ID
-      duration: "12:21" // optional placeholder
-    });
-    addVideo({
-      title: "Oxidation and reduction reactions",
-      subject: "Chemistry",
-      unit: 1,
-      yt: "OCZK3BG9fCU", // Playlist ID
-      duration: "12:21" // optional placeholder
-    });
-    addVideo({
-      title: "Oxidation and reduction reactions",
-      subject: "Chemistry",
-      unit: 1,
-      yt: "OCZK3BG9fCU", // Playlist ID
-      duration: "12:21" // optional placeholder
-    });
-    addVideo({
-      title: "Calculating molecular/formula masses and understanding the mole concept",
-      subject: "Chemistry",
-      unit: 1,
-      yt: "OCZK3BG9fCU", // Playlist ID
-      duration: "12:21" // optional placeholder
-    });
+// Embed URL with distraction minimizers
+function ytUrl(id){   
+  if(id.startsWith("PL")) {  
+    return `https://www.youtube.com/embed/videoseries?list=${id}&rel=0&modestbranding=1&autoplay=1&iv_load_policy=3&showinfo=0`;  
+  }  
+  return `https://www.youtube.com/embed/${id}?rel=0&modestbranding=1&autoplay=1&iv_load_policy=3&showinfo=0`;   
+}  
 
+// --- Data setup ---
+let videos = [];  
+let idSeed = 1000;  
+function addVideo({title,subject,unit,yt,duration="10:12"}){  
+  videos.push({id: idSeed++, title, subject, unit, yt, duration});  
+}  
+
+// Sample videos
+addVideo({
+  title: "Types of chemical reactions",
+  subject: "Chemistry",
+  unit: 1,
+  yt: "nhnebJas19A",
+  duration: "8:06"
+});
+addVideo({
+  title: "Newton's Laws of Motion",
+  subject: "Physics",
+  unit: 2,
+  yt: "KfFhZfGvA1U",
+  duration: "12:45"
+});
+addVideo({
+  title: "Quadratic Equations",
+  subject: "Mathematics",
+  unit: 3,
+  yt: "X6bJd9x12H0",
+  duration: "9:30"
+});
+
+// --- Player logic ---
+// Render mini player iframe
+function playVideo(videoId){
+  const mini = document.getElementById("miniPlayer");
+  mini.innerHTML = `
+    <iframe 
+      width="100%" height="300" 
+      src="${ytUrl(videoId)}" 
+      frameborder="0" 
+      allow="autoplay; encrypted-media" 
+      allowfullscreen>
+    </iframe>`;
+}
+
+// Render catalog thumbnails
+function renderCatalog(){
+  const container = document.getElementById("videoCatalog");
+  videos.forEach(v => {
+    const card = document.createElement("div");
+    card.style.width = "200px";
+    card.style.cursor = "pointer";
+    card.style.border = "1px solid #ddd";
+    card.style.borderRadius = "10px";
+    card.style.overflow = "hidden";
+    card.style.boxShadow = "0 2px 5px rgba(0,0,0,0.1)";
+    card.innerHTML = `
+      <img src="${ytThumb(v.yt)}" alt="${v.title}" style="width:100%; height:120px; object-fit:cover;">
+      <div style="padding:8px;">
+        <h4 style="margin:0; font-size:14px;">${v.title}</h4>
+        <p style="margin:4px 0; font-size:12px; color:#666;">${v.subject} - Unit ${v.unit}</p>
+        <span style="font-size:11px; color:#999;">⏱ ${v.duration}</span>
+      </div>
+    `;
+    card.onclick = () => playVideo(v.yt);
+    container.appendChild(card);
+  });
+}
+
+// Init
+renderCatalog();
     // Some reusable YouTube IDs for demo
     const YT_IDS = [];
   
@@ -755,6 +727,7 @@ select:focus{outline:none;box-shadow:var(--ring);border-color:transparent}
 </body>
 
 </html>
+
 
 
 
