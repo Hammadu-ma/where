@@ -4,8 +4,8 @@ const urlsToCache = [
   'style.css',
   'script.js',
   'icon-192.png',
-  'icon-512.png',
-  'offline.html'
+  'icon-512.png'
+  // no need for offline.html anymore
 ];
 
 // Install Service Worker and cache files
@@ -34,18 +34,17 @@ self.addEventListener('activate', event => {
   );
 });
 
-// Fetch files: respond from cache first, then network
+// Fetch: cache-first for app shell, network-first for others
 self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request).then(response => {
-      // Return cached page if available
+      // If cached, return it
       if (response) {
         return response;
       }
-      // If not cached, try network
+      // Else try network, fallback to app shell
       return fetch(event.request).catch(() => {
-        // If network fails, return offline page
-        return caches.match('offline.html');
+        return caches.match('index.html');
       });
     })
   );
