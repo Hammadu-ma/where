@@ -1164,6 +1164,21 @@
       document.getElementById("splash-screen").style.display = "none";
     }, 4000); // keep splash 4s max
   });
+        function loadContent() {
+  if (!navigator.onLine) {
+    showSkeletonLoaders();
+    return;
+  }
+  fetch('/api/data')
+    .then(res => res.json())
+    .then(data => renderData(data))
+    .catch(() => showSkeletonLoaders());
+}
+
+window.addEventListener('offline', showSkeletonLoaders);
+window.addEventListener('online', loadContent);
+
+loadContent();
     </script>
 </body>
 </html>
