@@ -36,12 +36,16 @@ self.addEventListener('activate', event => {
 // Fetch files: respond from cache first, then network
 self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        if (response) {
-          return response; // Return cached version
-        }
-        return fetch(event.request); // Otherwise fetch from network
-      })
+    caches.match(event.request).then(response => {
+      // Return cached page if available
+      if (response) {
+        return response;
+      }
+      // If not cached, try network
+      return fetch(event.request).catch(() => {
+        // If network fails, return offline page
+        return caches.match('offline.html');
+      });
+    })
   );
 });
