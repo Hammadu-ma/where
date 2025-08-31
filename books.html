@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexReads | Futuristic Book Store</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --bg-primary: #0f0f12;
+            --bg-secondary: #1a1a23;
+            --accent-red: #ff2e63;
+            --accent-orange: #ff8a30;
+            --accent-pink: #ff2e9d;
+            --accent-purple: #9d4edd;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b8;
+            --neu-dark: #0a0a0e;
+            --neu-light: #24242e;
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--bg-secondary);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--accent-red), var(--accent-orange), var(--accent-pink), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: var(--bg-primary);
+            border-radius: 30px;
+            padding: 0.5rem 1rem;
+            width: 40%;
+            box-shadow: inset 5px 5px 10px var(--neu-dark), 
+                        inset -5px -5px 10px var(--neu-light);
+        }
+
+        .search-bar input {
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            width: 100%;
+            padding: 0.5rem;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .user-actions i {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .user-actions i:hover {
+            color: var(--accent-purple);
+        }
+
+        .menu-btn {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Main Content Layout */
+        .main-content {
+            display: flex;
+            flex: 1;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 240px;
+            background-color: var(--bg-secondary);
+            padding: 1.5rem 1rem;
+            overflow-y: auto;
+            height: calc(100vh - 70px);
+            position: sticky;
+            top: 70px;
+        }
+
+        .sidebar-category {
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-category h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--accent-orange);
+            padding-left: 0.5rem;
+        }
+
+        .subject-list {
+            list-style: none;
+        }
+
+        .subject-list li {
+            padding: 0.7rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+
+        .subject-list li:hover {
+            background: linear-gradient(45deg, rgba(157, 78, 221, 0.2), rgba(255, 46, 157, 0.2));
+            color: var(--accent-pink);
+        }
+
+        .subject-list li.active {
+            background: linear-gradient(45deg, var(--accent-purple), var(--accent-pink));
+            color: white;
+            box-shadow: 0 4px 15px rgba(157, 78, 221, 0.4);
+        }
+
+        /* Content Area Styles */
+        .content-area {
+            flex: 1;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .book-display {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .book-cover {
+            flex: 0 0 300px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 8px 8px 16px var(--neu-dark), 
+                        -8px -8px 16px var(--neu-light);
+        }
+
+        .book-cover img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .book-details {
+            flex: 1;
+        }
+
+        .book-title {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, var(--accent-red), var(--accent-orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .book-author {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .book-description {
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        .book-meta {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .meta-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-purple);
+        }
+
+        .meta-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--accent-purple), var(--accent-pink));
+            color: white;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            box-shadow: inset 3px 3px 6px var(--neu-dark), 
+                        inset -3px -3px 6px var(--neu-light);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(157, 78, 221, 0.4);
+        }
+
+        /* Download Progress */
+        .download-progress {
+            margin-top: 1.5rem;
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 5px 5px 15px var(--neu-dark), 
+                        -5px -5px 15px var(--neu-light);
+            display: none;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--bg-primary);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-red), var(--accent-orange));
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* PDF Viewer - Enhanced for Mobile */
+        .pdf-viewer {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            flex-direction: column;
+        }
+
+        .pdf-viewer-header {
+            padding: 1rem;
+            background-color: var(--bg-secondary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 1001;
+        }
+
+        .pdf-viewer-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            max-width: 70%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .pdf-viewer-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .pdf-viewer-controls i {
+            font-size: 1.3rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: var(--transition);
+        }
+
+        .pdf-viewer-controls i:hover {
+            color: var(--accent-purple);
+        }
+
+        .pdf-viewer-close {
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        .pdf-viewer-close:hover {
+            color: var(--accent-red);
+        }
+
+        .pdf-viewer-body {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            width: 100%;
+            height: calc(100% - 60px);
+        }
+
+        .pdf-viewer-body iframe {
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+            border: none;
+        }
+
+        /* Mobile Controls */
+        .mobile-controls {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--bg-secondary);
+            padding: 1rem;
+            justify-content: space-around;
+            z-index: 1002;
+        }
+
+        .mobile-controls i {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .mobile-controls i:hover {
+            color: var(--accent-purple);
+        }
+
+        /* Related Books Section */
+        .related-books {
+            margin-top: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent-orange);
+        }
+
+        .book-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .book-card {
+            background: var(--bg-secondary);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: var(--transition);
+            box-shadow: 5px 5px 15px var(--neu-dark), 
+                        -5px -5px 15px var(--neu-light);
+            cursor: pointer;
+        }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .book-card-img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .book-card-content {
+            padding: 1rem;
+        }
+
+        .book-card-title {
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .book-card-author {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .book-card-meta {
+            display: flex;
+            justify-content: space-between;
+            color: var(--accent-purple);
+            font-size: 0.8rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .search-bar {
+                width: 30%;
+            }
+            
+            .book-display {
+                flex-direction: column;
+            }
+            
+            .book-cover {
+                align-self: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .menu-btn {
+                display: block;
+            }
+            
+            .sidebar {
+                position: fixed;
+                left: -240px;
+                transition: var(--transition);
+                z-index: 90;
+                height: calc(100vh - 70px);
+                top: 70px;
+            }
+            
+            .sidebar.active {
+                left: 0;
+            }
+            
+            .search-bar {
+                width: 50%;
+            }
+            
+            .book-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+
+            .pdf-viewer-body iframe {
+                border-radius: 0;
+            }
+
+            .pdf-viewer-header {
+                padding: 0.8rem;
+            }
+
+            .pdf-viewer-title {
+                font-size: 1rem;
+                max-width: 60%;
+            }
+
+            /* Show mobile controls on mobile */
+            .mobile-controls {
+                display: flex;
+            }
+        }
+
+        @media (max-width: 576px) {
+            header {
+                padding: 1rem;
+            }
+            
+            .logo {
+                font-size: 1.5rem;
+            }
+            
+            .search-bar {
+                display: none;
+            }
+            
+            .content-area {
+                padding: 1rem;
+            }
+            
+            .book-title {
+                font-size: 1.8rem;
+            }
+            
+            .book-meta {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                justify-content: center;
+            }
+
+            .pdf-viewer-header {
+                padding: 0.7rem;
+            }
+
+            .pdf-viewer-title {
+                font-size: 0.9rem;
+                max-width: 50%;
+            }
+
+            .pdf-viewer-controls i {
+                font-size: 1.1rem;
+            }
+
+            .mobile-controls i {
+                font-size: 1.3rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .pdf-viewer-title {
+                max-width: 40%;
+            }
+            
+            .book-cover {
+                flex: 0 0 250px;
+            }
+        }
+
+        /* Animation for download progress */
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--accent-purple);
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Fullscreen class for PDF viewer */
+        .fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-book-open"></i>
+                <span>NexReads</span>
+            </div>
+            
+            <div class="search-bar">
+                <input type="text" placeholder="Search for books, authors, or subjects...">
+                <i class="fas fa-search"></i>
+            </div>
+            
+            <div class="user-actions">
+                <i class="fas fa-bell"></i>
+                <i class="fas fa-user-circle"></i>
+            </div>
+            
+            <div class="menu-btn">
+                <i class="fas fa-bars"></i>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="sidebar-category">
+                    <h3>Subjects</h3>
+                    <ul class="subject-list">
+                        <li class="active" data-subject="all"><i class="fas fa-globe"></i> All Books</li>
+                        <li data-subject="sci-fi"><i class="fas fa-atom"></i> Science Fiction</li>
+                        <li data-subject="psychology"><i class="fas fa-brain"></i> Psychology</li>
+                        <li data-subject="technology"><i class="fas fa-laptop-code"></i> Technology</li>
+                        <li data-subject="business"><i class="fas fa-chart-line"></i> Business</li>
+                        <li data-subject="history"><i class="fas fa-landmark"></i> History</li>
+                        <li data-subject="romance"><i class="fas fa-heart"></i> Romance</li>
+                        <li data-subject="fantasy"><i class="fas fa-magic"></i> Fantasy</li>
+                        <li data-subject="horror"><i class="fas fa-skull"></i> Horror</li>
+                        <li data-subject="science"><i class="fas fa-microscope"></i> Science</li>
+                        <li data-subject="education"><i class="fas fa-graduation-cap"></i> Education</li>
+                        <li data-subject="art"><i class="fas fa-paint-brush"></i> Art & Design</li>
+                        <li data-subject="travel"><i class="fas fa-globe"></i> Travel</li>
+                        <li data-subject="cooking"><i class="fas fa-utensils"></i> Cooking</li>
+                        <li data-subject="health"><i class="fas fa-dumbbell"></i> Health & Fitness</li>
+                    </ul>
+                </div>
+                
+                <div class="sidebar-category">
+                    <h3>My Library</h3>
+                    <ul class="subject-list">
+                        <li><i class="fas fa-download"></i> Downloads</li>
+                        <li><i class="fas fa-history"></i> Recent</li>
+                        <li><i class="fas fa-bookmark"></i> Bookmarks</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="content-area">
+                <div class="book-display">
+                    <div class="book-cover">
+                        <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80" alt="Book Cover">
+                    </div>
+                    
+                    <div class="book-details">
+                        <h1 class="book-title">Neon Genesis: Digital Souls</h1>
+                        <p class="book-author">By Alex Ryder</p>
+                        
+                        <p class="book-description">
+                            In the year 2150, humanity exists in a digitized world where consciousness can be uploaded to the cloud. Follow the journey of Kairo, a neural engineer who discovers a dark secret within the system that threatens to unravel reality itself. This cyberpunk thriller explores the boundaries of technology and humanity.
+                        </p>
+                        
+                        <div class="book-meta">
+                            <div class="meta-item">
+                                <span class="meta-value">4.8</span>
+                                <span class="meta-label">Rating</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-value">428</span>
+                                <span class="meta-label">Pages</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-value">12k</span>
+                                <span class="meta-label">Downloads</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-value">EN</span>
+                                <span class="meta-label">Language</span>
+                            </div>
+                        </div>
+                        
+                        <div class="action-buttons">
+                            <button class="btn btn-primary" id="read-btn">
+                                <i class="fas fa-play"></i> Read Now
+                            </button>
+                            <button class="btn btn-secondary" id="download-btn">
+                                <i class="fas fa-download"></i> Download
+                            </button>
+                            <button class="btn btn-secondary" id="bookmark-btn">
+                                <i class="fas fa-bookmark"></i> Bookmark
+                            </button>
+                        </div>
+                        
+                        <div class="download-progress" id="download-progress">
+                            <div class="progress-header">
+                                <span>Downloading...</span>
+                                <span id="progress-percent">0%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progress-fill"></div>
+                            </div>
+                            <div class="progress-info">
+                                <span id="progress-size">0 MB of 218 MB</span>
+                                <span id="progress-speed">0 MB/s</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="related-books">
+                    <h2 class="section-title">Related Books</h2>
+                    
+                    <div class="book-grid" id="book-grid">
+                        <!-- Books will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PDF Viewer with Enhanced Mobile Support -->
+    <div class="pdf-viewer" id="pdf-viewer">
+        <div class="pdf-viewer-header">
+            <div class="pdf-viewer-title" id="pdf-title">Book Title</div>
+            <div class="pdf-viewer-controls">
+                <i class="fas fa-expand" id="fullscreen-btn"></i>
+                <i class="fas fa-download" id="pdf-download-btn"></i>
+                <i class="fas fa-times" id="close-pdf"></i>
+            </div>
+        </div>
+        <div class="pdf-viewer-body">
+            <iframe id="pdf-frame" src="" frameborder="0"></iframe>
+        </div>
+        
+        <!-- Mobile Controls -->
+        <div class="mobile-controls">
+            <i class="fas fa-chevron-left" id="prev-page"></i>
+            <i class="fas fa-search-minus" id="zoom-out"></i>
+            <i class="fas fa-search-plus" id="zoom-in"></i>
+            <i class="fas fa-chevron-right" id="next-page"></i>
+        </div>
+    </div>
+
+    <script>
+        // Sample book data with real PDF integration
+        const books = [
+            {
+                id: 1,
+                title: "Neon Genesis: Digital Souls",
+                author: "Alex Ryder",
+                subject: "sci-fi",
+                rating: 4.8,
+                pages: 428,
+                downloads: 12000,
+                language: "EN",
+                description: "In the year 2150, humanity exists in a digitized world where consciousness can be uploaded to the cloud. Follow the journey of Kairo, a neural engineer who discovers a dark secret within the system that threatens to unravel reality itself.",
+                cover: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80",
+                pdfUrl: "https://drive.google.com/file/d/19PCu0wsKYNv-hAcWJUKmSzD-TQ2Vf0j0/preview"
+            },
+            {
+                id: 2,
+                title: "Quantum Reality",
+                author: "Maya Chen",
+                subject: "sci-fi",
+                rating: 4.7,
+                pages: 392,
+                downloads: 8500,
+                language: "EN",
+                description: "A mind-bending journey through parallel universes and the nature of existence itself.",
+                cover: "https://images.unsplash.com/photo-1532012197267-da84d127e765?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80",
+                pdfUrl: "https://drive.google.com/file/d/19PCu0wsKYNv-hAcWJUKmSzD-TQ2Vf0j0/preview"
+            },
+            {
+                id: 3,
+                title: "Cybernetic Dreams",
+                author: "Tara Jackson",
+                subject: "sci-fi",
+                rating: 4.9,
+                pages: 410,
+                downloads: 15600,
+                language: "EN",
+                description: "In a world where dreams can be programmed, one woman discovers a conspiracy that threatens to control humanity's subconscious.",
+                cover: "https://images.unsplash.com/photo-1629992101753-56d196c8aabb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwa90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80",
+                pdfUrl: "https://drive.google.com/file/d/19PCu0wsKYNv-hAcWJUKmSzD-TQ2Vf0j0/preview"
+            },
+            {
+                id: 4,
+                title: "Neural Interface",
+                author: "Raj Patel",
+                subject: "technology",
+                rating: 4.5,
+                pages: 350,
+                downloads: 7200,
+                language: "EN",
+                description: "The story of the revolutionary technology that allowed humans to connect directly to the internet through neural implants.",
+                cover: "https://images.unsplash.com/photo-1554757380-2fb69b9c4549?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80",
+                pdfUrl: "https://drive.google.com/file/d/19PCu0wsKYNv-hAcWJUKmSzD-TQ2Vf0j0/preview"
+            },
+            {
+                id: 5,
+                title: "Virtual Afterlife",
+                author: "Chloe Zhang",
+                subject: "sci-fi",
+                rating: 4.8,
+                pages: 385,
+                downloads: 9300,
+                language: "EN",
+                description: "When the dead can be uploaded to a digital paradise, what does it mean to be truly alive?",
+                cover: "https://images.unsplash.com/photo-1530825894095-9c184b068fcb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80",
+                pdfUrl: "https://drive.google.com/file/d/19PCu0wsKYNv-hAcWJUKmSzD-TQ2Vf0j0/preview"
+            },
+            {
+                id: 6,
+                title: "The Psychology of Success",
+                author: "David Kim",
+                subject: "psychology",
+                rating: 4.6,
+                pages: 280,
+                downloads: 12500,
+                language: "EN",
+                description: "Understanding the mental patterns and habits that lead to extraordinary achievement.",
+                cover: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80",
+                pdfUrl: "https://drive.google.com/file/d/19PCu0wsKYNv-hAcWJUKmSzD-TQ2Vf0j0/preview"
+            }
+        ];
+
+        // DOM Elements
+        const menuBtn = document.querySelector('.menu-btn');
+        const sidebar = document.querySelector('.sidebar');
+        const subjectItems = document.querySelectorAll('.subject-list li[data-subject]');
+        const bookGrid = document.getElementById('book-grid');
+        const readBtn = document.getElementById('read-btn');
+        const downloadBtn = document.getElementById('download-btn');
+        const bookmarkBtn = document.getElementById('bookmark-btn');
+        const downloadProgress = document.getElementById('download-progress');
+        const progressFill = document.getElementById('progress-fill');
+        const progressPercent = document.getElementById('progress-percent');
+        const progressSize = document.getElementById('progress-size');
+        const progressSpeed = document.getElementById('progress-speed');
+        const pdfViewer = document.getElementById('pdf-viewer');
+        const closePdf = document.getElementById('close-pdf');
+        const pdfFrame = document.getElementById('pdf-frame');
+        const pdfTitle = document.getElementById('pdf-title');
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        const pdfDownloadBtn = document.getElementById('pdf-download-btn');
+        const prevPageBtn = document.getElementById('prev-page');
+        const nextPageBtn = document.getElementById('next-page');
+        const zoomInBtn = document.getElementById('zoom-in');
+        const zoomOutBtn = document.getElementById('zoom-out');
+
+        // Current book state
+        let currentBook = books[0];
+        let downloadInterval = null;
+        let bookmarked = false;
+        let isFullscreen = false;
+
+        // Initialize the page
+        function init() {
+            populateBookGrid('all');
+            setupEventListeners();
+        }
+
+        // Set up event listeners
+        function setupEventListeners() {
+            // Menu button
+            menuBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('active');
+            });
+
+            // Subject filters
+            subjectItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const subject = item.getAttribute('data-subject');
+                    subjectItems.forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+                    populateBookGrid(subject);
+                });
+            });
+
+            // Read button
+            readBtn.addEventListener('click', () => {
+                openPdfViewer(currentBook);
+            });
+
+            // Download button
+            downloadBtn.addEventListener('click', startDownload);
+
+            // Bookmark button
+            bookmarkBtn.addEventListener('click', toggleBookmark);
+
+            // Close PDF viewer
+            closePdf.addEventListener('click', () => {
+                closePdfViewer();
+            });
+
+            // Fullscreen button
+            fullscreenBtn.addEventListener('click', toggleFullscreen);
+
+            // PDF download button
+            pdfDownloadBtn.addEventListener('click', downloadPdf);
+
+            // Mobile controls
+            prevPageBtn.addEventListener('click', goToPrevPage);
+            nextPageBtn.addEventListener('click', goToNextPage);
+            zoomInBtn.addEventListener('click', zoomIn);
+            zoomOutBtn.addEventListener('click', zoomOut);
+
+            // Close PDF viewer when clicking outside (on overlay)
+            pdfViewer.addEventListener('click', (e) => {
+                if (e.target === pdfViewer) {
+                    closePdfViewer();
+                }
+            });
+
+            // Handle escape key to exit fullscreen
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && isFullscreen) {
+                    toggleFullscreen();
+                }
+            });
+        }
+
+        // Populate book grid based on subject filter
+        function populateBookGrid(subject) {
+            bookGrid.innerHTML = '';
+            
+            const filteredBooks = subject === 'all' 
+                ? books 
+                : books.filter(book => book.subject === subject);
+            
+            filteredBooks.forEach(book => {
+                if (book.id === currentBook.id) return; // Skip current book
+                
+                const bookCard = document.createElement('div');
+                bookCard.className = 'book-card';
+                bookCard.innerHTML = `
+                    <img class="book-card-img" src="${book.cover}" alt="${book.title}">
+                    <div class="book-card-content">
+                        <h3 class="book-card-title">${book.title}</h3>
+                        <p class="book-card-author">${book.author}</p>
+                        <div class="book-card-meta">
+                            <span>${book.rating} ★</span>
+                            <span>${book.pages}p</span>
+                        </div>
+                    </div>
+                `;
+                
+                bookCard.addEventListener('click', () => {
+                    selectBook(book);
+                });
+                
+                bookGrid.appendChild(bookCard);
+            });
+        }
+
+        // Select a book to display
+        function selectBook(book) {
+            currentBook = book;
+            
+            // Update book display
+            document.querySelector('.book-cover img').src = book.cover;
+            document.querySelector('.book-title').textContent = book.title;
+            document.querySelector('.book-author').textContent = `By ${book.author}`;
+            document.querySelector('.book-description').textContent = book.description;
+            document.querySelector('.meta-value:first-child').textContent = book.rating;
+            document.querySelector('.meta-value:nth-child(2)').textContent = book.pages;
+            document.querySelector('.meta-value:nth-child(3)').textContent = `${book.downloads/1000}k`;
+            
+            // Reset download button if needed
+            downloadBtn.innerHTML = '<i class="fas fa-download"></i> Download';
+            
+            // Hide download progress
+            downloadProgress.style.display = 'none';
+            if (downloadInterval) {
+                clearInterval(downloadInterval);
+                downloadInterval = null;
+            }
+            
+            // Update related books
+            populateBookGrid(document.querySelector('.subject-list li.active').getAttribute('data-subject'));
+        }
+
+        // Start download simulation
+        function startDownload() {
+            // Show progress bar
+            downloadProgress.style.display = 'block';
+            
+            // Reset progress
+            progressFill.style.width = '0%';
+            progressPercent.textContent = '0%';
+            progressSize.textContent = '0 MB of 218 MB';
+            progressSpeed.textContent = '0 MB/s';
+            
+            // Simulate download
+            let progress = 0;
+            let downloadedMB = 0;
+            const totalMB = 218;
+            const speed = 2.4; // MB per second
+            
+            if (downloadInterval) {
+                clearInterval(downloadInterval);
+            }
+            
+            downloadInterval = setInterval(() => {
+                progress += 5;
+                downloadedMB += speed * 0.5;
+                
+                if (progress > 100) {
+                    progress = 100;
+                    downloadedMB = totalMB;
+                    clearInterval(downloadInterval);
+                    downloadInterval = null;
+                    
+                    // Update button text when complete
+                    downloadBtn.innerHTML = '<i class="fas fa-check"></i> Downloaded';
+                    
+                    // Create a real download link
+                    const downloadLink = document.createElement('a');
+                    downloadLink.href = 'https://drive.google.com/uc?export=download&id=19PCu0wsKYNv-hAcWJUKmSzD-TQ2Vf0j0';
+                    downloadLink.download = `${currentBook.title}.pdf`;
+                    document.body.appendChild(downloadLink);
+                    downloadLink.click();
+                    document.body.removeChild(downloadLink);
+                }
+                
+                // Update progress bar
+                progressFill.style.width = `${progress}%`;
+                progressPercent.textContent = `${progress}%`;
+                progressSize.textContent = `${downloadedMB.toFixed(1)} MB of ${totalMB} MB`;
+                progressSpeed.textContent = `${speed} MB/s`;
+            }, 500);
+        }
+
+        // Toggle bookmark
+        function toggleBookmark() {
+            bookmarked = !bookmarked;
+            
+            if (bookmarked) {
+                bookmarkBtn.innerHTML = '<i class="fas fa-bookmark"></i> Bookmarked';
+                bookmarkBtn.style.color = 'var(--accent-purple)';
+            } else {
+                bookmarkBtn.innerHTML = '<i class="fas fa-bookmark"></i> Bookmark';
+                bookmarkBtn.style.color = 'var(--text-primary)';
+            }
+        }
+
+        // Open PDF viewer
+        function openPdfViewer(book) {
+            pdfTitle.textContent = book.title;
+            pdfFrame.src = book.pdfUrl;
+            pdfViewer.style.display = 'flex';
+            
+            // Prevent body scrolling when PDF viewer is open
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close PDF viewer
+        function closePdfViewer() {
+            pdfViewer.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            
+            // Exit fullscreen if active
+            if (isFullscreen) {
+                toggleFullscreen();
+            }
+        }
+
+        // Toggle fullscreen mode
+        function toggleFullscreen() {
+            if (!isFullscreen) {
+                pdfViewer.classList.add('fullscreen');
+                fullscreenBtn.classList.remove('fa-expand');
+                fullscreenBtn.classList.add('fa-compress');
+                isFullscreen = true;
+            } else {
+                pdfViewer.classList.remove('fullscreen');
+                fullscreenBtn.classList.remove('fa-compress');
+                fullscreenBtn.classList.add('fa-expand');
+                isFullscreen = false;
+            }
+        }
+
+        // Download PDF
+        function downloadPdf() {
+            const downloadLink = document.createElement('a');
+            downloadLink.href = 'https://drive.google.com/uc?export=download&id=19PCu0wsKYNv-hAcWJUKmSzD-TQ2Vf0j0';
+            downloadLink.download = `${currentBook.title}.pdf`;
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        }
+
+        // Mobile control functions
+        function goToPrevPage() {
+            // This would require PDF.js for proper implementation
+            alert("Previous page feature would require PDF.js integration");
+        }
+
+        function goToNextPage() {
+            // This would require PDF.js for proper implementation
+            alert("Next page feature would require PDF.js integration");
+        }
+
+        function zoomIn() {
+            // This would require PDF.js for proper implementation
+            alert("Zoom in feature would require PDF.js integration");
+        }
+
+        function zoomOut() {
+            // This would require PDF.js for proper implementation
+            alert("Zoom out feature would require PDF.js integration");
+        }
+
+        // Initialize the application
+        init();
+    </script>
+</body>
+</html>
