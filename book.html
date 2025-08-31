@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexReads | Book Selection</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --bg-primary: #0f0f12;
+            --bg-secondary: #1a1a23;
+            --accent-red: #ff2e63;
+            --accent-orange: #ff8a30;
+            --accent-pink: #ff2e9d;
+            --accent-purple: #9d4edd;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b8;
+            --neu-dark: #0a0a0e;
+            --neu-light: #24242e;
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--bg-secondary);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--accent-red), var(--accent-orange), var(--accent-pink), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: var(--bg-primary);
+            border-radius: 30px;
+            padding: 0.5rem 1rem;
+            width: 40%;
+            box-shadow: inset 5px 5px 10px var(--neu-dark), 
+                        inset -5px -5px 10px var(--neu-light);
+        }
+
+        .search-bar input {
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            width: 100%;
+            padding: 0.5rem;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .user-actions i {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .user-actions i:hover {
+            color: var(--accent-purple);
+        }
+
+        .menu-btn {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Main Content Layout */
+        .main-content {
+            display: flex;
+            flex: 1;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 240px;
+            background-color: var(--bg-secondary);
+            padding: 1.5rem 1rem;
+            overflow-y: auto;
+            height: calc(100vh - 70px);
+            position: sticky;
+            top: 70px;
+        }
+
+        .sidebar-category {
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-category h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--accent-orange);
+            padding-left: 0.5rem;
+        }
+
+        .subject-list {
+            list-style: none;
+        }
+
+        .subject-list li {
+            padding: 0.7rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+
+        .subject-list li:hover {
+            background: linear-gradient(45deg, rgba(157, 78, 221, 0.2), rgba(255, 46, 157, 0.2));
+            color: var(--accent-pink);
+        }
+
+        .subject-list li.active {
+            background: linear-gradient(45deg, var(--accent-purple), var(--accent-pink));
+            color: white;
+            box-shadow: 0 4px 15px rgba(157, 78, 221, 0.4);
+        }
+
+        /* Content Area Styles */
+        .content-area {
+            flex: 1;
+            padding: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent-orange);
+        }
+
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 2rem;
+        }
+
+        .book-card {
+            background: var(--bg-secondary);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: var(--transition);
+            box-shadow: 5px 5px 15px var(--neu-dark), 
+                        -5px -5px 15px var(--neu-light);
+            cursor: pointer;
+        }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .book-card-img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .book-card-content {
+            padding: 1.2rem;
+        }
+
+        .book-card-title {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .book-card-author {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.8rem;
+        }
+
+        .book-card-meta {
+            display: flex;
+            justify-content: space-between;
+            color: var(--accent-purple);
+            font-size: 0.9rem;
+        }
+
+        .book-card-description {
+            display: none;
+            margin-top: 0.8rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .book-card:hover .book-card-description {
+            display: block;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .search-bar {
+                width: 30%;
+            }
+            
+            .books-grid {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+                gap: 1.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .menu-btn {
+                display: block;
+            }
+            
+            .sidebar {
+                position: fixed;
+                left: -240px;
+                transition: var(--transition);
+                z-index: 90;
+                height: calc(100vh - 70px);
+                top: 70px;
+            }
+            
+            .sidebar.active {
+                left: 0;
+            }
+            
+            .search-bar {
+                width: 50%;
+            }
+            
+            .books-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 1.2rem;
+            }
+            
+            .book-card-img {
+                height: 220px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            header {
+                padding: 1rem;
+            }
+            
+            .logo {
+                font-size: 1.5rem;
+            }
+            
+            .search-bar {
+                display: none;
+            }
+            
+            .content-area {
+                padding: 1rem;
+            }
+            
+            .books-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 1rem;
+            }
+            
+            .book-card-img {
+                height: 200px;
+            }
+            
+            .book-card-content {
+                padding: 0.8rem;
+            }
+            
+            .book-card-title {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .books-grid {
+                grid-template-columns: 1fr;
+                gap: 1.2rem;
+            }
+            
+            .book-card {
+                display: flex;
+                height: 150px;
+            }
+            
+            .book-card-img {
+                width: 100px;
+                height: 100%;
+                flex-shrink: 0;
+            }
+            
+            .book-card-content {
+                flex: 1;
+                overflow: hidden;
+            }
+            
+            .book-card-description {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-book-open"></i>
+                <span>NexReads</span>
+            </div>
+            
+            <div class="search-bar">
+                <input type="text" placeholder="Search for books, authors, or subjects...">
+                <i class="fas fa-search"></i>
+            </div>
+            
+            <div class="user-actions">
+                <i class="fas fa-bell"></i>
+                <i class="fas fa-user-circle"></i>
+            </div>
+            
+            <div class="menu-btn">
+                <i class="fas fa-bars"></i>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="sidebar-category">
+                    <h3>Subjects</h3>
+                    <ul class="subject-list">
+                        <li class="active" data-subject="all"><i class="fas fa-globe"></i> All Books</li>
+                        <li data-subject="sci-fi"><i class="fas fa-atom"></i> Science Fiction</li>
+                        <li data-subject="psychology"><i class="fas fa-brain"></i> Psychology</li>
+                        <li data-subject="technology"><i class="fas fa-laptop-code"></i> Technology</li>
+                        <li data-subject="business"><i class="fas fa-chart-line"></i> Business</li>
+                        <li data-subject="history"><i class="fas fa-landmark"></i> History</li>
+                        <li data-subject="romance"><i class="fas fa-heart"></i> Romance</li>
+                        <li data-subject="fantasy"><i class="fas fa-magic"></i> Fantasy</li>
+                        <li data-subject="horror"><i class="fas fa-skull"></i> Horror</li>
+                        <li data-subject="science"><i class="fas fa-microscope"></i> Science</li>
+                        <li data-subject="education"><i class="fas fa-graduation-cap"></i> Education</li>
+                        <li data-subject="art"><i class="fas fa-paint-brush"></i> Art & Design</li>
+                        <li data-subject="travel"><i class="fas fa-globe"></i> Travel</li>
+                        <li data-subject="cooking"><i class="fas fa-utensils"></i> Cooking</li>
+                        <li data-subject="health"><i class="fas fa-dumbbell"></i> Health & Fitness</li>
+                    </ul>
+                </div>
+                
+                <div class="sidebar-category">
+                    <h3>My Library</h3>
+                    <ul class="subject-list">
+                        <li><i class="fas fa-download"></i> Downloads</li>
+                        <li><i class="fas fa-history"></i> Recent</li>
+                        <li><i class="fas fa-bookmark"></i> Bookmarks</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="content-area">
+                <h2 class="section-title">Browse Our Collection</h2>
+                
+                <div class="books-grid" id="books-grid">
+                    <!-- Books will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample book data
+        const books = [
+            {
+                id: 1,
+                title: "Neon Genesis: Digital Souls",
+                author: "Alex Ryder",
+                subject: "sci-fi",
+                rating: 4.8,
+                pages: 428,
+                downloads: 12000,
+                language: "EN",
+                description: "In the year 2150, humanity exists in a digitized world where consciousness can be uploaded to the cloud. Follow the journey of Kairo, a neural engineer who discovers a dark secret within the system that threatens to unravel reality itself.",
+                cover: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                id: 2,
+                title: "Quantum Reality",
+                author: "Maya Chen",
+                subject: "sci-fi",
+                rating: 4.7,
+                pages: 392,
+                downloads: 8500,
+                language: "EN",
+                description: "A mind-bending journey through parallel universes and the nature of existence itself.",
+                cover: "https://images.unsplash.com/photo-1532012197267-da84d127e765?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                id: 3,
+                title: "Cybernetic Dreams",
+                author: "Tara Jackson",
+                subject: "sci-fi",
+                rating: 4.9,
+                pages: 410,
+                downloads: 15600,
+                language: "EN",
+                description: "In a world where dreams can be programmed, one woman discovers a conspiracy that threatens to control humanity's subconscious.",
+                cover: "https://images.unsplash.com/photo-1629992101753-56d196c8aabb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwa90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                id: 4,
+                title: "Neural Interface",
+                author: "Raj Patel",
+                subject: "technology",
+                rating: 4.5,
+                pages: 350,
+                downloads: 7200,
+                language: "EN",
+                description: "The story of the revolutionary technology that allowed humans to connect directly to the internet through neural implants.",
+                cover: "https://images.unsplash.com/photo-1554757380-2fb69b9c4549?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                id: 5,
+                title: "Virtual Afterlife",
+                author: "Chloe Zhang",
+                subject: "sci-fi",
+                rating: 4.8,
+                pages: 385,
+                downloads: 9300,
+                language: "EN",
+                description: "When the dead can be uploaded to a digital paradise, what does it mean to be truly alive?",
+                cover: "https://images.unsplash.com/photo-1530825894095-9c184b068fcb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                id: 6,
+                title: "The Psychology of Success",
+                author: "David Kim",
+                subject: "psychology",
+                rating: 4.6,
+                pages: 280,
+                downloads: 12500,
+                language: "EN",
+                description: "Understanding the mental patterns and habits that lead to extraordinary achievement.",
+                cover: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                id: 7,
+                title: "Future Tense: AI Revolution",
+                author: "Jordan Michaels",
+                subject: "technology",
+                rating: 4.7,
+                pages: 320,
+                downloads: 9800,
+                language: "EN",
+                description: "Exploring the ethical dilemmas and societal changes brought about by artificial intelligence.",
+                cover: "https://images.unsplash.com/photo-1677442135131-fdbe5f78e6d2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                id: 8,
+                title: "Stellar Horizons",
+                author: "Nova Williams",
+                subject: "sci-fi",
+                rating: 4.9,
+                pages: 450,
+                downloads: 11200,
+                language: "EN",
+                description: "Humanity's first interstellar mission encounters a mysterious alien artifact that changes everything.",
+                cover: "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80"
+            }
+        ];
+
+        // DOM Elements
+        const menuBtn = document.querySelector('.menu-btn');
+        const sidebar = document.querySelector('.sidebar');
+        const subjectItems = document.querySelectorAll('.subject-list li[data-subject]');
+        const booksGrid = document.getElementById('books-grid');
+
+        // Initialize the page
+        function init() {
+            populateBooksGrid('all');
+            setupEventListeners();
+        }
+
+        // Set up event listeners
+        function setupEventListeners() {
+            // Menu button
+            menuBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('active');
+            });
+
+            // Subject filters
+            subjectItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const subject = item.getAttribute('data-subject');
+                    subjectItems.forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+                    populateBooksGrid(subject);
+                });
+            });
+        }
+
+        // Populate books grid based on subject filter
+        function populateBooksGrid(subject) {
+            booksGrid.innerHTML = '';
+            
+            const filteredBooks = subject === 'all' 
+                ? books 
+                : books.filter(book => book.subject === subject);
+            
+            filteredBooks.forEach(book => {
+                const bookCard = document.createElement('div');
+                bookCard.className = 'book-card';
+                bookCard.innerHTML = `
+                    <img class="book-card-img" src="${book.cover}" alt="${book.title}">
+                    <div class="book-card-content">
+                        <h3 class="book-card-title">${book.title}</h3>
+                        <p class="book-card-author">${book.author}</p>
+                        <div class="book-card-meta">
+                            <span>${book.rating} ★</span>
+                            <span>${book.pages}p</span>
+                        </div>
+                        <p class="book-card-description">${book.description}</p>
+                    </div>
+                `;
+                
+                bookCard.addEventListener('click', () => {
+                    // Store the selected book in localStorage and redirect to the detail page
+                    localStorage.setItem('selectedBook', JSON.stringify(book));
+                    window.location.href = 'go.html'; // Your detail page
+                });
+                
+                booksGrid.appendChild(bookCard);
+            });
+        }
+
+        // Initialize the application
+        init();
+    </script>
+</body>
+</html>
