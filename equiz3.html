@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Embryology Quiz</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a192f, #0d1b2a);
+            color: #e0e1dd;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .quiz-container {
+            width: 100%;
+            max-width: 900px;
+            background: rgba(13, 27, 42, 0.9);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(95, 158, 160, 0.3);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(95, 158, 160, 0.5);
+        }
+        
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #5f9ea0;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+        
+        .subtitle {
+            font-size: 18px;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+        
+        .instructions {
+            font-size: 16px;
+            opacity: 0.7;
+            margin-top: 10px;
+        }
+        
+        .progress-container {
+            background: rgba(224, 225, 221, 0.1);
+            border-radius: 10px;
+            height: 8px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #5f9ea0, #7cb9e8);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .question-number {
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #7cb9e8;
+            font-weight: 600;
+        }
+        
+        .question-text {
+            font-size: 22px;
+            font-weight: 500;
+            margin-bottom: 25px;
+            line-height: 1.4;
+        }
+        
+        .options-container {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+        
+        .option {
+            background: rgba(224, 225, 221, 0.05);
+            border: 2px solid rgba(95, 158, 160, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 17px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .option:hover {
+            background: rgba(95, 158, 160, 0.2);
+            transform: translateY(-2px);
+            border-color: #5f9ea0;
+        }
+        
+        .option.selected {
+            background: rgba(95, 158, 160, 0.3);
+            border-color: #5f9ea0;
+            box-shadow: 0 0 15px rgba(95, 158, 160, 0.3);
+        }
+        
+        .option.correct {
+            background: rgba(0, 184, 148, 0.2);
+            border-color: #00b894;
+        }
+        
+        .option.incorrect {
+            background: rgba(214, 48, 49, 0.2);
+            border-color: #d63031;
+        }
+        
+        .option-letter {
+            font-weight: bold;
+            margin-right: 12px;
+            color: #5f9ea0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(95, 158, 160, 0.2);
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            background: rgba(95, 158, 160, 0.3);
+            color: #e0e1dd;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        #prev-btn {
+            background: rgba(95, 158, 160, 0.2);
+        }
+        
+        #prev-btn:hover:not(:disabled) {
+            background: rgba(95, 158, 160, 0.4);
+        }
+        
+        #next-btn {
+            background: linear-gradient(90deg, #5f9ea0, #7cb9e8);
+        }
+        
+        #next-btn:hover {
+            background: linear-gradient(90deg, #4a8c8e, #6aa6d6);
+            box-shadow: 0 0 15px rgba(95, 158, 160, 0.4);
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .quiz-completed {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .score-text {
+            font-size: 24px;
+            margin-bottom: 16px;
+            color: #e0e1dd;
+        }
+        
+        .score-value {
+            font-size: 48px;
+            font-weight: 700;
+            color: #5f9ea0;
+            margin-bottom: 30px;
+        }
+        
+        #restart-btn {
+            background: linear-gradient(90deg, #5f9ea0, #7cb9e8);
+            padding: 16px 40px;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+        
+        #restart-btn:hover {
+            background: linear-gradient(90deg, #4a8c8e, #6aa6d6);
+            box-shadow: 0 0 20px rgba(95, 158, 160, 0.5);
+        }
+        
+        .feedback {
+            text-align: center;
+            margin-top: 20px;
+            font-weight: 500;
+            min-height: 24px;
+            color: #7cb9e8;
+        }
+        
+        .explanation {
+            background: rgba(95, 158, 160, 0.1);
+            border-left: 4px solid #5f9ea0;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 25px;
+            display: none;
+        }
+        
+        .explanation-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #5f9ea0;
+        }
+        
+        .timer {
+            text-align: right;
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: #5f9ea0;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .pulse {
+            animation: pulse 0.5s;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+        
+        @media (max-width: 600px) {
+            .quiz-container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .question-text {
+                font-size: 19px;
+            }
+            
+            .option {
+                padding: 14px;
+                font-size: 16px;
+            }
+            
+            button {
+                padding: 12px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="timer">
+            <i class="fas fa-clock"></i>
+            <span id="timer">00:00</span>
+        </div>
+        
+        <div class="header">
+            <h1>Embryology Quiz</h1>
+            <div class="subtitle">Professional Questions with Detailed Explanations</div>
+            <div class="instructions">Based on your PDF content and Langman's Medical Embryology</div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div class="question-number">Question <span id="current-question">1</span> of <span id="total-questions">60</span></div>
+        
+        <div class="question-text" id="question">During which week does the embryonic period proper begin?</div>
+        
+        <div class="options-container" id="options-container">
+            <!-- Options will be inserted here by JavaScript -->
+        </div>
+        
+        <div class="explanation" id="explanation">
+            <div class="explanation-title">Explanation:</div>
+            <div id="explanation-text"></div>
+        </div>
+        
+        <div class="feedback" id="feedback"></div>
+        
+        <div class="navigation">
+            <button id="prev-btn" disabled>
+                <i class="fas fa-arrow-left"></i> Previous
+            </button>
+            <button id="next-btn">
+                Next <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Quiz questions with explanations
+        const questions =
+       [
+  {
+    "question": "When does formation of primary spermatocytes begin?",
+    "options": ["During week 4 of embryonic life", "During month 5 of infancy", "During month 5 of fetal life", "At birth"],
+    "answer": 2,
+    "explanation": "Primordial germ cells migrate to the testes and become spermatogonia. These begin to develop into primary spermatocytes around the 5th month of fetal life, though meiosis is arrested until puberty."
+  },
+  {
+    "question": "When does a secondary oocyte complete its second meiotic division to become a mature ovum?",
+    "options": ["At ovulation", "Before birth", "At fertilization", "At puberty"],
+    "answer": 2,
+    "explanation": "The secondary oocyte arrests in metaphase of meiosis II. It only completes this final division upon fertilization by a sperm cell."
+  },
+  {
+    "question": "Which of the following events is involved in cleavage of the zygote during Week 1 of development?",
+    "options": ["A series of meiotic divisions", "An increased cytoplasmic content of blastomeres", "An increase in size of blastomeres", "A decrease in size of blastomeres"],
+    "answer": 3,
+    "explanation": "Cleavage is a series of rapid mitotic divisions *without* growth in between. The total size of the conceptus remains the same, so the resulting cells (blastomeres) become progressively smaller."
+  },
+  {
+    "question": "The first indication of gastrulation in the embryo is:",
+    "options": ["Formation of the primitive streak", "Formation of the notochord", "Formation of the neural tube", "Formation of the prochordal plate"],
+    "answer": 0,
+    "explanation": "Gastrulation begins with the formation of the primitive streak on the surface of the epiblast. This structure establishes the body's axes and is the site where cells migrate inward to form the germ layers."
+  },
+  {
+    "question": "The epiblast is capable of forming which of the following germ layers?",
+    "options": ["Ectoderm only", "Ectoderm and mesoderm only", "Ectoderm, mesoderm, and endoderm", "Mesoderm and endoderm only"],
+    "answer": 2,
+    "explanation": "During gastrulation, cells of the epiblast migrate through the primitive streak to form all three definitive germ layers of the embryo: ectoderm, mesoderm, and endoderm."
+  },
+  {
+    "question": "In the production of male gametes, which of the following cells remains dormant for years?",
+    "options": ["Primary spermatocyte", "Primordial germ cell / Spermatogonium", "Secondary spermatocyte", "Spermatid"],
+    "answer": 1,
+    "explanation": "Spermatogonia (derived from primordial germ cells) are the stem cells. They remain dormant from fetal life until puberty, when they begin to actively divide and differentiate into sperm."
+  },
+  {
+    "question": "Which structure is derived from the same embryonic primordium as the dorsal root ganglia?",
+    "options": ["Kidney", "Gonads", "Adrenal medulla", "Pineal gland"],
+    "answer": 2,
+    "explanation": "Both the dorsal root ganglia (nervous system) and the adrenal medulla are derived from neural crest cells, which emigrate from the neuroectoderm."
+  },
+  {
+    "question": "External genitalia organs are developed during:",
+    "options": ["First month of pregnancy", "Second trimester", "Third trimester", "They are fully formed at birth"],
+    "answer": 1,
+    "explanation": "While indifferent structures form early, the differentiation of the external genitalia into the definitive male or female form occurs primarily during the second trimester (weeks 9-12)."
+  },
+  {
+    "question": "A woman experiences her first missed menstrual period at the start of which week of embryonic development?",
+    "options": ["Start of week 3", "Start of week 4", "Start of week 5", "Start of week 6"],
+    "answer": 2,
+    "explanation": "A menstrual period is missed about 14 days after ovulation. Implantation occurs in week 2, and the woman would miss her period around week 4 of development (which is also week 4 of gestational age)."
+  },
+  {
+    "question": "During the later stages of pregnancy, maternal blood is separated from fetal blood by the:",
+    "options": ["Syncytiotrophoblast only", "Cytotrophoblast only", "Fetal connective tissue only", "Syncytiotrophoblast and fetal endothelium"],
+    "answer": 3,
+    "explanation": "This describes the placental barrier. In the later stages, it consists of the syncytiotrophoblast, a thin layer of cytotrophoblast cells (in some areas), fetal connective tissue, and the fetal capillary endothelium."
+  },
+  {
+    "question": "A pregnant woman has repeated painless vaginal bleeding and a placenta over the internal os. What is the diagnosis?",
+    "options": ["Hydatidiform mole", "Vasa previa", "Placenta previa", "Placental abruption"],
+    "answer": 2,
+    "explanation": "Placenta previa is characterized by painless, bright red vaginal bleeding in the 2nd/3rd trimester due to the placenta implanting over or near the internal cervical os."
+  },
+  {
+    "question": "Which time interval best describes the maximum susceptibility period for teratogens?",
+    "options": ["Week 1", "Week 2-3", "Week 3-8 (Embryonic Period)", "Week 9-38 (Fetal Period)"],
+    "answer": 2,
+    "explanation": "The embryonic period (weeks 3-8) is the period of organogenesis. Interference by teratogens during this time has the most severe consequences, leading to major structural birth defects."
+  },
+  {
+    "question": "Which of the following structures produces progesterone late in pregnancy?",
+    "options": ["Placenta", "Fetal adenohypophysis", "Corpus luteum", "Maternal liver"],
+    "answer": 0,
+    "explanation": "After the first trimester, the corpus luteum degenerates. The placenta takes over as the primary producer of progesterone for the remainder of the pregnancy."
+  },
+  {
+    "question": "Human chorionic gonadotropin (hCG) is produced by which of the following?",
+    "options": ["Ectoderm", "Syncytiotrophoblast", "Mesoderm", "Endoderm"],
+    "answer": 1,
+    "explanation": "The syncytiotrophoblast, the outer layer of the blastocyst that invades the endometrium, is responsible for secreting hCG to maintain the corpus luteum and its progesterone production."
+  },
+  {
+    "question": "What is the origin of the mitochondrial DNA of all human adult cells?",
+    "options": ["Paternal only", "Either paternal or maternal", "Maternal only", "A combination of paternal and maternal"],
+    "answer": 2,
+    "explanation": "Mitochondria, and therefore mitochondrial DNA, are inherited almost exclusively from the cytoplasm of the mother's oocyte (egg)."
+  },
+  {
+    "question": "The prochordal plate marks the site of the future:",
+    "options": ["Umbilical cord", "Heart", "Mouth", "Anus"],
+    "answer": 2,
+    "explanation": "The prochordal plate is a circular area of thickened endoderm in the cephalic (head) end of the embryonic disc. It later breaks down to become the oropharyngeal membrane, which defines the future mouth opening."
+  },
+  {
+    "question": "Which component plays the most active role in invading the endometrium during blastocyst implantation?",
+    "options": ["Epiblast", "Syncytiotrophoblast", "Hypoblast", "Cytotrophoblast"],
+    "answer": 1,
+    "explanation": "The syncytiotrophoblast is an invasive, multinucleated mass of cells that erodes the endometrial tissue, allowing the blastocyst to embed itself deeply into the uterine wall."
+  },
+  {
+    "question": "Which germ layers are present at the end of week 3 of development (day 21)?",
+    "options": ["Epiblast only", "Epiblast and hypoblast", "Ectoderm and endoderm", "Ectoderm, mesoderm, and endoderm"],
+    "answer": 3,
+    "explanation": "Gastrulation (weeks 2-3) is the process of forming the three germ layers. By the end of the third week, all three layers—ectoderm, mesoderm, and endoderm—are fully established."
+  },
+  {
+    "question": "Which process establishes the three definitive germ layers?",
+    "options": ["Neurulation", "Gastrulation", "Cranio-caudal folding", "Angiogenesis"],
+    "answer": 1,
+    "explanation": "Gastrulation, primarily through the formation and movement of cells through the primitive streak, establishes the three germ layers: ectoderm, mesoderm, and endoderm."
+  },
+  {
+    "question": "Intermediate mesoderm gives rise to the:",
+    "options": ["Neural tube", "Kidneys and gonads", "Dermis", "Notochord"],
+    "answer": 1,
+    "explanation": "The intermediate mesoderm, located between the paraxial and lateral plate mesoderm, gives rise to the urogenital system, including the kidneys (renal system) and the gonads (ovaries or testes)."
+  },
+  {
+    "question": "The Intervillous space of the placenta contains:",
+    "options": ["Maternal blood", "Fetal blood", "Maternal and fetal blood", "Amniotic fluid"],
+    "answer": 0,
+    "explanation": "Maternal spiral arteries eject blood into the intervillous space, where it bathes the fetal chorionic villi. This allows for exchange of gases and nutrients without direct mixing of maternal and fetal blood."
+  },
+  {
+    "question": "Which of the following regarding developmental anomalies is NOT true?",
+    "options": ["Dysplasia is abnormal organization of cells into tissues.", "Malformation occurs during formation of structures.", "Disruption results from morphological alterations after formation.", "Deformation is due to mechanical forces over time."],
+    "answer": 2,
+    "explanation": "This is the definition of a Malformation. A Disruption is a defect caused by the breakdown of, or interference with, an originally normal developmental process (e.g., amniotic band syndrome)."
+  },
+  {
+    "question": "Which statement about teratology is NOT true?",
+    "options": ["Susceptibility depends on the genotype of the conceptus.", "The maternal genome affects susceptibility.", "Susceptibility depends on the developmental stage.", "Manifestation depends on duration and not dose of the teratogen."],
+    "answer": 3,
+    "explanation": "Dose is a critical principle in teratology. The effects of a teratogen are often dose-dependent; a higher dose or longer exposure typically leads to more severe effects."
+  },
+  {
+    "question": "The incidence of major congenital anomalies is relatively higher in which organ?",
+    "options": ["Heart", "Kidneys", "Limbs", "All have similar rates"],
+    "answer": 0,
+    "explanation": "Congenital heart defects are among the most common types of major birth defects, reflecting the complex developmental process of heart formation."
+  },
+  {
+    "question": "Which of the following is not true about birth defects?",
+    "options": ["Short stature is a feature of Turner syndrome.", "A weak catlike cry indicates Achondroplasia.", "Gynecomastia may indicate Klinefelter's syndrome.", "Microtia is a minor anomaly."],
+    "answer": 1,
+    "explanation": "A weak, catlike cry is a classic feature of Cri-du-chat syndrome, caused by a deletion on chromosome 5. Achondroplasia is a skeletal dysplasia causing dwarfism and has no association with cry characteristics."
+  }
+];
+
+        // DOM elements
+        const questionElement = document.getElementById('question');
+        const optionsContainer = document.getElementById('options-container');
+        const currentQuestionElement = document.getElementById('current-question');
+        const totalQuestionsElement = document.getElementById('total-questions');
+        const progressBar = document.getElementById('progress-bar');
+        const prevButton = document.getElementById('prev-btn');
+        const nextButton = document.getElementById('next-btn');
+        const feedbackElement = document.getElementById('feedback');
+        const timerElement = document.getElementById('timer');
+        const explanationElement = document.getElementById('explanation');
+        const explanationTextElement = document.getElementById('explanation-text');
+        
+        // Quiz state
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedOption = null;
+        let timeStarted = null;
+        let timerInterval = null;
+        
+        // Initialize quiz
+        function initQuiz() {
+            totalQuestionsElement.textContent = questions.length;
+            loadQuestion();
+            startTimer();
+            
+            // Event listeners
+            prevButton.addEventListener('click', goToPreviousQuestion);
+            nextButton.addEventListener('click', goToNextQuestion);
+        }
+        
+        // Start timer
+        function startTimer() {
+            timeStarted = new Date();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+        
+        // Update timer
+        function updateTimer() {
+            const now = new Date();
+            const diff = new Date(now - timeStarted);
+            const minutes = diff.getMinutes().toString().padStart(2, '0');
+            const seconds = diff.getSeconds().toString().padStart(2, '0');
+            timerElement.textContent = `${minutes}:${seconds}`;
+        }
+        
+        // Load question
+        function loadQuestion() {
+            const question = questions[currentQuestionIndex];
+            questionElement.textContent = question.question;
+            currentQuestionElement.textContent = currentQuestionIndex + 1;
+            
+            // Update progress bar
+            progressBar.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+            
+            // Clear options
+            optionsContainer.innerHTML = '';
+            
+            // Add options
+            const optionLetters = ['A', 'B', 'C', 'D'];
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.classList.add('option');
+                
+                const optionLetter = document.createElement('div');
+                optionLetter.classList.add('option-letter');
+                optionLetter.textContent = optionLetters[index];
+                
+                const optionText = document.createElement('div');
+                optionText.textContent = option;
+                
+                optionElement.appendChild(optionLetter);
+                optionElement.appendChild(optionText);
+                
+                optionElement.addEventListener('click', () => selectOption(index));
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            // Update navigation buttons
+            prevButton.disabled = currentQuestionIndex === 0;
+            nextButton.textContent = currentQuestionIndex === questions.length - 1 ? 'Finish' : 'Next';
+            
+            // Clear feedback and selection
+            feedbackElement.textContent = '';
+            explanationElement.style.display = 'none';
+            selectedOption = null;
+        }
+        
+        // Select option
+        function selectOption(index) {
+            // Remove previous selection
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => option.classList.remove('selected'));
+            
+            // Set new selection
+            options[index].classList.add('selected');
+            selectedOption = index;
+            
+            // Check if correct
+            const isCorrect = index === questions[currentQuestionIndex].answer;
+            
+            // Show feedback
+            if (isCorrect) {
+                feedbackElement.textContent = 'Correct! 🎉';
+                feedbackElement.style.color = '#00b894';
+                score++;
+            } else {
+                feedbackElement.textContent = 'Incorrect 😢';
+                feedbackElement.style.color = '#d63031';
+                
+                // Show correct answer
+                options[questions[currentQuestionIndex].answer].classList.add('correct');
+            }
+            
+            // Show explanation
+            explanationTextElement.textContent = questions[currentQuestionIndex].explanation;
+            explanationElement.style.display = 'block';
+            
+            // Disable all options after selection
+            options.forEach(option => {
+                option.style.pointerEvents = 'none';
+            });
+            
+            // Enable next button
+            nextButton.disabled = false;
+        }
+        
+        // Navigate to next question
+        function goToNextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+        
+        // Navigate to previous question
+        function goToPreviousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        }
+        
+        // Show results
+        function showResults() {
+            clearInterval(timerInterval);
+            const quizContainer = document.querySelector('.quiz-container');
+            quizContainer.classList.add('pulse');
+            
+            const now = new Date();
+            const diff = new Date(now - timeStarted);
+            const minutes = diff.getMinutes().toString().padStart(2, '0');
+            const seconds = diff.getSeconds().toString().padStart(2, '0');
+            
+            quizContainer.innerHTML = `
+                <div class="quiz-completed">
+                    <div class="score-text">Your Score</div>
+                    <div class="score-value">${score}/${questions.length}</div>
+                    <div class="score-text">Time: ${minutes}:${seconds}</div>
+                    <button id="restart-btn">
+                        <i class="fas fa-redo"></i> Restart Quiz
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('restart-btn').addEventListener('click', () => {
+                currentQuestionIndex = 0;
+                score = 0;
+                quizContainer.classList.remove('pulse');
+                initQuiz();
+            });
+        }
+        
+        // Start the quiz
+        initQuiz();
+    </script>
+</body>
+</html>
