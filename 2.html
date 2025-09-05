@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Embryology Quiz</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a192f, #0d1b2a);
+            color: #e0e1dd;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .quiz-container {
+            width: 100%;
+            max-width: 900px;
+            background: rgba(13, 27, 42, 0.9);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(95, 158, 160, 0.3);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(95, 158, 160, 0.5);
+        }
+        
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #5f9ea0;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+        
+        .subtitle {
+            font-size: 18px;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+        
+        .instructions {
+            font-size: 16px;
+            opacity: 0.7;
+            margin-top: 10px;
+        }
+        
+        .progress-container {
+            background: rgba(224, 225, 221, 0.1);
+            border-radius: 10px;
+            height: 8px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #5f9ea0, #7cb9e8);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .question-number {
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #7cb9e8;
+            font-weight: 600;
+        }
+        
+        .question-text {
+            font-size: 22px;
+            font-weight: 500;
+            margin-bottom: 25px;
+            line-height: 1.4;
+        }
+        
+        .options-container {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+        
+        .option {
+            background: rgba(224, 225, 221, 0.05);
+            border: 2px solid rgba(95, 158, 160, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 17px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .option:hover {
+            background: rgba(95, 158, 160, 0.2);
+            transform: translateY(-2px);
+            border-color: #5f9ea0;
+        }
+        
+        .option.selected {
+            background: rgba(95, 158, 160, 0.3);
+            border-color: #5f9ea0;
+            box-shadow: 0 0 15px rgba(95, 158, 160, 0.3);
+        }
+        
+        .option.correct {
+            background: rgba(0, 184, 148, 0.2);
+            border-color: #00b894;
+        }
+        
+        .option.incorrect {
+            background: rgba(214, 48, 49, 0.2);
+            border-color: #d63031;
+        }
+        
+        .option-letter {
+            font-weight: bold;
+            margin-right: 12px;
+            color: #5f9ea0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(95, 158, 160, 0.2);
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            background: rgba(95, 158, 160, 0.3);
+            color: #e0e1dd;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        #prev-btn {
+            background: rgba(95, 158, 160, 0.2);
+        }
+        
+        #prev-btn:hover:not(:disabled) {
+            background: rgba(95, 158, 160, 0.4);
+        }
+        
+        #next-btn {
+            background: linear-gradient(90deg, #5f9ea0, #7cb9e8);
+        }
+        
+        #next-btn:hover {
+            background: linear-gradient(90deg, #4a8c8e, #6aa6d6);
+            box-shadow: 0 0 15px rgba(95, 158, 160, 0.4);
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .quiz-completed {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .score-text {
+            font-size: 24px;
+            margin-bottom: 16px;
+            color: #e0e1dd;
+        }
+        
+        .score-value {
+            font-size: 48px;
+            font-weight: 700;
+            color: #5f9ea0;
+            margin-bottom: 30px;
+        }
+        
+        #restart-btn {
+            background: linear-gradient(90deg, #5f9ea0, #7cb9e8);
+            padding: 16px 40px;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+        
+        #restart-btn:hover {
+            background: linear-gradient(90deg, #4a8c8e, #6aa6d6);
+            box-shadow: 0 0 20px rgba(95, 158, 160, 0.5);
+        }
+        
+        .feedback {
+            text-align: center;
+            margin-top: 20px;
+            font-weight: 500;
+            min-height: 24px;
+            color: #7cb9e8;
+        }
+        
+        .explanation {
+            background: rgba(95, 158, 160, 0.1);
+            border-left: 4px solid #5f9ea0;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 25px;
+            display: none;
+        }
+        
+        .explanation-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #5f9ea0;
+        }
+        
+        .timer {
+            text-align: right;
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: #5f9ea0;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .pulse {
+            animation: pulse 0.5s;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+        
+        @media (max-width: 600px) {
+            .quiz-container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .question-text {
+                font-size: 19px;
+            }
+            
+            .option {
+                padding: 14px;
+                font-size: 16px;
+            }
+            
+            button {
+                padding: 12px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="timer">
+            <i class="fas fa-clock"></i>
+            <span id="timer">00:00</span>
+        </div>
+        
+        <div class="header">
+            <h1>Embryology Quiz</h1>
+            <div class="subtitle">Professional Questions with Detailed Explanations</div>
+            <div class="instructions">Based on your PDF content and Langman's Medical Embryology</div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div class="question-number">Question <span id="current-question">1</span> of <span id="total-questions">60</span></div>
+        
+        <div class="question-text" id="question">During which week does the embryonic period proper begin?</div>
+        
+        <div class="options-container" id="options-container">
+            <!-- Options will be inserted here by JavaScript -->
+        </div>
+        
+        <div class="explanation" id="explanation">
+            <div class="explanation-title">Explanation:</div>
+            <div id="explanation-text"></div>
+        </div>
+        
+        <div class="feedback" id="feedback"></div>
+        
+        <div class="navigation">
+            <button id="prev-btn" disabled>
+                <i class="fas fa-arrow-left"></i> Previous
+            </button>
+            <button id="next-btn">
+                Next <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Quiz questions with explanations
+        const questions =
+        [
+  {
+    "question": "During which week does the embryonic period proper begin?",
+    "options": ["Week 3", "Week 4", "Week 5", "Week 8"],
+    "answer": 1,
+    "explanation": "The embryonic period spans weeks 4-8, characterized by organogenesis and high susceptibility to teratogens. This is when all major organs begin to form."
+  },
+  {
+    "question": "What process establishes the three germ layers?",
+    "options": ["Neurulation", "Gastrulation", "Folding", "Implantation"],
+    "answer": 1,
+    "explanation": "Gastrulation occurs during week 3 via the primitive streak, forming ectoderm, mesoderm, and endoderm. This process transforms the bilaminar disc into a trilaminar disc."
+  },
+  {
+    "question": "Which structure induces neural tube formation?",
+    "options": ["Somites", "Notochord", "Primitive streak", "Pharyngeal arches"],
+    "answer": 1,
+    "explanation": "The notochord secretes signaling molecules (like Sonic Hedgehog) that induce overlying ectoderm to form the neural plate, which then folds to create the neural tube."
+  },
+  {
+    "question": "Failure of cranial neuropore closure results in:",
+    "options": ["Spina bifida", "Anencephaly", "Hydrocephalus", "Encephalocele"],
+    "answer": 1,
+    "explanation": "Cranial neuropore closure occurs at day 25; failure causes anencephaly where the brain fails to develop, a condition incompatible with postnatal life."
+  },
+  {
+    "question": "Somites differentiate into all EXCEPT:",
+    "options": ["Vertebrae", "Dermis", "Kidneys", "Skeletal muscle"],
+    "answer": 2,
+    "explanation": "Somites form sclerotome (vertebrae), dermatome (dermis), and myotome (muscle). Kidneys derive from intermediate mesoderm, not somites."
+  },
+  {
+    "question": "Lateral folding of the embryo incorporates the endoderm into:",
+    "options": ["Neural tube", "Gut tube", "Heart tube", "Notochord"],
+    "answer": 1,
+    "explanation": "Lateral folding transforms the flat embryonic disc into a cylindrical embryo, incorporating endoderm into the primitive gut."
+  },
+  {
+    "question": "Pharyngeal arches are first visible at:",
+    "options": ["24 days", "28 days", "32 days", "36 days"],
+    "answer": 0,
+    "explanation": "The first and second pharyngeal arches appear by day 24, contributing to facial and neck structures."
+  },
+  {
+    "question": "Umbilical intestinal herniation occurs during:",
+    "options": ["Week 4", "Week 6", "Week 8", "Week 10"],
+    "answer": 1,
+    "explanation": "Rapid intestinal growth causes physiological herniation into the umbilical cord during week 6."
+  },
+  {
+    "question": "The most critical period for teratogen-induced cardiac malformations is:",
+    "options": ["Weeks 3-4", "Weeks 4-8", "Weeks 8-12", "Weeks 12-16"],
+    "answer": 1,
+    "explanation": "Cardiac development occurs primarily during weeks 4-8, making this the critical period for defects."
+  },
+  {
+    "question": "Which germ layer gives rise to the liver parenchyma?",
+    "options": ["Ectoderm", "Mesoderm", "Endoderm", "Trophoblast"],
+    "answer": 2,
+    "explanation": "The liver parenchyma derives from endodermal epithelial proliferation into surrounding mesoderm."
+  },
+  {
+    "question": "The apical ectodermal ridge regulates:",
+    "options": ["Neural tube closure", "Limb patterning", "Heart looping", "Somite differentiation"],
+    "answer": 1,
+    "explanation": "This ridge secretes FGFs controlling proximal-distal limb development."
+  },
+  {
+    "question": "Cleft lip results from failure of fusion between:",
+    "options": ["Maxillary and medial nasal processes", "Mandibular and maxillary processes", "Lateral nasal and maxillary processes", "Frontonasal and mandibular processes"],
+    "answer": 0,
+    "explanation": "Fusion occurs during weeks 6-7; failure causes cleft lip/palate."
+  },
+  {
+    "question": "The most common site of ectopic pregnancy is:",
+    "options": ["Ovary", "Abdominal cavity", "Uterine tube", "Cervix"],
+    "answer": 2,
+    "explanation": "Tubal implants account for ~95% of ectopic pregnancies, often causing rupture."
+  },
+  {
+    "question": "Diethylstilbestrol exposure in utero causes:",
+    "options": ["Limb defects", "Cardiac anomalies", "Vaginal clear cell adenocarcinoma", "Neural tube defects"],
+    "answer": 2,
+    "explanation": "DES daughters show increased risk of this rare cancer due to uterine lining changes."
+  },
+  {
+    "question": "Fetal alcohol syndrome is characterized by all EXCEPT:",
+    "options": ["Microcephaly", "Long palpebral fissures", "Intellectual disability", "Smooth philtrum"],
+    "answer": 1,
+    "explanation": "FAS features include short palpebral fissures, smooth philtrum, and cognitive impairment."
+  },
+  {
+    "question": "The umbilical cord normally contains:",
+    "options": ["Two arteries and one vein", "Two veins and one artery", "Two arteries and two veins", "One artery and one vein"],
+    "answer": 0,
+    "explanation": "The umbilical vein carries oxygenated blood to the fetus; arteries return deoxygenated blood."
+  },
+  {
+    "question": "Which vitamin deficiency increases neural tube defect risk?",
+    "options": ["Vitamin A", "Vitamin B9 (Folate)", "Vitamin C", "Vitamin D"],
+    "answer": 1,
+    "explanation": "Folate supplementation reduces NTD risk by 70% by supporting rapid cell division."
+  },
+  {
+    "question": "Teratogen susceptibility is highest during:",
+    "options": ["Pre-implantation period", "Embryonic period", "Fetal period", "Neonatal period"],
+    "answer": 1,
+    "explanation": "Weeks 4-8 involve organogenesis, with maximal sensitivity to teratogens."
+  },
+  {
+    "question": "The definitive placenta includes:",
+    "options": ["Decidua basalis and chorion frondosum", "Decidua capsularis and chorion laeve", "Decidua parietalis and amnion", "Decidua basalis and amnion"],
+    "answer": 0,
+    "explanation": "The functional placenta combines maternal decidua basalis with fetal chorionic villi."
+  },
+  {
+    "question": "Monozygotic twinning occurs after fertilization and may involve:",
+    "options": ["Two placentas and two amniotic sacs", "One placenta and one amniotic sac", "Either A or B depending on timing", "Always two placentas"],
+    "answer": 2,
+    "explanation": "Early splitting (≤3 days) gives dichorionic/diamniotic; later splitting yields monochorionic/monoamniotic."
+  },
+  {
+    "question": "Neural crest cells contribute to all EXCEPT:",
+    "options": ["Dorsal root ganglia", "Melanocytes", "Adrenal cortex", "Cardiac outflow tract septum"],
+    "answer": 2,
+    "explanation": "Neural crest forms adrenal medulla; cortex derives from mesoderm."
+  },
+  {
+    "question": "The allantois becomes the:",
+    "options": ["Urinary bladder", "Urachus", "Umbilical artery", "Vitelline duct"],
+    "answer": 1,
+    "explanation": "The allantois normally obliterates, forming the median umbilical ligament; persistence causes urachal fistula."
+  },
+  {
+    "question": "Meckel's diverticulum results from:",
+    "options": ["Persistent vitelline duct", "Persistent allantois", "Persistent notochord", "Persistent neuropore"],
+    "answer": 0,
+    "explanation": "This ileal outpouching represents incomplete vitelline duct closure."
+  },
+  {
+    "question": "The most common congenital heart defect is:",
+    "options": ["Tetralogy of Fallot", "Ventricular septal defect", "Atrial septal defect", "Transposition of great arteries"],
+    "answer": 1,
+    "explanation": "VSDs account for 25% of CHDs, often in the membranous septum."
+  },
+  {
+    "question": "Cystic hygromas are associated with:",
+    "options": ["Turner syndrome (45,X)", "Down syndrome (21 trisomy)", "Edwards syndrome (18 trisomy)", "Patau syndrome (13 trisomy)"],
+    "answer": 0,
+    "explanation": "Lymphatic malformations in the neck arise from failed jugular lymph sac development."
+  },
+  {
+    "question": "Holoprosencephaly is often linked to:",
+    "options": ["Maternal diabetes", "Alcohol exposure", "Chromosome 13 anomalies", "All of the above"],
+    "answer": 3,
+    "explanation": "Failed forebrain division involves multiple genetic and environmental factors."
+  },
+  {
+    "question": "The ductus arteriosus:",
+    "options": ["Connects pulmonary artery to aorta", "Connects umbilical vein to IVC", "Becomes the ligamentum teres", "Closes immediately after birth"],
+    "answer": 0,
+    "explanation": "This shunt bypasses fetal lungs; persistence causes PDA."
+  },
+  {
+    "question": "Erythropoiesis begins first in the:",
+    "options": ["Yolk sac", "Liver", "Spleen", "Bone marrow"],
+    "answer": 0,
+    "explanation": "Primitive nucleated RBCs appear in yolk sac blood islands by week 3."
+  },
+  {
+    "question": "The most sensitive period for limb reduction defects is:",
+    "options": ["Weeks 4-5", "Weeks 6-7", "Weeks 8-9", "Weeks 10-11"],
+    "answer": 1,
+    "explanation": "Limb buds form at week 4; differentiation occurs weeks 6-7."
+  },
+  {
+    "question": "Amniotic band syndrome may cause:",
+    "options": ["Digital amputations", "Craniofacial clefts", "Body wall defects", "All of the above"],
+    "answer": 3,
+    "explanation": "Mesenchymal bands entangle developing parts, causing disruptive defects."
+  },
+  {
+    "question": "The primary organizer in early development is the:",
+    "options": ["Primitive streak", "Notochord", "Neural crest", "Prechordal plate"],
+    "answer": 1,
+    "explanation": "The notochord induces neural tube formation and axial patterning."
+  },
+  {
+    "question": "The thyroid gland develops from:",
+    "options": ["Pharyngeal pouch 1", "Pharyngeal pouch 2", "Pharyngeal pouch 3", "Pharyngeal pouch 4"],
+    "answer": 3,
+    "explanation": "The thyroid diverticulum arises from the floor of the pharynx."
+  },
+  {
+    "question": "Treacher Collins syndrome involves defects in:",
+    "options": ["Pharyngeal arch 1 derivatives", "Pharyngeal arch 2 derivatives", "Pharyngeal arch 3 derivatives", "Pharyngeal arch 4 derivatives"],
+    "answer": 0,
+    "explanation": "Mandibulofacial dysostosis affects neural crest-derived structures."
+  },
+  {
+    "question": "The most common type of tracheoesophageal fistula is:",
+    "options": ["Proximal atresia with distal fistula", "Distal atresia with proximal fistula", "H-type fistula", "Esophageal atresia alone"],
+    "answer": 0,
+    "explanation": "This type accounts for 85% of TEF cases."
+  },
+  {
+    "question": "Hirschsprung's disease results from:",
+    "options": ["Failed neural crest migration", "Failed mesoderm formation", "Failed endoderm proliferation", "Failed ectoderm differentiation"],
+    "answer": 0,
+    "explanation": "Absence of enteric ganglia causes functional intestinal obstruction."
+  },
+  {
+    "question": "The ureteric bud gives rise to the:",
+    "options": ["Renal glomeruli", "Collecting system", "Nephron tubules", "Renal cortex"],
+    "answer": 1,
+    "explanation": "The ureteric bud induces metanephric mesenchyme and forms calyces, pelvis, and ureters."
+  },
+  {
+    "question": "Testicular descent requires:",
+    "options": ["Gubernaculum", "Processus vaginalis", "Androgens", "All of the above"],
+    "answer": 3,
+    "explanation": "Cryptorchidism may result from defects in any component."
+  },
+  {
+    "question": "The most common anomaly of the genital system is:",
+    "options": ["Hypospadias", "Epispadias", "Uterine didelphys", "Cryptorchidism"],
+    "answer": 0,
+    "explanation": "Faulty urethral fold fusion causes abnormal urethral opening in males."
+  },
+  {
+    "question": "The foramen ovale becomes the:",
+    "options": ["Fossa ovalis", "Ligamentum arteriosum", "Ligamentum teres", "Median umbilical ligament"],
+    "answer": 0,
+    "explanation": "This interatrial shunt closes functionally at birth."
+  },
+  {
+    "question": "Maternal rubella infection causes:",
+    "options": ["Cardiac defects", "Cataracts", "Deafness", "All of the above"],
+    "answer": 3,
+    "explanation": "The virus is teratogenic during organogenesis, especially weeks 4-8."
+  },
+  {
+    "question": "ACE inhibitors are teratogenic for:",
+    "options": ["Renal defects", "Cardiac defects", "Neural tube defects", "Limb defects"],
+    "answer": 0,
+    "explanation": "Fetal hypotension leads to renal tubular dysgenesis."
+  },
+  {
+    "question": "Vitamin A excess causes:",
+    "options": ["Craniofacial abnormalities", "Limb abnormalities", "Central nervous system defects", "All of the above"],
+    "answer": 3,
+    "explanation": "Retinoic acid disrupts HOX gene expression."
+  },
+  {
+    "question": "The most common chromosomal anomaly is:",
+    "options": ["Turner syndrome", "Klinefelter syndrome", "Down syndrome", "Edwards syndrome"],
+    "answer": 2,
+    "explanation": "Trisomy 21 occurs in ~1:800 live births."
+  },
+  {
+    "question": "Neural tube defects can be detected by:",
+    "options": ["Maternal serum AFP", "Ultrasound", "Amniotic fluid AFP", "All of the above"],
+    "answer": 3,
+    "explanation": "Elevated AFP suggests open defects; confirmed by imaging."
+  },
+  {
+    "question": "The most critical period for CNS teratogenesis is:",
+    "options": ["Weeks 3-4", "Weeks 5-6", "Weeks 7-8", "Weeks 9-10"],
+    "answer": 0,
+    "explanation": "Neural tube closure occurs during this period."
+  },
+  {
+    "question": "Diabetic embryopathy often includes:",
+    "options": ["Caudal regression syndrome", "Neural tube defects", "Cardiac defects", "All of the above"],
+    "answer": 3,
+    "explanation": "Hyperglycemia disrupts multiple developmental processes."
+  },
+  {
+    "question": "The most common neural tube defect is:",
+    "options": ["Anencephaly", "Spina bifida occulta", "Spina bifida cystica", "Encephalocele"],
+    "answer": 1,
+    "explanation": "Often asymptomatic with only vertebral arch defects."
+  },
+  {
+    "question": "Folic acid supplementation should begin:",
+    "options": ["At conception", "1 month before conception", "3 months before conception", "During the embryonic period"],
+    "answer": 2,
+    "explanation": "Neural tube closure occurs before many women know they're pregnant."
+  },
+  {
+    "question": "The most common cause of intellectual disability is:",
+    "options": ["Fetal alcohol syndrome", "Down syndrome", "Fragile X syndrome", "Cerebral palsy"],
+    "answer": 1,
+    "explanation": "Trisomy 21 causes variable cognitive impairment."
+  },
+  {
+    "question": "Potter sequence involves:",
+    "options": ["Oligohydramnios", "Pulmonary hypoplasia", "Characteristic facies", "All of the above"],
+    "answer": 3,
+    "explanation": "Renal agenesis leads to reduced amniotic fluid."
+  },
+  {
+    "question": "The most common renal anomaly is:",
+    "options": ["Renal agenesis", "Horseshoe kidney", "Polycystic kidney disease", "Duplex collecting system"],
+    "answer": 1,
+    "explanation": "Fusion of inferior poles during ascent."
+  },
+  {
+    "question": "Esophageal atresia is associated with:",
+    "options": ["Tracheoesophageal fistula", "Polyhydramnios", "VACTERL association", "All of the above"],
+    "answer": 3,
+    "explanation": "Failed foregut separation causes these related defects."
+  },
+  {
+    "question": "The most common diaphragmatic defect is:",
+    "options": ["Bochdalek hernia", "Morgagni hernia", "Eventration", "Central tendon defect"],
+    "answer": 0,
+    "explanation": "Posterolateral defect allowing abdominal contents into thorax."
+  },
+  {
+    "question": "Omphalocele differs from gastroschisis in:",
+    "options": ["Having a covering membrane", "Location relative to umbilicus", "Associated anomalies", "All of the above"],
+    "answer": 3,
+    "explanation": "Omphalocele is central and covered; gastroschisis is lateral and uncovered."
+  },
+  {
+    "question": "The most common limb reduction defect is:",
+    "options": ["Radial aplasia", "Phocomelia", "Amelia", "Longitudinal deficiency"],
+    "answer": 0,
+    "explanation": "Often associated with thrombocytopenia absent radius (TAR) syndrome."
+  },
+  {
+    "question": "Talipes equinovarus (clubfoot) involves:",
+    "options": ["Foot inversion", "Foot adduction", "Ankle plantar flexion", "All of the above"],
+    "answer": 3,
+    "explanation": "Multifactorial etiology with genetic and environmental components."
+  },
+  {
+    "question": "Developmental dysplasia of the hip is:",
+    "options": ["More common in females", "More common in breech delivery", "Associated with joint laxity", "All of the above"],
+    "answer": 3,
+    "explanation": "Shallow acetabulum allows femoral head dislocation."
+  },
+  {
+    "question": "The most common craniosynostosis is:",
+    "options": ["Sagittal suture", "Coronal suture", "Metopic suture", "Lambdoid suture"],
+    "answer": 0,
+    "explanation": "Premature fusion causes scaphocephaly."
+  },
+  {
+    "question": "Arnold-Chiari malformation involves:",
+    "options": ["Cerebellar tonsillar herniation", "Hydrocephalus", "Syringomyelia", "All of the above"],
+    "answer": 3,
+    "explanation": "Type II is associated with myelomeningocele."
+  },
+  {
+    "question": "Dandy-Walker malformation features:",
+    "options": ["Cerebellar vermis hypoplasia", "Cystic fourth ventricle", "Hydrocephalus", "All of the above"],
+    "answer": 3,
+    "explanation": "Abnormal roof of the fourth ventricle development."
+  }
+            // Additional questions would be added here in a real implementation
+        ];
+
+        // DOM elements
+        const questionElement = document.getElementById('question');
+        const optionsContainer = document.getElementById('options-container');
+        const currentQuestionElement = document.getElementById('current-question');
+        const totalQuestionsElement = document.getElementById('total-questions');
+        const progressBar = document.getElementById('progress-bar');
+        const prevButton = document.getElementById('prev-btn');
+        const nextButton = document.getElementById('next-btn');
+        const feedbackElement = document.getElementById('feedback');
+        const timerElement = document.getElementById('timer');
+        const explanationElement = document.getElementById('explanation');
+        const explanationTextElement = document.getElementById('explanation-text');
+        
+        // Quiz state
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedOption = null;
+        let timeStarted = null;
+        let timerInterval = null;
+        
+        // Initialize quiz
+        function initQuiz() {
+            totalQuestionsElement.textContent = questions.length;
+            loadQuestion();
+            startTimer();
+            
+            // Event listeners
+            prevButton.addEventListener('click', goToPreviousQuestion);
+            nextButton.addEventListener('click', goToNextQuestion);
+        }
+        
+        // Start timer
+        function startTimer() {
+            timeStarted = new Date();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+        
+        // Update timer
+        function updateTimer() {
+            const now = new Date();
+            const diff = new Date(now - timeStarted);
+            const minutes = diff.getMinutes().toString().padStart(2, '0');
+            const seconds = diff.getSeconds().toString().padStart(2, '0');
+            timerElement.textContent = `${minutes}:${seconds}`;
+        }
+        
+        // Load question
+        function loadQuestion() {
+            const question = questions[currentQuestionIndex];
+            questionElement.textContent = question.question;
+            currentQuestionElement.textContent = currentQuestionIndex + 1;
+            
+            // Update progress bar
+            progressBar.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+            
+            // Clear options
+            optionsContainer.innerHTML = '';
+            
+            // Add options
+            const optionLetters = ['A', 'B', 'C', 'D'];
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.classList.add('option');
+                
+                const optionLetter = document.createElement('div');
+                optionLetter.classList.add('option-letter');
+                optionLetter.textContent = optionLetters[index];
+                
+                const optionText = document.createElement('div');
+                optionText.textContent = option;
+                
+                optionElement.appendChild(optionLetter);
+                optionElement.appendChild(optionText);
+                
+                optionElement.addEventListener('click', () => selectOption(index));
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            // Update navigation buttons
+            prevButton.disabled = currentQuestionIndex === 0;
+            nextButton.textContent = currentQuestionIndex === questions.length - 1 ? 'Finish' : 'Next';
+            
+            // Clear feedback and selection
+            feedbackElement.textContent = '';
+            explanationElement.style.display = 'none';
+            selectedOption = null;
+        }
+        
+        // Select option
+        function selectOption(index) {
+            // Remove previous selection
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => option.classList.remove('selected'));
+            
+            // Set new selection
+            options[index].classList.add('selected');
+            selectedOption = index;
+            
+            // Check if correct
+            const isCorrect = index === questions[currentQuestionIndex].answer;
+            
+            // Show feedback
+            if (isCorrect) {
+                feedbackElement.textContent = 'Correct! 🎉';
+                feedbackElement.style.color = '#00b894';
+                score++;
+            } else {
+                feedbackElement.textContent = 'Incorrect 😢';
+                feedbackElement.style.color = '#d63031';
+                
+                // Show correct answer
+                options[questions[currentQuestionIndex].answer].classList.add('correct');
+            }
+            
+            // Show explanation
+            explanationTextElement.textContent = questions[currentQuestionIndex].explanation;
+            explanationElement.style.display = 'block';
+            
+            // Disable all options after selection
+            options.forEach(option => {
+                option.style.pointerEvents = 'none';
+            });
+            
+            // Enable next button
+            nextButton.disabled = false;
+        }
+        
+        // Navigate to next question
+        function goToNextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+        
+        // Navigate to previous question
+        function goToPreviousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        }
+        
+        // Show results
+        function showResults() {
+            clearInterval(timerInterval);
+            const quizContainer = document.querySelector('.quiz-container');
+            quizContainer.classList.add('pulse');
+            
+            const now = new Date();
+            const diff = new Date(now - timeStarted);
+            const minutes = diff.getMinutes().toString().padStart(2, '0');
+            const seconds = diff.getSeconds().toString().padStart(2, '0');
+            
+            quizContainer.innerHTML = `
+                <div class="quiz-completed">
+                    <div class="score-text">Your Score</div>
+                    <div class="score-value">${score}/${questions.length}</div>
+                    <div class="score-text">Time: ${minutes}:${seconds}</div>
+                    <button id="restart-btn">
+                        <i class="fas fa-redo"></i> Restart Quiz
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('restart-btn').addEventListener('click', () => {
+                currentQuestionIndex = 0;
+                score = 0;
+                quizContainer.classList.remove('pulse');
+                initQuiz();
+            });
+        }
+        
+        // Start the quiz
+        initQuiz();
+    </script>
+</body>
+</html>
