@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Embryology Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a192f, #0d1b2a);
+            color: #e0e1dd;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(13, 27, 42, 0.8);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(95, 158, 160, 0.3);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(95, 158, 160, 0.5);
+        }
+        
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #5f9ea0;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+        
+        .subtitle {
+            font-size: 18px;
+            opacity: 0.8;
+        }
+        
+        .progress-container {
+            background: rgba(224, 225, 221, 0.1);
+            border-radius: 10px;
+            height: 8px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #5f9ea0, #7cb9e8);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .question-number {
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #7cb9e8;
+            font-weight: 600;
+        }
+        
+        .question-text {
+            font-size: 22px;
+            font-weight: 500;
+            margin-bottom: 25px;
+            line-height: 1.4;
+        }
+        
+        .options-container {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+        
+        .option {
+            background: rgba(224, 225, 221, 0.05);
+            border: 2px solid rgba(95, 158, 160, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 17px;
+        }
+        
+        .option:hover {
+            background: rgba(95, 158, 160, 0.2);
+            transform: translateY(-2px);
+            border-color: #5f9ea0;
+        }
+        
+        .option.selected {
+            background: rgba(95, 158, 160, 0.3);
+            border-color: #5f9ea0;
+            box-shadow: 0 0 15px rgba(95, 158, 160, 0.3);
+        }
+        
+        .option.correct {
+            background: rgba(0, 184, 148, 0.2);
+            border-color: #00b894;
+        }
+        
+        .option.incorrect {
+            background: rgba(214, 48, 49, 0.2);
+            border-color: #d63031;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            background: rgba(95, 158, 160, 0.3);
+            color: #e0e1dd;
+            font-size: 16px;
+        }
+        
+        #prev-btn {
+            background: rgba(95, 158, 160, 0.2);
+        }
+        
+        #prev-btn:hover:not(:disabled) {
+            background: rgba(95, 158, 160, 0.4);
+        }
+        
+        #next-btn {
+            background: linear-gradient(90deg, #5f9ea0, #7cb9e8);
+        }
+        
+        #next-btn:hover {
+            background: linear-gradient(90deg, #4a8c8e, #6aa6d6);
+            box-shadow: 0 0 15px rgba(95, 158, 160, 0.4);
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .quiz-completed {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .score-text {
+            font-size: 24px;
+            margin-bottom: 16px;
+            color: #e0e1dd;
+        }
+        
+        .score-value {
+            font-size: 48px;
+            font-weight: 700;
+            color: #5f9ea0;
+            margin-bottom: 30px;
+        }
+        
+        #restart-btn {
+            background: linear-gradient(90deg, #5f9ea0, #7cb9e8);
+            padding: 16px 40px;
+            font-size: 18px;
+        }
+        
+        #restart-btn:hover {
+            background: linear-gradient(90deg, #4a8c8e, #6aa6d6);
+            box-shadow: 0 0 20px rgba(95, 158, 160, 0.5);
+        }
+        
+        .feedback {
+            text-align: center;
+            margin-top: 20px;
+            font-weight: 500;
+            min-height: 24px;
+            color: #7cb9e8;
+        }
+        
+        .timer {
+            text-align: right;
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: #5f9ea0;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .pulse {
+            animation: pulse 0.5s;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+        
+        @media (max-width: 600px) {
+            .quiz-container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .question-text {
+                font-size: 19px;
+            }
+            
+            .option {
+                padding: 14px;
+                font-size: 16px;
+            }
+            
+            button {
+                padding: 12px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="timer" id="timer">Time: 00:00</div>
+        
+        <div class="header">
+            <h1>Embryology Quiz</h1>
+            <div class="subtitle">Weeks 4-8 Development</div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div class="question-number">Question <span id="current-question">1</span> of <span id="total-questions">100</span></div>
+        
+        <div class="question-text" id="question">During which week does the embryonic period begin?</div>
+        
+        <div class="options-container" id="options-container">
+            <!-- Options will be inserted here by JavaScript -->
+        </div>
+        
+        <div class="feedback" id="feedback"></div>
+        
+        <div class="navigation">
+            <button id="prev-btn" disabled>Previous</button>
+            <button id="next-btn">Next</button>
+        </div>
+    </div>
+
+    <script>
+        // Quiz questions covering pages 131-182
+        const questions = [
+            {
+                question: "During which week does the embryonic period begin?",
+                options: ["Week 3", "Week 4", "Week 5", "Week 8"],
+                answer: 0
+            },
+            {
+                question: "What is the primary characteristic of the embryonic period?",
+                options: ["Rapid growth", "Organogenesis", "Cell differentiation", "Implantation"],
+                answer: 1
+            },
+            {
+                question: "Which of the following is NOT a process occurring during the embryonic period?",
+                options: ["Cell division", "Cell migration", "Programmed cell death", "Gametogenesis"],
+                answer: 3
+            },
+            {
+                question: "What structure defines the longitudinal axis of the embryo?",
+                options: ["Neural tube", "Notochord", "Primitive streak", "Somites"],
+                answer: 1
+            },
+            {
+                question: "The process by which the bilaminar embryonic disc becomes trilaminar is called:",
+                options: ["Neurulation", "Gastrulation", "Folding", "Implantation"],
+                answer: 1
+            },
+            {
+                question: "Which structure appears first during the third week of development?",
+                options: ["Notochord", "Neural tube", "Primitive streak", "Somites"],
+                answer: 2
+            },
+            {
+                question: "The primitive streak is formed from which cells?",
+                options: ["Hypoblast cells", "Epiblast cells", "Trophoblast cells", "Endoderm cells"],
+                answer: 1
+            },
+            {
+                question: "What does the primitive streak enable identification of?",
+                options: ["Craniocaudal axis", "Ventral surface", "Left side", "All of the above"],
+                answer: 3
+            },
+            {
+                question: "Cells migrating through the primitive pit form which structure?",
+                options: ["Neural tube", "Notochord", "Somites", "Heart tube"],
+                answer: 1
+            },
+            {
+                question: "The notochord induces the formation of which structure?",
+                options: ["Primitive streak", "Neural plate", "Somites", "Lateral plate mesoderm"],
+                answer: 1
+            },
+            {
+                question: "What is the fate of the notochord?",
+                options: ["Forms the spinal cord", "Becomes vertebral bodies", "Degenerates completely", "Forms parts of IVDs"],
+                answer: 3
+            },
+            {
+                question: "Neurulation refers to the formation of the:",
+                options: ["Notochord", "Neural tube", "Somites", "Primitive streak"],
+                answer: 1
+            },
+            {
+                question: "The neural plate thickens from which germ layer?",
+                options: ["Ectoderm", "Mesoderm", "Endoderm", "Trophoblast"],
+                answer: 0
+            },
+            {
+                question: "The neural groove forms between which structures?",
+                options: ["Neural folds", "Somites", "Pharyngeal arches", "Lateral plates"],
+                answer: 0
+            },
+            {
+                question: "When does the cranial neuropore close?",
+                options: ["Day 22", "Day 25", "Day 27", "Day 30"],
+                answer: 1
+            },
+            {
+                question: "Failure of the cranial neuropore to close results in:",
+                options: ["Spina bifida", "Anencephaly", "Hydrocephalus", "Encephalocele"],
+                answer: 1
+            },
+            {
+                question: "When does the caudal neuropore close?",
+                options: ["Day 22", "Day 25", "Day 27", "Day 30"],
+                answer: 2
+            },
+            {
+                question: "Failure of the caudal neuropore to close results in:",
+                options: ["Anencephaly", "Spina bifida", "Hydrocephalus", "Rachischisis"],
+                answer: 1
+            },
+            {
+                question: "Neural crest cells give rise to all EXCEPT:",
+                options: ["Peripheral nervous system", "Adrenal medulla", "Vertebrae", "Odontoblasts"],
+                answer: 2
+            },
+            {
+                question: "The intraembryonic mesoderm differentiates into all EXCEPT:",
+                options: ["Paraxial mesoderm", "Intermediate mesoderm", "Lateral mesoderm", "Neural mesoderm"],
+                answer: 3
+            },
+            {
+                question: "Somites develop from which type of mesoderm?",
+                options: ["Paraxial mesoderm", "Intermediate mesoderm", "Lateral mesoderm", "Splanchnic mesoderm"],
+                answer: 0
+            },
+            {
+                question: "How many pairs of somites are formed by the end of the fifth week?",
+                options: ["20-22", "30-32", "42-44", "50-52"],
+                answer: 2
+            },
+            {
+                question: "The ventromedial part of the somite becomes the:",
+                options: ["Dermatome", "Myotome", "Sclerotome", "Syndetome"],
+                answer: 2
+            },
+            {
+                question: "Which part of the somite gives rise to the vertebrae?",
+                options: ["Dermatome", "Myotome", "Sclerotome", "Syndetome"],
+                answer: 2
+            },
+            {
+                question: "The dorsolateral part of the somite is called:",
+                options: ["Sclerotome", "Dermomyotome", "Myotome", "Dermatome"],
+                answer: 1
+            },
+            {
+                question: "The intermediate mesoderm gives rise to the:",
+                options: ["Heart", "Kidneys", "Limbs", "Gut tube"],
+                answer: 1
+            },
+            {
+                question: "The lateral plate mesoderm splits into two layers called:",
+                options: ["Ectoderm and endoderm", "Paraxial and intermediate", "Somatic and splanchnic", "Epimere and hypomere"],
+                answer: 2
+            },
+            {
+                question: "The somatic layer of lateral mesoderm forms the:",
+                options: ["Body wall", "Gut wall", "Heart", "Kidneys"],
+                answer: 0
+            },
+            {
+                question: "The splanchnic layer of lateral mesoderm forms the:",
+                options: ["Body wall", "Gut wall", "Skin", "Nervous system"],
+                answer: 1
+            },
+            {
+                question: "The intraembryonic coelom becomes the:",
+                options: ["Amniotic cavity", "Yolk sac", "Body cavities", "Neural canal"],
+                answer: 2
+            },
+            {
+                question: "Vasculogenesis refers to:",
+                options: ["Budding of new vessels", "Formation of blood cells", "Formation of new vascular channels", "Development of heart tubes"],
+                answer: 2
+            },
+            {
+                question: "Angiogenesis refers to:",
+                options: ["Formation of blood cells", "Budding from pre-existing vessels", "Formation of heart", "Development of arteries"],
+                answer: 1
+            },
+            {
+                question: "Blood formation first appears in the:",
+                options: ["Liver", "Yolk sac", "Bone marrow", "Spleen"],
+                answer: 1
+            },
+            {
+                question: "The heart develops from the:",
+                options: ["Neuroectoderm", "Paraxial mesoderm", "Cardiogenic area", "Intermediate mesoderm"],
+                answer: 2
+            },
+            {
+                question: "When does the heart begin to beat?",
+                options: ["Day 21-22", "Day 25", "Day 28", "Day 35"],
+                answer: 0
+            },
+            {
+                question: "Chorionic villi develop through how many stages?",
+                options: ["2", "3", "4", "5"],
+                answer: 1
+            },
+            {
+                question: "Primary chorionic villi consist of:",
+                options: ["Cytotrophoblast core", "Syncytiotrophoblast cover", "Mesoderm core", "Both A and B"],
+                answer: 3
+            },
+            {
+                question: "Secondary chorionic villi have which additional component?",
+                options: ["Blood vessels", "Mesoderm core", "Syncytiotrophoblast", "Cytotrophoblast shell"],
+                answer: 1
+            },
+            {
+                question: "Tertiary chorionic villi contain:",
+                options: ["Blood vessels", "Mesoderm", "Trophoblast", "All of the above"],
+                answer: 3
+            },
+            {
+                question: "Stem villi connect the chorionic plate to the:",
+                options: ["Amnion", "Decidual plate", "Yolk sac", "Embryo"],
+                answer: 1
+            },
+            {
+                question: "Branch villi are involved in:",
+                options: ["Structural support", "Exchange of materials", "Hormone production", "Protection"],
+                answer: 1
+            },
+            {
+                question: "The placental membrane is functional by the end of which week?",
+                options: ["Week 2", "Week 3", "Week 4", "Week 8"],
+                answer: 2
+            },
+            {
+                question: "Embryonic folding occurs in which planes?",
+                options: ["Median only", "Horizontal only", "Both median and horizontal", "Sagittal only"],
+                answer: 2
+            },
+            {
+                question: "Folding results from:",
+                options: ["Rapid growth", "Cell death", "Slow growth", "Implantation"],
+                answer: 0
+            },
+            {
+                question: "The head fold brings the developing heart to the:",
+                options: ["Dorsal side", "Ventral side", "Cranial end", "Caudal end"],
+                answer: 1
+            },
+            {
+                question: "The septum transversum becomes the:",
+                options: ["Heart septum", "Diaphragm", "Liver", "Lung septum"],
+                answer: 1
+            },
+            {
+                question: "The foregut is derived from:",
+                options: ["Yolk sac endoderm", "Amniotic ectoderm", "Embryonic endoderm", "Trophoblast"],
+                answer: 2
+            },
+            {
+                question: "The oropharyngeal membrane separates the foregut from the:",
+                options: ["Stomodeum", "Proctodeum", "Amniotic cavity", "Yolk sac"],
+                answer: 0
+            },
+            {
+                question: "The tail fold results from growth of the:",
+                options: ["Neural tube", "Heart", "Somites", "Limbs"],
+                answer: 0
+            },
+            {
+                question: "The hindgut gives rise to the:",
+                options: ["Esophagus", "Stomach", "Descending colon", "Liver"],
+                answer: 2
+            },
+            {
+                question: "The cloaca develops into the:",
+                options: ["Esophagus and trachea", "Bladder and rectum", "Stomach and duodenum", "Liver and pancreas"],
+                answer: 1
+            },
+            {
+                question: "Lateral folding forms the:",
+                options: ["Head and tail", "Ventral body wall", "Neural tube", "Somites"],
+                answer: 1
+            },
+            {
+                question: "The connection between the midgut and yolk sac becomes the:",
+                options: ["Allantois", "Vitelline duct", "Umbilical cord", "Neurenteric canal"],
+                answer: 1
+            },
+            {
+                question: "At 23 days, the embryo has approximately how many somites?",
+                options: ["4-12", "13-20", "21-30", "31-40"],
+                answer: 0
+            },
+            {
+                question: "Pharyngeal arches first become visible at:",
+                options: ["24 days", "26 days", "28 days", "30 days"],
+                answer: 0
+            },
+            {
+                question: "How many pharyngeal arches are visible at 26 days?",
+                options: ["2", "3", "4", "5"],
+                answer: 1
+            },
+            {
+                question: "Upper limb buds appear at:",
+                options: ["24 days", "26 days", "28 days", "30 days"],
+                answer: 1
+            },
+            {
+                question: "Lower limb buds appear at:",
+                options: ["24 days", "26 days", "28 days", "30 days"],
+                answer: 2
+            },
+            {
+                question: "By the end of the fourth week, how many pharyngeal arches are present?",
+                options: ["2", "3", "4", "5"],
+                answer: 2
+            },
+            {
+                question: "The caudal eminence is most prominent during which week?",
+                options: ["Week 3", "Week 4", "Week 5", "Week 6"],
+                answer: 1
+            },
+            {
+                question: "Reflex responses to touch begin during which week?",
+                options: ["Week 4", "Week 5", "Week 6", "Week 7"],
+                answer: 2
+            },
+            {
+                question: "Spontaneous movements begin during which week?",
+                options: ["Week 4", "Week 5", "Week 6", "Week 7"],
+                answer: 2
+            },
+            {
+                question: "Elbow and hand plates develop during which week?",
+                options: ["Week 4", "Week 5", "Week 6", "Week 7"],
+                answer: 2
+            },
+            {
+                question: "The external acoustic meatus develops during which week?",
+                options: ["Week 4", "Week 5", "Week 6", "Week 7"],
+                answer: 2
+            },
+            {
+                question: "Umbilical intestinal herniation occurs during which week?",
+                options: ["Week 4", "Week 5", "Week 6", "Week 7"],
+                answer: 2
+            },
+            {
+                question: "Ossification of bones begins during which week?",
+                options: ["Week 5", "Week 6", "Week 7", "Week 8"],
+                answer: 2
+            },
+            {
+                question: "Purposeful movements occur during which week?",
+                options: ["Week 6", "Week 7", "Week 8", "Week 9"],
+                answer: 2
+            },
+            {
+                question: "The tail becomes smaller during which week?",
+                options: ["Week 6", "Week 7", "Week 8", "Week 9"],
+                answer: 2
+            },
+            {
+                question: "By the end of week 8, the head makes up what proportion of the embryo?",
+                options: ["One-quarter", "One-third", "One-half", "Two-thirds"],
+                answer: 2
+            },
+            {
+                question: "At the end of week 8, the embryo is about how long?",
+                options: ["10-15 mm", "17-22 mm", "27-31 mm", "35-40 mm"],
+                answer: 2
+            },
+            {
+                question: "Neural crest cells contribute to all EXCEPT:",
+                options: ["Peripheral nervous system", "Adrenal medulla", "Kidneys", "Facial bones"],
+                answer: 2
+            },
+            {
+                question: "Surface ectoderm gives rise to all EXCEPT:",
+                options: ["Epidermis", "Lens of eye", "Mammary glands", "Liver"],
+                answer: 3
+            },
+            {
+                question: "Which structure is derived from neuroectoderm?",
+                options: ["Liver", "Kidneys", "Central nervous system", "Heart"],
+                answer: 2
+            },
+            {
+                question: "Paraxial mesoderm gives rise to:",
+                options: ["Skeletal muscle", "Liver", "Lungs", "Kidneys"],
+                answer: 0
+            },
+            {
+                question: "Intermediate mesoderm gives rise to:",
+                options: ["Heart", "Kidneys", "Limbs", "Gut"],
+                answer: 1
+            },
+            {
+                question: "Lateral mesoderm gives rise to:",
+                options: ["Body wall", "Gut wall", "Both A and B", "Neither A nor B"],
+                answer: 2
+            },
+            {
+                question: "Endoderm gives rise to:",
+                options: ["Skin", "Nervous system", "Gut epithelium", "Bones"],
+                answer: 2
+            },
+            {
+                question: "The notochord is derived from:",
+                options: ["Ectoderm", "Mesoderm", "Endoderm", "Trophoblast"],
+                answer: 1
+            },
+            {
+                question: "Somites are derived from:",
+                options: ["Ectoderm", "Mesoderm", "Endoderm", "Trophoblast"],
+                answer: 1
+            },
+            {
+                question: "The neural tube is derived from:",
+                options: ["Ectoderm", "Mesoderm", "Endoderm", "Trophoblast"],
+                answer: 0
+            },
+            {
+                question: "The heart is derived from:",
+                options: ["Ectoderm", "Mesoderm", "Endoderm", "Trophoblast"],
+                answer: 1
+            },
+            {
+                question: "The liver is derived from:",
+                options: ["Ectoderm", "Mesoderm", "Endoderm", "Trophoblast"],
+                answer: 2
+            },
+            {
+                question: "The epidermis is derived from:",
+                options: ["Ectoderm", "Mesoderm", "Endoderm", "Trophoblast"],
+                answer: 0
+            },
+            {
+                question: "The dermis is derived from:",
+                options: ["Ectoderm", "Mesoderm", "Endoderm", "Trophoblast"],
+                answer: 1
+            },
+            {
+                question: "Which germ layer gives rise to the muscles?",
+                options: ["Ectoderm", "Mesoderm", "Endoderm", "Trophoblast"],
+                answer: 1
+            },
+            {
+                question: "Which germ layer gives rise to the respiratory epithelium?",
+                options: ["Ectoderm", "Mesoderm", "Endoderm", "Trophoblast"],
+                answer: 2
+            },
+            {
+                question: "Which germ layer gives rise to the nervous system?",
+                options: ["Ectoderm", "Mesoderm", "Endoderm", "Trophoblast"],
+                answer: 0
+            },
+            {
+                question: "The embryonic period is most critical for:",
+                options: ["Rapid growth", "Organ formation", "Sex determination", "Implantation"],
+                answer: 1
+            },
+            {
+                question: "Teratogens have the most severe effects during:",
+                options: ["Weeks 1-2", "Weeks 3-8", "Weeks 9-12", "Weeks 13-16"],
+                answer: 1
+            },
+            {
+                question: "The fetal period is characterized by:",
+                options: ["Organogenesis", "Rapid growth", "Gastrulation", "Neurulation"],
+                answer: 1
+            },
+            {
+                question: "By the end of week 8, the embryo has:",
+                options: ["All major organs formed", "Complete organ function", "Sexual differentiation", "Final body form"],
+                answer: 0
+            },
+            {
+                question: "Crown-rump length is used to measure:",
+                options: ["Head size", "Sitting height", "Standing height", "Limb length"],
+                answer: 1
+            },
+            {
+                question: "Crown-heel length is used to measure:",
+                options: ["Head size", "Sitting height", "Standing height", "Limb length"],
+                answer: 2
+            },
+            {
+                question: "The greatest length measurement is used for embryos:",
+                options: ["Before folding", "After folding", "During week 4", "During week 8"],
+                answer: 0
+            }
+        ];
+
+        // DOM elements
+        const questionElement = document.getElementById('question');
+        const optionsContainer = document.getElementById('options-container');
+        const currentQuestionElement = document.getElementById('current-question');
+        const totalQuestionsElement = document.getElementById('total-questions');
+        const progressBar = document.getElementById('progress-bar');
+        const prevButton = document.getElementById('prev-btn');
+        const nextButton = document.getElementById('next-btn');
+        const feedbackElement = document.getElementById('feedback');
+        const timerElement = document.getElementById('timer');
+        
+        // Quiz state
+        let currentQuestion = 0;
+        let score = 0;
+        let selectedOption = null;
+        let timeStarted = null;
+        let timerInterval = null;
+        
+        // Initialize quiz
+        function initQuiz() {
+            totalQuestionsElement.textContent = questions.length;
+            loadQuestion();
+            startTimer();
+            
+            // Event listeners
+            prevButton.addEventListener('click', goToPreviousQuestion);
+            nextButton.addEventListener('click', goToNextQuestion);
+        }
+        
+        // Start timer
+        function startTimer() {
+            timeStarted = new Date();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+        
+        // Update timer
+        function updateTimer() {
+            const now = new Date();
+            const diff = new Date(now - timeStarted);
+            const minutes = diff.getMinutes().toString().padStart(2, '0');
+            const seconds = diff.getSeconds().toString().padStart(2, '0');
+            timerElement.textContent = `Time: ${minutes}:${seconds}`;
+        }
+        
+        // Load question
+        function loadQuestion() {
+            const question = questions[currentQuestion];
+            questionElement.textContent = question.question;
+            currentQuestionElement.textContent = currentQuestion + 1;
+            
+            // Update progress bar
+            progressBar.style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
+            
+            // Clear options
+            optionsContainer.innerHTML = '';
+            
+            // Add options
+            question.options.forEach((option, index) => {
+                const button = document.createElement('div');
+                button.classList.add('option');
+                button.textContent = option;
+                button.addEventListener('click', () => selectOption(index));
+                optionsContainer.appendChild(button);
+            });
+            
+            // Update navigation buttons
+            prevButton.disabled = currentQuestion === 0;
+            nextButton.textContent = currentQuestion === questions.length - 1 ? 'Finish' : 'Next';
+            
+            // Clear feedback and selection
+            feedbackElement.textContent = '';
+            selectedOption = null;
+        }
+        
+        // Select option
+        function selectOption(index) {
+            // Remove previous selection
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => option.classList.remove('selected'));
+            
+            // Set new selection
+            options[index].classList.add('selected');
+            selectedOption = index;
+            
+            // Check if correct
+            const isCorrect = index === questions[currentQuestion].answer;
+            
+            // Show feedback
+            if (isCorrect) {
+                feedbackElement.textContent = 'Correct! 🎉';
+                feedbackElement.style.color = '#00b894';
+                score++;
+            } else {
+                feedbackElement.textContent = 'Incorrect 😢';
+                feedbackElement.style.color = '#d63031';
+                
+                // Show correct answer
+                options[questions[currentQuestion].answer].classList.add('correct');
+            }
+            
+            // Disable all options after selection
+            options.forEach(option => {
+                option.style.pointerEvents = 'none';
+            });
+            
+            // Enable next button
+            nextButton.disabled = false;
+        }
+        
+        // Navigate to next question
+        function goToNextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+        
+        // Navigate to previous question
+        function goToPreviousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                loadQuestion();
+            }
+        }
+        
+        // Show results
+        function showResults() {
+            clearInterval(timerInterval);
+            const quizContainer = document.querySelector('.quiz-container');
+            quizContainer.classList.add('pulse');
+            
+            const now = new Date();
+            const diff = new Date(now - timeStarted);
+            const minutes = diff.getMinutes().toString().padStart(2, '0');
+            const seconds = diff.getSeconds().toString().padStart(2, '0');
+            
+            quizContainer.innerHTML = `
+                <div class="quiz-completed">
+                    <div class="score-text">Your Score</div>
+                    <div class="score-value">${score}/${questions.length}</div>
+                    <div class="score-text">Time: ${minutes}:${seconds}</div>
+                    <button id="restart-btn">Restart Quiz</button>
+                </div>
+            `;
+            
+            document.getElementById('restart-btn').addEventListener('click', () => {
+                currentQuestion = 0;
+                score = 0;
+                quizContainer.classList.remove('pulse');
+                initQuiz();
+            });
+        }
+        
+        // Start the quiz
+        initQuiz();
+    </script>
+</body>
+</html>
