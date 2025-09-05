@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Embryology Quiz</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a192f, #0d1b2a);
+            color: #e0e1dd;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .quiz-container {
+            width: 100%;
+            max-width: 900px;
+            background: rgba(13, 27, 42, 0.9);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(95, 158, 160, 0.3);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(95, 158, 160, 0.5);
+        }
+        
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #5f9ea0;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+        
+        .subtitle {
+            font-size: 18px;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+        
+        .instructions {
+            font-size: 16px;
+            opacity: 0.7;
+            margin-top: 10px;
+        }
+        
+        .progress-container {
+            background: rgba(224, 225, 221, 0.1);
+            border-radius: 10px;
+            height: 8px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #5f9ea0, #7cb9e8);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .question-number {
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #7cb9e8;
+            font-weight: 600;
+        }
+        
+        .question-text {
+            font-size: 22px;
+            font-weight: 500;
+            margin-bottom: 25px;
+            line-height: 1.4;
+        }
+        
+        .options-container {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+        
+        .option {
+            background: rgba(224, 225, 221, 0.05);
+            border: 2px solid rgba(95, 158, 160, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 17px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .option:hover {
+            background: rgba(95, 158, 160, 0.2);
+            transform: translateY(-2px);
+            border-color: #5f9ea0;
+        }
+        
+        .option.selected {
+            background: rgba(95, 158, 160, 0.3);
+            border-color: #5f9ea0;
+            box-shadow: 0 0 15px rgba(95, 158, 160, 0.3);
+        }
+        
+        .option.correct {
+            background: rgba(0, 184, 148, 0.2);
+            border-color: #00b894;
+        }
+        
+        .option.incorrect {
+            background: rgba(214, 48, 49, 0.2);
+            border-color: #d63031;
+        }
+        
+        .option-letter {
+            font-weight: bold;
+            margin-right: 12px;
+            color: #5f9ea0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(95, 158, 160, 0.2);
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            background: rgba(95, 158, 160, 0.3);
+            color: #e0e1dd;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        #prev-btn {
+            background: rgba(95, 158, 160, 0.2);
+        }
+        
+        #prev-btn:hover:not(:disabled) {
+            background: rgba(95, 158, 160, 0.4);
+        }
+        
+        #next-btn {
+            background: linear-gradient(90deg, #5f9ea0, #7cb9e8);
+        }
+        
+        #next-btn:hover {
+            background: linear-gradient(90deg, #4a8c8e, #6aa6d6);
+            box-shadow: 0 0 15px rgba(95, 158, 160, 0.4);
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .quiz-completed {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .score-text {
+            font-size: 24px;
+            margin-bottom: 16px;
+            color: #e0e1dd;
+        }
+        
+        .score-value {
+            font-size: 48px;
+            font-weight: 700;
+            color: #5f9ea0;
+            margin-bottom: 30px;
+        }
+        
+        #restart-btn {
+            background: linear-gradient(90deg, #5f9ea0, #7cb9e8);
+            padding: 16px 40px;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+        
+        #restart-btn:hover {
+            background: linear-gradient(90deg, #4a8c8e, #6aa6d6);
+            box-shadow: 0 0 20px rgba(95, 158, 160, 0.5);
+        }
+        
+        .feedback {
+            text-align: center;
+            margin-top: 20px;
+            font-weight: 500;
+            min-height: 24px;
+            color: #7cb9e8;
+        }
+        
+        .explanation {
+            background: rgba(95, 158, 160, 0.1);
+            border-left: 4px solid #5f9ea0;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 25px;
+            display: none;
+        }
+        
+        .explanation-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #5f9ea0;
+        }
+        
+        .timer {
+            text-align: right;
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: #5f9ea0;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .pulse {
+            animation: pulse 0.5s;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+        
+        @media (max-width: 600px) {
+            .quiz-container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .question-text {
+                font-size: 19px;
+            }
+            
+            .option {
+                padding: 14px;
+                font-size: 16px;
+            }
+            
+            button {
+                padding: 12px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="timer">
+            <i class="fas fa-clock"></i>
+            <span id="timer">00:00</span>
+        </div>
+        
+        <div class="header">
+            <h1>Embryology Quiz</h1>
+            <div class="subtitle">Professional Questions with Detailed Explanations</div>
+            <div class="instructions">Based on your PDF content and Langman's Medical Embryology</div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div class="question-number">Question <span id="current-question">1</span> of <span id="total-questions">60</span></div>
+        
+        <div class="question-text" id="question">During which week does the embryonic period proper begin?</div>
+        
+        <div class="options-container" id="options-container">
+            <!-- Options will be inserted here by JavaScript -->
+        </div>
+        
+        <div class="explanation" id="explanation">
+            <div class="explanation-title">Explanation:</div>
+            <div id="explanation-text"></div>
+        </div>
+        
+        <div class="feedback" id="feedback"></div>
+        
+        <div class="navigation">
+            <button id="prev-btn" disabled>
+                <i class="fas fa-arrow-left"></i> Previous
+            </button>
+            <button id="next-btn">
+                Next <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Quiz questions with explanations
+        const questions =
+       [
+  {
+    "question": "Which type of tissue undergoes constant cell turnover due to rapid division and cell death?",
+    "options": ["Connective tissue", "Muscle tissue", "Epithelial tissue", "Nervous tissue"],
+    "answer": 2,
+    "explanation": "Epithelial tissues line surfaces subject to wear and tear (e.g., skin, gut lining). They have a high rate of cell division to replace cells that are constantly being lost or damaged."
+  },
+  {
+    "question": "Each biological tissue consists of two interacting structural components known as ______ and ______.",
+    "options": ["Cells and intracellular matrix", "Cells and extracellular matrix", "Nuclei and cytoplasm", "Membranes and organelles"],
+    "answer": 1,
+    "explanation": "All tissues are composed of cells and the extracellular matrix (ECM) that these cells produce. The ECM supports the cells and mediates their environment."
+  },
+  {
+    "question": "Nerve tissues are principally composed of two groups of cells: Those are ______ and ______.",
+    "options": ["Neurons and neuroglia", "Axons and dendrites", "Schwann cells and oligodendrocytes", "Sensory and motor cells"],
+    "answer": 0,
+    "explanation": "Nervous tissue is composed of neurons (the functional, signaling cells) and neuroglia (glial cells), which provide support, insulation, and nutrients for the neurons."
+  },
+  {
+    "question": "Which of the following is NOT a correct description about tissues?",
+    "options": ["Tissues are formed by groups of cells and their product known as intracellular matrix.", "Epithelial tissues that transport substances have a brush border of microvilli.", "Transitional epithelium's appearance changes with distension.", "Non-keratinized stratified squamous epithelium is found in dry areas.", "Epithelial tissue is characterized by abundant extracellular matrix."],
+    "answer": 4,
+    "explanation": "This is the defining feature of connective tissue. Epithelial tissue is characterized by being highly cellular with little to no extracellular matrix between the cells."
+  },
+  {
+    "question": "Which reason makes histology dependent on the use of microscopes?",
+    "options": ["The small size of cells and matrix components", "The small size of tissues", "The small size of organs", "All of the above"],
+    "answer": 3,
+    "explanation": "Histology is the study of the microscopic structure of tissues. Cells, the fundamental units of life, and the details of tissue organization are too small to be seen with the naked eye, requiring magnification."
+  },
+  {
+    "question": "Which body tissue is most frequently subject to wear and tear due to its superficial location?",
+    "options": ["Nervous tissue", "Muscle tissue", "Connective tissue", "Epithelial tissue"],
+    "answer": 3,
+    "explanation": "Epithelial tissue forms the lining of body surfaces (skin, digestive tract, etc.) and serves as a protective barrier. Its superficial location makes it the first point of contact with the external environment, leading to constant wear and tear."
+  },
+  {
+    "question": "Which description about epithelial tissues is wrong?",
+    "options": ["They exist on free surfaces and line cavities.", "They have diverse embryological origins.", "Their cells have structural modifications on different surfaces.", "They are highly vascularized.", "They rest on a basal lamina."],
+    "answer": 3,
+    "explanation": "This is the key identifying feature of epithelial tissue: it is avascular. It receives nutrients by diffusion from underlying connective tissue, which is highly vascularized."
+  },
+  {
+    "question": "Which feature helps distinguish connective tissue from other basic tissues?",
+    "options": ["Highest cellularity", "Abundant cellular junctions", "Abundant intercellular substance", "The presence of blood vessels"],
+    "answer": 2,
+    "explanation": "The defining characteristic of connective tissue is its extensive extracellular matrix (composed of fibers and ground substance), which separates the cells from one another. Other tissues are defined more by their cellularity and junctions."
+  },
+  {
+    "question": "Tendons, ligaments, and bones are chiefly composed of ______.",
+    "options": ["Epithelial tissue", "Nervous tissue", "Muscle tissue", "Connective tissue"],
+    "answer": 3,
+    "explanation": "Tendons (muscle to bone), ligaments (bone to bone), and bones themselves are all specialized forms of connective tissue. They are characterized by cells embedded within a abundant extracellular matrix."
+  },
+  {
+    "question": "The basic tissue types that constitute the brain and spinal cord is ______.",
+    "options": ["Connective tissue", "Muscle tissue", "Nervous tissue", "Epithelial tissue"],
+    "answer": 2,
+    "explanation": "The central nervous system (brain and spinal cord) is primarily composed of nervous tissue, which consists of neurons and supporting glial cells (neuroglia)."
+  }
+];
+
+        // DOM elements
+        const questionElement = document.getElementById('question');
+        const optionsContainer = document.getElementById('options-container');
+        const currentQuestionElement = document.getElementById('current-question');
+        const totalQuestionsElement = document.getElementById('total-questions');
+        const progressBar = document.getElementById('progress-bar');
+        const prevButton = document.getElementById('prev-btn');
+        const nextButton = document.getElementById('next-btn');
+        const feedbackElement = document.getElementById('feedback');
+        const timerElement = document.getElementById('timer');
+        const explanationElement = document.getElementById('explanation');
+        const explanationTextElement = document.getElementById('explanation-text');
+        
+        // Quiz state
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedOption = null;
+        let timeStarted = null;
+        let timerInterval = null;
+        
+        // Initialize quiz
+        function initQuiz() {
+            totalQuestionsElement.textContent = questions.length;
+            loadQuestion();
+            startTimer();
+            
+            // Event listeners
+            prevButton.addEventListener('click', goToPreviousQuestion);
+            nextButton.addEventListener('click', goToNextQuestion);
+        }
+        
+        // Start timer
+        function startTimer() {
+            timeStarted = new Date();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+        
+        // Update timer
+        function updateTimer() {
+            const now = new Date();
+            const diff = new Date(now - timeStarted);
+            const minutes = diff.getMinutes().toString().padStart(2, '0');
+            const seconds = diff.getSeconds().toString().padStart(2, '0');
+            timerElement.textContent = `${minutes}:${seconds}`;
+        }
+        
+        // Load question
+        function loadQuestion() {
+            const question = questions[currentQuestionIndex];
+            questionElement.textContent = question.question;
+            currentQuestionElement.textContent = currentQuestionIndex + 1;
+            
+            // Update progress bar
+            progressBar.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+            
+            // Clear options
+            optionsContainer.innerHTML = '';
+            
+            // Add options
+            const optionLetters = ['A', 'B', 'C', 'D'];
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.classList.add('option');
+                
+                const optionLetter = document.createElement('div');
+                optionLetter.classList.add('option-letter');
+                optionLetter.textContent = optionLetters[index];
+                
+                const optionText = document.createElement('div');
+                optionText.textContent = option;
+                
+                optionElement.appendChild(optionLetter);
+                optionElement.appendChild(optionText);
+                
+                optionElement.addEventListener('click', () => selectOption(index));
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            // Update navigation buttons
+            prevButton.disabled = currentQuestionIndex === 0;
+            nextButton.textContent = currentQuestionIndex === questions.length - 1 ? 'Finish' : 'Next';
+            
+            // Clear feedback and selection
+            feedbackElement.textContent = '';
+            explanationElement.style.display = 'none';
+            selectedOption = null;
+        }
+        
+        // Select option
+        function selectOption(index) {
+            // Remove previous selection
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => option.classList.remove('selected'));
+            
+            // Set new selection
+            options[index].classList.add('selected');
+            selectedOption = index;
+            
+            // Check if correct
+            const isCorrect = index === questions[currentQuestionIndex].answer;
+            
+            // Show feedback
+            if (isCorrect) {
+                feedbackElement.textContent = 'Correct! 🎉';
+                feedbackElement.style.color = '#00b894';
+                score++;
+            } else {
+                feedbackElement.textContent = 'Incorrect 😢';
+                feedbackElement.style.color = '#d63031';
+                
+                // Show correct answer
+                options[questions[currentQuestionIndex].answer].classList.add('correct');
+            }
+            
+            // Show explanation
+            explanationTextElement.textContent = questions[currentQuestionIndex].explanation;
+            explanationElement.style.display = 'block';
+            
+            // Disable all options after selection
+            options.forEach(option => {
+                option.style.pointerEvents = 'none';
+            });
+            
+            // Enable next button
+            nextButton.disabled = false;
+        }
+        
+        // Navigate to next question
+        function goToNextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+        
+        // Navigate to previous question
+        function goToPreviousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        }
+        
+        // Show results
+        function showResults() {
+            clearInterval(timerInterval);
+            const quizContainer = document.querySelector('.quiz-container');
+            quizContainer.classList.add('pulse');
+            
+            const now = new Date();
+            const diff = new Date(now - timeStarted);
+            const minutes = diff.getMinutes().toString().padStart(2, '0');
+            const seconds = diff.getSeconds().toString().padStart(2, '0');
+            
+            quizContainer.innerHTML = `
+                <div class="quiz-completed">
+                    <div class="score-text">Your Score</div>
+                    <div class="score-value">${score}/${questions.length}</div>
+                    <div class="score-text">Time: ${minutes}:${seconds}</div>
+                    <button id="restart-btn">
+                        <i class="fas fa-redo"></i> Restart Quiz
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('restart-btn').addEventListener('click', () => {
+                currentQuestionIndex = 0;
+                score = 0;
+                quizContainer.classList.remove('pulse');
+                initQuiz();
+            });
+        }
+        
+        // Start the quiz
+        initQuiz();
+    </script>
+</body>
+</html>
