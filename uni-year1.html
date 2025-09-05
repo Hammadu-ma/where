@@ -336,365 +336,150 @@ select:focus{outline:none;box-shadow:var(--ring);border-color:transparent}
 
   <!-- Mini player -->
   <div class="miniplayer card" id="miniPlayer"></div>
-  <script>
-    // --- Sample catalog: 14 subjects, Units, many videos (YouTube IDs used) ---
-    const SUBJECTS = [
-      "Mathematics","Physics","Chemistry","Biology","English","Civics",
-      "Geography","History","Economics","ICT","Amharic","Afan Oromo",
-      "HPE","Art"
-    ];
-  
-    // Minimal demo thumbnails via https://img.youtube.com
-    function ytThumb(id){ 
-      // If it's a playlist, you can optionally use a placeholder thumbnail
-      return id.startsWith("PL") ? "https://img.youtube.com/vi/BtLyik7oAxc/hqdefault.jpg" : `https://img.youtube.com/vi/${id}/hqdefault.jpg`; 
-    }
+ <script>
+// ----------------- Data -----------------
+let videos = [];
+let idSeed = 1000;
+let current = null;
 
-    function ytUrl(id){ 
-      // If it starts with "PL", treat as playlist
-      if(id.startsWith("PL")) {
-        return `https://www.youtube.com/embed/videoseries?list=${id}&rel=0&modestbranding=1&autoplay=1`;
-      }
-      return `https://www.youtube.com/embed/${id}?rel=0&modestbranding=1&autoplay=1`; 
-    }
+// ----------------- Subjects -----------------
+const SUBJECTS = ["Mathematics","Physics","Chemistry","Biology","English","Civics","Geography","History","Economics","ICT","Amharic","Afan Oromo","HPE","Art"];
 
-    // Generate sample data
-    let videos = [];
-    let idSeed = 1000;
-    function addVideo({title,subject,unit,yt, duration="10:12"}){
-      videos.push({id: idSeed++, title, subject, unit, yt, duration});
-    }
+// ----------------- Add Video -----------------
+function addVideo({title, subject, unit, type="youtube", yt, file, duration="10:12"}) {
+  videos.push({id: idSeed++, title, subject, unit, type, yt, file, duration});
+}
 
-    // Add sample videos
-    addVideo({
-      title: "Embryology 1",
-      subject: "Mathematics",
-      unit: 1,
-      yt: "BtLyik7oAxc",
-      duration: "12:00"
+// ----------------- Helper Functions -----------------
+function ytThumb(id){
+  return id.startsWith("PL")
+    ? "https://img.youtube.com/vi/BtLyik7oAxc/hqdefault.jpg"
+    : `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+}
+
+function getThumb(v){
+  if(v.type === "youtube") return ytThumb(v.yt);
+  if(v.type === "file") return "https://cdn-icons-png.flaticon.com/512/727/727245.png";
+  if(v.type === "embed") return "https://cdn-icons-png.flaticon.com/512/1384/1384060.png";
+  return "https://cdn-icons-png.flaticon.com/512/565/565547.png";
+}
+
+function getPlayerHTML(v){
+  if(v.type === "youtube"){
+    const url = v.yt.startsWith("PL")
+      ? `https://www.youtube.com/embed/videoseries?list=${v.yt}&rel=0&modestbranding=1&autoplay=1`
+      : `https://www.youtube.com/embed/${v.yt}?rel=0&modestbranding=1&autoplay=1`;
+    return `<iframe allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen src="${url}" title="${v.title}" width="100%" height="360"></iframe>`;
+  }
+  if(v.type === "file"){
+    return `<video controls width="100%" height="360" preload="metadata">
+              <source src="${v.file}" type="video/mp4">
+              Your browser does not support HTML video.
+            </video>`;
+  }
+  if(v.type === "embed"){
+    return `<iframe allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen src="${v.file}" title="${v.title}" width="100%" height="360"></iframe>`;
+  }
+  return `<div>Unsupported video type</div>`;
+}
+
+// ----------------- Render Functions -----------------
+function renderGrid(){
+  const playlistGrid = document.getElementById('playlistGrid');
+  playlistGrid.innerHTML = videos.map(v => `
+    <div class="card-mini" data-id="${v.id}">
+      <div class="thumb"><img src="${getThumb(v)}" alt="${v.title}"/></div>
+      <div class="info">
+        <div class="name">${v.title}</div>
+        <div class="small">${v.subject} • Unit ${v.unit} • ${v.duration}</div>
+      </div>
+    </div>`).join('');
+
+  playlistGrid.querySelectorAll('.card-mini').forEach(card => {
+    card.addEventListener('click', () => {
+      const id = Number(card.getAttribute('data-id'));
+      const vid = videos.find(x => x.id === id);
+      if(vid) play(vid);
     });
+  });
+}
 
-    addVideo({
-      title: "Embryology Playlist",
-      subject: "Mathematics",
-      unit: 2,
-      yt: "PLTF9h-T1TcJiNRCzNPen0m4AO6VQZ6YCl",
-      duration: "1:00:00"
+function renderRelated(){
+  const relatedList = document.getElementById('relatedList');
+  if(!current){
+    relatedList.innerHTML = '<div class="rel-meta">Select a video to see related lessons.</div>';
+    return;
+  }
+  const rel = videos.filter(v => v.id !== current.id && v.subject === current.subject && v.unit === current.unit).slice(0, 16);
+  relatedList.innerHTML = rel.map(v => `
+    <div class="rel-item" data-id="${v.id}">
+      <div class="thumb">
+        <img src="${getThumb(v)}" alt="${v.title}"/>
+        <div class="duration">${v.duration}</div>
+      </div>
+      <div>
+        <div class="rel-title">${v.title}</div>
+        <div class="rel-meta">${v.subject} • Unit ${v.unit}</div>
+      </div>
+    </div>`).join('');
+
+  relatedList.querySelectorAll('.rel-item').forEach(el => {
+    el.addEventListener('click', () => {
+      const id = Number(el.getAttribute('data-id'));
+      const v = videos.find(x => x.id === id);
+      if(v) play(v);
     });
-    
-    addVideo({
-      title: "embryology 1",
-      subject: "ICT",
-      unit: 1,
-      yt: "BtLyik7oAxc",
-      duration: "12:00"
-    });
-    
-    addVideo({
-      title: "dr sung",
-      subject: "Mathematics",
-      unit: 1,
-      yt: "V8RxHtoLVTk",
-      duration: "16:00"
-    });
-    
-    addVideo({
-      title: "Your Playlist Title Here",
-      subject: "Your Subject Here",
-      unit: 1,
-      yt: "PLtpriW2pnN_5MPy17cCxQ30F8D8swlf_c", // Playlist ID
-      duration: "1:00:00" // optional placeholder
-    });
+  });
+}
 
-    // Some reusable YouTube IDs for demo
-    const YT_IDS = [];
-  
-    // --- State ---
-    let current = null;
-  
-    // --- Elements ---
-    const subjectFilter = document.getElementById('subjectFilter');
-    const unitFilter = document.getElementById('unitFilter');
-    const playlistGrid = document.getElementById('playlistGrid');
-    const listTitle = document.getElementById('listTitle');
-    const search = document.getElementById('search');
-    const subjectsRail = document.getElementById('subjectsRail');
-    const videoWrap = document.getElementById('videoWrap');
-    const nowTitle = document.getElementById('nowTitle');
-    const nowMeta = document.getElementById('nowMeta');
-    const nowTags = document.getElementById('nowTags');
-    const relatedList = document.getElementById('relatedList');
-    const fsBtn = document.getElementById('fsBtn');
-    const miniBtn = document.getElementById('miniBtn');
-    const miniPlayer = document.getElementById('miniPlayer');
-    const playerCard = document.getElementById('playerCard');
-    const menuToggle = document.getElementById('menuToggle');
-    const filters = document.getElementById('filters');
-    const searchMobileBtn = document.getElementById('searchMobileBtn');
-    const mobileSearch = document.getElementById('mobileSearch');
-    const mobileSearchClose = document.getElementById('mobileSearchClose');
-    const mobileSearchInput = document.getElementById('mobileSearchInput');
-    const mobileSearchResults = document.getElementById('mobileSearchResults');
+// ----------------- Play Function -----------------
+function play(v){
+  current = v;
+  document.getElementById('nowTitle').textContent = v.title;
+  document.getElementById('nowMeta').textContent = `${v.subject} • Unit ${v.unit} • ${v.duration}`;
+  document.getElementById('nowTags').innerHTML = `<span class="tag">${v.subject}</span><span class="tag">Unit ${v.unit}</span>`;
+  document.getElementById('videoWrap').innerHTML = getPlayerHTML(v);
+  renderRelated();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
 
-    // Mobile menu toggle
-    menuToggle.addEventListener('click', () => {
-      menuToggle.classList.toggle('active');
-      filters.classList.toggle('active');
-    });
+// ----------------- Filters -----------------
+const subjectFilter = document.getElementById('subjectFilter');
+const unitFilter = document.getElementById('unitFilter');
+const search = document.getElementById('search');
 
-    // Mobile search functionality
-    searchMobileBtn.addEventListener('click', () => {
-      mobileSearch.classList.add('active');
-      mobileSearchInput.focus();
-    });
+SUBJECTS.forEach(s => {
+  const opt = document.createElement('option');
+  opt.value = s;
+  opt.textContent = s;
+  subjectFilter.appendChild(opt);
+});
 
-    mobileSearchClose.addEventListener('click', () => {
-      mobileSearch.classList.remove('active');
-    });
+function populateUnits(){
+  const units = [...new Set(videos.map(v => v.unit))].sort((a,b)=>a-b);
+  unitFilter.innerHTML = '<option value="">All Units</option>' + units.map(u => `<option value="${u}">Unit ${u}</option>`).join('');
+}
+populateUnits();
 
-    mobileSearchInput.addEventListener('input', () => {
-      const query = mobileSearchInput.value.trim().toLowerCase();
-      if (query.length < 2) {
-        mobileSearchResults.innerHTML = '<div class="rel-meta">Type at least 2 characters to search</div>';
-        return;
-      }
-      
-      const results = videos.filter(v => 
-        v.title.toLowerCase().includes(query) || 
-        v.subject.toLowerCase().includes(query) || 
-        String(v.unit).includes(query)
-      ).slice(0, 10);
-      
-      if (results.length === 0) {
-        mobileSearchResults.innerHTML = '<div class="rel-meta">No results found</div>';
-        return;
-      }
-      
-      mobileSearchResults.innerHTML = results.map(v => `
-        <div class="rel-item" data-id="${v.id}">
-          <div class="thumb">
-            <img src="${ytThumb(v.yt)}" alt="${v.title}"/>
-            <div class="duration">${v.duration}</div>
-          </div>
-          <div>
-            <div class="rel-title">${v.title}</div>
-            <div class="rel-meta">${v.subject} • Unit ${v.unit}</div>
-          </div>
-        </div>
-      `).join('');
-      
-      mobileSearchResults.querySelectorAll('.rel-item').forEach(el => {
-        el.addEventListener('click', () => {
-          const id = Number(el.getAttribute('data-id'));
-          const v = videos.find(x => x.id === id);
-          if (v) {
-            play(v);
-            mobileSearch.classList.remove('active');
-          }
-        });
-      });
-    });
+function updateAndRender(){
+  renderGrid();
+  renderRelated();
+}
 
-    // Populate filters
-    SUBJECTS.forEach(s => {
-      const opt = document.createElement('option'); 
-      opt.value = s; 
-      opt.textContent = s; 
-      subjectFilter.appendChild(opt);
-    });
-    
-    function populateUnits(){
-      const units = [...new Set(videos.map(v => v.unit))].sort((a, b) => a - b);
-      unitFilter.innerHTML = '<option value="">All Units</option>' + units.map(u => `<option value="${u}">Unit ${u}</option>`).join('');
-    }
-    
-    populateUnits();
+subjectFilter.addEventListener('change', updateAndRender);
+unitFilter.addEventListener('change', updateAndRender);
+search.addEventListener('input', updateAndRender);
 
-    // Subjects quick rail
-    function renderSubjectsRail(activeSubject = ""){
-      subjectsRail.innerHTML = '';
-      const all = document.createElement('div');
-      all.className = 'pill' + (activeSubject === '' ? ' active' : '');
-      all.textContent = 'All';
-      all.onclick = () => { 
-        subjectFilter.value = ''; 
-        updateAndRender(); 
-      };
-      subjectsRail.appendChild(all);
-      
-      SUBJECTS.forEach(s => {
-        const el = document.createElement('div');
-        el.className = 'pill' + (s === activeSubject ? ' active' : '');
-        el.textContent = s;
-        el.onclick = () => { 
-          subjectFilter.value = s; 
-          updateAndRender(); 
-        };
-        subjectsRail.appendChild(el);
-      });
-    }
+// ----------------- Sample Videos -----------------
+addVideo({title:"Embryology 1", subject:"Biology", unit:1, type:"youtube", yt:"BtLyik7oAxc", duration:"12:00"});
+addVideo({title:"Embryology Playlist", subject:"Biology", unit:2, type:"youtube", yt:"PLTF9h-T1TcJiNRCzNPen0m4AO6VQZ6YCl", duration:"1:00:00"});
+addVideo({title:"Embryology from MEGA", subject:"Biology", unit:3, type:"embed", file:"https://mega.nz/embed/BddxBJ4T#qZRNLRjSQkcsxNYA75OFQqGjyXaMJ7dc2KcXRW9mFlk", duration:"15:00"});
+addVideo({title:"Embryology Local File", subject:"ICT", unit:4, type:"file", file:"https://raw.githubusercontent.com/username/repo/main/videos/embryology.mp4", duration:"10:00"});
 
-    // Filtering logic
-    function getFiltered(){
-      const q = search.value.trim().toLowerCase();
-      const s = subjectFilter.value;
-      const u = unitFilter.value;
-      return videos.filter(v => {
-        const okS = !s || v.subject === s;
-        const okU = !u || String(v.unit) === String(u);
-        const okQ = !q || (v.title.toLowerCase().includes(q) || v.subject.toLowerCase().includes(q) || String(v.unit) === q);
-        return okS && okU && okQ;
-      });
-    }
-
-    // --- Skeleton Rendering ---
-    function renderSkeletonGrid(count = 8){
-      playlistGrid.innerHTML = Array.from({length: count}).map(() => `
-        <div class="card-mini skeleton-card">
-          <div class="thumb skeleton skeleton-thumb"></div>
-          <div class="info">
-            <div class="skeleton skeleton-line"></div>
-            <div class="skeleton skeleton-line short"></div>
-          </div>
-        </div>
-      `).join('');
-    }
-    
-    function renderSkeletonRelated(count = 6){
-      relatedList.innerHTML = Array.from({length: count}).map(() => `
-        <div class="rel-item skeleton-item">
-          <div class="thumb skeleton skeleton-rel-thumb"></div>
-          <div>
-            <div class="skeleton skeleton-rel-line"></div>
-            <div class="skeleton skeleton-rel-line short"></div>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    // Render playlists grid
-    function renderGrid(){
-      const items = getFiltered();
-      listTitle.textContent = `Playlists (${items.length})`;
-      playlistGrid.innerHTML = items.map(v => `
-        <div class="card-mini" data-id="${v.id}">
-          <div class="thumb"><img src="${ytThumb(v.yt)}" alt="${v.title}"/></div>
-          <div class="info">
-            <div class="name">${v.title}</div>
-            <div class="small">${v.subject} • Unit ${v.unit} • ${v.duration}</div>
-          </div>
-        </div>
-      `).join('');
-
-      playlistGrid.querySelectorAll('.card-mini').forEach(card => {
-        card.addEventListener('click', () => {
-          const id = Number(card.getAttribute('data-id'));
-          const vid = videos.find(x => x.id === id);
-          if (vid) play(vid);
-        });
-      });
-    }
-
-    // Play in main player
-    function play(v){
-      current = v;
-      nowTitle.textContent = v.title;
-      nowMeta.textContent = `${v.subject} • Unit ${v.unit} • ${v.duration}`;
-      nowTags.innerHTML = `<span class="tag">${v.subject}</span><span class="tag">Unit ${v.unit}</span>`;
-      videoWrap.innerHTML = `<iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen src="${ytUrl(v.yt)}" title="${v.title}"></iframe>`;
-      renderRelated();
-      window.scrollTo({top: 0, behavior: 'smooth'});
-    }
-
-    function renderRelated(){
-      if (!current){ 
-        relatedList.innerHTML = '<div class="rel-meta">Select a video to see related lessons.</div>'; 
-        return; 
-      }
-      
-      const rel = videos.filter(v => v.id !== current.id && v.subject === current.subject && v.unit === current.unit).slice(0, 16);
-      relatedList.innerHTML = rel.map(v => `
-        <div class="rel-item" data-id="${v.id}">
-          <div class="thumb">
-            <img src="${ytThumb(v.yt)}" alt="${v.title}"/>
-            <div class="duration">${v.duration}</div>
-          </div>
-          <div>
-            <div class="rel-title">${v.title}</div>
-            <div class="rel-meta">${v.subject} • Unit ${v.unit}</div>
-          </div>
-        </div>
-      `).join('');
-      
-      relatedList.querySelectorAll('.rel-item').forEach(el => {
-        el.addEventListener('click', () => {
-          const id = Number(el.getAttribute('data-id'));
-          const v = videos.find(x => x.id === id);
-          if (v) play(v);
-        });
-      });
-    }
-
-    // Fullscreen control
-    fsBtn.addEventListener('click', () => {
-      const el = playerCard;
-      if (!document.fullscreenElement) { 
-        el.requestFullscreen?.(); 
-      } else { 
-        document.exitFullscreen?.(); 
-      }
-    });
-
-    // Mini-player
-    function showMini(){
-      if (!current) return;
-      miniPlayer.classList.add('show');
-      miniPlayer.innerHTML = `
-        <div class="player-header" style="padding:8px 10px">
-          <div style="font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:240px">${current.title}</div>
-          <button class="btn" style="padding:6px 10px" id="miniClose">×</button>
-        </div>
-        <div class="video-wrap" style="aspect-ratio:16/9">
-          <iframe allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen src="${ytUrl(current.yt)}" title="${current.title}"></iframe>
-        </div>`;
-      document.getElementById('miniClose').onclick = hideMini;
-      miniPlayer.onclick = () => { 
-        hideMini(); 
-        window.scrollTo({top: 0, behavior: 'smooth'}); 
-      };
-    }
-    
-    function hideMini(){ 
-      miniPlayer.classList.remove('show'); 
-      miniPlayer.innerHTML = ''; 
-    }
-    
-    miniBtn.addEventListener('click', () => miniPlayer.classList.contains('show') ? hideMini() : showMini());
-
-    // Events
-    subjectFilter.addEventListener('change', () => { 
-      renderSubjectsRail(subjectFilter.value); 
-      updateAndRender(); 
-    });
-    
-    unitFilter.addEventListener('change', updateAndRender);
-    search.addEventListener('input', updateAndRender);
-
-    function updateAndRender(){ 
-      renderGrid(); 
-      renderRelated(); 
-      renderSubjectsRail(subjectFilter.value); 
-    }
-
-    // --- Init: Show skeletons, then real content ---
-    renderSkeletonGrid();
-    renderSkeletonRelated();
-    
-    setTimeout(() => {
-      renderSubjectsRail('');
-      renderGrid();
-      if (videos[0]) play(videos[0]);
-    }, 800); // skeleton delay
+// ----------------- Initialize -----------------
+renderGrid();
+if(videos[0]) play(videos[0]);
   </script>  
 </body>
+
 </html>
