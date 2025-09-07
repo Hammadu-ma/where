@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Embryology Quiz</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-light: #f5f7fa;
+            --bg-dark: #0a192f;
+            --text-light: #1a202c;
+            --text-dark: #e0e1dd;
+            --accent: #5f9ea0;
+            --accent-hover: #4a8c8e;
+            --card-bg-light: #ffffff;
+            --card-bg-dark: rgba(13, 27, 42, 0.95);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.light {
+            background: var(--bg-light);
+            color: var(--text-light);
+        }
+
+        body.dark {
+            background: linear-gradient(135deg, var(--bg-dark), #0d1b2a);
+            color: var(--text-dark);
+        }
+
+        header {
+            background: var(--card-bg-dark);
+            padding: 1rem;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header.light {
+            background: var(--card-bg-light);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: inherit;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(95, 158, 160, 0.2);
+        }
+
+        .quiz-container {
+            width: 100%;
+            max-width: 900px;
+            margin: 1.5rem auto;
+            background: var(--card-bg-dark);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+        }
+
+        .quiz-container.light {
+            background: var(--card-bg-light);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-top: 0.5rem;
+        }
+
+        .progress-container {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            height: 6px;
+            margin: 1.5rem 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), #7cb9e8);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .question-number {
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        .options-container {
+            display: grid;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .option.light {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .option:hover {
+            background: rgba(95, 158, 160, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .option.selected {
+            background: rgba(95, 158, 160, 0.3);
+            border-color: var(--accent);
+            box-shadow: 0 0 10px rgba(95, 158, 160, 0.3);
+        }
+
+        .option.correct {
+            background: rgba(0, 184, 148, 0.2);
+            border-color: #00b894;
+        }
+
+        .option.incorrect {
+            background: rgba(214, 48, 49, 0.2);
+            border-color: #d63031;
+        }
+
+        .option-letter {
+            font-weight: 600;
+            margin-right: 0.75rem;
+            color: var(--accent);
+            width: 1.5rem;
+            height: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(95, 158, 160, 0.2);
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+            gap: 1rem;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            background: var(--accent);
+            color: #fff;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        button.light {
+            color: var(--text-light);
+        }
+
+        #prev-btn {
+            background: rgba(95, 158, 160, 0.2);
+        }
+
+        #prev-btn:hover:not(:disabled) {
+            background: rgba(95, 158, 160, 0.4);
+        }
+
+        #next-btn:hover {
+            background: var(--accent-hover);
+            box-shadow: 0 0 10px rgba(95, 158, 160, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .quiz-completed {
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+
+        .score-text {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .score-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .mark-percentage {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+        }
+
+        #restart-btn {
+            background: linear-gradient(90deg, var(--accent), #7cb9e8);
+            padding: 1rem 2rem;
+            font-size: 1rem;
+        }
+
+        #restart-btn:hover {
+            background: linear-gradient(90deg, var(--accent-hover), #6aa6d6);
+        }
+
+        .feedback {
+            text-align: center;
+            margin-top: 1rem;
+            font-weight: 500;
+            min-height: 1.5rem;
+            color: var(--accent);
+        }
+
+        .explanation-toggle {
+            background: rgba(95, 158, 160, 0.2);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin: 1rem auto;
+            display: block;
+            transition: all 0.3s;
+        }
+
+        .explanation-toggle.light {
+            color: var(--text-light);
+        }
+
+        .explanation-toggle:hover {
+            background: rgba(95, 158, 160, 0.4);
+        }
+
+        .explanation {
+            background: rgba(95, 158, 160, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: none;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .explanation.show {
+            display: block;
+            max-height: 500px;
+        }
+
+        .explanation-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--accent);
+        }
+
+        .timer {
+            text-align: right;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+
+        footer {
+            background: var(--card-bg-dark);
+            padding: 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: auto;
+        }
+
+        footer.light {
+            background: var(--card-bg-light);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .quiz-container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .question-text {
+                font-size: 1.1rem;
+            }
+
+            .option {
+                padding: 0.75rem;
+                font-size: 0.9rem;
+            }
+
+            button {
+                padding: 0.6rem 1rem;
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .quiz-container {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 1.3rem;
+            }
+
+            .question-text {
+                font-size: 1rem;
+            }
+
+            .navigation {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body class="dark">
+    <header>
+        <h1>Embryology Quiz</h1>
+        <button class="theme-toggle" id="theme-toggle">
+            <i class="fas fa-moon"></i>
+        </button>
+    </header>
+
+    <div class="quiz-container">
+        <div class="timer">
+            <i class="fas fa-clock"></i>
+            <span id="timer">00:00</span>
+        </div>
+        
+        <div class="header">
+            <div class="subtitle">Professional Questions with Detailed Explanations</div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div class="question-number">Question <span id="current-question">1</span> of <span id="total-questions">1</span></div>
+        
+        <div class="question-text" id="question">Which part of the brain is responsible for coordinating skeletal muscle contractions?</div>
+        
+        <div class="options-container" id="options-container"></div>
+        
+        <button class="explanation-toggle" id="explanation-toggle">Show Explanation</button>
+        <div class="explanation" id="explanation">
+            <div class="explanation-title">Explanation:</div>
+            <div id="explanation-text"></div>
+        </div>
+        
+        <div class="feedback" id="feedback"></div>
+        
+        <div class="navigation">
+            <button id="prev-btn" disabled>
+                <i class="fas fa-arrow-left"></i> Previous
+            </button>
+            <button id="next-btn">
+                Next <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2025 Embryology Quiz | All Rights Reserved
+    </footer>
+
+    <script>
+        const questions = [
+    {
+        "question": "Which nerve plexus is formed by the anterior rami of C1-C4 and a portion of C5?",
+        "options": ["Brachial plexus", "Cervical plexus", "Lumbar plexus", "Sacral plexus"],
+        "answer": 1,
+        "correctAnswer": "Cervical plexus",
+        "explanation": "The cervical plexus is formed by the anterior rami of spinal nerves C1-C4 and a portion of C5, innervating the neck and upper shoulders."
+    },
+    {
+        "question": "The cervical plexus primarily innervates which body region?",
+        "options": ["Lower limb", "Neck and upper shoulders", "Upper limb", "Thorax"],
+        "answer": 1,
+        "correctAnswer": "Neck and upper shoulders",
+        "explanation": "The cervical plexus primarily innervates the neck and upper shoulders, including muscles and skin in these regions."
+    },
+    {
+        "question": "Which nerve of the cervical plexus innervates the diaphragm?",
+        "options": ["Lesser occipital nerve", "Phrenic nerve", "Great auricular nerve", "Transverse cervical nerve"],
+        "answer": 1,
+        "correctAnswer": "Phrenic nerve",
+        "explanation": "The phrenic nerve, arising from the cervical plexus, innervates the diaphragm, facilitating breathing."
+    },
+    {
+        "question": "The phrenic nerve receives fibers from which spinal nerves?",
+        "options": ["C1-C3", "C3-C5", "C5-C7", "T1-T3"],
+        "answer": 1,
+        "correctAnswer": "C3-C5",
+        "explanation": "The phrenic nerve receives fibers from spinal nerves C3-C5, primarily responsible for diaphragmatic movement."
+    },
+    {
+        "question": "The lesser occipital nerve of the cervical plexus supplies which area?",
+        "options": ["Anterior neck", "Skin of the neck and scalp posterior to the auricle", "Clavicular region", "Upper back"],
+        "answer": 1,
+        "correctAnswer": "Skin of the neck and scalp posterior to the auricle",
+        "explanation": "The lesser occipital nerve supplies the skin of the neck and scalp posterior to the auricle, contributing to sensory innervation."
+    },
+    {
+        "question": "The great auricular nerve innervates which structures?",
+        "options": ["Diaphragm", "Skin of the ear and over the parotid gland", "Anterior cervical region", "Shoulder"],
+        "answer": 1,
+        "correctAnswer": "Skin of the ear and over the parotid gland",
+        "explanation": "The great auricular nerve innervates the skin of the ear and the area over the parotid gland, providing sensory input."
+    },
+    {
+        "question": "The transverse cervical nerve supplies which region?",
+        "options": ["Posterior scalp", "Skin covering the anterior cervical region", "Upper shoulder", "Lower neck"],
+        "answer": 1,
+        "correctAnswer": "Skin covering the anterior cervical region",
+        "explanation": "The transverse cervical nerve supplies the skin covering the anterior cervical region, contributing to sensory innervation."
+    },
+    {
+        "question": "The supraclavicular nerves of the cervical plexus innervate which area?",
+        "options": ["Neck muscles", "Skin of the shoulder and clavicular region", "Diaphragm", "Upper limb"],
+        "answer": 1,
+        "correctAnswer": "Skin of the shoulder and clavicular region",
+        "explanation": "The supraclavicular nerves innervate the skin of the shoulder and clavicular region, providing sensory innervation."
+    },
+    {
+        "question": "The ansa cervicalis of the cervical plexus innervates which muscles?",
+        "options": ["Diaphragm", "Omohyoid, sternothyroid, and sternohyoid", "Pharyngeal muscles", "Facial muscles"],
+        "answer": 1,
+        "correctAnswer": "Omohyoid, sternothyroid, and sternohyoid",
+        "explanation": "The ansa cervicalis innervates infrahyoid muscles, including the omohyoid, sternothyroid, and sternohyoid, aiding in neck movements."
+    },
+    {
+        "question": "Which nerve of the cervical plexus receives fibers from C1?",
+        "options": ["Phrenic nerve", "Nerve to geniohyoid and thyrohyoid", "Lesser occipital nerve", "Great auricular nerve"],
+        "answer": 1,
+        "correctAnswer": "Nerve to geniohyoid and thyrohyoid",
+        "explanation": "The nerve to geniohyoid and thyrohyoid, part of the cervical plexus, receives fibers from C1, innervating these suprahyoid muscles."
+    },
+    {
+        "question": "Which nerve plexus is formed by the anterior rami of C5-C8 and T1?",
+        "options": ["Cervical plexus", "Brachial plexus", "Lumbar plexus", "Sacral plexus"],
+        "answer": 1,
+        "correctAnswer": "Brachial plexus",
+        "explanation": "The brachial plexus is formed by the anterior rami of C5-C8 and T1, innervating the upper limb."
+    },
+    {
+        "question": "The brachial plexus begins in which anatomical region?",
+        "options": ["Thorax", "Neck and extends into the axilla", "Lower abdomen", "Pelvis"],
+        "answer": 1,
+        "correctAnswer": "Neck and extends into the axilla",
+        "explanation": "The brachial plexus begins in the neck and extends into the axilla, distributing nerves to the upper limb."
+    },
+    {
+        "question": "The dorsal scapular nerve arises from which root of the brachial plexus?",
+        "options": ["C5", "C6", "T1", "C8"],
+        "answer": 0,
+        "correctAnswer": "C5",
+        "explanation": "The dorsal scapular nerve arises from the C5 root of the brachial plexus, innervating the rhomboid muscles and levator scapulae."
+    },
+    {
+        "question": "The long thoracic nerve arises from which roots of the brachial plexus?",
+        "options": ["C5-C6", "C5-C7", "C6-C8", "T1-T2"],
+        "answer": 1,
+        "correctAnswer": "C5-C7",
+        "explanation": "The long thoracic nerve arises from the C5-C7 roots, innervating the serratus anterior muscle."
+    },
+    {
+        "question": "The suprascapular nerve originates from which part of the brachial plexus?",
+        "options": ["Lateral cord", "Superior trunk", "Posterior cord", "Medial cord"],
+        "answer": 1,
+        "correctAnswer": "Superior trunk",
+        "explanation": "The suprascapular nerve originates from the superior trunk of the brachial plexus, innervating the supraspinatus and infraspinatus muscles."
+    },
+    {
+        "question": "The lateral pectoral nerve is a branch of which cord of the brachial plexus?",
+        "options": ["Posterior cord", "Lateral cord", "Medial cord", "Superior trunk"],
+        "answer": 1,
+        "correctAnswer": "Lateral cord",
+        "explanation": "The lateral pectoral nerve is a branch of the lateral cord, innervating the pectoralis major muscle."
+    },
+    {
+        "question": "The musculocutaneous nerve innervates which compartment of the arm?",
+        "options": ["Posterior", "Anterior", "Medial", "Lateral"],
+        "answer": 1,
+        "correctAnswer": "Anterior",
+        "explanation": "The musculocutaneous nerve innervates the anterior compartment of the arm, including muscles like the biceps brachii."
+    },
+    {
+        "question": "The radial nerve originates from which cord of the brachial plexus?",
+        "options": ["Lateral cord", "Posterior cord", "Medial cord", "Superior trunk"],
+        "answer": 1,
+        "correctAnswer": "Posterior cord",
+        "explanation": "The radial nerve originates from the posterior cord, innervating the posterior arm and forearm compartments."
+    },
+    {
+        "question": "The axillary nerve innervates which muscles?",
+        "options": ["Deltoid and teres minor", "Biceps brachii", "Triceps brachii", "Pectoralis major"],
+        "answer": 0,
+        "correctAnswer": "Deltoid and teres minor",
+        "explanation": "The axillary nerve, from the posterior cord, innervates the deltoid and teres minor muscles for shoulder movement."
+    },
+    {
+        "question": "The ulnar nerve is a branch of which cord of the brachial plexus?",
+        "options": ["Lateral cord", "Posterior cord", "Medial cord", "Superior trunk"],
+        "answer": 2,
+        "correctAnswer": "Medial cord",
+        "explanation": "The ulnar nerve is a branch of the medial cord, innervating the medial forearm and hand muscles."
+    },
+    {
+        "question": "The median nerve receives contributions from which cords of the brachial plexus?",
+        "options": ["Lateral and posterior", "Lateral and medial", "Posterior and medial", "Superior and inferior"],
+        "answer": 1,
+        "correctAnswer": "Lateral and medial",
+        "explanation": "The median nerve receives contributions from both the lateral and medial cords, innervating the anterior forearm and parts of the hand."
+    },
+    {
+        "question": "The lumbar plexus is formed by the anterior rami of which spinal nerves?",
+        "options": ["T1-T4", "L1-L4", "L5-S1", "S2-S4"],
+        "answer": 1,
+        "correctAnswer": "L1-L4",
+        "explanation": "The lumbar plexus is formed by the anterior rami of L1-L4, innervating parts of the lower abdomen and thigh."
+    },
+    {
+        "question": "The lumbar plexus is located within which muscle?",
+        "options": ["Quadriceps", "Psoas major", "Gluteus maximus", "Rectus abdominis"],
+        "answer": 1,
+        "correctAnswer": "Psoas major",
+        "explanation": "The lumbar plexus is embedded within the psoas major muscle, from which its nerves emerge to supply the lower limb."
+    },
+    {
+        "question": "The lumbar plexus innervates which body regions?",
+        "options": ["Upper limb and thorax", "Lower abdominal wall, thigh, and external genitals", "Neck and shoulders", "Pelvis and perineum"],
+        "answer": 1,
+        "correctAnswer": "Lower abdominal wall, thigh, and external genitals",
+        "explanation": "The lumbar plexus innervates the lower abdominal wall, anterior and medial thigh, and external genitals."
+    },
+    {
+        "question": "The femoral nerve, the largest nerve of the lumbar plexus, supplies which muscles?",
+        "options": ["Medial adductor muscles", "Anterior thigh muscles", "Posterior leg muscles", "Plantar foot muscles"],
+        "answer": 1,
+        "correctAnswer": "Anterior thigh muscles",
+        "explanation": "The femoral nerve supplies the anterior thigh muscles, such as the quadriceps femoris, for knee extension."
+    },
+    {
+        "question": "The iliohypogastric nerve arises from which spinal nerve?",
+        "options": ["L1", "L2", "L3", "L4"],
+        "answer": 0,
+        "correctAnswer": "L1",
+        "explanation": "The iliohypogastric nerve arises from the L1 spinal nerve, innervating the skin of the lower abdomen and gluteal region."
+    },
+    {
+        "question": "The ilioinguinal nerve originates from which spinal nerve?",
+        "options": ["L1", "L2", "L3", "L4"],
+        "answer": 0,
+        "correctAnswer": "L1",
+        "explanation": "The ilioinguinal nerve originates from the L1 spinal nerve, supplying the skin of the upper thigh and external genitals."
+    },
+    {
+        "question": "The genitofemoral nerve is formed by which spinal nerves?",
+        "options": ["L1-L2", "L2-L3", "L3-L4", "L4-S1"],
+        "answer": 0,
+        "correctAnswer": "L1-L2",
+        "explanation": "The genitofemoral nerve is formed by the L1-L2 spinal nerves, innervating the skin of the thigh and external genitals."
+    },
+    {
+        "question": "The lateral cutaneous nerve of the thigh arises from which spinal nerves?",
+        "options": ["L1-L2", "L2-L3", "L3-L4", "L4-S1"],
+        "answer": 1,
+        "correctAnswer": "L2-L3",
+        "explanation": "The lateral cutaneous nerve of the thigh arises from L2-L3, supplying the skin on the lateral aspect of the thigh."
+    },
+    {
+        "question": "The obturator nerve is formed by which spinal nerves?",
+        "options": ["L1-L2", "L2-L3 and L4", "L3-L4", "L4-S1"],
+        "answer": 1,
+        "correctAnswer": "L2-L3 and L4",
+        "explanation": "The obturator nerve is formed by the anterior divisions of L2-L4, innervating the medial adductor muscles of the thigh."
+    },
+    {
+        "question": "The sacral plexus arises from which spinal nerves?",
+        "options": ["C5-T1", "L1-L4", "L4-S4", "S1-S5"],
+        "answer": 2,
+        "correctAnswer": "L4-S4",
+        "explanation": "The sacral plexus is formed by the anterior rami of L4-S4, innervating the pelvis and lower limbs."
+    },
+    {
+        "question": "The sacral plexus is considered together with the lumbar plexus due to contributions from which structure?",
+        "options": ["Lumbosacral trunk", "Coccygeal nerve", "Phrenic nerve", "Sciatic nerve"],
+        "answer": 0,
+        "correctAnswer": "Lumbosacral trunk",
+        "explanation": "The sacral plexus is linked to the lumbar plexus via the lumbosacral trunk, which includes fibers from L4-L5."
+    },
+    {
+        "question": "The sacral plexus innervates which body regions?",
+        "options": ["Neck and shoulders", "Buttock, lower limb, pelvis, and perineum", "Upper limb and thorax", "Lower abdomen"],
+        "answer": 1,
+        "correctAnswer": "Buttock, lower limb, pelvis, and perineum",
+        "explanation": "The sacral plexus innervates the buttock, lower limb, pelvis, and perineum, including major muscles and skin."
+    },
+    {
+        "question": "The superior gluteal nerve arises from which spinal nerves?",
+        "options": ["L4-L5 and S1", "L5-S1 and S2", "S1-S2 and S3", "S2-S3 and S4"],
+        "answer": 0,
+        "correctAnswer": "L4-L5 and S1",
+        "explanation": "The superior gluteal nerve arises from L4-L5 and S1, innervating the gluteus medius, minimus, and tensor fasciae latae."
+    },
+    {
+        "question": "The inferior gluteal nerve is formed by which spinal nerves?",
+        "options": ["L4-L5 and S1", "L5-S1 and S2", "S1-S2 and S3", "S2-S3 and S4"],
+        "answer": 1,
+        "correctAnswer": "L5-S1 and S2",
+        "explanation": "The inferior gluteal nerve is formed by L5-S1 and S2, innervating the gluteus maximus."
+    },
+    {
+        "question": "The posterior cutaneous nerve of the thigh arises from which spinal nerves?",
+        "options": ["L4-L5 and S1", "S1-S2 and S3", "S2-S3 and S4", "L5-S1 and S2"],
+        "answer": 1,
+        "correctAnswer": "S1-S2 and S3",
+        "explanation": "The posterior cutaneous nerve of the thigh arises from S1-S2 and S3, supplying the skin of the posterior thigh."
+    },
+    {
+        "question": "The sciatic nerve is composed of which two nerves?",
+        "options": ["Femoral and obturator", "Tibial and common fibular", "Median and ulnar", "Radial and musculocutaneous"],
+        "answer": 1,
+        "correctAnswer": "Tibial and common fibular",
+        "explanation": "The sciatic nerve is composed of the tibial and common fibular nerves, which innervate different parts of the lower limb."
+    },
+    {
+        "question": "The sciatic nerve supplies all of the lower limb except which regions?",
+        "options": ["Posterior thigh and leg", "Anterior and medial thigh", "Anterior leg and foot", "Posterior leg and foot"],
+        "answer": 1,
+        "correctAnswer": "Anterior and medial thigh",
+        "explanation": "The sciatic nerve supplies most of the lower limb, except the anterior and medial thigh, which are innervated by the femoral and obturator nerves."
+    },
+    {
+        "question": "The pudendal nerve arises from which spinal nerves?",
+        "options": ["L4-L5 and S1", "S2-S3 and S4", "L5-S1 and S2", "S1-S2 and S3"],
+        "answer": 1,
+        "correctAnswer": "S2-S3 and S4",
+        "explanation": "The pudendal nerve arises from S2-S3 and S4, innervating the pelvis and perineum, including the external genitalia."
+    },
+    {
+        "question": "The coccygeal plexus is formed by which spinal nerves?",
+        "options": ["C1-C4", "L1-L4", "S1-S4", "Coccygeal nerves"],
+        "answer": 3,
+        "correctAnswer": "Coccygeal nerves",
+        "explanation": "The coccygeal plexus is formed by the coccygeal nerve (Co1) and contributions from S4-S5, supplying the coccygeal region."
+    }
+]
+    ;
+
+        const questionElement = document.getElementById('question');
+        const optionsContainer = document.getElementById('options-container');
+        const currentQuestionElement = document.getElementById('current-question');
+        const totalQuestionsElement = document.getElementById('total-questions');
+        const progressBar = document.getElementById('progress-bar');
+        const prevButton = document.getElementById('prev-btn');
+        const nextButton = document.getElementById('next-btn');
+        const feedbackElement = document.getElementById('feedback');
+        const timerElement = document.getElementById('timer');
+        const explanationElement = document.getElementById('explanation');
+        const explanationTextElement = document.getElementById('explanation-text');
+        const explanationToggle = document.getElementById('explanation-toggle');
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedOption = null;
+        let timeStarted = null;
+        let timerInterval = null;
+
+        function initQuiz() {
+            totalQuestionsElement.textContent = questions.length;
+            loadQuestion();
+            startTimer();
+            prevButton.addEventListener('click', goToPreviousQuestion);
+            nextButton.addEventListener('click', goToNextQuestion);
+            themeToggle.addEventListener('click', toggleTheme);
+            explanationToggle.addEventListener('click', toggleExplanation);
+            loadTheme();
+        }
+
+        function loadTheme() {
+            const theme = localStorage.getItem('theme') || 'dark';
+            body.className = theme;
+            themeToggle.innerHTML = theme === 'dark' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+            document.querySelectorAll('.quiz-container, header, footer, .explanation-toggle').forEach(el => {
+                el.className = el.className.replace(/light|dark/g, '') + ` ${theme}`;
+            });
+        }
+
+        function toggleTheme() {
+            const newTheme = body.className === 'dark' ? 'light' : 'dark';
+            body.className = newTheme;
+            localStorage.setItem('theme', newTheme);
+            themeToggle.innerHTML = newTheme === 'dark' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+            document.querySelectorAll('.quiz-container, header, footer, .explanation-toggle').forEach(el => {
+                el.className = el.className.replace(/light|dark/g, '') + ` ${newTheme}`;
+            });
+        }
+
+        function startTimer() {
+            timeStarted = new Date();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            const now = new Date();
+            const diff = new Date(now - timeStarted);
+            const minutes = diff.getMinutes().toString().padStart(2, '0');
+            const seconds = diff.getSeconds().toString().padStart(2, '0');
+            timerElement.textContent = `${minutes}:${seconds}`;
+        }
+
+        function loadQuestion() {
+            const question = questions[currentQuestionIndex];
+            questionElement.textContent = question.question;
+            currentQuestionElement.textContent = currentQuestionIndex + 1;
+            progressBar.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+            optionsContainer.innerHTML = '';
+
+            const optionLetters = ['A', 'B', 'C', 'D'];
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.classList.add('option', body.className);
+                const optionLetter = document.createElement('div');
+                optionLetter.classList.add('option-letter');
+                optionLetter.textContent = optionLetters[index];
+                const optionText = document.createElement('div');
+                optionText.textContent = option;
+                optionElement.appendChild(optionLetter);
+                optionElement.appendChild(optionText);
+                optionElement.addEventListener('click', () => selectOption(index));
+                optionsContainer.appendChild(optionElement);
+            });
+
+            prevButton.disabled = currentQuestionIndex === 0;
+            nextButton.textContent = currentQuestionIndex === questions.length - 1 ? 'Finish' : 'Next';
+            feedbackElement.textContent = '';
+            explanationElement.classList.remove('show');
+            explanationToggle.textContent = 'Show Explanation';
+            explanationToggle.style.display = 'none';
+            selectedOption = null;
+        }
+
+        function selectOption(index) {
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => option.classList.remove('selected'));
+            options[index].classList.add('selected');
+            selectedOption = index;
+            const isCorrect = index === questions[currentQuestionIndex].answer;
+
+            if (isCorrect) {
+                feedbackElement.textContent = 'Correct! 🎉';
+                feedbackElement.style.color = '#00b894';
+                score++;
+            } else {
+                feedbackElement.textContent = 'Incorrect 😢';
+                feedbackElement.style.color = '#d63031';
+                options[questions[currentQuestionIndex].answer].classList.add('correct');
+            }
+
+            explanationTextElement.textContent = questions[currentQuestionIndex].explanation;
+            explanationToggle.style.display = 'block';
+            options.forEach(option => {
+                option.style.pointerEvents = 'none';
+            });
+            nextButton.disabled = false;
+        }
+
+        function toggleExplanation() {
+            if (explanationElement.classList.contains('show')) {
+                explanationElement.classList.remove('show');
+                explanationToggle.textContent = 'Show Explanation';
+            } else {
+                explanationElement.classList.add('show');
+                explanationToggle.textContent = 'Hide Explanation';
+            }
+        }
+
+        function goToNextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function goToPreviousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        }
+
+        function showResults() {
+            clearInterval(timerInterval);
+            const quizContainer = document.querySelector('.quiz-container');
+            quizContainer.classList.add('fade-in');
+            const percentage = ((score / questions.length) * 100).toFixed(1);
+            const now = new Date();
+            const diff = new Date(now - timeStarted);
+            const minutes = diff.getMinutes().toString().padStart(2, '0');
+            const seconds = diff.getSeconds().toString().padStart(2, '0');
+
+            quizContainer.innerHTML = `
+                <div class="quiz-completed">
+                    <div class="score-text">Your Score</div>
+                    <div class="score-value">${score}/${questions.length}</div>
+                    <div class="mark-percentage">${percentage}%</div>
+                    <div class="score-text">Time: ${minutes}:${seconds}</div>
+                    <button id="restart-btn">
+                        <i class="fas fa-redo"></i> Restart Quiz
+                    </button>
+                </div>
+            `;
+
+            document.getElementById('restart-btn').addEventListener('click', () => {
+                currentQuestionIndex = 0;
+                score = 0;
+                quizContainer.classList.remove('fade-in');
+                quizContainer.innerHTML = `
+                    <div class="timer">
+                        <i class="fas fa-clock"></i>
+                        <span id="timer">00:00</span>
+                    </div>
+                    <div class="header">
+                        <div class="subtitle">Professional Questions with Detailed Explanations</div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="progress-bar"></div>
+                    </div>
+                    <div class="question-number">Question <span id="current-question">1</span> of <span id="total-questions">1</span></div>
+                    <div class="question-text" id="question"></div>
+                    <div class="options-container" id="options-container"></div>
+                    <button class="explanation-toggle ${body.className}" id="explanation-toggle">Show Explanation</button>
+                    <div class="explanation" id="explanation">
+                        <div class="explanation-title">Explanation:</div>
+                        <div id="explanation-text"></div>
+                    </div>
+                    <div class="feedback" id="feedback"></div>
+                    <div class="navigation">
+                        <button id="prev-btn" disabled>
+                            <i class="fas fa-arrow-left"></i> Previous
+                        </button>
+                        <button id="next-btn">
+                            Next <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                `;
+                // Reassign DOM elements after resetting HTML
+                questionElement = document.getElementById('question');
+                optionsContainer = document.getElementById('options-container');
+                currentQuestionElement = document.getElementById('current-question');
+                totalQuestionsElement = document.getElementById('total-questions');
+                progressBar = document.getElementById('progress-bar');
+                prevButton = document.getElementById('prev-btn');
+                nextButton = document.getElementById('next-btn');
+                feedbackElement = document.getElementById('feedback');
+                timerElement = document.getElementById('timer');
+                explanationElement = document.getElementById('explanation');
+                explanationTextElement = document.getElementById('explanation-text');
+                explanationToggle = document.getElementById('explanation-toggle');
+                initQuiz();
+            });
+        }
+
+        initQuiz();
+    </script>
+</body>
+</html>
