@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Embryology Quiz</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-light: #f5f7fa;
+            --bg-dark: #0a192f;
+            --text-light: #1a202c;
+            --text-dark: #e0e1dd;
+            --accent: #5f9ea0;
+            --accent-hover: #4a8c8e;
+            --card-bg-light: #ffffff;
+            --card-bg-dark: rgba(13, 27, 42, 0.95);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.light {
+            background: var(--bg-light);
+            color: var(--text-light);
+        }
+
+        body.dark {
+            background: linear-gradient(135deg, var(--bg-dark), #0d1b2a);
+            color: var(--text-dark);
+        }
+
+        header {
+            background: var(--card-bg-dark);
+            padding: 1rem;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header.light {
+            background: var(--card-bg-light);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: inherit;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(95, 158, 160, 0.2);
+        }
+
+        .quiz-container {
+            width: 100%;
+            max-width: 900px;
+            margin: 1.5rem auto;
+            background: var(--card-bg-dark);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+        }
+
+        .quiz-container.light {
+            background: var(--card-bg-light);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-top: 0.5rem;
+        }
+
+        .progress-container {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            height: 6px;
+            margin: 1.5rem 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), #7cb9e8);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .question-number {
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        .options-container {
+            display: grid;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .option.light {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .option:hover {
+            background: rgba(95, 158, 160, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .option.selected {
+            background: rgba(95, 158, 160, 0.3);
+            border-color: var(--accent);
+            box-shadow: 0 0 10px rgba(95, 158, 160, 0.3);
+        }
+
+        .option.correct {
+            background: rgba(0, 184, 148, 0.2);
+            border-color: #00b894;
+        }
+
+        .option.incorrect {
+            background: rgba(214, 48, 49, 0.2);
+            border-color: #d63031;
+        }
+
+        .option-letter {
+            font-weight: 600;
+            margin-right: 0.75rem;
+            color: var(--accent);
+            width: 1.5rem;
+            height: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(95, 158, 160, 0.2);
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+            gap: 1rem;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            background: var(--accent);
+            color: #fff;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        button.light {
+            color: var(--text-light);
+        }
+
+        #prev-btn {
+            background: rgba(95, 158, 160, 0.2);
+        }
+
+        #prev-btn:hover:not(:disabled) {
+            background: rgba(95, 158, 160, 0.4);
+        }
+
+        #next-btn:hover {
+            background: var(--accent-hover);
+            box-shadow: 0 0 10px rgba(95, 158, 160, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .quiz-completed {
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+
+        .score-text {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .score-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .mark-percentage {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+        }
+
+        #restart-btn {
+            background: linear-gradient(90deg, var(--accent), #7cb9e8);
+            padding: 1rem 2rem;
+            font-size: 1rem;
+        }
+
+        #restart-btn:hover {
+            background: linear-gradient(90deg, var(--accent-hover), #6aa6d6);
+        }
+
+        .feedback {
+            text-align: center;
+            margin-top: 1rem;
+            font-weight: 500;
+            min-height: 1.5rem;
+            color: var(--accent);
+        }
+
+        .explanation-toggle {
+            background: rgba(95, 158, 160, 0.2);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin: 1rem auto;
+            display: block;
+            transition: all 0.3s;
+        }
+
+        .explanation-toggle.light {
+            color: var(--text-light);
+        }
+
+        .explanation-toggle:hover {
+            background: rgba(95, 158, 160, 0.4);
+        }
+
+        .explanation {
+            background: rgba(95, 158, 160, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: none;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .explanation.show {
+            display: block;
+            max-height: 500px;
+        }
+
+        .explanation-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--accent);
+        }
+
+        .timer {
+            text-align: right;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+
+        footer {
+            background: var(--card-bg-dark);
+            padding: 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: auto;
+        }
+
+        footer.light {
+            background: var(--card-bg-light);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .quiz-container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .question-text {
+                font-size: 1.1rem;
+            }
+
+            .option {
+                padding: 0.75rem;
+                font-size: 0.9rem;
+            }
+
+            button {
+                padding: 0.6rem 1rem;
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .quiz-container {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 1.3rem;
+            }
+
+            .question-text {
+                font-size: 1rem;
+            }
+
+            .navigation {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body class="dark">
+    <header>
+        <h1>Embryology Quiz</h1>
+        <button class="theme-toggle" id="theme-toggle">
+            <i class="fas fa-moon"></i>
+        </button>
+    </header>
+
+    <div class="quiz-container">
+        <div class="timer">
+            <i class="fas fa-clock"></i>
+            <span id="timer">00:00</span>
+        </div>
+        
+        <div class="header">
+            <div class="subtitle">Professional Questions with Detailed Explanations</div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div class="question-number">Question <span id="current-question">1</span> of <span id="total-questions">1</span></div>
+        
+        <div class="question-text" id="question">Which part of the brain is responsible for coordinating skeletal muscle contractions?</div>
+        
+        <div class="options-container" id="options-container"></div>
+        
+        <button class="explanation-toggle" id="explanation-toggle">Show Explanation</button>
+        <div class="explanation" id="explanation">
+            <div class="explanation-title">Explanation:</div>
+            <div id="explanation-text"></div>
+        </div>
+        
+        <div class="feedback" id="feedback"></div>
+        
+        <div class="navigation">
+            <button id="prev-btn" disabled>
+                <i class="fas fa-arrow-left"></i> Previous
+            </button>
+            <button id="next-btn">
+                Next <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2025 Embryology Quiz | All Rights Reserved
+    </footer>
+
+    <script>
+        const questions = [
+    {
+        "question": "The nervous system is described as the most complex of the body's systems and accounts for approximately what percentage of total body weight?",
+        "options": ["1%", "3%", "5%", "10%"],
+        "answer": 1,
+        "correctAnswer": "3%",
+        "explanation": "Despite its immense complexity and control over body functions, the nervous system (brain, spinal cord, and nerves) makes up only about 3% of total body weight."
+    },
+    {
+        "question": "Human anatomy is divided into gross (macroscopic) anatomy and which other main branch?",
+        "options": ["Regional anatomy", "Systemic anatomy", "Microscopic anatomy (histology)", "Developmental anatomy"],
+        "answer": 2,
+        "correctAnswer": "Microscopic anatomy (histology)",
+        "explanation": "The two main branches of anatomy are gross anatomy, which studies structures visible to the naked eye, and microscopic anatomy (histology), which studies tissues and cells using a microscope."
+    },
+    {
+        "question": "In the anatomic position, the body is erect with palms facing which direction?",
+        "options": ["Backward", "Forward", "Upward", "Downward"],
+        "answer": 1,
+        "correctAnswer": "Forward",
+        "explanation": "The standard anatomical position is defined as the body standing erect, facing forward, with arms at the sides and palms facing forward (anteriorly)."
+    },
+    {
+        "question": "Which plane divides the body into superior and inferior portions?",
+        "options": ["Sagittal plane", "Coronal plane", "Transverse (horizontal) plane", "Midsagittal plane"],
+        "answer": 2,
+        "correctAnswer": "Transverse (horizontal) plane",
+        "explanation": "A transverse (or horizontal) plane runs parallel to the ground and divides the body or an organ into superior (upper) and inferior (lower) portions."
+    },
+    {
+        "question": "The term \"superior\" refers to a structure that is:",
+        "options": ["Toward the midline", "Away from the head", "Toward the head", "Farther from the body surface"],
+        "answer": 2,
+        "correctAnswer": "Toward the head",
+        "explanation": "In anatomical terminology, 'superior' means toward the head or the upper part of a structure. It is synonymous with cranial or cephalad."
+    },
+    {
+        "question": "Flexion is a movement that:",
+        "options": ["Increases the angle between bones", "Decreases the angle between bones", "Moves a limb away from the midline", "Rotates a limb laterally"],
+        "answer": 1,
+        "correctAnswer": "Decreases the angle between bones",
+        "explanation": "Flexion is a bending movement that decreases the angle between two body parts, such as bending the elbow or knee."
+    },
+    {
+        "question": "The cephalic region refers to the:",
+        "options": ["Neck", "Chest", "Head", "Lower back"],
+        "answer": 2,
+        "correctAnswer": "Head",
+        "explanation": "The cephalic region is the anatomical term for the entire head. It is derived from the Greek word 'kephalē' meaning head."
+    },
+    {
+        "question": "The dorsal body cavity includes which two subdivisions?",
+        "options": ["Thoracic and abdominopelvic", "Cranial and spinal", "Pleural and pericardial", "Abdominal and pelvic"],
+        "answer": 1,
+        "correctAnswer": "Cranial and spinal",
+        "explanation": "The dorsal body cavity is located on the posterior (back) side of the body and is subdivided into the cranial cavity (housing the brain) and the vertebral (spinal) canal (housing the spinal cord)."
+    },
+    {
+        "question": "The visceral pleura is the layer that:",
+        "options": ["Lines the chest wall", "Adheres to the surface of the lungs", "Surrounds the heart", "Covers the abdominal viscera"],
+        "answer": 1,
+        "correctAnswer": "Adheres to the surface of the lungs",
+        "explanation": "Serous membranes have two layers. The visceral pleura is the inner layer that directly covers the outer surface of the lungs. The parietal pleura is the outer layer that lines the chest wall."
+    },
+    {
+        "question": "The abdominopelvic cavity is divided into abdominal and pelvic portions, separated by which structure?",
+        "options": ["Diaphragm", "Ribs", "No physical wall", "Peritoneum"],
+        "answer": 2,
+        "correctAnswer": "No physical wall",
+        "explanation": "The abdominal and pelvic cavities are continuous with each other; there is no physical wall or partition separating them. The imaginary boundary is the superior aperture of the pelvis (pelvic brim)."
+    },
+    {
+        "question": "The nervous system is divided into the CNS and PNS, with the CNS consisting of:",
+        "options": ["Brain and cranial nerves", "Brain and spinal cord", "Spinal cord and peripheral nerves", "Ganglia and sensory receptors"],
+        "answer": 1,
+        "correctAnswer": "Brain and spinal cord",
+        "explanation": "The central nervous system (CNS) is the body's main processing and command center and is composed of the brain and the spinal cord."
+    },
+    {
+        "question": "How many pairs of cranial nerves emerge from the base of the brain?",
+        "options": ["10", "12", "31", "100"],
+        "answer": 1,
+        "correctAnswer": "12",
+        "explanation": "There are 12 pairs of cranial nerves, numbered I through XII. They emerge from the brainstem and other parts of the brain and primarily serve the head and neck."
+    },
+    {
+        "question": "The enteric plexus is a network of neurons located in the walls of which organs?",
+        "options": ["Brain", "Spinal cord", "Gastrointestinal tract", "Lungs"],
+        "answer": 2,
+        "correctAnswer": "Gastrointestinal tract",
+        "explanation": "The enteric nervous system is a extensive network of neurons located in the walls of the gastrointestinal tract, from the esophagus to the anus. It is sometimes called the 'second brain' and can operate independently to control digestive functions."
+    },
+    {
+        "question": "Nervous tissue consists of neurons and which supporting cells?",
+        "options": ["Myocytes", "Neuroglia", "Osteocytes", "Chondrocytes"],
+        "answer": 1,
+        "correctAnswer": "Neuroglia",
+        "explanation": "Nervous tissue is composed of two main cell types: neurons, which are the excitable nerve cells, and neuroglia (or glial cells), which are the supporting cells that surround and protect neurons."
+    },
+    {
+        "question": "The cell body of a neuron contains the nucleus and is also known as the:",
+        "options": ["Axon", "Dendrite", "Soma", "Synapse"],
+        "answer": 2,
+        "correctAnswer": "Soma",
+        "explanation": "The soma, or perikaryon, is the neuron's cell body. It contains the nucleus and most of the cytoplasm and is the cell's biosynthetic center."
+    },
+    {
+        "question": "Dendrites in a neuron function primarily as:",
+        "options": ["Output regions", "Input regions", "Secretory regions", "Biosynthetic centers"],
+        "answer": 1,
+        "correctAnswer": "Input regions",
+        "explanation": "Dendrites are short, branched processes that extend from the cell body. Their primary function is to receive incoming signals from other neurons or the environment and conduct this information toward the cell body."
+    },
+    {
+        "question": "Which structural classification of neurons has several dendrites and one axon, common in the brain and spinal cord?",
+        "options": ["Unipolar", "Bipolar", "Multipolar", "Pseudounipolar"],
+        "answer": 2,
+        "correctAnswer": "Multipolar",
+        "explanation": "Multipolar neurons have one axon and multiple dendrites. This is the most common structural type in the CNS and includes most interneurons and motor neurons."
+    },
+    {
+        "question": "Bipolar neurons are found in which locations?",
+        "options": ["Brain and spinal cord", "Retina, inner ear, olfactory area", "Dorsal root ganglia", "Peripheral nerves"],
+        "answer": 1,
+        "correctAnswer": "Retina, inner ear, olfactory area",
+        "explanation": "Bipolar neurons have one axon and one dendrite extending from opposite sides of the cell body. They are rare and found primarily in special sensory organs like the retina (sight), olfactory epithelium (smell), and inner ear (hearing and balance)."
+    },
+    {
+        "question": "Pseudounipolar neurons are typically found in:",
+        "options": ["Retina", "Dorsal root ganglia", "Cerebral cortex", "Cerebellum"],
+        "answer": 1,
+        "correctAnswer": "Dorsal root ganglia",
+        "explanation": "Pseudounipolar neurons have a single process that extends from the cell body and then splits into two branches (one peripheral and one central). They are found in sensory ganglia, like the dorsal root ganglia (for body sensation) and cranial nerve ganglia."
+    },
+    {
+        "question": "Axonal terminals contain vesicles with what substance?",
+        "options": ["Myelin", "Neurotransmitters", "Nucleus", "Mitochondria"],
+        "answer": 1,
+        "correctAnswer": "Neurotransmitters",
+        "explanation": "The axonal terminals (synaptic end bulbs) contain numerous synaptic vesicles that are filled with neurotransmitter molecules. These chemicals are released to communicate with the next cell across the synaptic cleft."
+    },
+    {
+        "question": "The gap between adjacent neurons at a synapse is called the:",
+        "options": ["Axon hillock", "Synaptic cleft", "Node of Ranvier", "Myelin sheath"],
+        "answer": 1,
+        "correctAnswer": "Synaptic cleft",
+        "explanation": "The synaptic cleft is the tiny, fluid-filled gap that separates the presynaptic neuron (which releases neurotransmitter) from the postsynaptic neuron (which receives the signal)."
+    },
+    {
+        "question": "Sensory (afferent) neurons carry impulses from receptors to the CNS and are mostly which structural type?",
+        "options": ["Multipolar", "Bipolar", "Unipolar", "Pseudounipolar"],
+        "answer": 3,
+        "correctAnswer": "Pseudounipolar",
+        "explanation": "Most sensory neurons are structurally classified as pseudounipolar. Their single process splits, with one branch carrying sensory input from the periphery and the other branch carrying that information into the CNS."
+    },
+    {
+        "question": "Motor (efferent) neurons carry impulses from the CNS to muscles or glands and are mostly:",
+        "options": ["Unipolar", "Bipolar", "Multipolar", "Pseudounipolar"],
+        "answer": 2,
+        "correctAnswer": "Multipolar",
+        "explanation": "Motor neurons, which carry commands from the CNS to effector organs (muscles and glands), are almost always multipolar. They have many dendrites receiving signals and one axon carrying the output signal."
+    },
+    {
+        "question": "Interneurons connect sensory and motor neurons and are mostly found in the:",
+        "options": ["PNS", "CNS", "Ganglia", "Enteric plexus"],
+        "answer": 1,
+        "correctAnswer": "CNS",
+        "explanation": "Interneurons (or association neurons) lie entirely within the central nervous system (brain and spinal cord). They form the connecting links between sensory and motor neurons and are involved in integration and processing."
+    },
+    {
+        "question": "Which CNS neuroglial cell is star-shaped and guides neuron migration?",
+        "options": ["Microglia", "Oligodendrocytes", "Astrocytes", "Ependymal cells"],
+        "answer": 2,
+        "correctAnswer": "Astrocytes",
+        "explanation": "Astrocytes are star-shaped glial cells with numerous processes. They are the most abundant CNS neuroglia and play a key role in supporting and guiding the migration of developing neurons."
+    },
+    {
+        "question": "Microglia in the CNS function as:",
+        "options": ["Myelin producers", "Macrophages", "CSF circulators", "Nutrient transporters"],
+        "answer": 1,
+        "correctAnswer": "Macrophages",
+        "explanation": "Microglia are the resident immune cells and phagocytes of the CNS. They act as macrophages, constantly monitoring the neural environment for damage or pathogens and engulfing cellular debris."
+    },
+    {
+        "question": "Ependymal cells in the CNS are ciliated to facilitate the movement of:",
+        "options": ["Neurotransmitters", "Myelin", "Cerebrospinal fluid", "Blood"],
+        "answer": 2,
+        "correctAnswer": "Cerebrospinal fluid",
+        "explanation": "Ependymal cells are epithelial-like cells that line the ventricles of the brain and the central canal of the spinal cord. Their cilia beat to help circulate cerebrospinal fluid (CSF) through these cavities."
+    },
+    {
+        "question": "Oligodendrocytes produce myelin sheaths in the:",
+        "options": ["PNS", "CNS", "Enteric plexus", "Ganglia"],
+        "answer": 1,
+        "correctAnswer": "CNS",
+        "explanation": "Oligodendrocytes are the myelinating glial cells of the central nervous system. A single oligodendrocyte can wrap its extensions around multiple axons to form myelin sheaths."
+    },
+    {
+        "question": "Schwann cells in the PNS are vital for:",
+        "options": ["Neuron migration", "Myelin formation and regeneration", "Phagocytosis", "CSF production"],
+        "answer": 1,
+        "correctAnswer": "Myelin formation and regeneration",
+        "explanation": "Schwann cells (or neurolemmocytes) are the PNS equivalents of oligodendrocytes. They form the myelin sheath around peripheral axons and are crucial for guiding the regeneration of injured axons."
+    },
+    {
+        "question": "Satellite cells in the PNS surround neuronal cell bodies to:",
+        "options": ["Produce myelin", "Regulate material exchange", "Act as macrophages", "Circulate fluid"],
+        "answer": 1,
+        "correctAnswer": "Regulate material exchange",
+        "explanation": "Satellite cells surround the cell bodies of neurons within ganglia in the PNS. Their function is to regulate the exchange of materials between the neuronal cell bodies and the surrounding interstitial fluid."
+    },
+    {
+        "question": "The meninges covering the brain and spinal cord, from outer to inner, are:",
+        "options": ["Pia, arachnoid, dura", "Arachnoid, dura, pia", "Dura, arachnoid, pia", "Dura, pia, arachnoid"],
+        "answer": 2,
+        "correctAnswer": "Dura, arachnoid, pia",
+        "explanation": "The meninges are three connective tissue membranes that envelop the CNS. From superficial to deep, they are: the dura mater (tough outer layer), the arachnoid mater (web-like middle layer), and the pia mater (delicate inner layer that clings to the CNS surface)."
+    },
+    {
+        "question": "The subarachnoid space contains which fluid?",
+        "options": ["Blood", "Lymph", "Cerebrospinal fluid", "Peritoneal fluid"],
+        "answer": 2,
+        "correctAnswer": "Cerebrospinal fluid",
+        "explanation": "The subarachnoid space is the area between the arachnoid mater and the pia mater. It is filled with cerebrospinal fluid (CSF), which cushions the brain and spinal cord."
+    },
+    {
+        "question": "CSF is secreted by choroid plexuses in which ventricles?",
+        "options": ["First and second", "Lateral, third, and fourth", "Third only", "Fourth only"],
+        "answer": 1,
+        "correctAnswer": "Lateral, third, and fourth",
+        "explanation": "Cerebrospinal fluid is produced by specialized structures called choroid plexuses, which are located in the roofs of all four ventricles: the two lateral ventricles, the third ventricle, and the fourth ventricle."
+    },
+    {
+        "question": "The primary function of CSF is:",
+        "options": ["Impulse conduction", "Shock absorption and nourishment", "Myelin production", "Hormone secretion"],
+        "answer": 1,
+        "correctAnswer": "Shock absorption and nourishment",
+        "explanation": "The primary functions of cerebrospinal fluid are to cushion the CNS from physical trauma (shock absorption), to provide buoyancy, and to deliver nutrients and remove waste from nervous tissue."
+    },
+    {
+        "question": "The forebrain includes the cerebrum and which other structure?",
+        "options": ["Midbrain", "Hindbrain", "Diencephalon", "Brainstem"],
+        "answer": 2,
+        "correctAnswer": "Diencephalon",
+        "explanation": "The forebrain (prosencephalon) is the largest and most rostral part of the brain. It consists of the cerebrum (telencephalon) and the diencephalon (which includes the thalamus, hypothalamus, and epithalamus)."
+    },
+    {
+        "question": "The cerebrum's surface layer of gray matter is called the:",
+        "options": ["White matter", "Cerebral cortex", "Corpus callosum", "Ventricle"],
+        "answer": 1,
+        "correctAnswer": "Cerebral cortex",
+        "explanation": "The cerebral cortex is the thin (2-4 mm), highly convoluted outer layer of the cerebrum. It is composed of gray matter (neuron cell bodies) and is responsible for higher brain functions like consciousness, memory, and language."
+    },
+    {
+        "question": "The frontal lobe is concerned with:",
+        "options": ["Vision", "Voluntary motor functions and judgment", "Hearing", "Balance"],
+        "answer": 1,
+        "correctAnswer": "Voluntary motor functions and judgment",
+        "explanation": "The frontal lobe, located anterior to the central sulcus, is responsible for voluntary motor control, speech production (Broca's area), decision-making, planning, and aspects of personality and judgment."
+    },
+    {
+        "question": "The occipital lobe's principal function is related to:",
+        "options": ["Smell", "Vision", "Taste", "Touch"],
+        "answer": 1,
+        "correctAnswer": "Vision",
+        "explanation": "The occipital lobe, located at the posterior part of the cerebrum, is almost exclusively devoted to visual processing. It contains the primary visual cortex and visual association areas."
+    },
+    {
+        "question": "The hypothalamus regulates which function?",
+        "options": ["Vision", "Thermoregulation and hunger", "Balance", "Hearing"],
+        "answer": 1,
+        "correctAnswer": "Thermoregulation and hunger",
+        "explanation": "The hypothalamus is a major control center for autonomic functions and maintains the body's internal balance (homeostasis). It regulates body temperature, hunger, thirst, sleep-wake cycles, and endocrine function."
+    },
+    {
+        "question": "The medulla oblongata contains centers for:",
+        "options": ["Memory", "Heart rate and breathing", "Vision", "Smell"],
+        "answer": 1,
+        "correctAnswer": "Heart rate and breathing",
+        "explanation": "The medulla oblongata, the most inferior part of the brainstem, houses vital autonomic centers that regulate heart rate (cardiac center), blood vessel diameter (vasomotor center), and the basic rhythm of breathing (respiratory centers)."
+    }
+]
+    ;
+
+        const questionElement = document.getElementById('question');
+        const optionsContainer = document.getElementById('options-container');
+        const currentQuestionElement = document.getElementById('current-question');
+        const totalQuestionsElement = document.getElementById('total-questions');
+        const progressBar = document.getElementById('progress-bar');
+        const prevButton = document.getElementById('prev-btn');
+        const nextButton = document.getElementById('next-btn');
+        const feedbackElement = document.getElementById('feedback');
+        const timerElement = document.getElementById('timer');
+        const explanationElement = document.getElementById('explanation');
+        const explanationTextElement = document.getElementById('explanation-text');
+        const explanationToggle = document.getElementById('explanation-toggle');
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedOption = null;
+        let timeStarted = null;
+        let timerInterval = null;
+
+        function initQuiz() {
+            totalQuestionsElement.textContent = questions.length;
+            loadQuestion();
+            startTimer();
+            prevButton.addEventListener('click', goToPreviousQuestion);
+            nextButton.addEventListener('click', goToNextQuestion);
+            themeToggle.addEventListener('click', toggleTheme);
+            explanationToggle.addEventListener('click', toggleExplanation);
+            loadTheme();
+        }
+
+        function loadTheme() {
+            const theme = localStorage.getItem('theme') || 'dark';
+            body.className = theme;
+            themeToggle.innerHTML = theme === 'dark' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+            document.querySelectorAll('.quiz-container, header, footer, .explanation-toggle').forEach(el => {
+                el.className = el.className.replace(/light|dark/g, '') + ` ${theme}`;
+            });
+        }
+
+        function toggleTheme() {
+            const newTheme = body.className === 'dark' ? 'light' : 'dark';
+            body.className = newTheme;
+            localStorage.setItem('theme', newTheme);
+            themeToggle.innerHTML = newTheme === 'dark' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+            document.querySelectorAll('.quiz-container, header, footer, .explanation-toggle').forEach(el => {
+                el.className = el.className.replace(/light|dark/g, '') + ` ${newTheme}`;
+            });
+        }
+
+        function startTimer() {
+            timeStarted = new Date();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            const now = new Date();
+            const diff = new Date(now - timeStarted);
+            const minutes = diff.getMinutes().toString().padStart(2, '0');
+            const seconds = diff.getSeconds().toString().padStart(2, '0');
+            timerElement.textContent = `${minutes}:${seconds}`;
+        }
+
+        function loadQuestion() {
+            const question = questions[currentQuestionIndex];
+            questionElement.textContent = question.question;
+            currentQuestionElement.textContent = currentQuestionIndex + 1;
+            progressBar.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+            optionsContainer.innerHTML = '';
+
+            const optionLetters = ['A', 'B', 'C', 'D'];
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.classList.add('option', body.className);
+                const optionLetter = document.createElement('div');
+                optionLetter.classList.add('option-letter');
+                optionLetter.textContent = optionLetters[index];
+                const optionText = document.createElement('div');
+                optionText.textContent = option;
+                optionElement.appendChild(optionLetter);
+                optionElement.appendChild(optionText);
+                optionElement.addEventListener('click', () => selectOption(index));
+                optionsContainer.appendChild(optionElement);
+            });
+
+            prevButton.disabled = currentQuestionIndex === 0;
+            nextButton.textContent = currentQuestionIndex === questions.length - 1 ? 'Finish' : 'Next';
+            feedbackElement.textContent = '';
+            explanationElement.classList.remove('show');
+            explanationToggle.textContent = 'Show Explanation';
+            explanationToggle.style.display = 'none';
+            selectedOption = null;
+        }
+
+        function selectOption(index) {
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => option.classList.remove('selected'));
+            options[index].classList.add('selected');
+            selectedOption = index;
+            const isCorrect = index === questions[currentQuestionIndex].answer;
+
+            if (isCorrect) {
+                feedbackElement.textContent = 'Correct! 🎉';
+                feedbackElement.style.color = '#00b894';
+                score++;
+            } else {
+                feedbackElement.textContent = 'Incorrect 😢';
+                feedbackElement.style.color = '#d63031';
+                options[questions[currentQuestionIndex].answer].classList.add('correct');
+            }
+
+            explanationTextElement.textContent = questions[currentQuestionIndex].explanation;
+            explanationToggle.style.display = 'block';
+            options.forEach(option => {
+                option.style.pointerEvents = 'none';
+            });
+            nextButton.disabled = false;
+        }
+
+        function toggleExplanation() {
+            if (explanationElement.classList.contains('show')) {
+                explanationElement.classList.remove('show');
+                explanationToggle.textContent = 'Show Explanation';
+            } else {
+                explanationElement.classList.add('show');
+                explanationToggle.textContent = 'Hide Explanation';
+            }
+        }
+
+        function goToNextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function goToPreviousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        }
+
+        function showResults() {
+            clearInterval(timerInterval);
+            const quizContainer = document.querySelector('.quiz-container');
+            quizContainer.classList.add('fade-in');
+            const percentage = ((score / questions.length) * 100).toFixed(1);
+            const now = new Date();
+            const diff = new Date(now - timeStarted);
+            const minutes = diff.getMinutes().toString().padStart(2, '0');
+            const seconds = diff.getSeconds().toString().padStart(2, '0');
+
+            quizContainer.innerHTML = `
+                <div class="quiz-completed">
+                    <div class="score-text">Your Score</div>
+                    <div class="score-value">${score}/${questions.length}</div>
+                    <div class="mark-percentage">${percentage}%</div>
+                    <div class="score-text">Time: ${minutes}:${seconds}</div>
+                    <button id="restart-btn">
+                        <i class="fas fa-redo"></i> Restart Quiz
+                    </button>
+                </div>
+            `;
+
+            document.getElementById('restart-btn').addEventListener('click', () => {
+                currentQuestionIndex = 0;
+                score = 0;
+                quizContainer.classList.remove('fade-in');
+                quizContainer.innerHTML = `
+                    <div class="timer">
+                        <i class="fas fa-clock"></i>
+                        <span id="timer">00:00</span>
+                    </div>
+                    <div class="header">
+                        <div class="subtitle">Professional Questions with Detailed Explanations</div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="progress-bar"></div>
+                    </div>
+                    <div class="question-number">Question <span id="current-question">1</span> of <span id="total-questions">1</span></div>
+                    <div class="question-text" id="question"></div>
+                    <div class="options-container" id="options-container"></div>
+                    <button class="explanation-toggle ${body.className}" id="explanation-toggle">Show Explanation</button>
+                    <div class="explanation" id="explanation">
+                        <div class="explanation-title">Explanation:</div>
+                        <div id="explanation-text"></div>
+                    </div>
+                    <div class="feedback" id="feedback"></div>
+                    <div class="navigation">
+                        <button id="prev-btn" disabled>
+                            <i class="fas fa-arrow-left"></i> Previous
+                        </button>
+                        <button id="next-btn">
+                            Next <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                `;
+                // Reassign DOM elements after resetting HTML
+                questionElement = document.getElementById('question');
+                optionsContainer = document.getElementById('options-container');
+                currentQuestionElement = document.getElementById('current-question');
+                totalQuestionsElement = document.getElementById('total-questions');
+                progressBar = document.getElementById('progress-bar');
+                prevButton = document.getElementById('prev-btn');
+                nextButton = document.getElementById('next-btn');
+                feedbackElement = document.getElementById('feedback');
+                timerElement = document.getElementById('timer');
+                explanationElement = document.getElementById('explanation');
+                explanationTextElement = document.getElementById('explanation-text');
+                explanationToggle = document.getElementById('explanation-toggle');
+                initQuiz();
+            });
+        }
+
+        initQuiz();
+    </script>
+</body>
+</html>
