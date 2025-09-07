@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Embryology Quiz</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-light: #f5f7fa;
+            --bg-dark: #0a192f;
+            --text-light: #1a202c;
+            --text-dark: #e0e1dd;
+            --accent: #5f9ea0;
+            --accent-hover: #4a8c8e;
+            --card-bg-light: #ffffff;
+            --card-bg-dark: rgba(13, 27, 42, 0.95);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.light {
+            background: var(--bg-light);
+            color: var(--text-light);
+        }
+
+        body.dark {
+            background: linear-gradient(135deg, var(--bg-dark), #0d1b2a);
+            color: var(--text-dark);
+        }
+
+        header {
+            background: var(--card-bg-dark);
+            padding: 1rem;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header.light {
+            background: var(--card-bg-light);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: inherit;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(95, 158, 160, 0.2);
+        }
+
+        .quiz-container {
+            width: 100%;
+            max-width: 900px;
+            margin: 1.5rem auto;
+            background: var(--card-bg-dark);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+        }
+
+        .quiz-container.light {
+            background: var(--card-bg-light);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-top: 0.5rem;
+        }
+
+        .progress-container {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            height: 6px;
+            margin: 1.5rem 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), #7cb9e8);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .question-number {
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        .options-container {
+            display: grid;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .option.light {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .option:hover {
+            background: rgba(95, 158, 160, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .option.selected {
+            background: rgba(95, 158, 160, 0.3);
+            border-color: var(--accent);
+            box-shadow: 0 0 10px rgba(95, 158, 160, 0.3);
+        }
+
+        .option.correct {
+            background: rgba(0, 184, 148, 0.2);
+            border-color: #00b894;
+        }
+
+        .option.incorrect {
+            background: rgba(214, 48, 49, 0.2);
+            border-color: #d63031;
+        }
+
+        .option-letter {
+            font-weight: 600;
+            margin-right: 0.75rem;
+            color: var(--accent);
+            width: 1.5rem;
+            height: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(95, 158, 160, 0.2);
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+            gap: 1rem;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            background: var(--accent);
+            color: #fff;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        button.light {
+            color: var(--text-light);
+        }
+
+        #prev-btn {
+            background: rgba(95, 158, 160, 0.2);
+        }
+
+        #prev-btn:hover:not(:disabled) {
+            background: rgba(95, 158, 160, 0.4);
+        }
+
+        #next-btn:hover {
+            background: var(--accent-hover);
+            box-shadow: 0 0 10px rgba(95, 158, 160, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .quiz-completed {
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+
+        .score-text {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .score-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .mark-percentage {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+        }
+
+        #restart-btn {
+            background: linear-gradient(90deg, var(--accent), #7cb9e8);
+            padding: 1rem 2rem;
+            font-size: 1rem;
+        }
+
+        #restart-btn:hover {
+            background: linear-gradient(90deg, var(--accent-hover), #6aa6d6);
+        }
+
+        .feedback {
+            text-align: center;
+            margin-top: 1rem;
+            font-weight: 500;
+            min-height: 1.5rem;
+            color: var(--accent);
+        }
+
+        .explanation-toggle {
+            background: rgba(95, 158, 160, 0.2);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin: 1rem auto;
+            display: block;
+            transition: all 0.3s;
+        }
+
+        .explanation-toggle.light {
+            color: var(--text-light);
+        }
+
+        .explanation-toggle:hover {
+            background: rgba(95, 158, 160, 0.4);
+        }
+
+        .explanation {
+            background: rgba(95, 158, 160, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: none;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .explanation.show {
+            display: block;
+            max-height: 500px;
+        }
+
+        .explanation-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--accent);
+        }
+
+        .timer {
+            text-align: right;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+
+        footer {
+            background: var(--card-bg-dark);
+            padding: 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: auto;
+        }
+
+        footer.light {
+            background: var(--card-bg-light);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .quiz-container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .question-text {
+                font-size: 1.1rem;
+            }
+
+            .option {
+                padding: 0.75rem;
+                font-size: 0.9rem;
+            }
+
+            button {
+                padding: 0.6rem 1rem;
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .quiz-container {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 1.3rem;
+            }
+
+            .question-text {
+                font-size: 1rem;
+            }
+
+            .navigation {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body class="dark">
+    <header>
+        <h1>Embryology Quiz</h1>
+        <button class="theme-toggle" id="theme-toggle">
+            <i class="fas fa-moon"></i>
+        </button>
+    </header>
+
+    <div class="quiz-container">
+        <div class="timer">
+            <i class="fas fa-clock"></i>
+            <span id="timer">00:00</span>
+        </div>
+        
+        <div class="header">
+            <div class="subtitle">Professional Questions with Detailed Explanations</div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div class="question-number">Question <span id="current-question">1</span> of <span id="total-questions">1</span></div>
+        
+        <div class="question-text" id="question">Which part of the brain is responsible for coordinating skeletal muscle contractions?</div>
+        
+        <div class="options-container" id="options-container"></div>
+        
+        <button class="explanation-toggle" id="explanation-toggle">Show Explanation</button>
+        <div class="explanation" id="explanation">
+            <div class="explanation-title">Explanation:</div>
+            <div id="explanation-text"></div>
+        </div>
+        
+        <div class="feedback" id="feedback"></div>
+        
+        <div class="navigation">
+            <button id="prev-btn" disabled>
+                <i class="fas fa-arrow-left"></i> Previous
+            </button>
+            <button id="next-btn">
+                Next <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2025 Embryology Quiz | All Rights Reserved
+    </footer>
+
+    <script>
+        const questions = [
+    {
+        "question": "The spinal cord extends through which anatomical structure?",
+        "options": ["Cranial cavity", "Vertebral canal", "Thoracic cavity", "Pelvic cavity"],
+        "answer": 1,
+        "correctAnswer": "Vertebral canal",
+        "explanation": "The spinal cord extends through the vertebral canal, formed by the vertebrae, which protects and houses the spinal cord."
+    },
+    {
+        "question": "How many layers of meninges surround the spinal cord?",
+        "options": ["One", "Two", "Three", "Four"],
+        "answer": 2,
+        "correctAnswer": "Three",
+        "explanation": "The spinal cord is surrounded by three layers of meninges: dura mater, arachnoid mater, and pia mater, providing protection and support."
+    },
+    {
+        "question": "The spinal cord provides neural communication through which component?",
+        "options": ["Gray matter horns", "Tracts of white matter", "Central canal", "Meninges"],
+        "answer": 1,
+        "correctAnswer": "Tracts of white matter",
+        "explanation": "Tracts of white matter in the spinal cord contain myelinated axons that form ascending and descending pathways for neural communication."
+    },
+    {
+        "question": "In adults, the spinal cord extends from the foramen magnum to which vertebra?",
+        "options": ["T12", "L1", "L2", "S1"],
+        "answer": 1,
+        "correctAnswer": "L1",
+        "explanation": "In adults, the spinal cord extends from the foramen magnum to approximately the L1 vertebra, ending at the conus medullaris."
+    },
+    {
+        "question": "In newborns, the spinal cord extends to which lumbar vertebra?",
+        "options": ["L1", "L2", "L3 or L4", "S1"],
+        "answer": 2,
+        "correctAnswer": "L3 or L4",
+        "explanation": "In newborns, the spinal cord extends further down the vertebral canal, typically to the L3 or L4 vertebra, before receding as the vertebral column grows."
+    },
+    {
+        "question": "The gray matter of the spinal cord is shaped like which letter or figure?",
+        "options": ["O", "H or butterfly", "X", "T"],
+        "answer": 1,
+        "correctAnswer": "H or butterfly",
+        "explanation": "The gray matter of the spinal cord, when viewed in cross-section, resembles an H or butterfly shape due to its central position and extensions."
+    },
+    {
+        "question": "The central canal is located within which part of the spinal cord?",
+        "options": ["White matter", "Gray matter", "Dorsal root", "Ventral root"],
+        "answer": 1,
+        "correctAnswer": "Gray matter",
+        "explanation": "The central canal, containing cerebrospinal fluid, is located within the gray matter at the center of the spinal cord."
+    },
+    {
+        "question": "The gray matter of the spinal cord contains which of the following?",
+        "options": ["Myelinated axons", "Dendrites and cell bodies of neurons", "Tracts of white matter", "Meninges"],
+        "answer": 1,
+        "correctAnswer": "Dendrites and cell bodies of neurons",
+        "explanation": "The gray matter contains dendrites, cell bodies of neurons, and unmyelinated axons, forming the processing centers of the spinal cord."
+    },
+    {
+        "question": "Which horn of the gray matter receives and processes sensory input?",
+        "options": ["Ventral horn", "Lateral horn", "Dorsal horn", "Anterior horn"],
+        "answer": 2,
+        "correctAnswer": "Dorsal horn",
+        "explanation": "The dorsal horn of the gray matter receives and processes sensory input from the dorsal roots of spinal nerves."
+    },
+    {
+        "question": "The lateral horn of the spinal cord contains autonomic motor nuclei and is present in which segments?",
+        "options": ["Cervical and thoracic", "Thoracic and upper lumbar", "Lumbar and sacral", "Sacral and coccygeal"],
+        "answer": 1,
+        "correctAnswer": "Thoracic and upper lumbar",
+        "explanation": "The lateral horn, containing autonomic motor nuclei, is found in the thoracic and upper lumbar segments (T1-L2) of the spinal cord."
+    },
+    {
+        "question": "The ventral horn of the spinal cord contains nuclei that provide impulses for which muscle type?",
+        "options": ["Smooth muscle", "Cardiac muscle", "Skeletal muscle", "Glands"],
+        "answer": 2,
+        "correctAnswer": "Skeletal muscle",
+        "explanation": "The ventral horn contains motor nuclei that send impulses to skeletal muscles for voluntary movements."
+    },
+    {
+        "question": "The white matter of the spinal cord consists primarily of:",
+        "options": ["Unmyelinated axons", "Bundles of myelinated axons", "Dendrites and cell bodies", "Neuroglia only"],
+        "answer": 1,
+        "correctAnswer": "Bundles of myelinated axons",
+        "explanation": "The white matter of the spinal cord is composed of bundles of myelinated axons organized into tracts for signal transmission."
+    },
+    {
+        "question": "Which groove divides the white matter of the spinal cord into right and left sides on the anterior side?",
+        "options": ["Posterior median sulcus", "Anterior median fissure", "Lateral sulcus", "Central canal"],
+        "answer": 1,
+        "correctAnswer": "Anterior median fissure",
+        "explanation": "The anterior median fissure is a deep groove on the anterior side of the spinal cord, dividing the white matter into right and left halves."
+    },
+    {
+        "question": "The peripheral nervous system (PNS) is defined as which portion of the nervous system?",
+        "options": ["Inside the brain", "Outside the CNS", "Within the spinal cord", "Inside the meninges"],
+        "answer": 1,
+        "correctAnswer": "Outside the CNS",
+        "explanation": "The PNS consists of all nervous system components outside the central nervous system (brain and spinal cord)."
+    },
+    {
+        "question": "The PNS functions to convey impulses to and from which structures?",
+        "options": ["Brain only", "Spinal cord only", "Brain or spinal cord", "Cranial nerves only"],
+        "answer": 2,
+        "correctAnswer": "Brain or spinal cord",
+        "explanation": "The PNS conveys sensory and motor impulses to and from the brain and spinal cord, connecting the CNS to the body."
+    },
+    {
+        "question": "Sensory neurons of the somatic nervous system convey information from which receptors?",
+        "options": ["Visceral organs", "Somatic receptors in the head, body wall, and limbs", "Cardiac muscle", "Smooth muscle"],
+        "answer": 1,
+        "correctAnswer": "Somatic receptors in the head, body wall, and limbs",
+        "explanation": "Somatic sensory neurons transmit information from receptors in the skin, muscles, and limbs to the CNS."
+    },
+    {
+        "question": "Motor neurons of the somatic nervous system conduct impulses to which muscle type?",
+        "options": ["Smooth muscle", "Cardiac muscle", "Skeletal muscle", "Glands"],
+        "answer": 2,
+        "correctAnswer": "Skeletal muscle",
+        "explanation": "Somatic motor neurons conduct impulses to skeletal muscles, enabling voluntary movements."
+    },
+    {
+        "question": "Sensory neurons of the autonomic nervous system (ANS) convey information from which organs?",
+        "options": ["Skin and limbs", "Visceral organs like the stomach and lungs", "Skeletal muscles", "Brain"],
+        "answer": 1,
+        "correctAnswer": "Visceral organs like the stomach and lungs",
+        "explanation": "ANS sensory neurons transmit information from visceral organs, such as the stomach and lungs, to the CNS."
+    },
+    {
+        "question": "Motor neurons of the ANS conduct impulses to which structures involuntarily?",
+        "options": ["Skeletal muscle", "Smooth muscle, cardiac muscle, and glands", "Sensory receptors", "Spinal tracts"],
+        "answer": 1,
+        "correctAnswer": "Smooth muscle, cardiac muscle, and glands",
+        "explanation": "ANS motor neurons involuntarily control smooth muscle, cardiac muscle, and glands to regulate bodily functions."
+    },
+    {
+        "question": "The motor part of the ANS consists of which two branches?",
+        "options": ["Somatic and visceral", "Sympathetic and parasympathetic", "Central and peripheral", "Cranial and spinal"],
+        "answer": 1,
+        "correctAnswer": "Sympathetic and parasympathetic",
+        "explanation": "The ANS motor component is divided into sympathetic and parasympathetic branches, which regulate involuntary responses."
+    },
+    {
+        "question": "The sympathetic division of the ANS supports which response?",
+        "options": ["Rest and digest", "Fight or flight", "Digestion and defecation", "Relaxation"],
+        "answer": 1,
+        "correctAnswer": "Fight or flight",
+        "explanation": "The sympathetic division prepares the body for 'fight or flight' responses, increasing heart rate and energy mobilization."
+    },
+    {
+        "question": "The parasympathetic division of the ANS supports which activity?",
+        "options": ["Exercise and emergency", "Rest and digest", "Fight or flight", "Excitement"],
+        "answer": 1,
+        "correctAnswer": "Rest and digest",
+        "explanation": "The parasympathetic division promotes 'rest and digest' activities, such as digestion and energy conservation."
+    },
+    {
+        "question": "The PNS is classified into how many pairs of cranial nerves?",
+        "options": ["10", "12", "31", "43"],
+        "answer": 1,
+        "correctAnswer": "12",
+        "explanation": "The PNS includes 12 pairs of cranial nerves that connect the brain to various parts of the head and body."
+    },
+    {
+        "question": "How many pairs of spinal nerves are there in the human body?",
+        "options": ["12", "31", "33", "62"],
+        "answer": 1,
+        "correctAnswer": "31",
+        "explanation": "There are 31 pairs of spinal nerves: 8 cervical, 12 thoracic, 5 lumbar, 5 sacral, and 1 coccygeal."
+    },
+    {
+        "question": "Which cranial nerve is sensory for the sense of smell?",
+        "options": ["Optic (II)", "Olfactory (I)", "Oculomotor (III)", "Trochlear (IV)"],
+        "answer": 1,
+        "correctAnswer": "Olfactory (I)",
+        "explanation": "The olfactory nerve (I) is a sensory cranial nerve responsible for the sense of smell."
+    },
+    {
+        "question": "The oculomotor nerve (III) provides motor fibers to which muscles?",
+        "options": ["Chewing muscles", "Eye muscles (except two)", "Neck muscles", "Tongue muscles"],
+        "answer": 1,
+        "correctAnswer": "Eye muscles (except two)",
+        "explanation": "The oculomotor nerve (III) innervates most eye muscles, except the superior oblique and lateral rectus."
+    },
+    {
+        "question": "The trigeminal nerve (V) provides motor fibers to which muscles?",
+        "options": ["Eye muscles", "Chewing muscles", "Face muscles", "Pharynx muscles"],
+        "answer": 1,
+        "correctAnswer": "Chewing muscles",
+        "explanation": "The trigeminal nerve (V) provides motor fibers to the muscles of mastication (chewing muscles)."
+    },
+    {
+        "question": "The abducens nerve (VI) provides motor fibers to which eye muscle?",
+        "options": ["Superior oblique", "Lateral rectus", "Inferior rectus", "Medial rectus"],
+        "answer": 1,
+        "correctAnswer": "Lateral rectus",
+        "explanation": "The abducens nerve (VI) innervates the lateral rectus muscle, which abducts the eye."
+    },
+    {
+        "question": "The facial nerve (VII) is sensory for which taste region?",
+        "options": ["Posterior tongue", "Anterior two-thirds of the tongue", "Pharynx", "Larynx"],
+        "answer": 1,
+        "correctAnswer": "Anterior two-thirds of the tongue",
+        "explanation": "The facial nerve (VII) provides sensory innervation for taste from the anterior two-thirds of the tongue."
+    },
+    {
+        "question": "The vestibulocochlear nerve (VIII) is sensory for which functions?",
+        "options": ["Taste and smell", "Balance and hearing", "Vision and equilibrium", "Touch and pressure"],
+        "answer": 1,
+        "correctAnswer": "Balance and hearing",
+        "explanation": "The vestibulocochlear nerve (VIII) is responsible for sensory functions of balance (vestibular) and hearing (cochlear)."
+    },
+    {
+        "question": "The glossopharyngeal nerve (IX) provides motor fibers to which muscle?",
+        "options": ["Sternocleidomastoid", "Stylopharyngeus", "Trapezius", "Palatoglossus"],
+        "answer": 1,
+        "correctAnswer": "Stylopharyngeus",
+        "explanation": "The glossopharyngeal nerve (IX) provides motor fibers to the stylopharyngeus muscle, aiding in swallowing."
+    },
+    {
+        "question": "The vagus nerve (X) provides sensory and motor fibers to which structures?",
+        "options": ["Eye muscles", "Pharynx, larynx, and viscera", "Tongue muscles", "Neck muscles"],
+        "answer": 1,
+        "correctAnswer": "Pharynx, larynx, and viscera",
+        "explanation": "The vagus nerve (X) provides sensory and motor fibers to the pharynx, larynx, and visceral organs in the thorax and abdomen."
+    },
+    {
+        "question": "The accessory nerve (XI) provides motor fibers to which muscles?",
+        "options": ["Eye muscles", "Sternocleidomastoid and trapezius", "Chewing muscles", "Tongue muscles"],
+        "answer": 1,
+        "correctAnswer": "Sternocleidomastoid and trapezius",
+        "explanation": "The accessory nerve (XI) innervates the sternocleidomastoid and trapezius muscles, controlling neck and shoulder movements."
+    },
+    {
+        "question": "The hypoglossal nerve (XII) provides motor fibers to which structure?",
+        "options": ["Pharynx", "Tongue muscles (except palatoglossus)", "Neck muscles", "Larynx"],
+        "answer": 1,
+        "correctAnswer": "Tongue muscles (except palatoglossus)",
+        "explanation": "The hypoglossal nerve (XII) provides motor fibers to most tongue muscles, excluding the palatoglossus, for tongue movement."
+    },
+    {
+        "question": "How many pairs of cervical spinal nerves are there?",
+        "options": ["5", "8", "12", "31"],
+        "answer": 1,
+        "correctAnswer": "8",
+        "explanation": "There are 8 pairs of cervical spinal nerves, numbered C1-C8, exiting the vertebral column in the cervical region."
+    },
+    {
+        "question": "The dorsal root of a spinal nerve contains which type of ganglia?",
+        "options": ["Motor ganglia", "Sensory ganglia", "Autonomic ganglia", "Sympathetic ganglia"],
+        "answer": 1,
+        "correctAnswer": "Sensory ganglia",
+        "explanation": "The dorsal root contains sensory ganglia (dorsal root ganglia), which house the cell bodies of sensory neurons."
+    },
+    {
+        "question": "The ventral ramus of a spinal nerve supplies which body region?",
+        "options": ["Back muscles and skin", "Ventral muscles, skin, and limbs", "Thoracic cavity", "Spinal cord"],
+        "answer": 1,
+        "correctAnswer": "Ventral muscles, skin, and limbs",
+        "explanation": "The ventral ramus supplies the ventral muscles, skin, and limbs, contributing to motor and sensory innervation."
+    },
+    {
+        "question": "The thoracic spinal nerves T2-T12 are unique because they do not form:",
+        "options": ["Plexuses", "Dorsal rami", "Ventral rami", "Spinal ganglia"],
+        "answer": 0,
+        "correctAnswer": "Plexuses",
+        "explanation": "Thoracic spinal nerves T2-T12 typically do not form plexuses; instead, they directly form intercostal nerves."
+    },
+    {
+        "question": "The ventral rami of T1-T11 are known as which type of nerves?",
+        "options": ["Subcostal nerves", "Intercostal nerves", "Phrenic nerves", "Sciatic nerves"],
+        "answer": 1,
+        "correctAnswer": "Intercostal nerves",
+        "explanation": "The ventral rami of T1-T11 form intercostal nerves, which innervate the intercostal muscles and skin of the thoracic wall."
+    },
+    {
+        "question": "The ventral ramus of T12 is known as the:",
+        "options": ["Intercostal nerve", "Subcostal nerve", "Phrenic nerve", "Femoral nerve"],
+        "answer": 1,
+        "correctAnswer": "Subcostal nerve",
+        "explanation": "The ventral ramus of T12 is called the subcostal nerve, as it lies below the 12th rib and innervates the lower thoracic and abdominal regions."
+    }
+]
+    ;
+
+        const questionElement = document.getElementById('question');
+        const optionsContainer = document.getElementById('options-container');
+        const currentQuestionElement = document.getElementById('current-question');
+        const totalQuestionsElement = document.getElementById('total-questions');
+        const progressBar = document.getElementById('progress-bar');
+        const prevButton = document.getElementById('prev-btn');
+        const nextButton = document.getElementById('next-btn');
+        const feedbackElement = document.getElementById('feedback');
+        const timerElement = document.getElementById('timer');
+        const explanationElement = document.getElementById('explanation');
+        const explanationTextElement = document.getElementById('explanation-text');
+        const explanationToggle = document.getElementById('explanation-toggle');
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedOption = null;
+        let timeStarted = null;
+        let timerInterval = null;
+
+        function initQuiz() {
+            totalQuestionsElement.textContent = questions.length;
+            loadQuestion();
+            startTimer();
+            prevButton.addEventListener('click', goToPreviousQuestion);
+            nextButton.addEventListener('click', goToNextQuestion);
+            themeToggle.addEventListener('click', toggleTheme);
+            explanationToggle.addEventListener('click', toggleExplanation);
+            loadTheme();
+        }
+
+        function loadTheme() {
+            const theme = localStorage.getItem('theme') || 'dark';
+            body.className = theme;
+            themeToggle.innerHTML = theme === 'dark' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+            document.querySelectorAll('.quiz-container, header, footer, .explanation-toggle').forEach(el => {
+                el.className = el.className.replace(/light|dark/g, '') + ` ${theme}`;
+            });
+        }
+
+        function toggleTheme() {
+            const newTheme = body.className === 'dark' ? 'light' : 'dark';
+            body.className = newTheme;
+            localStorage.setItem('theme', newTheme);
+            themeToggle.innerHTML = newTheme === 'dark' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+            document.querySelectorAll('.quiz-container, header, footer, .explanation-toggle').forEach(el => {
+                el.className = el.className.replace(/light|dark/g, '') + ` ${newTheme}`;
+            });
+        }
+
+        function startTimer() {
+            timeStarted = new Date();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            const now = new Date();
+            const diff = new Date(now - timeStarted);
+            const minutes = diff.getMinutes().toString().padStart(2, '0');
+            const seconds = diff.getSeconds().toString().padStart(2, '0');
+            timerElement.textContent = `${minutes}:${seconds}`;
+        }
+
+        function loadQuestion() {
+            const question = questions[currentQuestionIndex];
+            questionElement.textContent = question.question;
+            currentQuestionElement.textContent = currentQuestionIndex + 1;
+            progressBar.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+            optionsContainer.innerHTML = '';
+
+            const optionLetters = ['A', 'B', 'C', 'D'];
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.classList.add('option', body.className);
+                const optionLetter = document.createElement('div');
+                optionLetter.classList.add('option-letter');
+                optionLetter.textContent = optionLetters[index];
+                const optionText = document.createElement('div');
+                optionText.textContent = option;
+                optionElement.appendChild(optionLetter);
+                optionElement.appendChild(optionText);
+                optionElement.addEventListener('click', () => selectOption(index));
+                optionsContainer.appendChild(optionElement);
+            });
+
+            prevButton.disabled = currentQuestionIndex === 0;
+            nextButton.textContent = currentQuestionIndex === questions.length - 1 ? 'Finish' : 'Next';
+            feedbackElement.textContent = '';
+            explanationElement.classList.remove('show');
+            explanationToggle.textContent = 'Show Explanation';
+            explanationToggle.style.display = 'none';
+            selectedOption = null;
+        }
+
+        function selectOption(index) {
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => option.classList.remove('selected'));
+            options[index].classList.add('selected');
+            selectedOption = index;
+            const isCorrect = index === questions[currentQuestionIndex].answer;
+
+            if (isCorrect) {
+                feedbackElement.textContent = 'Correct! 🎉';
+                feedbackElement.style.color = '#00b894';
+                score++;
+            } else {
+                feedbackElement.textContent = 'Incorrect 😢';
+                feedbackElement.style.color = '#d63031';
+                options[questions[currentQuestionIndex].answer].classList.add('correct');
+            }
+
+            explanationTextElement.textContent = questions[currentQuestionIndex].explanation;
+            explanationToggle.style.display = 'block';
+            options.forEach(option => {
+                option.style.pointerEvents = 'none';
+            });
+            nextButton.disabled = false;
+        }
+
+        function toggleExplanation() {
+            if (explanationElement.classList.contains('show')) {
+                explanationElement.classList.remove('show');
+                explanationToggle.textContent = 'Show Explanation';
+            } else {
+                explanationElement.classList.add('show');
+                explanationToggle.textContent = 'Hide Explanation';
+            }
+        }
+
+        function goToNextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function goToPreviousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        }
+
+        function showResults() {
+            clearInterval(timerInterval);
+            const quizContainer = document.querySelector('.quiz-container');
+            quizContainer.classList.add('fade-in');
+            const percentage = ((score / questions.length) * 100).toFixed(1);
+            const now = new Date();
+            const diff = new Date(now - timeStarted);
+            const minutes = diff.getMinutes().toString().padStart(2, '0');
+            const seconds = diff.getSeconds().toString().padStart(2, '0');
+
+            quizContainer.innerHTML = `
+                <div class="quiz-completed">
+                    <div class="score-text">Your Score</div>
+                    <div class="score-value">${score}/${questions.length}</div>
+                    <div class="mark-percentage">${percentage}%</div>
+                    <div class="score-text">Time: ${minutes}:${seconds}</div>
+                    <button id="restart-btn">
+                        <i class="fas fa-redo"></i> Restart Quiz
+                    </button>
+                </div>
+            `;
+
+            document.getElementById('restart-btn').addEventListener('click', () => {
+                currentQuestionIndex = 0;
+                score = 0;
+                quizContainer.classList.remove('fade-in');
+                quizContainer.innerHTML = `
+                    <div class="timer">
+                        <i class="fas fa-clock"></i>
+                        <span id="timer">00:00</span>
+                    </div>
+                    <div class="header">
+                        <div class="subtitle">Professional Questions with Detailed Explanations</div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="progress-bar"></div>
+                    </div>
+                    <div class="question-number">Question <span id="current-question">1</span> of <span id="total-questions">1</span></div>
+                    <div class="question-text" id="question"></div>
+                    <div class="options-container" id="options-container"></div>
+                    <button class="explanation-toggle ${body.className}" id="explanation-toggle">Show Explanation</button>
+                    <div class="explanation" id="explanation">
+                        <div class="explanation-title">Explanation:</div>
+                        <div id="explanation-text"></div>
+                    </div>
+                    <div class="feedback" id="feedback"></div>
+                    <div class="navigation">
+                        <button id="prev-btn" disabled>
+                            <i class="fas fa-arrow-left"></i> Previous
+                        </button>
+                        <button id="next-btn">
+                            Next <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                `;
+                // Reassign DOM elements after resetting HTML
+                questionElement = document.getElementById('question');
+                optionsContainer = document.getElementById('options-container');
+                currentQuestionElement = document.getElementById('current-question');
+                totalQuestionsElement = document.getElementById('total-questions');
+                progressBar = document.getElementById('progress-bar');
+                prevButton = document.getElementById('prev-btn');
+                nextButton = document.getElementById('next-btn');
+                feedbackElement = document.getElementById('feedback');
+                timerElement = document.getElementById('timer');
+                explanationElement = document.getElementById('explanation');
+                explanationTextElement = document.getElementById('explanation-text');
+                explanationToggle = document.getElementById('explanation-toggle');
+                initQuiz();
+            });
+        }
+
+        initQuiz();
+    </script>
+</body>
+</html>
