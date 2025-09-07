@@ -3,177 +3,298 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MedQuiz Pro | Ultimate Medical Knowledge Challenge</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>MedQuiz Pro | Medical Knowledge Challenge</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            /* Light Mode */
-            --bg-primary: #f5f7fa;
-            --bg-secondary: #ffffff;
-            --text-primary: #1a202c;
-            --text-secondary: #4a5568;
-            --accent: #3b82f6;
-            --accent-hover: #2563eb;
-            --card-bg: #ffffff;
-            --card-border: #e2e8f0;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --scrollbar-bg: #edf2f7;
-            --scrollbar-thumb: #cbd5e0;
-
-            /* Dark Mode */
-            --dark-bg-primary: #1a202c;
-            --dark-bg-secondary: #2d3748;
-            --dark-text-primary: #e2e8f0;
-            --dark-text-secondary: #a0aec0;
-            --dark-accent: #60a5fa;
-            --dark-accent-hover: #4299e1;
-            --dark-card-bg: #2d3748;
-            --dark-card-border: #4a5568;
-            --dark-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-            --dark-scrollbar-bg: #2d3748;
-            --dark-scrollbar-thumb: #718096;
+            /* Light Theme Variables */
+            --light-bg: #f8fafc;
+            --light-card-bg: #ffffff;
+            --light-text: #1e293b;
+            --light-text-dim: #64748b;
+            --light-primary: #0ea5e9;
+            --light-accent: #06b6d4;
+            --light-border: #e2e8f0;
+            --light-hover: #f1f5f9;
+            --light-shadow: rgba(0, 0, 0, 0.05);
+            
+            /* Dark Theme Variables */
+            --dark-bg: #0f172a;
+            --dark-card-bg: #1e293b;
+            --dark-text: #f1f5f9;
+            --dark-text-dim: #94a3b8;
+            --dark-primary: #38bdf8;
+            --dark-accent: #22d3ee;
+            --dark-border: #334155;
+            --dark-hover: #334155;
+            --dark-shadow: rgba(0, 0, 0, 0.2);
+            
+            /* Common Variables */
+            --transition: all 0.3s ease;
+            --border-radius: 12px;
+            --card-shadow: 0 4px 6px;
+            --header-height: 70px;
         }
 
-        [data-theme="dark"] {
-            --bg-primary: var(--dark-bg-primary);
-            --bg-secondary: var(--dark-bg-secondary);
-            --text-primary: var(--dark-text-primary);
-            --text-secondary: var(--dark-text-secondary);
-            --accent: var(--dark-accent);
-            --accent-hover: var(--dark-accent-hover);
+        .light-mode {
+            --bg: var(--light-bg);
+            --card-bg: var(--light-card-bg);
+            --text: var(--light-text);
+            --text-dim: var(--light-text-dim);
+            --primary: var(--light-primary);
+            --accent: var(--light-accent);
+            --border: var(--light-border);
+            --hover: var(--light-hover);
+            --shadow: var(--light-shadow);
+        }
+
+        .dark-mode {
+            --bg: var(--dark-bg);
             --card-bg: var(--dark-card-bg);
-            --card-border: var(--dark-card-border);
+            --text: var(--dark-text);
+            --text-dim: var(--dark-text-dim);
+            --primary: var(--dark-primary);
+            --accent: var(--dark-accent);
+            --border: var(--dark-border);
+            --hover: var(--dark-hover);
             --shadow: var(--dark-shadow);
-            --scrollbar-bg: var(--dark-scrollbar-bg);
-            --scrollbar-thumb: var(--dark-scrollbar-thumb);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
+            transition: var(--transition);
         }
 
         body {
-            background: var(--bg-primary);
-            color: var(--text-primary);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
             min-height: 100vh;
-            transition: background 0.3s ease, color 0.3s ease;
         }
 
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 1rem;
         }
 
-        /* Header */
+        /* Header Styles */
         header {
-            text-align: center;
-            margin-bottom: 3rem;
-            position: relative;
-            padding: 2rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+            height: var(--header-height);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
 
         .logo {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--accent);
-            letter-spacing: 1px;
-            position: relative;
-            display: inline-block;
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
 
         .tagline {
-            color: var(--text-secondary);
-            font-size: 1.2rem;
-            margin-top: 0.5rem;
-            font-weight: 300;
+            color: var(--text-dim);
+            font-size: 1rem;
         }
 
-        /* Theme Toggle */
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-box {
+            padding: 0.7rem 1rem 0.7rem 2.5rem;
+            border-radius: 50px;
+            border: 1px solid var(--border);
+            background-color: var(--card-bg);
+            color: var(--text);
+            width: 250px;
+            font-size: 0.9rem;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-dim);
+        }
+
         .theme-toggle {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            background-color: var(--card-bg);
+            color: var(--text);
+            box-shadow: var(--card-shadow) var(--shadow);
         }
 
         .theme-toggle:hover {
-            background: var(--accent);
-            color: var(--bg-secondary);
+            background-color: var(--hover);
         }
 
-        .theme-toggle svg {
-            width: 24px;
-            height: 24px;
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 2rem;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            height: fit-content;
+            box-shadow: var(--card-shadow) var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .sidebar-title {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .subject-filters {
+            list-style: none;
+        }
+
+        .filter-item {
+            margin-bottom: 0.7rem;
+        }
+
+        .filter-link {
+            display: block;
+            padding: 0.7rem 1rem;
+            border-radius: 8px;
+            color: var(--text);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+
+        .filter-link:hover, .filter-link.active {
+            background-color: var(--hover);
+            color: var(--primary);
+        }
+
+        .filter-icon {
+            width: 20px;
+            text-align: center;
         }
 
         /* Subjects Grid */
         .subjects-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
             gap: 1.5rem;
-            margin-top: 2rem;
         }
 
         .subject-card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 12px;
-            padding: 1.5rem;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow);
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--card-shadow) var(--shadow);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            height: 400px;
         }
 
-        .subject-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        .subject-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .subject-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
         }
 
         .subject-title {
             font-size: 1.3rem;
             font-weight: 600;
-            color: var(--accent);
-            margin-bottom: 0.5rem;
+            color: var(--text);
         }
 
-        .subject-card p {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            margin-bottom: 1rem;
+        .subject-description {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            margin-top: 0.3rem;
+        }
+
+        .quiz-list-container {
+            padding: 0 1rem;
+            flex-grow: 1;
+            overflow: hidden;
+            position: relative;
         }
 
         .quiz-list {
-            list-style-type: none;
-            max-height: 200px;
+            list-style: none;
+            max-height: 250px;
             overflow-y: auto;
-            scrollbar-width: thin;
-            scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-bg);
+            padding: 0.5rem 0;
+            margin-right: 5px;
         }
 
+        /* Custom scrollbar */
         .quiz-list::-webkit-scrollbar {
             width: 6px;
         }
 
         .quiz-list::-webkit-scrollbar-track {
-            background: var(--scrollbar-bg);
-            border-radius: 3px;
+            background: transparent;
         }
 
         .quiz-list::-webkit-scrollbar-thumb {
-            background: var(--scrollbar-thumb);
+            background: var(--border);
             border-radius: 3px;
+        }
+
+        .quiz-list::-webkit-scrollbar-thumb:hover {
+            background: var(--text-dim);
         }
 
         .quiz-item {
@@ -181,245 +302,356 @@
         }
 
         .quiz-link {
-            display: block;
-            padding: 0.6rem 1rem;
-            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.8rem 1rem;
             border-radius: 8px;
-            color: var(--text-primary);
+            color: var(--text);
             text-decoration: none;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-            border: 1px solid var(--card-border);
+            transition: var(--transition);
         }
 
         .quiz-link:hover {
-            background: var(--accent);
-            color: var(--bg-secondary);
-            border-color: var(--accent);
+            background-color: var(--hover);
+        }
+
+        .quiz-link-text {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+
+        .quiz-link i {
+            color: var(--primary);
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .quiz-link:hover i {
+            opacity: 1;
+        }
+
+        .view-all {
+            display: block;
+            text-align: center;
+            padding: 0.8rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            border-top: 1px solid var(--border);
+            margin-top: auto;
+        }
+
+        .view-all:hover {
+            background-color: var(--hover);
         }
 
         /* Footer */
         .footer {
             text-align: center;
-            margin-top: 3rem;
+            margin-top: 4rem;
             padding: 2rem 0;
-            color: var(--text-secondary);
-            border-top: 1px solid var(--card-border);
-            font-size: 0.9rem;
+            color: var(--text-dim);
+            border-top: 1px solid var(--border);
         }
 
         /* Responsive Design */
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+        }
+
         @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                height: auto;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .logo-container {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .header-controls {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .search-box {
+                width: 100%;
+            }
+            
             .subjects-grid {
-                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                grid-template-columns: 1fr;
             }
+        }
 
-            .logo {
-                font-size: 2rem;
-            }
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-            .tagline {
-                font-size: 1rem;
-            }
-
-            .subject-card {
-                padding: 1.2rem;
-            }
-
-            .subject-title {
-                font-size: 1.2rem;
-            }
+        .subject-card {
+            animation: fadeIn 0.5s ease-out;
         }
     </style>
 </head>
-<body data-theme="light">
-    <div class="theme-toggle" onclick="toggleTheme()">
-        <svg id="theme-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-        </svg>
-    </div>
-
+<body class="light-mode">
     <div class="container">
         <header>
-            <h1 class="logo">MedQuiz Pro</h1>
-            <p class="tagline">Elevate Your Medical Expertise with Interactive Quizzes</p>
+            <div class="logo-container">
+                <h1 class="logo">MedQuiz Pro</h1>
+                <p class="tagline">Test your medical knowledge across specialized subjects</p>
+            </div>
+            <div class="header-controls">
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-box" placeholder="Search quizzes...">
+                </div>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
         </header>
-
-        <div class="subjects-grid">
-            <!-- Subject 1 -->
-            <div class="subject-card">
-                <h2 class="subject-title">Embryology</h2>
-                <p>Explore the Science of Embryo Development</p>
-                <ul class="quiz-list">
-                    <li class="quiz-item"><a href="quiz.html" class="quiz-link">Embryology Practice 1</a></li>
-                    <li class="quiz-item"><a href="2.html" class="quiz-link">Embryology Practice 2</a></li>
-                    <li class="quiz-item"><a href="equiz3.html" class="quiz-link">2014 Embryology Exam</a></li>
+        
+        <div class="main-content">
+            <aside class="sidebar">
+                <h2 class="sidebar-title"><i class="fas fa-folder"></i> Subjects</h2>
+                <ul class="subject-filters">
+                    <li class="filter-item"><a href="#" class="filter-link active"><span class="filter-icon"><i class="fas fa-brain"></i></span> Neuroscience</a></li>
+                    <li class="filter-item"><a href="#" class="filter-link"><span class="filter-icon"><i class="fas fa-heart"></i></span> Cardiology</a></li>
+                    <li class="filter-item"><a href="#" class="filter-link"><span class="filter-icon"><i class="fas fa-dna"></i></span> Genetics</a></li>
+                    <li class="filter-item"><a href="#" class="filter-link"><span class="filter-icon"><i class="fas fa-pills"></i></span> Pharmacology</a></li>
+                    <li class="filter-item"><a href="#" class="filter-link"><span class="filter-icon"><i class="fas fa-bacteria"></i></span> Microbiology</a></li>
+                    <li class="filter-item"><a href="#" class="filter-link"><span class="filter-icon"><i class="fas fa-vial"></i></span> Biochemistry</a></li>
+                    <li class="filter-item"><a href="#" class="filter-link"><span class="filter-icon"><i class="fas fa-stethoscope"></i></span> All Subjects</a></li>
                 </ul>
-            </div>
-
-            <!-- Subject 2 -->
-            <div class="subject-card">
-                <h2 class="subject-title">Anatomy</h2>
-                <p>Discover the Intricacies of Body Structures</p>
-                <ul class="quiz-list">
-                    <li class="quiz-item"><a href="anatquiz1.html" class="quiz-link">2014 Anatomy Exam</a></li>
-                    <li class="quiz-item"><a href="anatquiz2.html" class="quiz-link">Anatomy Quiz 2</a></li>
-                    <li class="quiz-item"><a href="anatomynspart1.html" class="quiz-link">NS Part 1</a></li>
-                    <li class="quiz-item"><a href="anatomynspart2.html" class="quiz-link">NS Part 2</a></li>
-                    <li class="quiz-item"><a href="anatomynspart3.html" class="quiz-link">NS Part 3</a></li>
-                    <li class="quiz-item"><a href="anatomynspart4.html" class="quiz-link">NS Part 4</a></li>
-                    <li class="quiz-item"><a href="anatomynsfultopic1.html" class="quiz-link">Full NS Part 1</a></li>
-                    <li class="quiz-item"><a href="anatomynsfultopic2.html" class="quiz-link">Full NS Part 2</a></li>
-                    <li class="quiz-item"><a href="anatomynsdilabpart1.html" class="quiz-link">DILAB NS Part 1</a></li>
-                    <li class="quiz-item"><a href="masterplexus.html" class="quiz-link">Master NS Part 1</a></li>
-                    <li class="quiz-item"><a href="anatomymedicoinfo1.html" class="quiz-link">NS Medicoinfo</a></li>
-                </ul>
-            </div>
-
-            <!-- Subject 3 -->
-            <div class="subject-card">
-                <h2 class="subject-title">Physiology</h2>
-                <p>Unravel the Functions of the Human Body</p>
-                <ul class="quiz-list">
-                    <li class="quiz-item"><a href="physions1.html" class="quiz-link">Physiology NS 1</a></li>
-                    <li class="quiz-item"><a href="physions2.html" class="quiz-link">Physiology NS 2</a></li>
-                    <li class="quiz-item"><a href="physions3.html" class="quiz-link">Physiology NS 3</a></li>
-                    <li class="quiz-item"><a href="physions4.html" class="quiz-link">Physiology NS 4</a></li>
-                    <li class="quiz-item"><a href="physions5.html" class="quiz-link">Physiology NS 5</a></li>
-                    <li class="quiz-item"><a href="physions6.html" class="quiz-link">Physiology NS 6</a></li>
-                    <li class="quiz-item"><a href="physions7.html" class="quiz-link">Physiology NS 7</a></li>
-                </ul>
-            </div>
-
-            <!-- Subject 4 -->
-            <div class="subject-card">
-                <h2 class="subject-title">Biochemistry</h2>
-                <p>Decode Chemical Processes in Living Organisms</p>
-                <ul class="quiz-list">
-                    <li class="quiz-item"><a href="biochemquiz1.html" class="quiz-link">Biochemistry Quiz 1</a></li>
-                    <li class="quiz-item"><a href="biochemquiz2.html" class="quiz-link">Biochemistry Quiz 2</a></li>
-                </ul>
-            </div>
-
-            <!-- Subject 5 -->
-            <div class="subject-card">
-                <h2 class="subject-title">Pathology</h2>
-                <p>Investigate the Nature of Diseases</p>
-                <ul class="quiz-list">
-                    <li class="quiz-item"><a href="pathoquiz1.html" class="quiz-link">Pathology Quiz 1</a></li>
-                    <li class="quiz-item"><a href="pathoquiz2.html" class="quiz-link">Pathology Quiz 2</a></li>
-                </ul>
-            </div>
-
-            <!-- Subject 6 -->
-            <div class="subject-card">
-                <h2 class="subject-title">Pharmacology</h2>
-                <p>Master Drugs and Medications</p>
-                <ul class="quiz-list">
-                    <li class="quiz-item"><a href="pharmaquiz1.html" class="quiz-link">Pharmacology Quiz 1</a></li>
-                    <li class="quiz-item"><a href="pharmaquiz2.html" class="quiz-link">Pharmacology Quiz 2</a></li>
-                </ul>
-            </div>
-
-            <!-- Subject 7 -->
-            <div class="subject-card">
-                <h2 class="subject-title">Microbiology</h2>
-                <p>Study Microorganisms and Their Impact</p>
-                <ul class="quiz-list">
-                    <li class="quiz-item"><a href="microbioquiz1.html" class="quiz-link">Microbiology Quiz 1</a></li>
-                    <li class="quiz-item"><a href="microbioquiz2.html" class="quiz-link">Microbiology Quiz 2</a></li>
-                </ul>
-            </div>
-
-            <!-- Subject 8 -->
-            <div class="subject-card">
-                <h2 class="subject-title">Immunology</h2>
-                <p>Explore the Immune System</p>
-                <ul class="quiz-list">
-                    <li class="quiz-item"><a href="immunoquiz1.html" class="quiz-link">Immunology Quiz 1</a></li>
-                    <li class="quiz-item"><a href="immunoquiz2.html" class="quiz-link">Immunology Quiz 2</a></li>
-                </ul>
-            </div>
-
-            <!-- Subject 9 -->
-            <div class="subject-card">
-                <h2 class="subject-title">Histology</h2>
-                <p>Examine Tissue Structures</p>
-                <ul class="quiz-list">
-                    <li class="quiz-item"><a href="histoquiz1.html" class="quiz-link">2014 Histology Exam</a></li>
-                    <li class="quiz-item"><a href="histoquiz2.html" class="quiz-link">Histology Quiz 2</a></li>
-                </ul>
-            </div>
-
-            <!-- Subject 10 -->
-            <div class="subject-card">
-                <h2 class="subject-title">Neuroscience</h2>
-                <p>Dive into the Nervous System</p>
-                <ul class="quiz-list">
-                    <li class="quiz-item"><a href="neuroquiz1.html" class="quiz-link">Neuroscience Quiz 1</a></li>
-                    <li class="quiz-item"><a href="neuroquiz2.html" class="quiz-link">Neuroscience Quiz 2</a></li>
-                </ul>
-            </div>
-
-            <!-- Subject 11 -->
-            <div class="subject-card">
-                <h2 class="subject-title">Genetics</h2>
-                <p>Uncover Genes and Heredity</p>
-                <ul class="quiz-list">
-                    <li class="quiz-item"><a href="genetquiz1.html" class="quiz-link">Genetics Quiz 1</a></li>
-                    <li class="quiz-item"><a href="genetquiz2.html" class="quiz-link">Genetics Quiz 2</a></li>
-                </ul>
-            </div>
-
-            <!-- Subject 12 -->
-            <div class="subject-card">
-                <h2 class="subject-title">Cardiology</h2>
-                <p>Study the Heart and Its Functions</p>
-                <ul class="quiz-list">
-                    <li class="quiz-item"><a href="cardioquiz1.html" class="quiz-link">Cardiology Quiz 1</a></li>
-                    <li class="quiz-item"><a href="cardioquiz2.html" class="quiz-link">Cardiology Quiz 2</a></li>
-                </ul>
-            </div>
-
-            <!-- Subject 13 -->
-            <div class="subject-card">
-                <h2 class="subject-title">Endocrinology</h2>
-                <p>Understand Hormones and Their Effects</p>
-                <ul class="quiz-list">
-                    <li class="quiz-item"><a href="endocquiz1.html" class="quiz-link">Endocrinology Quiz 1</a></li>
-                    <li class="quiz-item"><a href="endocquiz2.html" class="quiz-link">Endocrinology Quiz 2</a></li>
-                </ul>
-            </div>
-
-            <!-- Subject 14 -->
-            <div class="subject-card">
-                <h2 class="subject-title">Epidemiology</h2>
-                <p>Analyze Disease Patterns and Trends</p>
-                <ul class="quiz-list">
-                    <li class="quiz-item"><a href="epiquiz1.html" class="quiz-link">Epidemiology Quiz 1</a></li>
-                    <li class="quiz-item"><a href="epiquiz2.html" class="quiz-link">Epidemiology Quiz 2</a></li>
-                    <li class="quiz-item"><a href="epiquiz3.html" class="quiz-link">Epidemiology Quiz 3</a></li>
-                    <li class="quiz-item"><a href="epiquiz4.html" class="quiz-link">Epidemiology Quiz 4</a></li>
-                    <li class="quiz-item"><a href="epiquiz5.html" class="quiz-link">Epidemiology Quiz 5</a></li>
-                </ul>
-            </div>
+            </aside>
+            
+            <main class="subjects-grid">
+                <!-- Subject 1 -->
+                <div class="subject-card">
+                    <div class="subject-header">
+                        <div class="subject-icon">
+                            <i class="fas fa-baby"></i>
+                        </div>
+                        <div>
+                            <h2 class="subject-title">Embryology</h2>
+                            <p class="subject-description">Study of embryo development</p>
+                        </div>
+                    </div>
+                    <div class="quiz-list-container">
+                        <ul class="quiz-list">
+                            <li class="quiz-item"><a href="quiz.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-play-circle"></i> Embryology Practice 1</span> <i class="fas fa-arrow-right"></i></a></li>
+                            <li class="quiz-item"><a href="2.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-play-circle"></i> Embryology Practice 2</span> <i class="fas fa-arrow-right"></i></a></li>
+                            <li class="quiz-item"><a href="equiz3.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-file-alt"></i> 2014 Embryology Exam</span> <i class="fas fa-arrow-right"></i></a></li>
+                            <li class="quiz-item"><a href="#" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-play-circle"></i> Embryology Advanced</span> <i class="fas fa-arrow-right"></i></a></li>
+                            <li class="quiz-item"><a href="#" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-chart-bar"></i> Embryology Test</span> <i class="fas fa-arrow-right"></i></a></li>
+                            <li class="quiz-item"><a href="#" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> Developmental Biology</span> <i class="fas fa-arrow-right"></i></a></li>
+                        </ul>
+                    </div>
+                    <a href="#" class="view-all">View All Embryology Quizzes</a>
+                </div>
+                
+                <!-- Subject 2 -->
+                <div class="subject-card">
+                    <div class="subject-header">
+                        <div class="subject-icon">
+                            <i class="fas fa-bone"></i>
+                        </div>
+                        <div>
+                            <h2 class="subject-title">Anatomy</h2>
+                            <p class="subject-description">Study of body structures</p>
+                        </div>
+                    </div>
+                    <div class="quiz-list-container">
+                        <ul class="quiz-list">
+                            <li class="quiz-item"><a href="anatquiz1.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-file-alt"></i> 2014 Anatomy Exam</span> <i class="fas fa-arrow-right"></i></a></li>
+                            <li class="quiz-item"><a href="anatquiz2.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-play-circle"></i> Anatomy Quiz 2</span> <i class="fas fa-arrow-right"></i></a></li>
+                            <li class="quiz-item"><a href="anatomynspart1.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> NS Part 1</span> <i class="fas fa-arrow-right"></i></a></li>
+                            <li class="quiz-item"><a href="anatomynspart2.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> NS Part 2</span> <i class="fas fa-arrow-right"></i></a></li>
+                            <li class="quiz-item"><a href="anatomynspart3.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> NS Part 3</span> <i class="fas fa-arrow-right"></i></a></li>
+                            <li class="quiz-item"><a href="anatomynspart4.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> NS Part 4</span> <i class="fas fa-arrow-right"></i></a></li>
+                            <li class="quiz-item"><a href="anatomynsfultopic1.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> Full NS Part 1</span> <i class="fas fa-arrow-right"></i></a></li>
+                            <li class="quiz-item"><a href="anatomynsfultopic2.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> Full NS Part 2</span> <i class="fas fa-arrow-right"></i></a></li>
+                        </ul>
+                    </div>
+                    <a href="#" class="view-all">View All Anatomy Quizzes</a>
+                </div>
+                
+                <!-- Subject 3 -->
+                <div class="subject-card">
+                    <div class="subject-header">
+                        <div class="subject-icon">
+                            <i class="fas fa-heartbeat"></i>
+                        </div>
+                        <div>
+                            <h2 class="subject-title">Physiology</h2>
+                            <p class="subject-description">Study of body functions</p>
+                        </div>
+                    </div>
+                    <div class="quiz-list-container">
+                        <ul class="quiz-list">
+                            <li class="quiz-item"><a href="physions1.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> PHYSIO NS</span> <i class="fas fa-arrow-right"></i></a></li>
+                            <li class="quiz-item"><a href="physions2.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> PHYSIO NS-2</span> <i class="fas fa-arrow-right"></i></a></li>
+                            <li class="quiz-item"><a href="physions3.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> PHYSIO NS-3</span> <i class="fas fa-arrow-right"></i></a></li>
+                            <li class="quiz-item"><a href="physions4.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> PHYSIO NS-4</span> <i class="fas fa-arrow-right"></i></a></li>
+                            <li class="quiz-item"><a href="physions5.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> PHYSIO NS-5</span> <i class="fas fa-arrow-right"></i></a></li>
+                            <li class="quiz-item"><a href="physions6.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> PHYSIO NS-6</span> <i class="fas fa-arrow-right"></i></a></li>
+                            <li class="quiz-item"><a href="physions7.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> PHYSIO NS-7</span> <i class="fas fa-arrow-right"></i></a></li>
+                        </ul>
+                    </div>
+                    <a href="#" class="view-all">View All Physiology Quizzes</a>
+                </div>
+                
+                <!-- Subject 4 -->
+                <div class="subject-card">
+                    <div class="subject-header">
+                        <div class="subject-icon">
+                            <i class="fas fa-vial"></i>
+                        </div>
+                        <div>
+                            <h2 class="subject-title">Biochemistry</h2>
+                            <p class="subject-description">Chemical processes in living organisms</p>
+                        </div>
+                    </div>
+                    <div class="quiz-list-container">
+                        <ul class="quiz-list">
+                            <li class="quiz-item"><a href="biochemquiz1.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-play-circle"></i> Biochemistry Quiz 1</span> <i class="fas fa-arrow-right"></i></a></li>
+                            <li class="quiz-item"><a href="biochemquiz2.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-play-circle"></i> Biochemistry Quiz 2</span> <i class="fas fa-arrow-right"></i></a></li>
+                            <li class="quiz-item"><a href="#" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-file-alt"></i> Metabolic Pathways</span> <i class="fas fa-arrow-right"></i></a></li>
+                            <li class="quiz-item"><a href="#" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-dna"></i> Molecular Biology</span> <i class="fas fa-arrow-right"></i></a></li>
+                        </ul>
+                    </div>
+                    <a href="#" class="view-all">View All Biochemistry Quizzes</a>
+                </div>
+                
+                <!-- Subject 5 -->
+                <div class="subject-card">
+                    <div class="subject-header">
+                        <div class="subject-icon">
+                            <i class="fas fa-virus"></i>
+                        </div>
+                        <div>
+                            <h2 class="subject-title">Pathology</h2>
+                            <p class="subject-description">Study of diseases</p>
+                        </div>
+                    </div>
+                    <div class="quiz-list-container">
+                        <ul class="quiz-list">
+                            <li class="quiz-item"><a href="pathoquiz1.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-play-circle"></i> Pathology Quiz 1</span> <i class="fas fa-arrow-right"></i></a></li>
+                            <li class="quiz-item"><a href="pathoquiz2.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-play-circle"></i> Pathology Quiz 2</span> <i class="fas fa-arrow-right"></i></a></li>
+                            <li class="quiz-item"><a href="#" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-lungs-virus"></i> Systemic Pathology</span> <i class="fas fa-arrow-right"></i></a></li>
+                            <li class="quiz-item"><a href="#" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-microscope"></i> Histopathology</span> <i class="fas fa-arrow-right"></i></a></li>
+                        </ul>
+                    </div>
+                    <a href="#" class="view-all">View All Pathology Quizzes</a>
+                </div>
+                
+                <!-- Subject 6 -->
+                <div class="subject-card">
+                    <div class="subject-header">
+                        <div class="subject-icon">
+                            <i class="fas fa-pills"></i>
+                        </div>
+                        <div>
+                            <h2 class="subject-title">Pharmacology</h2>
+                            <p class="subject-description">Study of drugs and medications</p>
+                        </div>
+                    </div>
+                    <div class="quiz-list-container">
+                        <ul class="quiz-list">
+                            <li class="quiz-item"><a href="pharmaquiz1.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-play-circle"></i> Pharmacology Quiz 1</span> <i class="fas fa-arrow-right"></i></a></li>
+                            <li class="quiz-item"><a href="pharmaquiz2.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-play-circle"></i> Pharmacology Quiz 2</span> <i class="fas fa-arrow-right"></i></a></li>
+                            <li class="quiz-item"><a href="#" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-capsules"></i> Drug Mechanisms</span> <i class="fas fa-arrow-right"></i></a></li>
+                            <li class="quiz-item"><a href="#" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-prescription-bottle"></i> Clinical Pharmacology</span> <i class="fas fa-arrow-right"></i></a></li>
+                        </ul>
+                    </div>
+                    <a href="#" class="view-all">View All Pharmacology Quizzes</a>
+                </div>
+            </main>
         </div>
-
+        
         <footer class="footer">
-            <p>MedQuiz Pro © 2025 | Empowering Medical Professionals</p>
+            <p>MedQuiz Pro © 2023 | Expand Your Medical Knowledge</p>
         </footer>
     </div>
 
     <script>
-        function toggleTheme() {
-            const body = document.body;
-            const themeIcon = document.getElementById('theme-icon');
-            const isDark = body.getAttribute('data-theme') === 'dark';
-            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
-            themeIcon.innerHTML = isDark
-                ? `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />`
-                : `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />`;
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        const themeIcon = themeToggle.querySelector('i');
+        
+        // Check for saved theme preference or respect OS preference
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+            body.classList.replace('light-mode', 'dark-mode');
+            themeIcon.classList.replace('fa-moon', 'fa-sun');
         }
+        
+        themeToggle.addEventListener('click', () => {
+            if (body.classList.contains('light-mode')) {
+                body.classList.replace('light-mode', 'dark-mode');
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                body.classList.replace('dark-mode', 'light-mode');
+                themeIcon.classList.replace('fa-sun', 'fa-moon');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+        
+        // Search functionality
+        const searchBox = document.querySelector('.search-box');
+        const subjectCards = document.querySelectorAll('.subject-card');
+        
+        searchBox.addEventListener('input', () => {
+            const searchTerm = searchBox.value.toLowerCase();
+            
+            subjectCards.forEach(card => {
+                const title = card.querySelector('.subject-title').textContent.toLowerCase();
+                const description = card.querySelector('.subject-description').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+        
+        // Filter functionality
+        const filterLinks = document.querySelectorAll('.filter-link');
+        
+        filterLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                // Remove active class from all links
+                filterLinks.forEach(l => l.classList.remove('active'));
+                
+                // Add active class to clicked link
+                link.classList.add('active');
+                
+                // Here you would typically filter the subjects
+                // For this example, we'll just show all
+                subjectCards.forEach(card => {
+                    card.style.display = 'flex';
+                });
+            });
+        });
     </script>
 </body>
 </html>
