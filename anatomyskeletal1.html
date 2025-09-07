@@ -1,0 +1,2876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Embryology Quiz Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --primary-dark: #3a0ca3;
+            --secondary: #f72585;
+            --success: #4cc9f0;
+            --warning: #f9c74f;
+            --danger: #f94144;
+            --info: #577590;
+            --gray-50: #f8f9fa;
+            --gray-100: #f1f3f5;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --gray-500: #adb5bd;
+            --gray-600: #868e96;
+            --gray-700: #495057;
+            --gray-800: #343a40;
+            --gray-900: #212529;
+            --bg-primary: var(--gray-900);
+            --bg-secondary: #1a1d21;
+            --bg-tertiary: #2c303a;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-tertiary: rgba(255, 255, 255, 0.5);
+            --card-bg: rgba(35, 39, 47, 0.95);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15), 0 5px 10px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.2);
+            --transition-base: all 0.2s ease-in-out;
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --radius-2xl: 24px;
+            --header-height: 70px;
+            --max-width: 900px;
+            --side-padding: 1.5rem;
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f5f7fa;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #eef2f6;
+            --text-primary: #1a1d21;
+            --text-secondary: rgba(26, 29, 33, 0.7);
+            --text-tertiary: rgba(26, 29, 33, 0.5);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-border: rgba(0, 0, 0, 0.1);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.08), 0 5px 10px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        [data-theme="minimal"] {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f1f5f9;
+            --text-primary: #0f172a;
+            --text-secondary: #334155;
+            --text-tertiary: #64748b;
+            --card-bg: #ffffff;
+            --card-border: #e2e8f0;
+            --primary: #0ea5e9;
+            --primary-light: #38bdf8;
+            --primary-dark: #0284c7;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition-base);
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        header {
+            height: var(--header-height);
+            background: var(--bg-secondary);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 var(--side-padding);
+            transition: var(--transition-base);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--primary);
+        }
+
+        .logo-icon {
+            font-size: 1.5rem;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .control-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: var(--transition-base);
+            position: relative;
+        }
+
+        .control-btn:hover {
+            background: var(--bg-tertiary);
+            transform: translateY(-2px);
+        }
+
+        .control-btn i {
+            font-size: 1.1rem;
+        }
+
+        .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--secondary);
+            color: white;
+            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        main {
+            flex: 1;
+            padding: 2rem var(--side-padding);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .quiz-container {
+            width: 100%;
+            max-width: var(--max-width);
+            background: var(--card-bg);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition-smooth);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(10px);
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .quiz-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .quiz-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .stats-container {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.5rem 0.75rem;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            min-width: 70px;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            margin: 1.5rem 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-light), var(--primary));
+            border-radius: var(--radius-lg);
+            transition: width 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            100% { left: 100%; }
+        }
+
+        .question-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-tags {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .tag {
+            padding: 0.25rem 0.75rem;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .question-number {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            line-height: 1.4;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            border: 1px solid transparent;
+        }
+
+        .option:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-light);
+        }
+
+        .option.selected {
+            background: rgba(67, 97, 238, 0.1);
+            border-color: var(--primary);
+            animation: pulse 0.3s ease;
+        }
+
+        .option.correct {
+            background: rgba(76, 201, 240, 0.1);
+            border-color: var(--success);
+        }
+
+        .option.incorrect {
+            background: rgba(249, 65, 68, 0.1);
+            border-color: var(--danger);
+        }
+
+        .option-letter {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-md);
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 1rem;
+            flex-shrink: 0;
+            transition: var(--transition-base);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .option.selected .option-letter {
+            background: var(--primary);
+            color: white;
+        }
+
+        .option.correct .option-letter {
+            background: var(--success);
+            color: white;
+        }
+
+        .option.incorrect .option-letter {
+            background: var(--danger);
+            color: white;
+        }
+
+        .option-text {
+            flex: 1;
+        }
+
+        .bookmark-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: var(--transition-base);
+        }
+
+        .bookmark-btn:hover {
+            color: var(--primary);
+        }
+
+        .bookmark-btn.bookmarked {
+            color: var(--warning);
+        }
+
+        .feedback {
+            padding: 1rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .feedback.correct {
+            background: rgba(76, 201, 240, 0.1);
+            color: var(--success);
+        }
+
+        .feedback.incorrect {
+            background: rgba(249, 65, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .feedback-icon {
+            font-size: 1.5rem;
+        }
+
+        .explanation-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+        .explanation-container.expanded {
+            max-height: 500px;
+        }
+
+        .explanation {
+            padding: 1.25rem;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-lg);
+            margin-top: 1rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .explanation-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-lg);
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition-base);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--bg-secondary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .results-container {
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: conic-gradient(var(--primary) 0% var(--p, 0%), var(--bg-tertiary) var(--p, 0%) 100%);
+            position: relative;
+        }
+
+        .score-circle::before {
+            content: '';
+            position: absolute;
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background: var(--card-bg);
+        }
+
+        .score-text {
+            position: relative;
+            z-index: 1;
+        }
+
+        .score-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .score-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .results-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .result-stat {
+            padding: 1rem;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-lg);
+        }
+
+        .result-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .result-stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .review-section {
+            margin-top: 2rem;
+            text-align: left;
+        }
+
+        .review-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .review-item {
+            padding: 1.25rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 1rem;
+            background: var(--bg-tertiary);
+        }
+
+        .review-item.correct {
+            border-left: 4px solid var(--success);
+        }
+
+        .review-item.incorrect {
+            border-left: 4px solid var(--danger);
+        }
+
+        .review-question {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .review-answer {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .review-explanation {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        footer {
+            padding: 1.5rem var(--side-padding);
+            background: var(--bg-secondary);
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        .pulse {
+            animation: pulse 0.5s ease;
+        }
+
+        .bounce-in {
+            animation: bounceIn 0.5s ease;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-1 { margin-top: 0.5rem; }
+        .mt-2 { margin-top: 1rem; }
+        .mt-3 { margin-top: 1.5rem; }
+        .mt-4 { margin-top: 2rem; }
+
+        @media (max-width: 768px) {
+            :root {
+                --side-padding: 1rem;
+                --header-height: 60px;
+            }
+
+            .quiz-container {
+                padding: 1.5rem;
+            }
+
+            .quiz-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .stats-container {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .results-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .score-circle {
+                width: 120px;
+                height: 120px;
+            }
+
+            .score-circle::before {
+                width: 100px;
+                height: 100px;
+            }
+
+            .score-value {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navigation {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .option {
+                padding: 0.75rem;
+            }
+
+            .option-letter {
+                width: 28px;
+                height: 28px;
+                margin-right: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <header>
+        <div class="logo">
+            <i class="fas fa-brain logo-icon"></i>
+            <span>EmbryoQuiz</span>
+        </div>
+        <div class="header-controls">
+            <button class="control-btn" id="theme-toggle" aria-label="Toggle theme">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button class="control-btn" id="sound-toggle" aria-label="Toggle sound">
+                <i class="fas fa-volume-up"></i>
+            </button>
+            <button class="control-btn" id="stats-btn" aria-label="View statistics">
+                <i class="fas fa-chart-line"></i>
+                <span class="badge" id="bookmarks-count">0</span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <div class="quiz-container">
+            <div class="quiz-header">
+                <div>
+                    <h1 class="quiz-title">Advanced Embryology Quiz</h1>
+                    <p class="quiz-subtitle">Test your knowledge with professional questions and detailed explanations</p>
+                </div>
+                <div class="stats-container">
+                    <div class="stat">
+                        <span class="stat-value" id="score">0</span>
+                        <span class="stat-label">Score</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="timer">00:00</span>
+                        <span class="stat-label">Time</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="streak">0</span>
+                        <span class="stat-label">Streak</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="category">All</span>
+                        <span class="stat-label">Category</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar" style="width: 10%"></div>
+            </div>
+
+            <div class="question-meta">
+                <div class="question-tags">
+                    <span class="tag" id="category-tag">Neuro</span>
+                    <span class="tag" id="difficulty-tag">Medium</span>
+                </div>
+                <button class="bookmark-btn" id="bookmark-btn" aria-label="Bookmark question">
+                    <i class="fas fa-bookmark"></i>
+                </button>
+            </div>
+            <div class="question-number">Question <span id="current-question">1</span> of <span id="total-questions">10</span></div>
+            <div class="question-text" id="question">Which part of the brain is responsible for coordinating skeletal muscle contractions?</div>
+
+            <div class="options-grid" id="options-container">
+                <div class="option">
+                    <div class="option-letter">A</div>
+                    <div class="option-text">Cerebrum</div>
+                </div>
+                <div class="option">
+                    <div class="option-letter">B</div>
+                    <div class="option-text">Cerebellum</div>
+                </div>
+                <div class="option">
+                    <div class="option-letter">C</div>
+                    <div class="option-text">Pons</div>
+                </div>
+                <div class="option">
+                    <div class="option-letter">D</div>
+                    <div class="option-text">Midbrain</div>
+                </div>
+            </div>
+
+            <div class="feedback correct" id="feedback" style="display: none;">
+                <i class="fas fa-check-circle feedback-icon"></i>
+                <div class="feedback-text">Correct! Well done.</div>
+            </div>
+
+            <button class="btn btn-secondary" id="show-explanation-btn" style="display: none;">
+                <i class="fas fa-info-circle"></i> Show Explanation
+            </button>
+
+            <div class="explanation-container" id="explanation-container">
+                <div class="explanation">
+                    <div class="explanation-title">Explanation:</div>
+                    <div id="explanation-text">The cerebellum, located posterior to the brainstem, is the 'little brain.' It compares intended movements with actual movements to ensure smooth, coordinated skeletal muscle activity and maintain posture and balance.</div>
+                </div>
+            </div>
+
+            <div class="navigation">
+                <button class="btn btn-secondary" id="prev-btn" disabled>
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                <button class="btn btn-primary" id="next-btn">
+                    Next Question <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2025 EmbryoQuiz | Advanced Embryology Learning Platform | All Rights Reserved
+    </footer>
+
+    <script>
+        const questions =  
+        
+      [
+    {
+        "question": "What constitutes the skeletal system according to the documents?",
+        "options": ["Bones and muscles only", "Bones, cartilages, ligaments", "Bones and skin", "Cartilages and tendons"],
+        "answer": 1,
+        "correctAnswer": "Bones, cartilages, ligaments",
+        "explanation": "The documents state that the bones and their cartilages, along with ligaments, constitute the skeletal system."
+    },
+    {
+        "question": "What is the study of the structure of bone called?",
+        "options": ["Myology", "Osteology", "Arthrology", "Neurology"],
+        "answer": 1,
+        "correctAnswer": "Osteology",
+        "explanation": "The first document defines osteology as the study of the structure of bone."
+    },
+    {
+        "question": "What percentage of the human body's weight does bone tissue make up?",
+        "options": ["10%", "18%", "20%", "25%"],
+        "answer": 1,
+        "correctAnswer": "18%",
+        "explanation": "Bone tissue makes up about 18% of the weight of the human body, as per the first document."
+    },
+    {
+        "question": "What are the two major subdivisions of the skeleton?",
+        "options": ["Compact and spongy", "Axial and appendicular", "Long and short", "Cranial and facial"],
+        "answer": 1,
+        "correctAnswer": "Axial and appendicular",
+        "explanation": "The two major subdivisions are the axial skeleton and appendicular skeleton."
+    },
+    {
+        "question": "Which function of bones allows movement due to attached skeletal muscles?",
+        "options": ["Support the body", "Protect soft organs", "Allow movement", "Store minerals"],
+        "answer": 2,
+        "correctAnswer": "Allow movement",
+        "explanation": "Bones allow movement due to attached skeletal muscles, as listed in the functions section."
+    },
+    {
+        "question": "What is one function of bones related to blood cell formation?",
+        "options": ["Store fats", "Blood cell formation", "Protect organs", "Provide leverage"],
+        "answer": 1,
+        "correctAnswer": "Blood cell formation",
+        "explanation": "Blood cell formation is a key function of bones."
+    },
+    {
+        "question": "How many bones are in the adult human skeleton?",
+        "options": ["200", "206", "208", "210"],
+        "answer": 1,
+        "correctAnswer": "206",
+        "explanation": "The adult skeleton has 206 bones, stated in both documents."
+    },
+    {
+        "question": "What is the strongest outer part of bone tissue?",
+        "options": ["Spongy bone", "Compact bone", "Cartilage", "Marrow"],
+        "answer": 1,
+        "correctAnswer": "Compact bone",
+        "explanation": "Compact bone is the strongest outer part with few spaces and osteons, making up 80% dense and hard."
+    },
+    {
+        "question": "Where is spongy bone typically located?",
+        "options": ["Outer layer", "Inside the shaft of long bones", "Only in flat bones", "In ligaments"],
+        "answer": 1,
+        "correctAnswer": "Inside the shaft of long bones",
+        "explanation": "Spongy bone is inside the shaft of long bones, with many open spaces filled with bone marrow, 20% and light in weight."
+    },
+    {
+        "question": "In embryos, what is the skeleton primarily composed of?",
+        "options": ["Bone", "Cartilage", "Ligaments", "Muscle"],
+        "answer": 1,
+        "correctAnswer": "Cartilage",
+        "explanation": "In embryos, the skeleton is primarily cartilage, later replaced by bone."
+    },
+    {
+        "question": "What remains as cartilage in isolated areas after development?",
+        "options": ["Bridge of the nose and parts of ribs", "Femur shaft", "Skull roof", "Vertebral bodies"],
+        "answer": 0,
+        "correctAnswer": "Bridge of the nose and parts of ribs",
+        "explanation": "Cartilage remains in the bridge of the nose, parts of ribs, and joints."
+    },
+    {
+        "question": "What is the science concerned with the study of joints called?",
+        "options": ["Osteology", "Arthrology", "Myology", "Cytology"],
+        "answer": 1,
+        "correctAnswer": "Arthrology",
+        "explanation": "The science concerned with the study of joints is arthrology."
+    },
+    {
+        "question": "How many major functions does the skeleton serve according to the second document?",
+        "options": ["4", "5", "6", "7"],
+        "answer": 2,
+        "correctAnswer": "6",
+        "explanation": "The skeleton system serves 6 major functions to the human body."
+    },
+    {
+        "question": "Which function involves providing a framework for attachment of soft tissues and organs?",
+        "options": ["Movement", "Support", "Blood cell production", "Mineral storage"],
+        "answer": 1,
+        "correctAnswer": "Support",
+        "explanation": "Support: for the entire body, individual bones provide a framework for attachment of soft tissues and organs."
+    },
+    {
+        "question": "Where does blood cell production take place in the skeleton?",
+        "options": ["Compact bone", "Bone marrow", "Ligaments", "Cartilage"],
+        "answer": 1,
+        "correctAnswer": "Bone marrow",
+        "explanation": "Blood cell production takes place in bone marrow."
+    },
+    {
+        "question": "What cells are produced in bone marrow as red blood cells?",
+        "options": ["Leukocytes", "Erythrocytes", "Thrombocytes", "Osteocytes"],
+        "answer": 1,
+        "correctAnswer": "Erythrocytes",
+        "explanation": "Produces red blood cells (erythrocytes)."
+    },
+    {
+        "question": "What cells are produced in bone marrow as white blood cells?",
+        "options": ["Erythrocytes", "Leukocytes", "Osteoblasts", "Chondrocytes"],
+        "answer": 1,
+        "correctAnswer": "Leukocytes",
+        "explanation": "Produces white blood cells (leukocytes)."
+    },
+    {
+        "question": "What percentage of body mass does the skeletal system account for?",
+        "options": ["10%", "15%", "20%", "25%"],
+        "answer": 2,
+        "correctAnswer": "20%",
+        "explanation": "The skeletal system accounts for about 20% of body mass."
+    },
+    {
+        "question": "What is the skeleton defined as in the second document?",
+        "options": ["Soft framework", "Hard framework of the human body", "Muscular support", "Cartilaginous base"],
+        "answer": 1,
+        "correctAnswer": "Hard framework of the human body",
+        "explanation": "Skeleton is defined as the hard framework of human body around which the entire body is built."
+    },
+    {
+        "question": "Bones make up most of what part of the skeletal system?",
+        "options": ["Ligaments", "Joints", "The skeleton", "Cartilages"],
+        "answer": 2,
+        "correctAnswer": "The skeleton",
+        "explanation": "Bones make up most of the skeleton."
+    },
+    {
+        "question": "What is a characteristic of long bones?",
+        "options": ["Cube-shaped", "Longer than wide, with a shaft and heads", "Thin and curved", "Irregular shape"],
+        "answer": 1,
+        "correctAnswer": "Longer than wide, with a shaft and heads",
+        "explanation": "Long bones are typically longer than they are wide, have a shaft with heads at both ends, contain mostly compact bone."
+    },
+    {
+        "question": "What is an example of a long bone?",
+        "options": ["Carpals", "Femur", "Skull", "Vertebrae"],
+        "answer": 1,
+        "correctAnswer": "Femur",
+        "explanation": "Example: Femur (also humerus)."
+    },
+    {
+        "question": "What is a characteristic of short bones?",
+        "options": ["Longer than wide", "Cube-shaped, nearly equal in length and width", "Flattened and curved", "Do not fit other categories"],
+        "answer": 1,
+        "correctAnswer": "Cube-shaped, nearly equal in length and width",
+        "explanation": "Short bones are generally cube-shaped, nearly equal in length and width, contain mostly spongy bone."
+    },
+    {
+        "question": "What is an example of a short bone?",
+        "options": ["Femur", "Carpals", "Ribs", "Hip bones"],
+        "answer": 1,
+        "correctAnswer": "Carpals",
+        "explanation": "Example: Carpals (also tarsals)."
+    },
+    {
+        "question": "What is a characteristic of flat bones?",
+        "options": ["Cube-shaped", "Thin, flattened, and usually curved", "Longer than wide", "Irregular"],
+        "answer": 1,
+        "correctAnswer": "Thin, flattened, and usually curved",
+        "explanation": "Flat bones are thin, flattened, and usually curved; two thin layers of compact bone surround a layer of spongy bone."
+    },
+    {
+        "question": "What is an example of a flat bone?",
+        "options": ["Vertebrae", "Skull", "Tarsals", "Humerus"],
+        "answer": 1,
+        "correctAnswer": "Skull",
+        "explanation": "Example: Skull (also ribs, sternum)."
+    },
+    {
+        "question": "What is a characteristic of irregular bones?",
+        "options": ["Fit into other categories", "Irregular shape, do not fit into other categories", "Cube-shaped", "Flattened"],
+        "answer": 1,
+        "correctAnswer": "Irregular shape, do not fit into other categories",
+        "explanation": "Irregular bones have an irregular shape and do not fit into other bone classification categories."
+    },
+    {
+        "question": "What is an example of an irregular bone?",
+        "options": ["Femur", "Vertebrae", "Carpals", "Frontal bone"],
+        "answer": 1,
+        "correctAnswer": "Vertebrae",
+        "explanation": "Example: Vertebrae (also hip bones)."
+    },
+    {
+        "question": "According to the second document, what is an example of a long bone?",
+        "options": ["Tarsal bone", "Femur", "Frontal bone", "Vertebrae"],
+        "answer": 1,
+        "correctAnswer": "Femur",
+        "explanation": "Long bone (femur) is listed in the introduction to skeletal system."
+    },
+    {
+        "question": "What is an example of a short bone in the second document?",
+        "options": ["Femur", "Tarsal bone", "Frontal bone", "Vertebrae"],
+        "answer": 1,
+        "correctAnswer": "Tarsal bone",
+        "explanation": "Short bone (tarsal bone) is specified."
+    },
+    {
+        "question": "What is an example of a flat bone in the second document?",
+        "options": ["Femur", "Tarsal bone", "Frontal bone", "Vertebrae"],
+        "answer": 2,
+        "correctAnswer": "Frontal bone",
+        "explanation": "Flat bone (frontal bone) is given as an example."
+    },
+    {
+        "question": "What is an example of a regular bone in the second document?",
+        "options": ["Femur", "Tarsal bone", "Frontal bone", "Vertebrae"],
+        "answer": 3,
+        "correctAnswer": "Vertebrae",
+        "explanation": "Regular bone (vertebrae) is listed, though documents primarily use \"irregular.\""
+    },
+    {
+        "question": "Flat bones are thin and flattened, usually curved; what is an example?",
+        "options": ["Humerus", "Ribs", "Radius", "Metacarpals"],
+        "answer": 1,
+        "correctAnswer": "Ribs",
+        "explanation": "e.g. Skull, ribs, sternum."
+    },
+    {
+        "question": "Irregular bones have complex shapes; what is an example?",
+        "options": ["Sternum", "Hip bones", "Scapula", "Tibia"],
+        "answer": 1,
+        "correctAnswer": "Hip bones",
+        "explanation": "e.g. Vertebrae, hip bones, some facial bones, calcaneus."
+    },
+    {
+        "question": "Which classification includes bones that are thin and flattened?",
+        "options": ["Long", "Short", "Flat", "Irregular"],
+        "answer": 2,
+        "correctAnswer": "Flat",
+        "explanation": "Flat bones: Thin and flattened, usually curved."
+    },
+    {
+        "question": "Which bones cannot be grouped into long, short, or flat categories?",
+        "options": ["Long bones", "Irregular bones", "Short bones", "Flat bones"],
+        "answer": 1,
+        "correctAnswer": "Irregular bones",
+        "explanation": "Irregular bones: Complex shapes and cannot be grouped into any of the previous categories."
+    },
+    {
+        "question": "What surrounds a layer of spongy bone in flat bones?",
+        "options": ["One layer of compact bone", "Two thin layers of compact bone", "Cartilage", "Marrow only"],
+        "answer": 1,
+        "correctAnswer": "Two thin layers of compact bone",
+        "explanation": "Two thin layers of compact bone surround a layer of spongy bone."
+    },
+    {
+        "question": "Long bones contain mostly what type of bone?",
+        "options": ["Spongy", "Compact", "Irregular", "Cartilaginous"],
+        "answer": 1,
+        "correctAnswer": "Compact",
+        "explanation": "Contain mostly compact bone."
+    },
+    {
+        "question": "Short bones contain mostly what type of bone?",
+        "options": ["Compact", "Spongy", "Dense", "Hard"],
+        "answer": 1,
+        "correctAnswer": "Spongy",
+        "explanation": "Contain mostly spongy bone."
+    },
+    {
+        "question": "What is the basis for classifying bones into long, short, flat, and irregular?",
+        "options": ["Function", "Shape", "Location", "Density"],
+        "answer": 1,
+        "correctAnswer": "Shape",
+        "explanation": "Classification of Bones on the Basis of Shape."
+    },
+    {
+        "question": "What are surface features of bones used for?",
+        "options": ["Only decoration", "Sites of attachments for muscles, tendons, ligaments; passages for nerves and blood vessels", "Mineral storage only", "Blood formation"],
+        "answer": 1,
+        "correctAnswer": "Sites of attachments for muscles, tendons, ligaments; passages for nerves and blood vessels",
+        "explanation": "Surface features of bones: Sites of attachments for muscles, tendons, and ligaments; Passages for nerves and blood vessels."
+    },
+    {
+        "question": "What are categories of bone markings?",
+        "options": ["Only projections", "Projections or processes and depressions or cavities", "Only cavities", "Ligaments and tendons"],
+        "answer": 1,
+        "correctAnswer": "Projections or processes and depressions or cavities",
+        "explanation": "Categories of bone markings: Projections or processes—grow out from the bone surface; Depressions or cavities—indentations."
+    },
+    {
+        "question": "How many types of bone markings are generally there?",
+        "options": ["2", "3", "4", "5"],
+        "answer": 1,
+        "correctAnswer": "3",
+        "explanation": "Generally, there are 3 types of bone markings: Projections that grow out, Depressions that indent, Passages."
+    },
+    {
+        "question": "What is a condyle?",
+        "options": ["Small rounded projection", "Rounded articular projection", "Sharp pointed projection", "Narrow slit-like opening"],
+        "answer": 1,
+        "correctAnswer": "Rounded articular projection",
+        "explanation": "Condyle: Rounded articular projection (joint articulations)."
+    },
+    {
+        "question": "What is a sulcus, groove, or furrow?",
+        "options": ["Rounded projection", "Shallow depression", "Large blunt projection", "Canal through bone"],
+        "answer": 1,
+        "correctAnswer": "Shallow depression",
+        "explanation": "Sulcus, Groove or Furrow: a shallow depression."
+    },
+    {
+        "question": "What is a tubercle?",
+        "options": ["Large rounded projection", "Small rounded projection", "Very large blunt projection", "Arm-like bar"],
+        "answer": 1,
+        "correctAnswer": "Small rounded projection",
+        "explanation": "Tubercle: Small rounded projection."
+    },
+    {
+        "question": "What is a tuberosity?",
+        "options": ["Small rounded projection", "Large rounded or roughened projection", "Sharp projection", "Oval opening"],
+        "answer": 1,
+        "correctAnswer": "Large rounded or roughened projection",
+        "explanation": "Tuberosity: large rounded or roughened projection."
+    },
+    {
+        "question": "What is a trochanter?",
+        "options": ["Small projection", "Very large, blunt projection (only on femur)", "Shallow groove", "Round opening"],
+        "answer": 1,
+        "correctAnswer": "Very large, blunt projection (only on femur)",
+        "explanation": "Trochanter: very large, blunt projection (only on femur)."
+    },
+    {
+        "question": "What is a spine in bone markings?",
+        "options": ["Blunt projection", "Sharp, pointed projection", "Depression", "Passage"],
+        "answer": 1,
+        "correctAnswer": "Sharp, pointed projection",
+        "explanation": "Spine: Sharp, pointed projection."
+    },
+    {
+        "question": "What is a ramus?",
+        "options": ["Sharp projection", "Arm-like bar of bone", "Shallow depression", "Slit-like opening"],
+        "answer": 1,
+        "correctAnswer": "Arm-like bar of bone",
+        "explanation": "Ramus: Arm-like bar of bone."
+    },
+    {
+        "question": "What is a foramen?",
+        "options": ["Canal not through bone", "Round or oval opening", "Narrow slit", "Depression"],
+        "answer": 1,
+        "correctAnswer": "Round or oval opening",
+        "explanation": "Foramen: Round or oval opening (passages allow blood vessels or nerves to pass through)."
+    },
+    {
+        "question": "What is a meatus?",
+        "options": ["Round opening", "Canal or tube which does not pass through a bone", "Slit-like opening", "Blunt projection"],
+        "answer": 1,
+        "correctAnswer": "Canal or tube which does not pass through a bone",
+        "explanation": "Meatus: Canal or tube which do not pass through a bone."
+    },
+    {
+        "question": "What is a fissure?",
+        "options": ["Round opening", "Narrow, slit-like opening", "Large projection", "Groove"],
+        "answer": 1,
+        "correctAnswer": "Narrow, slit-like opening",
+        "explanation": "Fissure: narrow, slit-like opening."
+    },
+    {
+        "question": "Where is the foramen magnum located?",
+        "options": ["Femur", "Occipital bone", "Humerus", "Tibia"],
+        "answer": 1,
+        "correctAnswer": "Occipital bone",
+        "explanation": "Foramen magnum is the large hole in the occipital bone."
+    },
+    {
+        "question": "What is an example of a projection for joint articulation?",
+        "options": ["Foramen", "Condyle", "Fissure", "Meatus"],
+        "answer": 1,
+        "correctAnswer": "Condyle",
+        "explanation": "Projection: Joint articulations - Condyle: Rounded articular projection."
+    },
+    {
+        "question": "What bone has a trochanter?",
+        "options": ["Humerus", "Femur", "Radius", "Ulna"],
+        "answer": 1,
+        "correctAnswer": "Femur",
+        "explanation": "Trochanter: very large, blunt projection (only on femur)."
+    },
+    {
+        "question": "What is located on the proximal tibia as an example?",
+        "options": ["Foramen magnum", "Tuberosity", "Spine", "Fissure"],
+        "answer": 1,
+        "correctAnswer": "Tuberosity",
+        "explanation": "Tuberosity example on proximal tibia."
+    },
+    {
+        "question": "What provides attachment in thoracic vertebrae and iliac crest?",
+        "options": ["Ramus", "Spine", "Groove", "Foramen"],
+        "answer": 1,
+        "correctAnswer": "Spine",
+        "explanation": "Spine example in thoracic vertebrae; ramus in iliac crest, but spine is sharp projection."
+    },
+    {
+        "question": "What type of marking is the foramen magnum?",
+        "options": ["Projection", "Depression", "Passage", "Groove"],
+        "answer": 2,
+        "correctAnswer": "Passage",
+        "explanation": "Passages: Foramen magnum - Round or oval opening."
+    },
+    {
+        "question": "Bone markings include indentations known as?",
+        "options": ["Processes", "Depressions or cavities", "Projections only", "Foramina"],
+        "answer": 1,
+        "correctAnswer": "Depressions or cavities",
+        "explanation": "Depressions or cavities—indentations."
+    },
+    {
+        "question": "What forms the longitudinal axis of the body in the axial skeleton?",
+        "options": ["Appendicular parts", "Skull, vertebral column, bony thorax", "Limbs", "Pelvis"],
+        "answer": 1,
+        "correctAnswer": "Skull, vertebral column, bony thorax",
+        "explanation": "The axial skeleton forms the longitudinal axis; divided into skull, vertebral column, bony thorax."
+    },
+    {
+        "question": "How many cranial bones are there?",
+        "options": ["14", "8", "12", "7"],
+        "answer": 1,
+        "correctAnswer": "8",
+        "explanation": "The cranial bones: 8 in number."
+    },
+    {
+        "question": "How many facial bones are there?",
+        "options": ["8", "14", "12", "26"],
+        "answer": 1,
+        "correctAnswer": "14",
+        "explanation": "The facial bones: 14 in number."
+    },
+    {
+        "question": "How are most skull bones joined?",
+        "options": ["Freely movable joints", "Sutures", "Cartilage", "Ligaments only"],
+        "answer": 1,
+        "correctAnswer": "Sutures",
+        "explanation": "Bones are joined by sutures; only the mandible is attached by a freely movable joint."
+    },
+    {
+        "question": "What is the only freely movable bone in the skull?",
+        "options": ["Frontal", "Mandible", "Parietal", "Occipital"],
+        "answer": 1,
+        "correctAnswer": "Mandible",
+        "explanation": "Only the mandible is attached by a freely movable joint."
+    },
+    {
+        "question": "How many unpaired cerebral/cranial bones are there?",
+        "options": ["4", "8", "12", "14"],
+        "answer": 0,
+        "correctAnswer": "4",
+        "explanation": "Cerebral/cranial bones (8 total): Unpaired (4): occipital, frontal, sphenoid, ethmoid."
+    },
+    {
+        "question": "How many paired cerebral/cranial bones?",
+        "options": ["4", "8", "12", "14"],
+        "answer": 0,
+        "correctAnswer": "4",
+        "explanation": "Paired (4): parietal, temporal."
+    },
+    {
+        "question": "How many paired facial bones?",
+        "options": ["12", "14", "2", "8"],
+        "answer": 0,
+        "correctAnswer": "12",
+        "explanation": "Facial or visceral cranium: Paired (12): nasal, lacrimal, maxilla, zygomatic, palatine, inferior nasal concha."
+    },
+    {
+        "question": "How many unpaired facial bones?",
+        "options": ["12", "2", "4", "14"],
+        "answer": 1,
+        "correctAnswer": "2",
+        "explanation": "Unpaired (2): vomer, mandible."
+    },
+    {
+        "question": "What does the frontal bone form?",
+        "options": ["Back of skull", "Anterior roof of cranium, forehead, roof of nasal cavity, superior arch of orbit", "Lower sides", "Base"],
+        "answer": 1,
+        "correctAnswer": "Anterior roof of cranium, forehead, roof of nasal cavity, superior arch of orbit",
+        "explanation": "Frontal bone forms the anterior roof of the cranium, the forehead, the roof of the nasal cavity, and the superior arch of the orbit."
+    },
+    {
+        "question": "At what age does the frontal bone completely fuse?",
+        "options": ["Birth", "2 years", "5 or 6", "12 years"],
+        "answer": 2,
+        "correctAnswer": "5 or 6",
+        "explanation": "Develops in two halves that grow together and are completely fused at age 5 or 6."
+    },
+    {
+        "question": "What suture separates the frontal bone from the parietals?",
+        "options": ["Sagittal", "Lambdoid", "Coronal", "Squamosal"],
+        "answer": 2,
+        "correctAnswer": "Coronal",
+        "explanation": "The coronal suture separates the frontal bone from the parietals."
+    },
+    {
+        "question": "What do parietal bones form?",
+        "options": ["Forehead", "Upper sides and roof of the cranium", "Base", "Nasal cavity roof"],
+        "answer": 1,
+        "correctAnswer": "Upper sides and roof of the cranium",
+        "explanation": "Parietal bones form the upper sides and roof of the cranium."
+    },
+    {
+        "question": "What suture separates the right and left parietal bones?",
+        "options": ["Coronal", "Sagittal", "Lambdoid", "Squamosal"],
+        "answer": 1,
+        "correctAnswer": "Sagittal",
+        "explanation": "The sagittal suture separates the right and left parietal bones along the superior midline."
+    },
+    {
+        "question": "What do temporal bones form?",
+        "options": ["Roof", "Lower sides of the cranium", "Back", "Forehead"],
+        "answer": 1,
+        "correctAnswer": "Lower sides of the cranium",
+        "explanation": "Temporal bones form the lower sides of the cranium."
+    },
+    {
+        "question": "What suture joins temporal to parietal bone?",
+        "options": ["Sagittal", "Squamosal", "Coronal", "Lambdoid"],
+        "answer": 1,
+        "correctAnswer": "Squamosal",
+        "explanation": "Each temporal bone is joined to its adjacent parietal bone by the squamosal suture."
+    },
+    {
+        "question": "How many parts does each temporal bone have?",
+        "options": ["2", "3", "4", "5"],
+        "answer": 2,
+        "correctAnswer": "4",
+        "explanation": "Each temporal bone has four parts: squamous, tympanic, mastoid, petrous parts."
+    },
+    {
+        "question": "What does the occipital bone form?",
+        "options": ["Forehead", "Back and much of the base of the skull", "Sides", "Nasal roof"],
+        "answer": 1,
+        "correctAnswer": "Back and much of the base of the skull",
+        "explanation": "Occipital bone forms the back and much of the base of the skull."
+    },
+    {
+        "question": "What suture fastens occipital to parietal bones?",
+        "options": ["Coronal", "Sagittal", "Lambdoid", "Squamosal"],
+        "answer": 2,
+        "correctAnswer": "Lambdoid",
+        "explanation": "It is fastened to the parietal bones by the lambdoid suture."
+    },
+    {
+        "question": "What is the foramen magnum for?",
+        "options": ["Olfactory nerves", "Spinal cord attaches to brain", "Pituitary support", "Nasal passage"],
+        "answer": 1,
+        "correctAnswer": "Spinal cord attaches to brain",
+        "explanation": "The foramen magnum is the large hole in the occipital bone through which the spinal cord attaches to the brain."
+    },
+    {
+        "question": "What articulates with the atlas in the occipital bone?",
+        "options": ["Axis", "Occipital condyle", "Foramen magnum", "Sella turcica"],
+        "answer": 1,
+        "correctAnswer": "Occipital condyle",
+        "explanation": "The occipital condyle, which articulates with atlas of the vertebral column, is found on each side of the foramen."
+    },
+    {
+        "question": "What shape is the sphenoid bone?",
+        "options": ["Wedge", "Butterfly-shaped with outstretched wings", "Triangular", "Cube"],
+        "answer": 1,
+        "correctAnswer": "Butterfly-shaped with outstretched wings",
+        "explanation": "Sphenoid bone forms the anterior base of the cranium; butterfly-shaped with outstretched wings."
+    },
+    {
+        "question": "What parts does the sphenoid bone consist of?",
+        "options": ["Body, greater and lesser wings", "Squamous and tympanic", "Pedicle and lamina", "Ilium and ischium"],
+        "answer": 0,
+        "correctAnswer": "Body, greater and lesser wings",
+        "explanation": "Consists of a body, greater and lesser wings."
+    },
+    {
+        "question": "What does the body of the sphenoid contain?",
+        "options": ["Foramen magnum", "Sphenoidal sinuses and sella turcica", "Cribriform plate", "Nasal conchae"],
+        "answer": 1,
+        "correctAnswer": "Sphenoidal sinuses and sella turcica",
+        "explanation": "The body is a wedge-like central portion containing the sphenoidal sinuses and a prominent depression called the sella turcica which supports the pituitary gland."
+    },
+    {
+        "question": "What does the ethmoid bone form?",
+        "options": ["Back of skull", "Roof of the nasal cavity", "Lower sides", "Forehead"],
+        "answer": 1,
+        "correctAnswer": "Roof of the nasal cavity",
+        "explanation": "Ethmoid bone forms the roof of the nasal cavity."
+    },
+    {
+        "question": "Where is the ethmoid bone located?",
+        "options": ["Posterior floor", "Anterior position of the floor of the cranium between the orbits", "Base only", "Roof only"],
+        "answer": 1,
+        "correctAnswer": "Anterior position of the floor of the cranium between the orbits",
+        "explanation": "Located in the anterior position of the floor of the cranium between the orbits."
+    },
+    {
+        "question": "What has numerous perforations for olfactory nerves in the ethmoid?",
+        "options": ["Sella turcica", "Cribriform plate", "Perpendicular plate", "Crista galli"],
+        "answer": 1,
+        "correctAnswer": "Cribriform plate",
+        "explanation": "The cribriform plate is the part having numerous perforations for the passage of olfactory nerves."
+    },
+    {
+        "question": "What contributes to the nasal septum from the ethmoid?",
+        "options": ["Cribriform plate", "Perpendicular plate", "Superior nasal concha", "Sphenoidal sinus"],
+        "answer": 1,
+        "correctAnswer": "Perpendicular plate",
+        "explanation": "The perpendicular plate of ethmoid contributes partly to the nasal septum."
+    },
+    {
+        "question": "What projects superiorly into the cranial cavity from the ethmoid?",
+        "options": ["Sella turcica", "Crista galli", "Foramen magnum", "Lambdoid suture"],
+        "answer": 1,
+        "correctAnswer": "Crista galli",
+        "explanation": "The crista galli projects superiorly into the cranial cavity where it forms an attachment to the meninges."
+    },
+    {
+        "question": "What forms the lateral walls of the nasal cavity from the ethmoid?",
+        "options": ["Perpendicular plate", "Superior and middle nasal conchae", "Cribriform plate", "Body"],
+        "answer": 1,
+        "correctAnswer": "Superior and middle nasal conchae",
+        "explanation": "The superior and the middle nasal conchae are bony projections forming the lateral walls of the nasal cavity."
+    },
+    {
+        "question": "What do facial bones provide with certain cranial bones?",
+        "options": ["Brain protection only", "Basic shape of the face, support teeth, attachments for jaw and facial muscles", "Movement only", "Blood production"],
+        "answer": 1,
+        "correctAnswer": "Basic shape of the face, support teeth, attachments for jaw and facial muscles",
+        "explanation": "Facial bones with certain cranial bones provide the basic shape of the face, support the teeth, and provide attachments for various muscles that move the jaw and cause facial expressions."
+    },
+    {
+        "question": "Which facial bones are unpaired?",
+        "options": ["Maxillae", "Vomer and mandible", "Zygomatic", "Nasal"],
+        "answer": 1,
+        "correctAnswer": "Vomer and mandible",
+        "explanation": "All are paired except the vomer and mandible."
+    },
+    {
+        "question": "What forms the upper jaw?",
+        "options": ["Mandible", "Maxillae", "Zygomatic", "Palatine"],
+        "answer": 1,
+        "correctAnswer": "Maxillae",
+        "explanation": "Maxillae form upper jaw."
+    },
+    {
+        "question": "What is the only movable bone of the skull?",
+        "options": ["Maxilla", "Mandible or lower jaw", "Vomer", "Nasal"],
+        "answer": 1,
+        "correctAnswer": "Mandible or lower jaw",
+        "explanation": "Mandible or lower jaw is the only moveable bone of the skull; attached by temporomandibular joint."
+    },
+    {
+        "question": "What are other bones of the face including?",
+        "options": ["Femur", "Palatine, zygomatic, lacrimal, nasal, vomer, inferior nasal conchae", "Tibia", "Humerus"],
+        "answer": 1,
+        "correctAnswer": "Palatine, zygomatic, lacrimal, nasal, vomer, inferior nasal conchae",
+        "explanation": "Other bones of the face include the palatine bones, zygomatic bones, lacrimal bones, nasal bones, vomer, and inferior nasal conchae."
+    },
+    {
+        "question": "What are paranasal sinuses?",
+        "options": ["Solid bone parts", "Hollow portions of bones surrounding the nasal cavity", "Cartilage areas", "Muscle attachments"],
+        "answer": 1,
+        "correctAnswer": "Hollow portions of bones surrounding the nasal cavity",
+        "explanation": "Paranasal sinuses: Hollow portions of bones surrounding the nasal cavity."
+    },
+    {
+        "question": "What is one function of paranasal sinuses?",
+        "options": ["Heavy the skull", "Lighten the skull", "Store blood", "Produce movement"],
+        "answer": 1,
+        "correctAnswer": "Lighten the skull",
+        "explanation": "Functions: Lighten the skull; give resonance and amplification to voice."
+    },
+    {
+        "question": "What is the hyoid bone?",
+        "options": ["Articulates with another bone", "The only bone that does not articulate with another bone", "Part of vertebral column", "In the skull"],
+        "answer": 1,
+        "correctAnswer": "The only bone that does not articulate with another bone",
+        "explanation": "The only bone that does not articulate with another bone."
+    },
+    {
+        "question": "What does the hyoid bone serve as?",
+        "options": ["Protection for heart", "Moveable base for the tongue; aids in swallowing and speech", "Attachment for legs", "Blood formation"],
+        "answer": 1,
+        "correctAnswer": "Moveable base for the tongue; aids in swallowing and speech",
+        "explanation": "Serves as a moveable base for the tongue; aids in swallowing and speech."
+    },
+    {
+        "question": "What are fontanels in the fetal skull?",
+        "options": ["Fused bones", "Fibrous membranes connecting the cranial bones", "Hard plates", "Sutures only"],
+        "answer": 1,
+        "correctAnswer": "Fibrous membranes connecting the cranial bones",
+        "explanation": "Fontanels—fibrous membranes connecting the cranial bones; allow brain to grow, convert to bone within 24 months after birth."
+    },
+    {
+        "question": "What is the hyoid bone's shape and location?",
+        "options": ["Triangular in back", "Small U-shape; lies in front of the neck", "Flat in chest", "Long in arm"],
+        "answer": 1,
+        "correctAnswer": "Small U-shape; lies in front of the neck",
+        "explanation": "Hyoid bone = small U-shape; lies in front of the neck."
+    },
+    {
+        "question": "What attaches to the base of the tongue?",
+        "options": ["Sternum", "Hyoid bone", "Ribs", "Vertebrae"],
+        "answer": 1,
+        "correctAnswer": "Hyoid bone",
+        "explanation": "Base of the tongue is attached to hyoid bone; lies between mandible & thyroid cartilage."
+    },
+    {
+        "question": "What are ossicles?",
+        "options": ["Large limb bones", "Small bones of the ear", "Facial bones", "Pelvic bones"],
+        "answer": 1,
+        "correctAnswer": "Small bones of the ear",
+        "explanation": "Ossicles = small bones of the ear."
+    },
+    {
+        "question": "How many stapes are there?",
+        "options": ["1", "2", "4", "6"],
+        "answer": 1,
+        "correctAnswer": "2",
+        "explanation": "Stapes (stirrup) – 2."
+    },
+    {
+        "question": "How many incus?",
+        "options": ["1", "2", "4", "6"],
+        "answer": 1,
+        "correctAnswer": "2",
+        "explanation": "Incus (anvil) – 2."
+    },
+    {
+        "question": "How many malleus?",
+        "options": ["1", "2", "4", "6"],
+        "answer": 1,
+        "correctAnswer": "2",
+        "explanation": "Malleus (hammer) – 2."
+    },
+    {
+        "question": "What is the vertebral column?",
+        "options": ["Straight pillar", "Curved, slightly movable pillar", "Flat plate", "Spherical"],
+        "answer": 1,
+        "correctAnswer": "Curved, slightly movable pillar",
+        "explanation": "Vertebral column = curved, slightly movable pillar; united by cartilage & ligaments."
+    },
+    {
+        "question": "How long is the vertebral column?",
+        "options": ["50-60 cm", "71-75 cm", "80-90 cm", "100 cm"],
+        "answer": 1,
+        "correctAnswer": "71-75 cm",
+        "explanation": "71 – 75 cm long."
+    },
+    {
+        "question": "What forms the vertebral column?",
+        "options": ["Single bone", "Series of bones -- vertebrae", "Cartilage only", "Ligaments"],
+        "answer": 1,
+        "correctAnswer": "Series of bones -- vertebrae",
+        "explanation": "Formed by series of bones -- vertebrae."
+    },
+    {
+        "question": "What is one function of the vertebral column?",
+        "options": ["Limb support", "Support of the trunk", "Arm movement", "Leg protection"],
+        "answer": 1,
+        "correctAnswer": "Support of the trunk",
+        "explanation": "Function: 1. support of the trunk; 2. contains & protects the spinal cord & nerves."
+    },
+    {
+        "question": "How many cervical vertebrae in adults?",
+        "options": ["5", "7", "12", "33"],
+        "answer": 1,
+        "correctAnswer": "7",
+        "explanation": "Cervical: 7 in adult."
+    },
+    {
+        "question": "How many thoracic vertebrae?",
+        "options": ["5", "7", "12", "33"],
+        "answer": 2,
+        "correctAnswer": "12",
+        "explanation": "Thoracic: 12."
+    },
+    {
+        "question": "How many lumbar vertebrae?",
+        "options": ["5", "7", "12", "33"],
+        "answer": 0,
+        "correctAnswer": "5",
+        "explanation": "Lumbar: 5."
+    },
+    {
+        "question": "How many sacral vertebrae in adult?",
+        "options": ["5", "1 (fused)", "4", "33"],
+        "answer": 1,
+        "correctAnswer": "1 (fused)",
+        "explanation": "Sacral: 5 in young, 1 in adult."
+    },
+    {
+        "question": "How many coccygeal vertebrae in adult?",
+        "options": ["4", "1 (fused)", "5", "33"],
+        "answer": 1,
+        "correctAnswer": "1 (fused)",
+        "explanation": "Coccygeal: 4 in young, 1 in adult; total 33 young, 26 adult."
+    },
+    {
+        "question": "What are intervertebral discs?",
+        "options": ["Bone fusions", "Flattened plates of fibrocartilage between vertebrae bodies", "Ligaments only", "Nerves"],
+        "answer": 1,
+        "correctAnswer": "Flattened plates of fibrocartilage between vertebrae bodies",
+        "explanation": "Intervertebral discs = flattened plates of fibrocartilage that are interposed between the adjacent surfaces of the bodies of vertebrae."
+    },
+    {
+        "question": "What is one function of intervertebral discs?",
+        "options": ["Bone growth", "Main shock absorber", "Blood production", "Muscle attachment"],
+        "answer": 1,
+        "correctAnswer": "Main shock absorber",
+        "explanation": "Function: 1. uniting medium; 2. main shock absorber; 3. give flexibility & movement."
+    },
+    {
+        "question": "What are general parts of vertebrae including?",
+        "options": ["Body, arch, pedicle, lamina, transverse process, articular process, spinous process, spinal foramen", "Only body and arch", "Only processes", "Cartilage only"],
+        "answer": 0,
+        "correctAnswer": "Body, arch, pedicle, lamina, transverse process, articular process, spinous process, spinal foramen",
+        "explanation": "1. body; 2. arch; 3. pedicle or root; 4. lamina; 5. transverse process; 6. articular process; 7. spinous process; 8. spinal or vertebral foramen."
+    },
+    {
+        "question": "What do all cervical vertebrae have?",
+        "options": ["Costal pits", "Transverse foramen", "Mammillary processes", "Triangular canal"],
+        "answer": 1,
+        "correctAnswer": "Transverse foramen",
+        "explanation": "Cervical vertebrae (7) = forms the skeleton of the neck, all have transverse foramen."
+    },
+    {
+        "question": "What are atypical cervical vertebrae?",
+        "options": ["3rd to 6th", "Atlas (1st), axis (2nd), 7th cervical", "Thoracic", "Lumbar"],
+        "answer": 1,
+        "correctAnswer": "Atlas (1st), axis (2nd), 7th cervical",
+        "explanation": "Atypical: 1. atlas -- 1st; 2. axis = 2nd; 3. 7th cervical = spinous process not bifid, small transverse foramen."
+    },
+    {
+        "question": "What do thoracic vertebrae have for rib attachment?",
+        "options": ["Transverse foramen", "Costal pits", "Mammillary processes", "Large bodies"],
+        "answer": 1,
+        "correctAnswer": "Costal pits",
+        "explanation": "Thoracic vertebrae (12) = costal pits - rib attachment; circular vertebral canal."
+    },
+    {
+        "question": "What shape is the vertebral canal in thoracic vertebrae?",
+        "options": ["Triangular", "Circular", "Oval", "Square"],
+        "answer": 1,
+        "correctAnswer": "Circular",
+        "explanation": "Circular vertebral canal."
+    },
+    {
+        "question": "What do lumbar vertebrae have?",
+        "options": ["Costal pits", "Presence of mammillary, costarious & accessory processes; triangular vertebral foramen; large bodies", "Transverse foramen", "Small foramen"],
+        "answer": 1,
+        "correctAnswer": "Presence of mammillary, costarious & accessory processes; triangular vertebral foramen; large bodies",
+        "explanation": "Lumbar vertebrae (5) = presence of mammillary, costarious & accessory processes; triangular vertebral foramen; have large bodies."
+    },
+    {
+        "question": "What is the shape of the sacrum?",
+        "options": ["Circular", "Inverted triangular bone", "Cube", "Long shaft"],
+        "answer": 1,
+        "correctAnswer": "Inverted triangular bone",
+        "explanation": "Sacrum = inverted triangular bone situated between hip bones."
+    },
+    {
+        "question": "What is the coccygeal vertebrae?",
+        "options": ["1 large bone", "4 small incomplete vertebrae fused to form the coccyx / tail bone; triangular", "12 fused", "Part of skull"],
+        "answer": 1,
+        "correctAnswer": "4 small incomplete vertebrae fused to form the coccyx / tail bone; triangular",
+        "explanation": "Coccygeal vertebrae (1) = 4 small incomplete vertebrae fused to form the coccyx / tail bone; triangular."
+    },
+    {
+        "question": "What is the sternum?",
+        "options": ["Curved bone in neck", "Flat bone, found -- anterior thoracic wall", "Long bone in arm", "Short bone in wrist"],
+        "answer": 1,
+        "correctAnswer": "Flat bone, found -- anterior thoracic wall",
+        "explanation": "Sternum (breast bone) = flat bone, found -- anterior thoracic wall."
+    },
+    {
+        "question": "What composes the sternum?",
+        "options": ["Only compact bone", "2 plates of compact bone with a layer of spongy bone in between containing red bone marrow", "Cartilage only", "Irregular fusion"],
+        "answer": 1,
+        "correctAnswer": "2 plates of compact bone with a layer of spongy bone in between containing red bone marrow",
+        "explanation": "Composed of 2 plates of compact bone with a layer of spongy bone in between containing red bone marrow."
+    },
+    {
+        "question": "What are parts of the sternum?",
+        "options": ["Ilium, ischium, pubis", "Manubrium, corpus or body, xiphoid process", "Atlas, axis", "Stapes, incus"],
+        "answer": 1,
+        "correctAnswer": "Manubrium, corpus or body, xiphoid process",
+        "explanation": "Parts: a. Manubrium; b. Corpus or body; c. Xiphoid process."
+    },
+    {
+        "question": "How many pairs of ribs?",
+        "options": ["10", "12", "14", "7"],
+        "answer": 1,
+        "correctAnswer": "12",
+        "explanation": "Ribs (12 pairs)."
+    },
+    {
+        "question": "What are ribs described as?",
+        "options": ["Wide flat bones", "Narrow arched flat bones with 2 ends", "Cube-shaped", "Long shafts"],
+        "answer": 1,
+        "correctAnswer": "Narrow arched flat bones with 2 ends",
+        "explanation": "Narrow arched flat bones with 2 ends: 1. vertebral - posterior; 2. sternal - anterior."
+    },
+    {
+        "question": "What attaches posteriorly to ribs?",
+        "options": ["Sternum directly", "Thoracic vertebrae", "Pelvis", "Scapula"],
+        "answer": 1,
+        "correctAnswer": "Thoracic vertebrae",
+        "explanation": "Vertebral end attaches with thoracic vertebrae."
+    },
+    {
+        "question": "What attaches anteriorly to ribs via costal cartilages?",
+        "options": ["Vertebrae", "Sternum", "Humerus", "Femur"],
+        "answer": 1,
+        "correctAnswer": "Sternum",
+        "explanation": "Sternal end attaches with costal cartilages to sternum (for true ribs)."
+    },
+    {
+        "question": "What are sternal or true ribs?",
+        "options": ["8th to 12th", "1st to 7th; costal cartilages directly attached to sternum", "11th and 12th only", "All 12"],
+        "answer": 1,
+        "correctAnswer": "1st to 7th; costal cartilages directly attached to sternum",
+        "explanation": "Sternal or true ribs (1st to 7th) - ribs whose costal cartilages are directly attached to sternum."
+    },
+    {
+        "question": "What are asternal or false ribs?",
+        "options": ["1st to 7th", "8th to 12th; not directly attached to sternum but to 7th", "Only floating", "True ribs"],
+        "answer": 1,
+        "correctAnswer": "8th to 12th; not directly attached to sternum but to 7th",
+        "explanation": "Asternal or false ribs (8th to 12th) - ribs whose costal cartilages are not attached directly to the sternum but to 7th."
+    },
+    {
+        "question": "What are false ribs proper?",
+        "options": ["1st to 7th", "8th, 9th, 10th ribs", "11th and 12th", "All false"],
+        "answer": 1,
+        "correctAnswer": "8th, 9th, 10th ribs",
+        "explanation": "Subdivisions: 1. false rib proper - 8th, 9th, 10th ribs."
+    },
+    {
+        "question": "What are floating or hanging ribs?",
+        "options": ["8th to 10th", "11th & 12th", "True ribs", "1st to 7th"],
+        "answer": 1,
+        "correctAnswer": "11th & 12th",
+        "explanation": "2. floating or hanging ribs – 11th & 12th."
+    },
+    {
+        "question": "In young, total vertebrae number?",
+        "options": ["26", "33", "206", "80"],
+        "answer": 1,
+        "correctAnswer": "33",
+        "explanation": "Total 33 in young."
+    },
+    {
+        "question": "In adult, total vertebrae number?",
+        "options": ["33", "26", "206", "80"],
+        "answer": 1,
+        "correctAnswer": "26",
+        "explanation": "26 in adult (due to fusions)."
+    },
+    {
+        "question": "What gives flexibility to the vertebral column?",
+        "options": ["Fusions only", "Intervertebral discs", "Sutures", "Compact bone"],
+        "answer": 1,
+        "correctAnswer": "Intervertebral discs",
+        "explanation": "Give flexibility & movement to the whole vertebral column."
+    },
+    {
+        "question": "What protects the spinal cord in the vertebral column?",
+        "options": ["Ribs", "Vertebrae", "Sternum", "Hyoid"],
+        "answer": 1,
+        "correctAnswer": "Vertebrae",
+        "explanation": "Contains & protects the spinal cord & nerves."
+    },
+    {
+        "question": "What forms the pectoral girdle?",
+        "options": ["Hip bones", "Clavicle and scapula", "Femur and tibia", "Vertebrae"],
+        "answer": 1,
+        "correctAnswer": "Clavicle and scapula",
+        "explanation": "Pectoral Girdle: Clavicle (collar bone), Scapula (shoulder blade)."
+    },
+    {
+        "question": "What does the clavicle bind?",
+        "options": ["Pelvis to sacrum", "Shoulder to axial skeleton", "Leg to trunk", "Arm to leg"],
+        "answer": 1,
+        "correctAnswer": "Shoulder to axial skeleton",
+        "explanation": "Binds the shoulder to the axial skeleton and positions the shoulder joint away from the trunk for freedom of movement."
+    },
+    {
+        "question": "What is the scapula?",
+        "options": ["Collar bone", "Large, triangular flat bone on posterior ribcage, overlying ribs 2-7", "Thigh bone", "Shin bone"],
+        "answer": 1,
+        "correctAnswer": "Large, triangular flat bone on posterior ribcage, overlying ribs 2-7",
+        "explanation": "Scapula (shoulder blade): a large, triangular flat bone positioned on the posterior aspect of the ribcage, overlying ribs 2 to 7."
+    },
+    {
+        "question": "What articulates with humerus and clavicle?",
+        "options": ["Femur", "Scapula", "Tibia", "Radius"],
+        "answer": 1,
+        "correctAnswer": "Scapula",
+        "explanation": "Scapula – articulates with humerus & clavicle."
+    },
+    {
+        "question": "What is the humerus?",
+        "options": ["Wrist bone", "Longest & largest bone of upper extremity; articulates with scapula (above), radius & ulna (below)", "Ankle bone", "Finger bone"],
+        "answer": 1,
+        "correctAnswer": "Longest & largest bone of upper extremity; articulates with scapula (above), radius & ulna (below)",
+        "explanation": "Humerus (arm bone) - longest & largest bone of UPPER EXTREMITY; articulates with scapula (above), radius & ulna (below)."
+    },
+    {
+        "question": "What is the radius?",
+        "options": ["Medial forearm bone", "Lateral bone of the forearm; cup-shaped head", "Principal forearm bone", "Larger than ulna"],
+        "answer": 1,
+        "correctAnswer": "Lateral bone of the forearm; cup-shaped head",
+        "explanation": "Radius - lateral bone of the forearm; cup-shaped head."
+    },
+    {
+        "question": "What is the ulna?",
+        "options": ["Lateral and shorter", "Principal bone of the forearm; longer & larger than radius", "Wrist bone", "Arm bone"],
+        "answer": 1,
+        "correctAnswer": "Principal bone of the forearm; longer & larger than radius",
+        "explanation": "Ulna - principal bone of the forearm; longer & larger than radius."
+    },
+    {
+        "question": "How many carpals (wrist bones)?",
+        "options": ["5", "8", "14", "27"],
+        "answer": 1,
+        "correctAnswer": "8",
+        "explanation": "Carpals (wrist bone) - 8 bones arranged into 2 rows: proximal & distal rows."
+    },
+    {
+        "question": "What are metacarpals?",
+        "options": ["Wrist bones", "5 long bones placed between carpals & phalanges; numbered lateral to medial", "Finger bones", "Arm bones"],
+        "answer": 1,
+        "correctAnswer": "5 long bones placed between carpals & phalanges; numbered lateral to medial",
+        "explanation": "Metacarpals (bones of the hand) - 5 long bones placed between carpals & phalanges; numbered from lateral to medial."
+    },
+    {
+        "question": "How many phalanges in fingers?",
+        "options": ["8", "10", "14", "27"],
+        "answer": 2,
+        "correctAnswer": "14",
+        "explanation": "Phalanges (bones of the fingers) = 14 long bones of the fingers -- 3 bones except thumb - 2 bones."
+    },
+    {
+        "question": "What is the clavicle also known as?",
+        "options": ["Shoulder blade", "Collar bone", "Arm bone", "Shin bone"],
+        "answer": 1,
+        "correctAnswer": "Collar bone",
+        "explanation": "Clavicle (collar bone)."
+    },
+    {
+        "question": "What bones are in the upper extremity including?",
+        "options": ["Femur, tibia", "Clavicle, scapula, humerus, radius, ulna, carpals, metacarpals, phalanges", "Hip, tarsals", "Ribs, sternum"],
+        "answer": 1,
+        "correctAnswer": "Clavicle, scapula, humerus, radius, ulna, carpals, metacarpals, phalanges",
+        "explanation": "Bones of the UPPER EXTREMITY (UE): 1. Clavicle; 2. Scapula; 3. Humerus; 4. Radius; 5. Ulna; 6. Carpals; 7. Metacarpals; Phalanges."
+    },
+    {
+        "question": "How many rows are carpals arranged in?",
+        "options": ["1", "2", "3", "5"],
+        "answer": 1,
+        "correctAnswer": "2",
+        "explanation": "8 bones arranged into 2 rows - proximal & distal rows."
+    },
+    {
+        "question": "How are metacarpals numbered?",
+        "options": ["Medial to lateral", "Lateral to medial", "Proximal to distal", "Distal to proximal"],
+        "answer": 1,
+        "correctAnswer": "Lateral to medial",
+        "explanation": "Numbered from lateral to medial."
+    },
+    {
+        "question": "How many bones per finger except thumb?",
+        "options": ["2", "3", "4", "5"],
+        "answer": 1,
+        "correctAnswer": "3",
+        "explanation": "3 bones except thumb - 2 bones."
+    },
+    {
+        "question": "What is the longest bone in the upper extremity?",
+        "options": ["Radius", "Ulna", "Humerus", "Clavicle"],
+        "answer": 2,
+        "correctAnswer": "Humerus",
+        "explanation": "Humerus - longest & largest bone of upper extremity."
+    },
+    {
+        "question": "What overlies ribs 2 to 7?",
+        "options": ["Clavicle", "Scapula", "Humerus", "Sternum"],
+        "answer": 1,
+        "correctAnswer": "Scapula",
+        "explanation": "Scapula overlying ribs 2 to 7."
+    },
+    {
+        "question": "What positions the shoulder joint away from the trunk?",
+        "options": ["Scapula", "Clavicle", "Both", "Humerus"],
+        "answer": 2,
+        "correctAnswer": "Both",
+        "explanation": "Clavicle positions the shoulder joint away for freedom of movement."
+    },
+    {
+        "question": "What is the principal bone of the forearm?",
+        "options": ["Radius", "Ulna", "Humerus", "Carpals"],
+        "answer": 1,
+        "correctAnswer": "Ulna",
+        "explanation": "Ulna - principal bone of the forearm."
+    },
+    {
+        "question": "What has a cup-shaped head in the forearm?",
+        "options": ["Ulna", "Radius", "Humerus", "Scapula"],
+        "answer": 1,
+        "correctAnswer": "Radius",
+        "explanation": "Radius - cup-shaped head."
+    },
+    {
+        "question": "What forms the pelvic girdle?",
+        "options": ["Clavicle and scapula", "Two hip bones (ossa coxae) united anteriorly by symphysis pubis; attached posteriorly to sacrum", "Humerus and radius", "Sternum and ribs"],
+        "answer": 1,
+        "correctAnswer": "Two hip bones (ossa coxae) united anteriorly by symphysis pubis; attached posteriorly to sacrum",
+        "explanation": "Pelvic girdle is formed by two hip bones (ossa coxae) united anteriorly by the symphysis pubis. It is attached posteriorly to the sacrum."
+    },
+    {
+        "question": "What does the pelvic girdle support and protect?",
+        "options": ["Upper viscera", "Lower viscera and developing fetus", "Brain", "Spinal cord"],
+        "answer": 1,
+        "correctAnswer": "Lower viscera and developing fetus",
+        "explanation": "Supports and protects the lower viscera and the developing fetus."
+    },
+    {
+        "question": "What are the three separate bones in each hip bone?",
+        "options": ["Ilium, ischium, pubis", "Femur, tibia, fibula", "Clavicle, scapula, humerus", "Radius, ulna, carpals"],
+        "answer": 0,
+        "correctAnswer": "Ilium, ischium, pubis",
+        "explanation": "Each hip bone consists of three separate bones: the ilium, the ischium, and the pubis, which fuse in the adult."
+    },
+    {
+        "question": "What is the acetabulum?",
+        "options": ["Foramen in skull", "Large circular depression on lateral surface of hip bone receiving head of femur", "Suture in cranium", "Process on vertebrae"],
+        "answer": 1,
+        "correctAnswer": "Large circular depression on lateral surface of hip bone receiving head of femur",
+        "explanation": "On the lateral surface where these three bones ossify together, is a large circular depression, the acetabulum, which receives the head of the femur."
+    },
+    {
+        "question": "What is the hip bone also called?",
+        "options": ["Innominate bone", "Collar bone", "Shoulder blade", "Breast bone"],
+        "answer": 0,
+        "correctAnswer": "Innominate bone",
+        "explanation": "Hip bone (innominate bone)."
+    },
+    {
+        "question": "What forms the pelvic girdle with hip bones?",
+        "options": ["Sternum", "Sacrum", "Scapula", "Ribs"],
+        "answer": 1,
+        "correctAnswer": "Sacrum",
+        "explanation": "Right & left hip bones + sacrum = pelvic girdle."
+    },
+    {
+        "question": "What are the three parts of each hip bone?",
+        "options": ["Manubrium, body, xiphoid", "Ilium, ischium, pubis", "Atlas, axis, cervical", "Stapes, incus, malleus"],
+        "answer": 1,
+        "correctAnswer": "Ilium, ischium, pubis",
+        "explanation": "3 bones: 1. ilium; 2. ischium; 3. pubis."
+    },
+    {
+        "question": "What is the femur?",
+        "options": ["Smallest bone", "Longest, strongest, largest bone in the body (thigh)", "Wrist bone", "Finger bone"],
+        "answer": 1,
+        "correctAnswer": "Longest, strongest, largest bone in the body (thigh)",
+        "explanation": "Femur (thigh) = longest, strongest, largest bone in the body."
+    },
+    {
+        "question": "What is the tibia?",
+        "options": ["Lateral leg bone", "Long bone; anterior, medial, & larger of the 2 bones of the leg (shin bone)", "Thigh bone", "Ankle bone"],
+        "answer": 1,
+        "correctAnswer": "Long bone; anterior, medial, & larger of the 2 bones of the leg (shin bone)",
+        "explanation": "Tibia (shin bone) = long bone; anterior, medial, & larger of the 2 bones of the leg."
+    },
+    {
+        "question": "What is the fibula?",
+        "options": ["Medial and larger", "Long slender bone parallel with tibia but located laterally (peroneal bone)", "Thigh bone", "Foot bone"],
+        "answer": 1,
+        "correctAnswer": "Long slender bone parallel with tibia but located laterally (peroneal bone)",
+        "explanation": "Fibula (peroneal bone) = long slender bone placed parallel with the tibia but located laterally."
+    },
+    {
+        "question": "How many tarsals (ankle bones)?",
+        "options": ["5", "7 (2 rows: internal & external)", "8", "14"],
+        "answer": 1,
+        "correctAnswer": "7 (2 rows: internal & external)",
+        "explanation": "Tarsals (ankle bone) = short bones; 2 rows: internal & external rows (implying 7 total, as standard)."
+    },
+    {
+        "question": "What are metatarsals?",
+        "options": ["Ankle bones", "5 long bones; numbered from medial to lateral (bones of foot)", "Toe bones", "Thigh bones"],
+        "answer": 1,
+        "correctAnswer": "5 long bones; numbered from medial to lateral (bones of foot)",
+        "explanation": "Metatarsals (bones of foot) = 5 long bones; numbered from medial to lateral."
+    },
+    {
+        "question": "What are phalanges of toes similar to?",
+        "options": ["Wrist bones", "Bones of the fingers", "Arm bones", "Ribs"],
+        "answer": 1,
+        "correctAnswer": "Bones of the fingers",
+        "explanation": "Phalanges (bones of toes) = similar to bones of the fingers."
+    },
+    {
+        "question": "What receives the head of the femur?",
+        "options": ["Scapula", "Acetabulum", "Glenoid", "Foramen magnum"],
+        "answer": 1,
+        "correctAnswer": "Acetabulum",
+        "explanation": "Acetabulum receives the head of the femur."
+    },
+    {
+        "question": "What fuses in the adult hip bone?",
+        "options": ["Ilium, ischium, pubis", "Femur and tibia", "Radius and ulna", "Carpals"],
+        "answer": 0,
+        "correctAnswer": "Ilium, ischium, pubis",
+        "explanation": "The ilium, the ischium, and the pubis, which fuse in the adult."
+    },
+    {
+        "question": "What is the strongest bone in the body?",
+        "options": ["Humerus", "Tibia", "Femur", "Fibula"],
+        "answer": 2,
+        "correctAnswer": "Femur",
+        "explanation": "Femur = longest, strongest, largest bone in the body."
+    },
+    {
+        "question": "What is anterior and medial in the leg?",
+        "options": ["Fibula", "Tibia", "Femur", "Tarsals"],
+        "answer": 1,
+        "correctAnswer": "Tibia",
+        "explanation": "Tibia = anterior, medial, & larger."
+    },
+    {
+        "question": "How are metatarsals numbered?",
+        "options": ["Lateral to medial", "Medial to lateral", "Proximal to distal", "Distal to proximal"],
+        "answer": 1,
+        "correctAnswer": "Medial to lateral",
+        "explanation": "Numbered from medial to lateral."
+    },
+    {
+        "question": "What bones are in the lower extremity including?",
+        "options": ["Clavicle, scapula", "Hip bone, femur, tibia, fibula, tarsals, metatarsals, phalanges", "Ribs, sternum", "Vertebrae, skull"],
+        "answer": 1,
+        "correctAnswer": "Hip bone, femur, tibia, fibula, tarsals, metatarsals, phalanges",
+        "explanation": "BONES of the LOWER EXTREMITY (LE): 1. Hip bone; 2. Femur; 3. Tibia; 4. Fibula; 5. Tarsals; 6. Metatarsals; 7. Phalanges."
+    },
+    {
+        "question": "What is parallel and lateral to the tibia?",
+        "options": ["Femur", "Fibula", "Humerus", "Radius"],
+        "answer": 1,
+        "correctAnswer": "Fibula",
+        "explanation": "Fibula placed parallel with the tibia but located laterally."
+    },
+    {
+        "question": "What is one clinical application mentioned for injection sites?",
+        "options": ["Skull", "Greater trochanter or other bone markings", "Vertebrae only", "Ribs"],
+        "answer": 1,
+        "correctAnswer": "Greater trochanter or other bone markings",
+        "explanation": "Documents mention injection sites, implying common sites like greater trochanter on femur."
+    },
+    {
+        "question": "What divides the pelvis into greater and false?",
+        "options": ["Sacrum only", "Pelvic brim or inlet", "Symphysis pubis", "Acetabulum"],
+        "answer": 1,
+        "correctAnswer": "Pelvic brim or inlet",
+        "explanation": "Greater and false pelvis (divided by pelvic brim)."
+    },
+    {
+        "question": "In male bony pelvis, what is the general structure?",
+        "options": ["Thin and light", "Thick and heavy", "Shallow", "Wide"],
+        "answer": 1,
+        "correctAnswer": "Thick and heavy",
+        "explanation": "Male (♂): General structure – Thick and heavy."
+    },
+    {
+        "question": "In female bony pelvis, what is the general structure?",
+        "options": ["Thick and heavy", "Thin and light", "Deep", "Narrow"],
+        "answer": 1,
+        "correctAnswer": "Thin and light",
+        "explanation": "Female (♀): General structure – Thin and light."
+    },
+    {
+        "question": "Male greater pelvis?",
+        "options": ["Shallow", "Deep", "Wide", "Cylindrical"],
+        "answer": 1,
+        "correctAnswer": "Deep",
+        "explanation": "Male: Greater pelvis (pelvis major) – Deep."
+    },
+    {
+        "question": "Female greater pelvis?",
+        "options": ["Deep", "Shallow", "Narrow", "Tapering"],
+        "answer": 1,
+        "correctAnswer": "Shallow",
+        "explanation": "Female: Greater pelvis – Shallow."
+    },
+    {
+        "question": "Male lesser pelvis?",
+        "options": ["Wide and shallow", "Narrow and deep, tapering", "Cylindrical", "Oval"],
+        "answer": 1,
+        "correctAnswer": "Narrow and deep, tapering",
+        "explanation": "Male: Lesser pelvis (pelvis minor) – Narrow and deep, tapering."
+    },
+    {
+        "question": "Female lesser pelvis?",
+        "options": ["Narrow and deep", "Wide and shallow, cylindrical", "Heart-shaped", "Small outlet"],
+        "answer": 1,
+        "correctAnswer": "Wide and shallow, cylindrical",
+        "explanation": "Female: Lesser pelvis – Wide and shallow, cylindrical."
+    },
+    {
+        "question": "Male pelvic inlet?",
+        "options": ["Oval and rounded", "Heart-shaped, narrow", "Large", "Wide"],
+        "answer": 1,
+        "correctAnswer": "Heart-shaped, narrow",
+        "explanation": "Male: Pelvic inlet (superior pelvic aperture) – Heart-shaped, narrow."
+    },
+    {
+        "question": "Female pelvic inlet?",
+        "options": ["Heart-shaped", "Oval and rounded; wide", "Small", "Tapering"],
+        "answer": 1,
+        "correctAnswer": "Oval and rounded; wide",
+        "explanation": "Female: Pelvic inlet – Oval and rounded; wide."
+    },
+    {
+        "question": "Male pelvic outlet?",
+        "options": ["Large", "Comparatively small", "Wide arch", ">80°"],
+        "answer": 1,
+        "correctAnswer": "Comparatively small",
+        "explanation": "Male: Pelvic outlet (inferior pelvic aperture) – Comparatively small."
+    },
+    {
+        "question": "Female pelvic outlet?",
+        "options": ["Small", "Comparatively large", "Narrow arch", "<70°"],
+        "answer": 1,
+        "correctAnswer": "Comparatively large",
+        "explanation": "Female: Pelvic outlet – Comparatively large."
+    },
+    {
+        "question": "Male pubic arch and subpubic angle?",
+        "options": ["Wide (>80°)", "Narrow (<70°)", "Oval", "Round"],
+        "answer": 1,
+        "correctAnswer": "Narrow (<70°)",
+        "explanation": "Male: Pubic arch and subpubic angle – Narrow (<70°)."
+    },
+    {
+        "question": "Female pubic arch and subpubic angle?",
+        "options": ["Narrow", "Wide (>80°)", "Heart-shaped", "Inverted V"],
+        "answer": 1,
+        "correctAnswer": "Wide (>80°)",
+        "explanation": "Female: Pubic arch and subpubic angle – Wide (>80°)."
+    },
+    {
+        "question": "Male obturator foramen?",
+        "options": ["Oval", "Round", "Large", "Small"],
+        "answer": 1,
+        "correctAnswer": "Round",
+        "explanation": "Male: Obturator foramen – Round."
+    },
+    {
+        "question": "Female obturator foramen?",
+        "options": ["Round", "Oval", "Narrow", "Wide"],
+        "answer": 1,
+        "correctAnswer": "Oval",
+        "explanation": "Female: Obturator foramen – Oval."
+    },
+    {
+        "question": "Male acetabulum?",
+        "options": ["Small", "Large", "Shallow", "Deep"],
+        "answer": 1,
+        "correctAnswer": "Large",
+        "explanation": "Male: Acetabulum – Large."
+    },
+    {
+        "question": "Female acetabulum?",
+        "options": ["Large", "Small", "Round", "Oval"],
+        "answer": 1,
+        "correctAnswer": "Small",
+        "explanation": "Female: Acetabulum – Small."
+    },
+    {
+        "question": "Male greater sciatic notch?",
+        "options": ["Almost 90°", "Narrow (~70°); inverted V", "Wide", "Shallow"],
+        "answer": 1,
+        "correctAnswer": "Narrow (~70°); inverted V",
+        "explanation": "Male: Greater sciatic notch – Narrow (~70°); inverted V."
+    },
+    {
+        "question": "Female greater sciatic notch?",
+        "options": ["Narrow", "Almost 90°", "<70°", "Heart-shaped"],
+        "answer": 1,
+        "correctAnswer": "Almost 90°",
+        "explanation": "Female: Greater sciatic notch – Almost 90°."
+    }
+]
+
+;
+
+        // DOM Elements
+        let body = document.body;
+        let questionElement = document.getElementById('question');
+        let optionsContainer = document.getElementById('options-container');
+        let currentQuestionElement = document.getElementById('current-question');
+        let totalQuestionsElement = document.getElementById('total-questions');
+        let progressBar = document.getElementById('progress-bar');
+        let prevButton = document.getElementById('prev-btn');
+        let nextButton = document.getElementById('next-btn');
+        let feedbackElement = document.getElementById('feedback');
+        let timerElement = document.getElementById('timer');
+        let scoreElement = document.getElementById('score');
+        let streakElement = document.getElementById('streak');
+        let categoryElement = document.getElementById('category');
+        let explanationContainer = document.getElementById('explanation-container');
+        let explanationTextElement = document.getElementById('explanation-text');
+        let themeToggle = document.getElementById('theme-toggle');
+        let soundToggle = document.getElementById('sound-toggle');
+        let bookmarkBtn = document.getElementById('bookmark-btn');
+        let bookmarksCount = document.getElementById('bookmarks-count');
+        let categoryTag = document.getElementById('category-tag');
+        let difficultyTag = document.getElementById('difficulty-tag');
+        let showExplanationBtn = document.getElementById('show-explanation-btn');
+
+        // Quiz state
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let streak = 0;
+        let selectedOption = null;
+        let timeStarted = null;
+        let timerInterval = null;
+        let timeElapsed = 0;
+        let answers = [];
+        let soundsEnabled = true;
+        let bookmarkedQuestions = [];
+        let quizHistory = [];
+        let performanceMetrics = {
+            categories: {},
+            difficulties: { Easy: 0, Medium: 0, Hard: 0 },
+            totalCorrect: 0,
+            totalQuestions: 0
+        };
+
+        function initQuiz() {
+            // Reset DOM elements
+            scoreElement.textContent = score;
+            streakElement.textContent = streak;
+            timerElement.textContent = '00:00';
+            totalQuestionsElement.textContent = questions.length;
+            
+            loadQuestion();
+            startTimer();
+            
+            // Remove existing event listeners to prevent duplicates
+            const prevBtnClone = prevButton.cloneNode(true);
+            prevButton.parentNode.replaceChild(prevBtnClone, prevButton);
+            const nextBtnClone = nextButton.cloneNode(true);
+            nextButton.parentNode.replaceChild(nextBtnClone, nextButton);
+            const themeToggleClone = themeToggle.cloneNode(true);
+            themeToggle.parentNode.replaceChild(themeToggleClone, themeToggle);
+            const soundToggleClone = soundToggle.cloneNode(true);
+            soundToggle.parentNode.replaceChild(soundToggleClone, soundToggle);
+            const bookmarkBtnClone = bookmarkBtn.cloneNode(true);
+            bookmarkBtn.parentNode.replaceChild(bookmarkBtnClone, bookmarkBtn);
+            const showExplanationBtnClone = showExplanationBtn.cloneNode(true);
+            showExplanationBtn.parentNode.replaceChild(showExplanationBtnClone, showExplanationBtn);
+
+            // Reassign DOM elements after cloning
+            prevButton = document.getElementById('prev-btn');
+            nextButton = document.getElementById('next-btn');
+            themeToggle = document.getElementById('theme-toggle');
+            soundToggle = document.getElementById('sound-toggle');
+            bookmarkBtn = document.getElementById('bookmark-btn');
+            showExplanationBtn = document.getElementById('show-explanation-btn');
+
+            // Add event listeners
+            prevButton.addEventListener('click', goToPreviousQuestion);
+            nextButton.addEventListener('click', goToNextQuestion);
+            themeToggle.addEventListener('click', toggleTheme);
+            soundToggle.addEventListener('click', toggleSound);
+            bookmarkBtn.addEventListener('click', toggleBookmark);
+            showExplanationBtn.addEventListener('click', toggleExplanation);
+            
+            // Keyboard navigation
+            document.removeEventListener('keydown', handleKeydown);
+            document.addEventListener('keydown', handleKeydown);
+            
+            loadPreferences();
+            loadQuizHistory();
+            updateBookmarksCount();
+        }
+
+        function handleKeydown(e) {
+            if (e.key === 'ArrowRight') {
+                goToNextQuestion();
+            } else if (e.key === 'ArrowLeft') {
+                goToPreviousQuestion();
+            } else if (e.key.toLowerCase() === 'a' || e.key === '1') {
+                selectOption(0);
+            } else if (e.key.toLowerCase() === 'b' || e.key === '2') {
+                selectOption(1);
+            } else if (e.key.toLowerCase() === 'c' || e.key === '3') {
+                selectOption(2);
+            } else if (e.key.toLowerCase() === 'd' || e.key === '4') {
+                selectOption(3);
+            } else if (e.key === 'Enter') {
+                if (showExplanationBtn.style.display !== 'none') {
+                    toggleExplanation();
+                }
+            }
+        }
+
+        function loadQuestion() {
+            const question = questions[currentQuestionIndex];
+            questionElement.textContent = question.question;
+            currentQuestionElement.textContent = currentQuestionIndex + 1;
+            categoryTag.textContent = question.category || 'Unknown';
+            difficultyTag.textContent = question.difficulty || 'Medium';
+            categoryElement.textContent = question.category || 'All';
+            
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+            
+            optionsContainer.innerHTML = '';
+            
+            const optionLetters = ['A', 'B', 'C', 'D', 'E'];
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.classList.add('option', 'bounce-in');
+                optionElement.setAttribute('role', 'button');
+                optionElement.setAttribute('tabindex', '0');
+                optionElement.setAttribute('aria-label', `Option ${optionLetters[index]}: ${option}`);
+                
+                const optionLetter = document.createElement('div');
+                optionLetter.classList.add('option-letter');
+                optionLetter.textContent = optionLetters[index];
+                
+                const optionText = document.createElement('div');
+                optionText.classList.add('option-text');
+                optionText.textContent = option;
+                
+                optionElement.appendChild(optionLetter);
+                optionElement.appendChild(optionText);
+                
+                optionElement.addEventListener('click', () => selectOption(index));
+                optionElement.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        selectOption(index);
+                    }
+                });
+                
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            prevButton.disabled = currentQuestionIndex === 0;
+            nextButton.textContent = currentQuestionIndex === questions.length - 1 ? 'Finish Quiz' : 'Next Question';
+            
+            feedbackElement.style.display = 'none';
+            showExplanationBtn.style.display = 'none';
+            explanationContainer.classList.remove('expanded');
+            
+            selectedOption = null;
+            
+            // If the question was previously answered or skipped, display the feedback
+            if (answers[currentQuestionIndex]) {
+                const ans = answers[currentQuestionIndex];
+                const options = document.querySelectorAll('.option');
+                feedbackElement.style.display = 'flex';
+                showExplanationBtn.style.display = 'block';
+                explanationTextElement.textContent = question.explanation;
+                options.forEach(option => option.style.pointerEvents = 'none');
+                
+                if (ans.selected === 'Skipped') {
+                    selectedOption = null;
+                    feedbackElement.classList.add('incorrect');
+                    feedbackElement.innerHTML = '<i class="fas fa-times-circle feedback-icon"></i><div class="feedback-text">Skipped. The right answer is highlighted.</div>';
+                    options[question.answer].classList.add('correct');
+                } else {
+                    const optIndex = question.options.findIndex(opt => opt === ans.selected);
+                    if (optIndex !== -1) {
+                        selectedOption = optIndex;
+                        options[optIndex].classList.add('selected');
+                        if (ans.isCorrect) {
+                            feedbackElement.classList.add('correct');
+                            feedbackElement.innerHTML = '<i class="fas fa-check-circle feedback-icon"></i><div class="feedback-text">Correct! Well done.</div>';
+                        } else {
+                            feedbackElement.classList.add('incorrect');
+                            feedbackElement.innerHTML = '<i class="fas fa-times-circle feedback-icon"></i><div class="feedback-text">Incorrect. The right answer is highlighted.</div>';
+                            options[question.answer].classList.add('correct');
+                        }
+                    }
+                }
+            }
+            
+            updateBookmarkStatus();
+        }
+
+        function selectOption(index) {
+            if (selectedOption !== null || answers[currentQuestionIndex]) return;
+            
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => option.classList.remove('selected'));
+            options[index].classList.add('selected');
+            selectedOption = index;
+            
+            const question = questions[currentQuestionIndex];
+            const isCorrect = index === question.answer;
+            
+            feedbackElement.style.display = 'flex';
+            if (isCorrect) {
+                feedbackElement.classList.remove('incorrect');
+                feedbackElement.classList.add('correct');
+                feedbackElement.innerHTML = '<i class="fas fa-check-circle feedback-icon"></i><div class="feedback-text">Correct! Well done.</div>';
+                score += getScoreForDifficulty(question.difficulty);
+                streak++;
+                playSound('correct');
+            } else {
+                feedbackElement.classList.remove('correct');
+                feedbackElement.classList.add('incorrect');
+                feedbackElement.innerHTML = '<i class="fas fa-times-circle feedback-icon"></i><div class="feedback-text">Incorrect. The right answer is highlighted.</div>';
+                options[question.answer].classList.add('correct');
+                streak = 0;
+                playSound('incorrect');
+            }
+            
+            scoreElement.textContent = score;
+            streakElement.textContent = streak;
+            
+            explanationTextElement.textContent = question.explanation;
+            showExplanationBtn.style.display = 'block';
+            
+            answers[currentQuestionIndex] = {
+                question: question.question,
+                selected: question.options[index],
+                correct: question.options[question.answer],
+                isCorrect: isCorrect,
+                explanation: question.explanation,
+                category: question.category,
+                difficulty: question.difficulty
+            };
+            
+            updatePerformanceMetrics(isCorrect, question);
+            
+            options.forEach(option => option.style.pointerEvents = 'none');
+        }
+
+        function maybeHandleSkip() {
+            if (!answers[currentQuestionIndex] && selectedOption === null) {
+                const question = questions[currentQuestionIndex];
+                answers[currentQuestionIndex] = {
+                    question: question.question,
+                    selected: 'Skipped',
+                    correct: question.options[question.answer],
+                    isCorrect: false,
+                    explanation: question.explanation,
+                    category: question.category,
+                    difficulty: question.difficulty
+                };
+                updatePerformanceMetrics(false, question);
+                streak = 0;
+                streakElement.textContent = streak;
+            }
+        }
+
+        function toggleExplanation() {
+            explanationContainer.classList.toggle('expanded');
+            showExplanationBtn.innerHTML = explanationContainer.classList.contains('expanded') ?
+                '<i class="fas fa-info-circle"></i> Hide Explanation' :
+                '<i class="fas fa-info-circle"></i> Show Explanation';
+        }
+
+        function getScoreForDifficulty(difficulty) {
+            switch (difficulty) {
+                case 'Easy': return 5;
+                case 'Medium': return 10;
+                case 'Hard': return 15;
+                default: return 10;
+            }
+        }
+
+        function updatePerformanceMetrics(isCorrect, question) {
+            performanceMetrics.totalQuestions++;
+            if (isCorrect) performanceMetrics.totalCorrect++;
+            
+            performanceMetrics.categories[question.category] = performanceMetrics.categories[question.category] || { correct: 0, total: 0 };
+            performanceMetrics.categories[question.category].total++;
+            if (isCorrect) performanceMetrics.categories[question.category].correct++;
+            
+            performanceMetrics.difficulties[question.difficulty] = performanceMetrics.difficulties[question.difficulty] || 0;
+            if (isCorrect) performanceMetrics.difficulties[question.difficulty]++;
+        }
+
+        function toggleBookmark() {
+            const questionId = questions[currentQuestionIndex].id;
+            const index = bookmarkedQuestions.indexOf(questionId);
+            if (index === -1) {
+                bookmarkedQuestions.push(questionId);
+                bookmarkBtn.classList.add('bookmarked');
+            } else {
+                bookmarkedQuestions.splice(index, 1);
+                bookmarkBtn.classList.remove('bookmarked');
+            }
+            updateBookmarksCount();
+            saveBookmarks();
+        }
+
+        function updateBookmarkStatus() {
+            const questionId = questions[currentQuestionIndex].id;
+            bookmarkBtn.classList.toggle('bookmarked', bookmarkedQuestions.includes(questionId));
+        }
+
+        function updateBookmarksCount() {
+            bookmarksCount.textContent = bookmarkedQuestions.length;
+        }
+
+        function goToNextQuestion() {
+            maybeHandleSkip();
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                showResults();
+                saveQuizHistory();
+            }
+        }
+
+        function goToPreviousQuestion() {
+            maybeHandleSkip();
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        }
+
+        function startTimer() {
+            timeStarted = new Date();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            timeElapsed++;
+            
+            const minutes = Math.floor(timeElapsed / 60).toString().padStart(2, '0');
+            const seconds = (timeElapsed % 60).toString().padStart(2, '0');
+            timerElement.textContent = `${minutes}:${seconds}`;
+            
+            // Optional: Add warning color for long durations (e.g., after 5 minutes)
+            if (timeElapsed >= 300) {
+                timerElement.style.color = 'var(--danger)';
+                timerElement.classList.add('pulse');
+            } else {
+                timerElement.style.color = 'var(--primary)';
+                timerElement.classList.remove('pulse');
+            }
+        }
+
+        function showResults() {
+            clearInterval(timerInterval);
+            
+            const quizContainer = document.querySelector('.quiz-container');
+            const maxScore = questions.reduce((sum, q) => sum + getScoreForDifficulty(q.difficulty), 0);
+            const percentage = ((score / maxScore) * 100).toFixed(1);
+            const categoryStats = Object.entries(performanceMetrics.categories)
+                .map(([category, stats]) => `${category}: ${((stats.correct / stats.total) * 100).toFixed(1)}%`)
+                .join(', ');
+            
+            quizContainer.innerHTML = `
+                <div class="results-container">
+                    <h2 class="quiz-title">Quiz Completed!</h2>
+                    <p class="quiz-subtitle">You've finished the embryology quiz</p>
+                    
+                    <div class="score-circle" style="--p: ${percentage}%">
+                        <div class="score-text">
+                            <div class="score-value">${score}</div>
+                            <div class="score-label">Points</div>
+                        </div>
+                    </div>
+                    
+                    <div class="results-stats">
+                        <div class="result-stat">
+                            <div class="result-stat-value">${percentage}%</div>
+                            <div class="result-stat-label">Accuracy</div>
+                        </div>
+                        <div class="result-stat">
+                            <div class="result-stat-value">${timeElapsed}s</div>
+                            <div class="result-stat-label">Time Taken</div>
+                        </div>
+                        <div class="result-stat">
+                            <div class="result-stat-value">${streak}</div>
+                            <div class="result-stat-label">Best Streak</div>
+                        </div>
+                        <div class="result-stat">
+                            <div class="result-stat-value">${bookmarkedQuestions.length}</div>
+                            <div class="result-stat-label">Bookmarked</div>
+                        </div>
+                    </div>
+                    
+                    <div class="review-section">
+                        <h3 class="review-title">Performance Analytics</h3>
+                        <div class="review-item">
+                            <div class="review-answer">Category Performance: ${categoryStats}</div>
+                            <div class="review-answer">Difficulty Performance: Easy: ${performanceMetrics.difficulties.Easy || 0}, Medium: ${performanceMetrics.difficulties.Medium || 0}, Hard: ${performanceMetrics.difficulties.Hard || 0}</div>
+                        </div>
+                        
+                        <h3 class="review-title">Review Your Answers</h3>
+                        ${answers.map((answer, index) => `
+                            <div class="review-item ${answer.isCorrect ? 'correct' : 'incorrect'}">
+                                <div class="review-question">Q${index + 1}: ${answer.question} (${answer.category} - ${answer.difficulty})</div>
+                                <div class="review-answer">Your Answer: ${answer.selected}</div>
+                                <div class="review-answer">Correct Answer: ${answer.correct}</div>
+                                <div class="review-explanation">${answer.explanation}</div>
+                            </div>
+                        `).join('')}
+                        
+                        <h3 class="review-title">Bookmarked Questions</h3>
+                        ${bookmarkedQuestions.map(qid => {
+                            const question = questions.find(q => q.id === qid);
+                            return `
+                                <div class="review-item">
+                                    <div class="review-question">${question.question} (${question.category} - ${question.difficulty})</div>
+                                    <div class="review-answer">Correct Answer: ${question.correctAnswer}</div>
+                                    <div class="review-explanation">${question.explanation}</div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    
+                    <button class="btn btn-primary mt-4" id="restart-btn">
+                        <i class="fas fa-redo"></i> Try Again
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('restart-btn').addEventListener('click', restartQuiz);
+        }
+
+        function restartQuiz() {
+            // Reset quiz state
+            currentQuestionIndex = 0;
+            score = 0;
+            streak = 0;
+            timeElapsed = 0;
+            answers = [];
+            selectedOption = null;
+            performanceMetrics = {
+                categories: {},
+                difficulties: { Easy: 0, Medium: 0, Hard: 0 },
+                totalCorrect: 0,
+                totalQuestions: 0
+            };
+            
+            // Clear any existing timer
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            
+            // Reset DOM
+            const quizContainer = document.querySelector('.quiz-container');
+            quizContainer.innerHTML = `
+                <div class="quiz-header">
+                    <div>
+                        <h1 class="quiz-title">Advanced Embryology Quiz</h1>
+                        <p class="quiz-subtitle">Test your knowledge with professional questions and detailed explanations</p>
+                    </div>
+                    <div class="stats-container">
+                        <div class="stat">
+                            <span class="stat-value" id="score">0</span>
+                            <span class="stat-label">Score</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value" id="timer">00:00</span>
+                            <span class="stat-label">Time</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value" id="streak">0</span>
+                            <span class="stat-label">Streak</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value" id="category">All</span>
+                            <span class="stat-label">Category</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar" style="width: 10%"></div>
+                </div>
+
+                <div class="question-meta">
+                    <div class="question-tags">
+                        <span class="tag" id="category-tag">Neuro</span>
+                        <span class="tag" id="difficulty-tag">Medium</span>
+                    </div>
+                    <button class="bookmark-btn" id="bookmark-btn" aria-label="Bookmark question">
+                        <i class="fas fa-bookmark"></i>
+                    </button>
+                </div>
+                <div class="question-number">Question <span id="current-question">1</span> of <span id="total-questions">10</span></div>
+                <div class="question-text" id="question"></div>
+
+                <div class="options-grid" id="options-container"></div>
+
+                <div class="feedback correct" id="feedback" style="display: none;">
+                    <i class="fas fa-check-circle feedback-icon"></i>
+                    <div class="feedback-text">Correct! Well done.</div>
+                </div>
+
+                <button class="btn btn-secondary" id="show-explanation-btn" style="display: none;">
+                    <i class="fas fa-info-circle"></i> Show Explanation
+                </button>
+
+                <div class="explanation-container" id="explanation-container">
+                    <div class="explanation">
+                        <div class="explanation-title">Explanation:</div>
+                        <div id="explanation-text"></div>
+                    </div>
+                </div>
+
+                <div class="navigation">
+                    <button class="btn btn-secondary" id="prev-btn" disabled>
+                        <i class="fas fa-arrow-left"></i> Previous
+                    </button>
+                    <button class="btn btn-primary" id="next-btn">
+                        Next Question <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            `;
+            
+            // Reinitialize DOM elements
+            questionElement = document.getElementById('question');
+            optionsContainer = document.getElementById('options-container');
+            currentQuestionElement = document.getElementById('current-question');
+            totalQuestionsElement = document.getElementById('total-questions');
+            progressBar = document.getElementById('progress-bar');
+            prevButton = document.getElementById('prev-btn');
+            nextButton = document.getElementById('next-btn');
+            feedbackElement = document.getElementById('feedback');
+            timerElement = document.getElementById('timer');
+            scoreElement = document.getElementById('score');
+            streakElement = document.getElementById('streak');
+            categoryElement = document.getElementById('category');
+            explanationContainer = document.getElementById('explanation-container');
+            explanationTextElement = document.getElementById('explanation-text');
+            bookmarkBtn = document.getElementById('bookmark-btn');
+            bookmarksCount = document.getElementById('bookmarks-count');
+            categoryTag = document.getElementById('category-tag');
+            difficultyTag = document.getElementById('difficulty-tag');
+            showExplanationBtn = document.getElementById('show-explanation-btn');
+            
+            // Reinitialize the quiz
+            initQuiz();
+        }
+
+        function toggleTheme() {
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 
+                            currentTheme === 'light' ? 'minimal' : 'dark';
+            
+            body.setAttribute('data-theme', newTheme);
+            themeToggle.innerHTML = newTheme === 'dark' ? '<i class="fas fa-moon"></i>' : 
+                                  newTheme === 'light' ? '<i class="fas fa-sun"></i>' : 
+                                  '<i class="fas fa-paint-brush"></i>';
+            
+            localStorage.setItem('theme', newTheme);
+        }
+
+        function toggleSound() {
+            soundsEnabled = !soundsEnabled;
+            soundToggle.innerHTML = soundsEnabled ? '<i class="fas fa-volume-up"></i>' : '<i class="fas fa-volume-mute"></i>';
+            
+            localStorage.setItem('soundsEnabled', soundsEnabled);
+        }
+
+        function playSound(type) {
+            if (!soundsEnabled) return;
+            console.log(`Playing ${type} sound`);
+        }
+
+        function loadPreferences() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                body.setAttribute('data-theme', savedTheme);
+                themeToggle.innerHTML = savedTheme === 'dark' ? '<i class="fas fa-moon"></i>' : 
+                                      savedTheme === 'light' ? '<i class="fas fa-sun"></i>' : 
+                                      '<i class="fas fa-paint-brush"></i>';
+            }
+            
+            const savedSounds = localStorage.getItem('soundsEnabled');
+            if (savedSounds !== null) {
+                soundsEnabled = savedSounds === 'true';
+                soundToggle.innerHTML = soundsEnabled ? '<i class="fas fa-volume-up"></i>' : '<i class="fas fa-volume-mute"></i>';
+            }
+        }
+
+        function saveBookmarks() {
+            localStorage.setItem('bookmarkedQuestions', JSON.stringify(bookmarkedQuestions));
+        }
+
+        function loadQuizHistory() {
+            const saved = localStorage.getItem('quizHistory');
+            if (saved) {
+                quizHistory = JSON.parse(saved);
+            }
+            loadBookmarks();
+        }
+
+        function saveQuizHistory() {
+            quizHistory.push({
+                timestamp: new Date().toISOString(),
+                score: score,
+                percentage: ((score / (questions.length * 15)) * 100).toFixed(1),
+                timeSpent: timeElapsed,
+                streak: streak,
+                answers: answers,
+                performanceMetrics: performanceMetrics
+            });
+            localStorage.setItem('quizHistory', JSON.stringify(quizHistory));
+        }
+
+        function loadBookmarks() {
+            const saved = localStorage.getItem('bookmarkedQuestions');
+            if (saved) {
+                bookmarkedQuestions = JSON.parse(saved);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', initQuiz);
+    </script>
+</body>
+</html>

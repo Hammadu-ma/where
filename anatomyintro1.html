@@ -1,0 +1,2876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Embryology Quiz Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --primary-dark: #3a0ca3;
+            --secondary: #f72585;
+            --success: #4cc9f0;
+            --warning: #f9c74f;
+            --danger: #f94144;
+            --info: #577590;
+            --gray-50: #f8f9fa;
+            --gray-100: #f1f3f5;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --gray-500: #adb5bd;
+            --gray-600: #868e96;
+            --gray-700: #495057;
+            --gray-800: #343a40;
+            --gray-900: #212529;
+            --bg-primary: var(--gray-900);
+            --bg-secondary: #1a1d21;
+            --bg-tertiary: #2c303a;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-tertiary: rgba(255, 255, 255, 0.5);
+            --card-bg: rgba(35, 39, 47, 0.95);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15), 0 5px 10px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.2);
+            --transition-base: all 0.2s ease-in-out;
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --radius-2xl: 24px;
+            --header-height: 70px;
+            --max-width: 900px;
+            --side-padding: 1.5rem;
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f5f7fa;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #eef2f6;
+            --text-primary: #1a1d21;
+            --text-secondary: rgba(26, 29, 33, 0.7);
+            --text-tertiary: rgba(26, 29, 33, 0.5);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-border: rgba(0, 0, 0, 0.1);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.08), 0 5px 10px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        [data-theme="minimal"] {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f1f5f9;
+            --text-primary: #0f172a;
+            --text-secondary: #334155;
+            --text-tertiary: #64748b;
+            --card-bg: #ffffff;
+            --card-border: #e2e8f0;
+            --primary: #0ea5e9;
+            --primary-light: #38bdf8;
+            --primary-dark: #0284c7;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition-base);
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        header {
+            height: var(--header-height);
+            background: var(--bg-secondary);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 var(--side-padding);
+            transition: var(--transition-base);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--primary);
+        }
+
+        .logo-icon {
+            font-size: 1.5rem;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .control-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: var(--transition-base);
+            position: relative;
+        }
+
+        .control-btn:hover {
+            background: var(--bg-tertiary);
+            transform: translateY(-2px);
+        }
+
+        .control-btn i {
+            font-size: 1.1rem;
+        }
+
+        .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--secondary);
+            color: white;
+            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        main {
+            flex: 1;
+            padding: 2rem var(--side-padding);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .quiz-container {
+            width: 100%;
+            max-width: var(--max-width);
+            background: var(--card-bg);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition-smooth);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(10px);
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .quiz-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .quiz-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .stats-container {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.5rem 0.75rem;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            min-width: 70px;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            margin: 1.5rem 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-light), var(--primary));
+            border-radius: var(--radius-lg);
+            transition: width 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            100% { left: 100%; }
+        }
+
+        .question-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-tags {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .tag {
+            padding: 0.25rem 0.75rem;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .question-number {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            line-height: 1.4;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            border: 1px solid transparent;
+        }
+
+        .option:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-light);
+        }
+
+        .option.selected {
+            background: rgba(67, 97, 238, 0.1);
+            border-color: var(--primary);
+            animation: pulse 0.3s ease;
+        }
+
+        .option.correct {
+            background: rgba(76, 201, 240, 0.1);
+            border-color: var(--success);
+        }
+
+        .option.incorrect {
+            background: rgba(249, 65, 68, 0.1);
+            border-color: var(--danger);
+        }
+
+        .option-letter {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-md);
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 1rem;
+            flex-shrink: 0;
+            transition: var(--transition-base);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .option.selected .option-letter {
+            background: var(--primary);
+            color: white;
+        }
+
+        .option.correct .option-letter {
+            background: var(--success);
+            color: white;
+        }
+
+        .option.incorrect .option-letter {
+            background: var(--danger);
+            color: white;
+        }
+
+        .option-text {
+            flex: 1;
+        }
+
+        .bookmark-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: var(--transition-base);
+        }
+
+        .bookmark-btn:hover {
+            color: var(--primary);
+        }
+
+        .bookmark-btn.bookmarked {
+            color: var(--warning);
+        }
+
+        .feedback {
+            padding: 1rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .feedback.correct {
+            background: rgba(76, 201, 240, 0.1);
+            color: var(--success);
+        }
+
+        .feedback.incorrect {
+            background: rgba(249, 65, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .feedback-icon {
+            font-size: 1.5rem;
+        }
+
+        .explanation-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+        .explanation-container.expanded {
+            max-height: 500px;
+        }
+
+        .explanation {
+            padding: 1.25rem;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-lg);
+            margin-top: 1rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .explanation-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-lg);
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition-base);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--bg-secondary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .results-container {
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: conic-gradient(var(--primary) 0% var(--p, 0%), var(--bg-tertiary) var(--p, 0%) 100%);
+            position: relative;
+        }
+
+        .score-circle::before {
+            content: '';
+            position: absolute;
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background: var(--card-bg);
+        }
+
+        .score-text {
+            position: relative;
+            z-index: 1;
+        }
+
+        .score-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .score-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .results-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .result-stat {
+            padding: 1rem;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-lg);
+        }
+
+        .result-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .result-stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .review-section {
+            margin-top: 2rem;
+            text-align: left;
+        }
+
+        .review-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .review-item {
+            padding: 1.25rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 1rem;
+            background: var(--bg-tertiary);
+        }
+
+        .review-item.correct {
+            border-left: 4px solid var(--success);
+        }
+
+        .review-item.incorrect {
+            border-left: 4px solid var(--danger);
+        }
+
+        .review-question {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .review-answer {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .review-explanation {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        footer {
+            padding: 1.5rem var(--side-padding);
+            background: var(--bg-secondary);
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        .pulse {
+            animation: pulse 0.5s ease;
+        }
+
+        .bounce-in {
+            animation: bounceIn 0.5s ease;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-1 { margin-top: 0.5rem; }
+        .mt-2 { margin-top: 1rem; }
+        .mt-3 { margin-top: 1.5rem; }
+        .mt-4 { margin-top: 2rem; }
+
+        @media (max-width: 768px) {
+            :root {
+                --side-padding: 1rem;
+                --header-height: 60px;
+            }
+
+            .quiz-container {
+                padding: 1.5rem;
+            }
+
+            .quiz-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .stats-container {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .results-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .score-circle {
+                width: 120px;
+                height: 120px;
+            }
+
+            .score-circle::before {
+                width: 100px;
+                height: 100px;
+            }
+
+            .score-value {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navigation {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .option {
+                padding: 0.75rem;
+            }
+
+            .option-letter {
+                width: 28px;
+                height: 28px;
+                margin-right: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <header>
+        <div class="logo">
+            <i class="fas fa-brain logo-icon"></i>
+            <span>EmbryoQuiz</span>
+        </div>
+        <div class="header-controls">
+            <button class="control-btn" id="theme-toggle" aria-label="Toggle theme">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button class="control-btn" id="sound-toggle" aria-label="Toggle sound">
+                <i class="fas fa-volume-up"></i>
+            </button>
+            <button class="control-btn" id="stats-btn" aria-label="View statistics">
+                <i class="fas fa-chart-line"></i>
+                <span class="badge" id="bookmarks-count">0</span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <div class="quiz-container">
+            <div class="quiz-header">
+                <div>
+                    <h1 class="quiz-title">Advanced Embryology Quiz</h1>
+                    <p class="quiz-subtitle">Test your knowledge with professional questions and detailed explanations</p>
+                </div>
+                <div class="stats-container">
+                    <div class="stat">
+                        <span class="stat-value" id="score">0</span>
+                        <span class="stat-label">Score</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="timer">00:00</span>
+                        <span class="stat-label">Time</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="streak">0</span>
+                        <span class="stat-label">Streak</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="category">All</span>
+                        <span class="stat-label">Category</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar" style="width: 10%"></div>
+            </div>
+
+            <div class="question-meta">
+                <div class="question-tags">
+                    <span class="tag" id="category-tag">Neuro</span>
+                    <span class="tag" id="difficulty-tag">Medium</span>
+                </div>
+                <button class="bookmark-btn" id="bookmark-btn" aria-label="Bookmark question">
+                    <i class="fas fa-bookmark"></i>
+                </button>
+            </div>
+            <div class="question-number">Question <span id="current-question">1</span> of <span id="total-questions">10</span></div>
+            <div class="question-text" id="question">Which part of the brain is responsible for coordinating skeletal muscle contractions?</div>
+
+            <div class="options-grid" id="options-container">
+                <div class="option">
+                    <div class="option-letter">A</div>
+                    <div class="option-text">Cerebrum</div>
+                </div>
+                <div class="option">
+                    <div class="option-letter">B</div>
+                    <div class="option-text">Cerebellum</div>
+                </div>
+                <div class="option">
+                    <div class="option-letter">C</div>
+                    <div class="option-text">Pons</div>
+                </div>
+                <div class="option">
+                    <div class="option-letter">D</div>
+                    <div class="option-text">Midbrain</div>
+                </div>
+            </div>
+
+            <div class="feedback correct" id="feedback" style="display: none;">
+                <i class="fas fa-check-circle feedback-icon"></i>
+                <div class="feedback-text">Correct! Well done.</div>
+            </div>
+
+            <button class="btn btn-secondary" id="show-explanation-btn" style="display: none;">
+                <i class="fas fa-info-circle"></i> Show Explanation
+            </button>
+
+            <div class="explanation-container" id="explanation-container">
+                <div class="explanation">
+                    <div class="explanation-title">Explanation:</div>
+                    <div id="explanation-text">The cerebellum, located posterior to the brainstem, is the 'little brain.' It compares intended movements with actual movements to ensure smooth, coordinated skeletal muscle activity and maintain posture and balance.</div>
+                </div>
+            </div>
+
+            <div class="navigation">
+                <button class="btn btn-secondary" id="prev-btn" disabled>
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                <button class="btn btn-primary" id="next-btn">
+                    Next Question <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2025 EmbryoQuiz | Advanced Embryology Learning Platform | All Rights Reserved
+    </footer>
+
+    <script>
+        const questions =  
+        
+     [
+    {
+        "question": "What does the term 'anatomy' originate from?",
+        "options": ["Latin 'ana' and 'tome'", "Greek 'ana' and 'tomy'", "French 'anatomie'", "English 'cut-up'"],
+        "answer": 1,
+        "correctAnswer": "Greek 'ana' and 'tomy'",
+        "explanation": "The term 'anatomy' comes from the Greek words 'ana' (meaning 'up' or 'apart') and 'tomy' (meaning 'cutting'), referring to the dissection of the body."
+    },
+    {
+        "question": "Anatomy is best defined as the study of:",
+        "options": ["Body functions", "Body structures and their relationships", "Disease processes", "Cellular metabolism"],
+        "answer": 1,
+        "correctAnswer": "Body structures and their relationships",
+        "explanation": "Anatomy studies the structure of the body and the relationships between its parts, distinguishing it from physiology, which focuses on function."
+    },
+    {
+        "question": "Which of the following is a major subdivision of anatomy?",
+        "options": ["Physiological anatomy", "Gross anatomy", "Biochemical anatomy", "Genetic anatomy"],
+        "answer": 1,
+        "correctAnswer": "Gross anatomy",
+        "explanation": "Gross anatomy is a major subdivision, focusing on structures visible to the naked eye, unlike the non-standard terms like physiological or biochemical anatomy."
+    },
+    {
+        "question": "Gross anatomy is also known as:",
+        "options": ["Microscopic anatomy", "Macroscopic anatomy", "Clinical anatomy", "Developmental anatomy"],
+        "answer": 1,
+        "correctAnswer": "Macroscopic anatomy",
+        "explanation": "Gross anatomy, also called macroscopic anatomy, studies structures visible without magnification."
+    },
+    {
+        "question": "Which approach to gross anatomy studies all structures in a specific region together?",
+        "options": ["Systemic approach", "Regional approach", "Clinical approach", "Histological approach"],
+        "answer": 1,
+        "correctAnswer": "Regional approach",
+        "explanation": "The regional approach examines all structures (e.g., muscles, bones) within a specific body region together."
+    },
+    {
+        "question": "In the systemic approach to gross anatomy, the body is divided into:",
+        "options": ["Regions like head and neck", "Organ systems like nervous and respiratory", "Tissues and cells", "Bones and muscles"],
+        "answer": 1,
+        "correctAnswer": "Organ systems like nervous and respiratory",
+        "explanation": "The systemic approach divides the body into organ systems, such as nervous or respiratory, studying each system as a whole."
+    },
+    {
+        "question": "Microscopic anatomy is also called:",
+        "options": ["Histology", "Gross anatomy", "Embryology", "Pathology"],
+        "answer": 0,
+        "correctAnswer": "Histology",
+        "explanation": "Microscopic anatomy, or histology, studies tissues and cells under a microscope."
+    },
+    {
+        "question": "What does microscopic anatomy study?",
+        "options": ["Visible body parts", "Organs and tissues under a microscope", "Bone structure", "Muscle movement"],
+        "answer": 1,
+        "correctAnswer": "Organs and tissues under a microscope",
+        "explanation": "Microscopic anatomy examines structures at the cellular and tissue level using a microscope."
+    },
+    {
+        "question": "Which subdivision of anatomy focuses on features important in medical practice?",
+        "options": ["Developmental anatomy", "Applied (clinical) anatomy", "Regional anatomy", "Systemic anatomy"],
+        "answer": 1,
+        "correctAnswer": "Applied (clinical) anatomy",
+        "explanation": "Applied (clinical) anatomy focuses on anatomical features relevant to medical practice, such as surgical or diagnostic applications."
+    },
+    {
+        "question": "Developmental anatomy is primarily concerned with:",
+        "options": ["Adult body structures", "Embryonic development", "Microscopic tissues", "Disease progression"],
+        "answer": 1,
+        "correctAnswer": "Embryonic development",
+        "explanation": "Developmental anatomy studies the structural changes from conception through development, particularly embryonic stages."
+    },
+    {
+        "question": "Which of the following is NOT a subdivision of anatomy?",
+        "options": ["Gross anatomy", "Histology", "Pharmacological anatomy", "Embryology"],
+        "answer": 2,
+        "correctAnswer": "Pharmacological anatomy",
+        "explanation": "Pharmacological anatomy is not a recognized subdivision; gross anatomy, histology, and embryology are standard subdivisions."
+    },
+    {
+        "question": "The study of body parts visible to the naked eye falls under:",
+        "options": ["Microscopic anatomy", "Gross anatomy", "Developmental anatomy", "Clinical anatomy"],
+        "answer": 1,
+        "correctAnswer": "Gross anatomy",
+        "explanation": "Gross anatomy studies body parts visible without magnification, unlike microscopic anatomy."
+    },
+    {
+        "question": "Which approach is best for studying the respiratory system as a whole?",
+        "options": ["Regional approach", "Systemic approach", "Histological approach", "Embryological approach"],
+        "answer": 1,
+        "correctAnswer": "Systemic approach",
+        "explanation": "The systemic approach studies entire organ systems, like the respiratory system, as a cohesive unit."
+    },
+    {
+        "question": "The regional approach is most useful for studying:",
+        "options": ["The digestive system", "All structures in the upper limb", "Cellular organization", "Embryonic growth"],
+        "answer": 1,
+        "correctAnswer": "All structures in the upper limb",
+        "explanation": "The regional approach focuses on all structures within a specific body region, such as the upper limb."
+    },
+    {
+        "question": "Histology involves the use of which tool?",
+        "options": ["X-ray machine", "Microscope", "Stethoscope", "Scalpel"],
+        "answer": 1,
+        "correctAnswer": "Microscope",
+        "explanation": "Histology, or microscopic anatomy, requires a microscope to study tissues and cells."
+    },
+    {
+        "question": "Applied anatomy is most relevant to which field?",
+        "options": ["Botany", "Medicine", "Chemistry", "Physics"],
+        "answer": 1,
+        "correctAnswer": "Medicine",
+        "explanation": "Applied (clinical) anatomy is most relevant to medicine, aiding in diagnosis, surgery, and treatment."
+    },
+    {
+        "question": "Which subdivision studies the development of organs from conception?",
+        "options": ["Gross anatomy", "Developmental anatomy", "Microscopic anatomy", "Systemic anatomy"],
+        "answer": 1,
+        "correctAnswer": "Developmental anatomy",
+        "explanation": "Developmental anatomy focuses on the development of organs and structures from conception."
+    },
+    {
+        "question": "The study of muscles and blood vessels in the neck is an example of:",
+        "options": ["Systemic anatomy", "Regional anatomy", "Histology", "Embryology"],
+        "answer": 1,
+        "correctAnswer": "Regional anatomy",
+        "explanation": "Studying muscles and blood vessels in the neck is an example of regional anatomy, focusing on a specific body region."
+    },
+    {
+        "question": "Which approach would focus on the nervous system alone?",
+        "options": ["Regional approach", "Systemic approach", "Clinical approach", "Histological approach"],
+        "answer": 1,
+        "correctAnswer": "Systemic approach",
+        "explanation": "The systemic approach studies the nervous system as a whole, focusing on its components and functions."
+    },
+    {
+        "question": "Microscopic anatomy differs from gross anatomy in that it requires:",
+        "options": ["Dissection", "Magnification", "X-rays", "Surgical tools"],
+        "answer": 1,
+        "correctAnswer": "Magnification",
+        "explanation": "Microscopic anatomy requires magnification (via microscopes) to study cells and tissues, unlike gross anatomy."
+    },
+    {
+        "question": "How many main approaches are there to studying anatomy?",
+        "options": ["Two", "Three", "Four", "Five"],
+        "answer": 1,
+        "correctAnswer": "Three",
+        "explanation": "The three main approaches to studying anatomy are systemic, regional, and clinical."
+    },
+    {
+        "question": "Which approach emphasizes practical medical applications?",
+        "options": ["Regional anatomy", "Systemic anatomy", "Clinical anatomy", "Histology"],
+        "answer": 2,
+        "correctAnswer": "Clinical anatomy",
+        "explanation": "Clinical anatomy emphasizes practical applications in medical practice, such as surgery and diagnostics."
+    },
+    {
+        "question": "The highest level of structural organization in the body is the:",
+        "options": ["Organ level", "System level", "Organism level", "Tissue level"],
+        "answer": 2,
+        "correctAnswer": "Organism level",
+        "explanation": "The organism level is the highest, encompassing all systems working together as a living entity."
+    },
+    {
+        "question": "At the chemical level, the body is composed of:",
+        "options": ["Organs and systems", "Atoms and molecules", "Cells and tissues", "Bones and muscles"],
+        "answer": 1,
+        "correctAnswer": "Atoms and molecules",
+        "explanation": "The chemical level consists of atoms and molecules, the basic building blocks of matter."
+    },
+    {
+        "question": "Which level includes the basic structural and functional units of life?",
+        "options": ["Chemical level", "Cellular level", "Tissue level", "Organ level"],
+        "answer": 1,
+        "correctAnswer": "Cellular level",
+        "explanation": "The cellular level includes cells, the basic structural and functional units of life."
+    },
+    {
+        "question": "Groups of similar cells with a common function form the:",
+        "options": ["Organ level", "Tissue level", "System level", "Cellular level"],
+        "answer": 1,
+        "correctAnswer": "Tissue level",
+        "explanation": "The tissue level consists of groups of similar cells performing a common function."
+    },
+    {
+        "question": "An organ is composed of at least:",
+        "options": ["One tissue type", "Two tissue types", "Three tissue types", "Four tissue types"],
+        "answer": 1,
+        "correctAnswer": "Two tissue types",
+        "explanation": "An organ is composed of at least two tissue types working together, such as muscle and connective tissue."
+    },
+    {
+        "question": "Which level involves organs working together for a common function?",
+        "options": ["Tissue level", "Organ level", "System level", "Organism level"],
+        "answer": 2,
+        "correctAnswer": "System level",
+        "explanation": "The system level involves organs working together within an organ system, like the cardiovascular system."
+    },
+    {
+        "question": "The human body has how many recognized systems?",
+        "options": ["9", "10", "11", "12"],
+        "answer": 2,
+        "correctAnswer": "11",
+        "explanation": "The human body has 11 recognized organ systems, including integumentary, skeletal, and nervous systems."
+    },
+    {
+        "question": "Which element is NOT typically listed at the chemical level?",
+        "options": ["Carbon", "Hydrogen", "Iron", "Gold"],
+        "answer": 3,
+        "correctAnswer": "Gold",
+        "explanation": "Carbon, hydrogen, and iron are common in the body, but gold is not typically a significant element."
+    },
+    {
+        "question": "The cellular level includes structures like:",
+        "options": ["Muscles and bones", "Nucleus and mitochondria", "Heart and lungs", "Skin and hair"],
+        "answer": 1,
+        "correctAnswer": "Nucleus and mitochondria",
+        "explanation": "The cellular level includes intracellular structures like the nucleus and mitochondria."
+    },
+    {
+        "question": "Which tissue type is responsible for contraction?",
+        "options": ["Epithelial tissue", "Muscle tissue", "Connective tissue", "Nervous tissue"],
+        "answer": 1,
+        "correctAnswer": "Muscle tissue",
+        "explanation": "Muscle tissue is specialized for contraction, enabling movement."
+    },
+    {
+        "question": "An example of an organ is the:",
+        "options": ["Skin", "Heart", "Muscle fiber", "Blood"],
+        "answer": 1,
+        "correctAnswer": "Heart",
+        "explanation": "The heart is an organ composed of multiple tissue types, unlike muscle fiber or blood."
+    },
+    {
+        "question": "The integumentary system is primarily composed of:",
+        "options": ["Bones and cartilage", "Skin and nails", "Nerves and brain", "Heart and blood vessels"],
+        "answer": 1,
+        "correctAnswer": "Skin and nails",
+        "explanation": "The integumentary system includes the skin, nails, hair, and associated glands."
+    },
+    {
+        "question": "Which level of organization is above the tissue level?",
+        "options": ["Chemical level", "Cellular level", "Organ level", "System level"],
+        "answer": 2,
+        "correctAnswer": "Organ level",
+        "explanation": "The organ level, consisting of multiple tissues, is above the tissue level in structural organization."
+    },
+    {
+        "question": "The skeletal system functions to:",
+        "options": ["Produce hormones", "Store minerals and support organs", "Conduct nerve impulses", "Digest food"],
+        "answer": 1,
+        "correctAnswer": "Store minerals and support organs",
+        "explanation": "The skeletal system stores minerals (e.g., calcium) and provides structural support for organs."
+    },
+    {
+        "question": "The nervous system includes:",
+        "options": ["Skin and hair", "Brain and spinal cord", "Lungs and trachea", "Liver and gallbladder"],
+        "answer": 1,
+        "correctAnswer": "Brain and spinal cord",
+        "explanation": "The nervous system includes the brain, spinal cord, and nerves for communication and control."
+    },
+    {
+        "question": "At the tissue level, nervous tissue is specialized for:",
+        "options": ["Support and protection", "Contraction and movement", "Communication and control", "Absorption and secretion"],
+        "answer": 2,
+        "correctAnswer": "Communication and control",
+        "explanation": "Nervous tissue is specialized for communication and control via electrical and chemical signals."
+    },
+    {
+        "question": "The organism level represents:",
+        "options": ["A single cell", "A living human body", "A group of tissues", "A collection of organs"],
+        "answer": 1,
+        "correctAnswer": "A living human body",
+        "explanation": "The organism level represents the entire living human body, encompassing all systems."
+    },
+    {
+        "question": "Which approach studies the cardiovascular system specifically?",
+        "options": ["Regional anatomy", "Systemic anatomy", "Clinical anatomy", "Histology"],
+        "answer": 1,
+        "correctAnswer": "Systemic anatomy",
+        "explanation": "Systemic anatomy studies specific organ systems, like the cardiovascular system, as a whole."
+    },
+    {
+        "question": "How many primary planes are used to study the body?",
+        "options": ["Two", "Three", "Four", "Five"],
+        "answer": 1,
+        "correctAnswer": "Three",
+        "explanation": "The three primary planes are sagittal, coronal (frontal), and transverse."
+    },
+    {
+        "question": "The sagittal plane divides the body into:",
+        "options": ["Anterior and posterior parts", "Superior and inferior parts", "Right and left sides", "Upper and lower halves"],
+        "answer": 2,
+        "correctAnswer": "Right and left sides",
+        "explanation": "The sagittal plane divides the body into right and left sides."
+    },
+    {
+        "question": "The median plane is also known as the:",
+        "options": ["Parasagittal plane", "Midsagittal plane", "Transverse plane", "Coronal plane"],
+        "answer": 1,
+        "correctAnswer": "Midsagittal plane",
+        "explanation": "The median plane, or midsagittal plane, divides the body into equal right and left halves."
+    },
+    {
+        "question": "A parasagittal plane divides the body into:",
+        "options": ["Equal right and left halves", "Unequal right and left sides", "Anterior and posterior portions", "Superior and inferior portions"],
+        "answer": 1,
+        "correctAnswer": "Unequal right and left sides",
+        "explanation": "A parasagittal plane divides the body into unequal right and left sides, offset from the midline."
+    },
+    {
+        "question": "The coronal plane divides the body into:",
+        "options": ["Right and left sides", "Anterior and posterior portions", "Superior and inferior parts", "Upper and lower halves"],
+        "answer": 1,
+        "correctAnswer": "Anterior and posterior portions",
+        "explanation": "The coronal (frontal) plane divides the body into anterior (front) and posterior (back) portions."
+    },
+    {
+        "question": "The transverse plane is also called the:",
+        "options": ["Horizontal plane", "Vertical plane", "Median plane", "Parasagittal plane"],
+        "answer": 0,
+        "correctAnswer": "Horizontal plane",
+        "explanation": "The transverse plane, also called the horizontal plane, divides the body into superior and inferior parts."
+    },
+    {
+        "question": "Which plane divides the body into superior and inferior portions?",
+        "options": ["Sagittal plane", "Coronal plane", "Transverse plane", "Median plane"],
+        "answer": 2,
+        "correctAnswer": "Transverse plane",
+        "explanation": "The transverse plane divides the body into superior (upper) and inferior (lower) portions."
+    },
+    {
+        "question": "A section through the chest along the coronal plane would show:",
+        "options": ["Right and left lungs", "Front and back of the chest", "Top and bottom of the chest", "Equal halves of the body"],
+        "answer": 1,
+        "correctAnswer": "Front and back of the chest",
+        "explanation": "A coronal plane section through the chest divides it into anterior and posterior portions."
+    },
+    {
+        "question": "The midsagittal plane passes through which structure?",
+        "options": ["Spine", "Midline of the body", "Shoulder joint", "Hip joint"],
+        "answer": 1,
+        "correctAnswer": "Midline of the body",
+        "explanation": "The midsagittal plane passes through the midline, dividing the body into equal right and left halves."
+    },
+    {
+        "question": "Which plane is best for viewing the brain's right and left hemispheres?",
+        "options": ["Transverse plane", "Coronal plane", "Sagittal plane", "Parasagittal plane"],
+        "answer": 2,
+        "correctAnswer": "Sagittal plane",
+        "explanation": "The sagittal plane, especially the midsagittal, best shows the right and left hemispheres of the brain."
+    },
+    {
+        "question": "A transverse section of the leg would separate:",
+        "options": ["Front and back", "Right and left", "Upper and lower parts", "Inner and outer sides"],
+        "answer": 2,
+        "correctAnswer": "Upper and lower parts",
+        "explanation": "A transverse section divides the leg into upper and lower parts."
+    },
+    {
+        "question": "The coronal plane is perpendicular to the:",
+        "options": ["Sagittal plane", "Transverse plane", "Median plane", "Horizontal plane"],
+        "answer": 0,
+        "correctAnswer": "Sagittal plane",
+        "explanation": "The coronal plane is perpendicular to the sagittal plane, dividing the body into anterior and posterior portions."
+    },
+    {
+        "question": "Which plane would best show the relationship between the stomach and liver?",
+        "options": ["Sagittal plane", "Coronal plane", "Transverse plane", "Parasagittal plane"],
+        "answer": 1,
+        "correctAnswer": "Coronal plane",
+        "explanation": "The coronal plane best shows the anterior-posterior relationship between the stomach and liver."
+    },
+    {
+        "question": "A parasagittal section through the head would create:",
+        "options": ["Equal right and left halves", "Unequal right and left sides", "Anterior and posterior views", "Superior and inferior views"],
+        "answer": 1,
+        "correctAnswer": "Unequal right and left sides",
+        "explanation": "A parasagittal section divides the head into unequal right and left sides."
+    },
+    {
+        "question": "The transverse plane is parallel to the:",
+        "options": ["Ground", "Spine", "Chest wall", "Head"],
+        "answer": 0,
+        "correctAnswer": "Ground",
+        "explanation": "The transverse plane is parallel to the ground, dividing the body into superior and inferior parts."
+    },
+    {
+        "question": "Which plane divides an organ like the heart into front and back?",
+        "options": ["Sagittal plane", "Coronal plane", "Transverse plane", "Median plane"],
+        "answer": 1,
+        "correctAnswer": "Coronal plane",
+        "explanation": "The coronal plane divides the heart into anterior and posterior portions."
+    },
+    {
+        "question": "A sagittal section through the midline would pass through the:",
+        "options": ["Nose", "Ear", "Shoulder", "Knee"],
+        "answer": 0,
+        "correctAnswer": "Nose",
+        "explanation": "A midsagittal section through the midline passes through structures like the nose."
+    },
+    {
+        "question": "The term 'horizontal plane' is synonymous with:",
+        "options": ["Coronal plane", "Transverse plane", "Sagittal plane", "Parasagittal plane"],
+        "answer": 1,
+        "correctAnswer": "Transverse plane",
+        "explanation": "The horizontal plane is synonymous with the transverse plane."
+    },
+    {
+        "question": "Which plane would best demonstrate the separation of the thoracic and abdominal cavities?",
+        "options": ["Sagittal plane", "Coronal plane", "Transverse plane", "Median plane"],
+        "answer": 2,
+        "correctAnswer": "Transverse plane",
+        "explanation": "The transverse plane best shows the separation between the thoracic and abdominal cavities."
+    },
+    {
+        "question": "A coronal plane through the foot would divide it into:",
+        "options": ["Top and bottom", "Right and left", "Front and back", "Inner and outer"],
+        "answer": 2,
+        "correctAnswer": "Front and back",
+        "explanation": "A coronal plane divides the foot into anterior and posterior (front and back) portions."
+    },
+    {
+        "question": "In anatomical position, the body is:",
+        "options": ["Lying down", "Erect with palms forward", "Sitting with arms crossed", "Bent forward"],
+        "answer": 1,
+        "correctAnswer": "Erect with palms forward",
+        "explanation": "In anatomical position, the body is erect with palms facing forward."
+    },
+    {
+        "question": "The term 'superior' refers to a position:",
+        "options": ["Below another part", "Toward the head", "Behind another part", "Toward the feet"],
+        "answer": 1,
+        "correctAnswer": "Toward the head",
+        "explanation": "Superior indicates a position toward the head or above another part."
+    },
+    {
+        "question": "The nose is ________ to the mouth.",
+        "options": ["Inferior", "Superior", "Anterior", "Posterior"],
+        "answer": 1,
+        "correctAnswer": "Superior",
+        "explanation": "The nose is superior to the mouth, being positioned above it."
+    },
+    {
+        "question": "The term 'inferior' indicates a position:",
+        "options": ["Toward the head", "Away from the head", "In front of another part", "Behind another part"],
+        "answer": 1,
+        "correctAnswer": "Away from the head",
+        "explanation": "Inferior indicates a position away from the head or below another part."
+    },
+    {
+        "question": "The chin is ________ to the forehead.",
+        "options": ["Superior", "Inferior", "Anterior", "Posterior"],
+        "answer": 1,
+        "correctAnswer": "Inferior",
+        "explanation": "The chin is inferior to the forehead, located below it."
+    },
+    {
+        "question": "'Anterior' is synonymous with:",
+        "options": ["Posterior", "Ventral", "Dorsal", "Superior"],
+        "answer": 1,
+        "correctAnswer": "Ventral",
+        "explanation": "Anterior is synonymous with ventral, indicating the front of the body."
+    },
+    {
+        "question": "The chest is ________ to the spine.",
+        "options": ["Posterior", "Anterior", "Inferior", "Superior"],
+        "answer": 1,
+        "correctAnswer": "Anterior",
+        "explanation": "The chest is anterior to the spine, located in front of it."
+    },
+    {
+        "question": "'Posterior' is the same as:",
+        "options": ["Ventral", "Dorsal", "Anterior", "Inferior"],
+        "answer": 1,
+        "correctAnswer": "Dorsal",
+        "explanation": "Posterior is synonymous with dorsal, indicating the back of the body."
+    },
+    {
+        "question": "The spine is ________ to the chest.",
+        "options": ["Anterior", "Posterior", "Superior", "Inferior"],
+        "answer": 1,
+        "correctAnswer": "Posterior",
+        "explanation": "The spine is posterior to the chest, located behind it."
+    },
+    {
+        "question": "'Medial' refers to a position:",
+        "options": ["Toward the midline", "Away from the midline", "Above another part", "Below another part"],
+        "answer": 0,
+        "correctAnswer": "Toward the midline",
+        "explanation": "Medial indicates a position toward the midline of the body."
+    },
+    {
+        "question": "The nose is ________ to the ears.",
+        "options": ["Lateral", "Medial", "Superior", "Inferior"],
+        "answer": 1,
+        "correctAnswer": "Medial",
+        "explanation": "The nose is medial to the ears, being closer to the midline."
+    },
+    {
+        "question": "'Lateral' indicates a position:",
+        "options": ["Toward the midline", "Away from the midline", "In front of another part", "Behind another part"],
+        "answer": 1,
+        "correctAnswer": "Away from the midline",
+        "explanation": "Lateral indicates a position away from the midline of the body."
+    },
+    {
+        "question": "The arms are ________ to the chest.",
+        "options": ["Medial", "Lateral", "Anterior", "Posterior"],
+        "answer": 1,
+        "correctAnswer": "Lateral",
+        "explanation": "The arms are lateral to the chest, positioned away from the midline."
+    },
+    {
+        "question": "'Proximal' refers to a position:",
+        "options": ["Farther from the point of attachment", "Closer to the point of attachment", "Above another part", "Below another part"],
+        "answer": 1,
+        "correctAnswer": "Closer to the point of attachment",
+        "explanation": "Proximal indicates a position closer to the point of attachment to the body."
+    },
+    {
+        "question": "The elbow is ________ to the wrist.",
+        "options": ["Distal", "Proximal", "Lateral", "Medial"],
+        "answer": 1,
+        "correctAnswer": "Proximal",
+        "explanation": "The elbow is proximal to the wrist, being closer to the point of attachment."
+    },
+    {
+        "question": "'Distal' indicates a position:",
+        "options": ["Closer to the point of attachment", "Farther from the point of attachment", "Toward the head", "Toward the feet"],
+        "answer": 1,
+        "correctAnswer": "Farther from the point of attachment",
+        "explanation": "Distal indicates a position farther from the point of attachment."
+    },
+    {
+        "question": "The fingers are ________ to the elbow.",
+        "options": ["Proximal", "Distal", "Medial", "Lateral"],
+        "answer": 1,
+        "correctAnswer": "Distal",
+        "explanation": "The fingers are distal to the elbow, being farther from the point of attachment."
+    },
+    {
+        "question": "'Superficial' refers to a position:",
+        "options": ["Deep within the body", "Toward the body surface", "Toward the midline", "Away from the midline"],
+        "answer": 1,
+        "correctAnswer": "Toward the body surface",
+        "explanation": "Superficial indicates a position closer to the body surface."
+    },
+    {
+        "question": "The skin is ________ to the muscles.",
+        "options": ["Deep", "Superficial", "Proximal", "Distal"],
+        "answer": 1,
+        "correctAnswer": "Superficial",
+        "explanation": "The skin is superficial to the muscles, being closer to the body surface."
+    },
+    {
+        "question": "'Deep' indicates a position:",
+        "options": ["Toward the body surface", "Away from the body surface", "Toward the head", "Toward the feet"],
+        "answer": 1,
+        "correctAnswer": "Away from the body surface",
+        "explanation": "Deep indicates a position farther from the body surface, toward the interior."
+    },
+    {
+        "question": "The region of the head includes the:",
+        "options": ["Chest", "Skull and face", "Abdomen", "Thigh"],
+        "answer": 1,
+        "correctAnswer": "Skull and face",
+        "explanation": "The head region includes the skull and face."
+    },
+    {
+        "question": "The cervical region refers to the:",
+        "options": ["Lower back", "Neck", "Upper arm", "Chest"],
+        "answer": 1,
+        "correctAnswer": "Neck",
+        "explanation": "The cervical region refers to the neck."
+    },
+    {
+        "question": "The thoracic region is associated with the:",
+        "options": ["Abdomen", "Chest", "Pelvis", "Thigh"],
+        "answer": 1,
+        "correctAnswer": "Chest",
+        "explanation": "The thoracic region corresponds to the chest."
+    },
+    {
+        "question": "The brachial region is part of the:",
+        "options": ["Lower limb", "Upper limb", "Trunk", "Head"],
+        "answer": 1,
+        "correctAnswer": "Upper limb",
+        "explanation": "The brachial region is part of the upper limb, specifically the upper arm."
+    },
+    {
+        "question": "The pubic region is located in the:",
+        "options": ["Anterior pelvis", "Upper back", "Neck", "Lower leg"],
+        "answer": 0,
+        "correctAnswer": "Anterior pelvis",
+        "explanation": "The pubic region is located in the anterior pelvis."
+    },
+    {
+        "question": "The inguinal region is known as the:",
+        "options": ["Groin", "Chest", "Forearm", "Foot"],
+        "answer": 0,
+        "correctAnswer": "Groin",
+        "explanation": "The inguinal region refers to the groin."
+    },
+    {
+        "question": "The antibrachial region refers to the:",
+        "options": ["Upper arm", "Forearm", "Hand", "Thigh"],
+        "answer": 1,
+        "correctAnswer": "Forearm",
+        "explanation": "The antibrachial region is the forearm."
+    },
+    {
+        "question": "The carpal region is the:",
+        "options": ["Wrist", "Elbow", "Shoulder", "Ankle"],
+        "answer": 0,
+        "correctAnswer": "Wrist",
+        "explanation": "The carpal region refers to the wrist."
+    },
+    {
+        "question": "The manual region includes the:",
+        "options": ["Foot", "Hand", "Arm", "Leg"],
+        "answer": 1,
+        "correctAnswer": "Hand",
+        "explanation": "The manual region refers to the hand."
+    },
+    {
+        "question": "The abdominal region covers the:",
+        "options": ["Chest", "Abdomen", "Back", "Neck"],
+        "answer": 1,
+        "correctAnswer": "Abdomen",
+        "explanation": "The abdominal region covers the abdomen."
+    },
+    {
+        "question": "The pelvic region includes the:",
+        "options": ["Pelvis", "Thigh", "Chest", "Head"],
+        "answer": 0,
+        "correctAnswer": "Pelvis",
+        "explanation": "The pelvic region includes the pelvis."
+    },
+    {
+        "question": "The pedal region refers to the:",
+        "options": ["Hand", "Foot", "Arm", "Leg"],
+        "answer": 1,
+        "correctAnswer": "Foot",
+        "explanation": "The pedal region refers to the foot."
+    },
+    {
+        "question": "The sole is the plantar region of the:",
+        "options": ["Hand", "Foot", "Arm", "Leg"],
+        "answer": 1,
+        "correctAnswer": "Foot",
+        "explanation": "The plantar region refers to the sole of the foot."
+    },
+    {
+        "question": "The lumbar region is located in the:",
+        "options": ["Upper back", "Lower back", "Chest", "Neck"],
+        "answer": 1,
+        "correctAnswer": "Lower back",
+        "explanation": "The lumbar region is located in the lower back."
+    },
+    {
+        "question": "The gluteal region refers to the:",
+        "options": ["Buttock", "Thigh", "Chest", "Arm"],
+        "answer": 0,
+        "correctAnswer": "Buttock",
+        "explanation": "The gluteal region refers to the buttock."
+    },
+    {
+        "question": "The femoral region is the:",
+        "options": ["Thigh", "Lower leg", "Foot", "Arm"],
+        "answer": 0,
+        "correctAnswer": "Thigh",
+        "explanation": "The femoral region is the thigh."
+    },
+    {
+        "question": "The patellar region is the:",
+        "options": ["Knee cap", "Elbow", "Ankle", "Wrist"],
+        "answer": 0,
+        "correctAnswer": "Knee cap",
+        "explanation": "The patellar region refers to the knee cap."
+    },
+    {
+        "question": "The crural region extends from the:",
+        "options": ["Hip to knee", "Knee to ankle", "Ankle to foot", "Thigh to foot"],
+        "answer": 1,
+        "correctAnswer": "Knee to ankle",
+        "explanation": "The crural region extends from the knee to the ankle."
+    },
+    {
+        "question": "The tarsal region is the:",
+        "options": ["Ankle", "Knee", "Wrist", "Elbow"],
+        "answer": 0,
+        "correctAnswer": "Ankle",
+        "explanation": "The tarsal region refers to the ankle."
+    },
+    {
+        "question": "The region between the thigh and trunk is called the:",
+        "options": ["Inguinal region", "Brachial region", "Cervical region", "Lumbar region"],
+        "answer": 0,
+        "correctAnswer": "Inguinal region",
+        "explanation": "The inguinal region is the groin, located between the thigh and trunk."
+    },
+    {
+        "question": "The body is divided into how many main cavities?",
+        "options": ["One", "Two", "Three", "Four"],
+        "answer": 1,
+        "correctAnswer": "Two",
+        "explanation": "The body is divided into two main cavities: dorsal and ventral."
+    },
+    {
+        "question": "The dorsal cavity protects organs of the:",
+        "options": ["Digestive system", "Nervous system", "Respiratory system", "Circulatory system"],
+        "answer": 1,
+        "correctAnswer": "Nervous system",
+        "explanation": "The dorsal cavity, including the cranial and spinal cavities, protects nervous system organs."
+    },
+    {
+        "question": "The cranial cavity contains the:",
+        "options": ["Spinal cord", "Brain", "Heart", "Lungs"],
+        "answer": 1,
+        "correctAnswer": "Brain",
+        "explanation": "The cranial cavity contains the brain."
+    },
+    {
+        "question": "The spinal cavity is also known as the:",
+        "options": ["Cranial cavity", "Vertebral canal", "Thoracic cavity", "Pelvic cavity"],
+        "answer": 1,
+        "correctAnswer": "Vertebral canal",
+        "explanation": "The spinal cavity, or vertebral canal, houses the spinal cord."
+    },
+    {
+        "question": "The ventral cavity is located on the:",
+        "options": ["Posterior surface", "Anterior surface", "Lateral sides", "Inferior end"],
+        "answer": 1,
+        "correctAnswer": "Anterior surface",
+        "explanation": "The ventral cavity is located on the anterior (front) surface of the body."
+    },
+    {
+        "question": "The diaphragm separates the ventral cavity into:",
+        "options": ["Cranial and spinal cavities", "Thoracic and abdominopelvic cavities", "Dorsal and ventral cavities", "Pleural and pericardial cavities"],
+        "answer": 1,
+        "correctAnswer": "Thoracic and abdominopelvic cavities",
+        "explanation": "The diaphragm separates the ventral cavity into thoracic and abdominopelvic cavities."
+    },
+    {
+        "question": "The thoracic cavity contains the:",
+        "options": ["Stomach and liver", "Heart and lungs", "Brain and spinal cord", "Kidneys and bladder"],
+        "answer": 1,
+        "correctAnswer": "Heart and lungs",
+        "explanation": "The thoracic cavity contains the heart and lungs."
+    },
+    {
+        "question": "The pleural cavity is associated with the:",
+        "options": ["Heart", "Lungs", "Liver", "Spleen"],
+        "answer": 1,
+        "correctAnswer": "Lungs",
+        "explanation": "The pleural cavity surrounds the lungs."
+    },
+    {
+        "question": "The mediastinum is located:",
+        "options": ["Between the lungs", "Below the diaphragm", "Above the heart", "In the pelvic cavity"],
+        "answer": 0,
+        "correctAnswer": "Between the lungs",
+        "explanation": "The mediastinum is located between the lungs, containing the heart and other structures."
+    },
+    {
+        "question": "The pericardial cavity surrounds the:",
+        "options": ["Lungs", "Heart", "Liver", "Kidneys"],
+        "answer": 1,
+        "correctAnswer": "Heart",
+        "explanation": "The pericardial cavity surrounds the heart."
+    },
+    {
+        "question": "The abdominopelvic cavity extends from the:",
+        "options": ["Head to neck", "Diaphragm to groin", "Chest to spine", "Pelvis to feet"],
+        "answer": 1,
+        "correctAnswer": "Diaphragm to groin",
+        "explanation": "The abdominopelvic cavity extends from the diaphragm to the groin."
+    },
+    {
+        "question": "The abdominal cavity contains the:",
+        "options": ["Heart and lungs", "Stomach and spleen", "Brain and spinal cord", "Bladder and rectum"],
+        "answer": 1,
+        "correctAnswer": "Stomach and spleen",
+        "explanation": "The abdominal cavity contains organs like the stomach and spleen."
+    },
+    {
+        "question": "The pelvic cavity contains the:",
+        "options": ["Lungs and heart", "Urinary bladder and rectum", "Liver and gallbladder", "Brain and spinal cord"],
+        "answer": 1,
+        "correctAnswer": "Urinary bladder and rectum",
+        "explanation": "The pelvic cavity contains the urinary bladder and rectum."
+    },
+    {
+        "question": "The peritoneum is a serous membrane of the:",
+        "options": ["Thoracic cavity", "Abdominopelvic cavity", "Dorsal cavity", "Cranial cavity"],
+        "answer": 1,
+        "correctAnswer": "Abdominopelvic cavity",
+        "explanation": "The peritoneum is the serous membrane lining the abdominopelvic cavity."
+    },
+    {
+        "question": "The visceral peritoneum covers the:",
+        "options": ["Abdominal wall", "Abdominal viscera", "Chest wall", "Spinal cord"],
+        "answer": 1,
+        "correctAnswer": "Abdominal viscera",
+        "explanation": "The visceral peritoneum covers the abdominal organs (viscera)."
+    },
+    {
+        "question": "The parietal peritoneum lines the:",
+        "options": ["Organs", "Abdominal wall", "Lungs", "Heart"],
+        "answer": 1,
+        "correctAnswer": "Abdominal wall",
+        "explanation": "The parietal peritoneum lines the abdominal wall."
+    },
+    {
+        "question": "Pleural fluid is found between the:",
+        "options": ["Pericardial layers", "Pleural layers", "Peritoneal layers", "Meningeal layers"],
+        "answer": 1,
+        "correctAnswer": "Pleural layers",
+        "explanation": "Pleural fluid is found between the visceral and parietal pleural layers, reducing friction."
+    },
+    {
+        "question": "The pericardial fluid is located between the:",
+        "options": ["Pleural layers", "Pericardial layers", "Peritoneal layers", "Cranial layers"],
+        "answer": 1,
+        "correctAnswer": "Pericardial layers",
+        "explanation": "Pericardial fluid is located between the visceral and parietal pericardial layers."
+    },
+    {
+        "question": "The diaphragm forms the boundary between the:",
+        "options": ["Cranial and spinal cavities", "Thoracic and abdominopelvic cavities", "Dorsal and ventral cavities", "Pleural and pericardial cavities"],
+        "answer": 1,
+        "correctAnswer": "Thoracic and abdominopelvic cavities",
+        "explanation": "The diaphragm separates the thoracic and abdominopelvic cavities."
+    },
+    {
+        "question": "The vertebral canal is part of the:",
+        "options": ["Ventral cavity", "Dorsal cavity", "Thoracic cavity", "Pelvic cavity"],
+        "answer": 1,
+        "correctAnswer": "Dorsal cavity",
+        "explanation": "The vertebral canal, housing the spinal cord, is part of the dorsal cavity."
+    },
+    {
+        "question": "Serous membranes line which type of body cavities?",
+        "options": ["Cavities open to the outside", "Cavities not open to the outside", "Dorsal cavities only", "Ventral cavities only"],
+        "answer": 1,
+        "correctAnswer": "Cavities not open to the outside",
+        "explanation": "Serous membranes line closed cavities, such as the pleural and pericardial cavities."
+    },
+    {
+        "question": "The thin layer of fluid secreted by serous membranes is called:",
+        "options": ["Peritoneal fluid", "Serous fluid", "Pleural fluid", "Cerebrospinal fluid"],
+        "answer": 1,
+        "correctAnswer": "Serous fluid",
+        "explanation": "Serous fluid is secreted by serous membranes to reduce friction between organs and cavity walls."
+    },
+    {
+        "question": "The serous membrane covering the lungs is called the:",
+        "options": ["Peritoneum", "Pleura", "Pericardium", "Meninges"],
+        "answer": 1,
+        "correctAnswer": "Pleura",
+        "explanation": "The pleura is the serous membrane covering the lungs."
+    },
+    {
+        "question": "The parietal pleura lines the:",
+        "options": ["Lung surface", "Chest wall", "Heart surface", "Abdominal wall"],
+        "answer": 1,
+        "correctAnswer": "Chest wall",
+        "explanation": "The parietal pleura lines the chest wall."
+    },
+    {
+        "question": "The visceral pleura is attached to the:",
+        "options": ["Chest wall", "Lung surface", "Diaphragm", "Spine"],
+        "answer": 1,
+        "correctAnswer": "Lung surface",
+        "explanation": "The visceral pleura is attached to the lung surface."
+    },
+    {
+        "question": "The serous membrane surrounding the heart is the:",
+        "options": ["Pleura", "Peritoneum", "Pericardium", "Dura mater"],
+        "answer": 2,
+        "correctAnswer": "Pericardium",
+        "explanation": "The pericardium is the serous membrane surrounding the heart."
+    },
+    {
+        "question": "The parietal pericardium lines the:",
+        "options": ["Heart surface", "Chest wall", "Lung surface", "Abdominal wall"],
+        "answer": 1,
+        "correctAnswer": "Chest wall",
+        "explanation": "The parietal pericardium lines the chest wall surrounding the heart."
+    },
+    {
+        "question": "The visceral pericardium is attached to the:",
+        "options": ["Chest wall", "Heart surface", "Diaphragm", "Spine"],
+        "answer": 1,
+        "correctAnswer": "Heart surface",
+        "explanation": "The visceral pericardium is attached to the heart surface."
+    },
+    {
+        "question": "The serous membrane of the abdominal cavity is the:",
+        "options": ["Pleura", "Pericardium", "Peritoneum", "Meninges"],
+        "answer": 2,
+        "correctAnswer": "Peritoneum",
+        "explanation": "The peritoneum is the serous membrane of the abdominal cavity."
+    },
+    {
+        "question": "The mesentery is associated with which serous membrane?",
+        "options": ["Pleura", "Pericardium", "Peritoneum", "Dura mater"],
+        "answer": 2,
+        "correctAnswer": "Peritoneum",
+        "explanation": "The mesentery is a fold of the peritoneum supporting abdominal organs."
+    },
+    {
+        "question": "Serous fluid reduces friction between:",
+        "options": ["Bones and muscles", "Organs and cavity walls", "Nerves and tissues", "Blood vessels"],
+        "answer": 1,
+        "correctAnswer": "Organs and cavity walls",
+        "explanation": "Serous fluid reduces friction between organs and the walls of the cavities they occupy."
+    },
+    {
+        "question": "The right upper quadrant (RUQ) contains the:",
+        "options": ["Spleen", "Gallbladder", "Left kidney", "Sigmoid colon"],
+        "answer": 1,
+        "correctAnswer": "Gallbladder",
+        "explanation": "The RUQ contains the gallbladder and parts of the liver."
+    },
+    {
+        "question": "The left upper quadrant (LUQ) contains the:",
+        "options": ["Liver", "Spleen", "Appendix", "Right kidney"],
+        "answer": 1,
+        "correctAnswer": "Spleen",
+        "explanation": "The LUQ contains the spleen and parts of the stomach."
+    },
+    {
+        "question": "The right lower quadrant (RLQ) includes the:",
+        "options": ["Stomach", "Appendix", "Pancreas", "Spleen"],
+        "answer": 1,
+        "correctAnswer": "Appendix",
+        "explanation": "The RLQ includes the appendix."
+    },
+    {
+        "question": "The left lower quadrant (LLQ) contains the:",
+        "options": ["Gallbladder", "Sigmoid colon", "Liver", "Right ovary"],
+        "answer": 1,
+        "correctAnswer": "Sigmoid colon",
+        "explanation": "The LLQ contains the sigmoid colon."
+    },
+    {
+        "question": "The liver is located in which abdominal quadrant?",
+        "options": ["LUQ", "RUQ", "LLQ", "RLQ"],
+        "answer": 1,
+        "correctAnswer": "RUQ",
+        "explanation": "The liver is primarily located in the RUQ."
+    },
+    {
+        "question": "The spleen is found in which quadrant?",
+        "options": ["RUQ", "LUQ", "RLQ", "LLQ"],
+        "answer": 1,
+        "correctAnswer": "LUQ",
+        "explanation": "The spleen is located in the LUQ."
+    },
+    {
+        "question": "The appendix is located in which quadrant?",
+        "options": ["LUQ", "RUQ", "RLQ", "LLQ"],
+        "answer": 2,
+        "correctAnswer": "RLQ",
+        "explanation": "The appendix is located in the RLQ."
+    },
+    {
+        "question": "The urinary bladder, when full, may extend into which quadrant?",
+        "options": ["RUQ", "LUQ", "RLQ and LLQ", "LUQ and RUQ"],
+        "answer": 2,
+        "correctAnswer": "RLQ and LLQ",
+        "explanation": "The urinary bladder, when full, may extend into both the RLQ and LLQ."
+    },
+    {
+        "question": "The stomach is primarily located in which quadrant?",
+        "options": ["RUQ", "LUQ", "RLQ", "LLQ"],
+        "answer": 1,
+        "correctAnswer": "LUQ",
+        "explanation": "The stomach is primarily located in the LUQ."
+    },
+    {
+        "question": "How many human body systems are recognized?",
+        "options": ["9", "10", "11", "12"],
+        "answer": 2,
+        "correctAnswer": "11",
+        "explanation": "There are 11 recognized human body systems, including integumentary, skeletal, and nervous."
+    },
+    {
+        "question": "The integumentary system includes:",
+        "options": ["Bones and cartilage", "Skin and nails", "Heart and blood vessels", "Brain and spinal cord"],
+        "answer": 1,
+        "correctAnswer": "Skin and nails",
+        "explanation": "The integumentary system includes the skin, nails, hair, and glands."
+    },
+    {
+        "question": "The primary function of the skeletal system is to:",
+        "options": ["Produce hormones", "Support and protect organs", "Conduct nerve impulses", "Digest food"],
+        "answer": 1,
+        "correctAnswer": "Support and protect organs",
+        "explanation": "The skeletal system provides support and protection for organs and stores minerals."
+    },
+    {
+        "question": "The muscular system is composed of:",
+        "options": ["Nerves and glands", "Muscles and tendons", "Bones and ligaments", "Skin and hair"],
+        "answer": 1,
+        "correctAnswer": "Muscles and tendons",
+        "explanation": "The muscular system includes muscles and tendons for movement and stability."
+    },
+    {
+        "question": "The nervous system includes the:",
+        "options": ["Heart and lungs", "Brain and spinal cord", "Liver and gallbladder", "Kidneys and bladder"],
+        "answer": 1,
+        "correctAnswer": "Brain and spinal cord",
+        "explanation": "The nervous system includes the brain, spinal cord, and nerves."
+    },
+    {
+        "question": "The endocrine system consists of:",
+        "options": ["Ductless glands", "Blood vessels", "Muscles", "Bones"],
+        "answer": 0,
+        "correctAnswer": "Ductless glands",
+        "explanation": "The endocrine system consists of ductless glands that secrete hormones."
+    },
+    {
+        "question": "The cardiovascular system includes the:",
+        "options": ["Lungs and trachea", "Heart and blood vessels", "Stomach and intestines", "Brain and nerves"],
+        "answer": 1,
+        "correctAnswer": "Heart and blood vessels",
+        "explanation": "The cardiovascular system includes the heart and blood vessels for circulation."
+    },
+    {
+        "question": "The respiratory system is responsible for:",
+        "options": ["Digestion", "Gas exchange", "Blood circulation", "Hormone secretion"],
+        "answer": 1,
+        "correctAnswer": "Gas exchange",
+        "explanation": "The respiratory system facilitates gas exchange (oxygen and carbon dioxide)."
+    },
+    {
+        "question": "The digestive system includes the:",
+        "options": ["Heart and lungs", "Stomach and intestines", "Brain and spinal cord", "Kidneys and bladder"],
+        "answer": 1,
+        "correctAnswer": "Stomach and intestines",
+        "explanation": "The digestive system includes the stomach, intestines, and other organs for nutrient breakdown."
+    },
+    {
+        "question": "The urinary system includes the:",
+        "options": ["Lungs and trachea", "Kidneys and bladder", "Liver and gallbladder", "Heart and blood vessels"],
+        "answer": 1,
+        "correctAnswer": "Kidneys and bladder",
+        "explanation": "The urinary system includes the kidneys and bladder for waste excretion."
+    },
+    {
+        "question": "The reproductive system is responsible for:",
+        "options": ["Producing offspring", "Regulating temperature", "Conducting nerve impulses", "Supporting bones"],
+        "answer": 0,
+        "correctAnswer": "Producing offspring",
+        "explanation": "The reproductive system is responsible for producing offspring."
+    },
+    {
+        "question": "The lymphatic system includes the:",
+        "options": ["Thymus and spleen", "Heart and lungs", "Liver and kidneys", "Skin and nails"],
+        "answer": 0,
+        "correctAnswer": "Thymus and spleen",
+        "explanation": "The lymphatic system includes the thymus, spleen, and lymph nodes."
+    },
+    {
+        "question": "The integumentary system protects against:",
+        "options": ["Infections", "Deep tissue injury", "Both a and b", "Neither a nor b"],
+        "answer": 2,
+        "correctAnswer": "Both a and b",
+        "explanation": "The integumentary system protects against infections and deep tissue injury."
+    },
+    {
+        "question": "The skeletal system is a site for:",
+        "options": ["Blood cell formation", "Hormone production", "Nerve conduction", "Digestion"],
+        "answer": 0,
+        "correctAnswer": "Blood cell formation",
+        "explanation": "The skeletal system is a site for blood cell formation in bone marrow."
+    },
+    {
+        "question": "The muscular system produces:",
+        "options": ["Hormones", "Heat", "Blood", "Urine"],
+        "answer": 1,
+        "correctAnswer": "Heat",
+        "explanation": "The muscular system produces heat through muscle contraction."
+    },
+    {
+        "question": "The nervous system controls:",
+        "options": ["Digestion", "Coordination", "Both a and b", "Neither a nor b"],
+        "answer": 2,
+        "correctAnswer": "Both a and b",
+        "explanation": "The nervous system controls digestion and coordination."
+    },
+    {
+        "question": "The endocrine system regulates:",
+        "options": ["Body temperature", "Growth and metabolism", "Both a and b", "Neither a nor b"],
+        "answer": 2,
+        "correctAnswer": "Both a and b",
+        "explanation": "The endocrine system regulates body temperature, growth, and metabolism via hormones."
+    },
+    {
+        "question": "The cardiovascular system transports:",
+        "options": ["Oxygen and nutrients", "Waste products", "Both a and b", "Neither a nor b"],
+        "answer": 2,
+        "correctAnswer": "Both a and b",
+        "explanation": "The cardiovascular system transports oxygen, nutrients, and waste products."
+    },
+    {
+        "question": "The respiratory system facilitates:",
+        "options": ["Oxygen intake", "Carbon dioxide removal", "Both a and b", "Neither a nor b"],
+        "answer": 2,
+        "correctAnswer": "Both a and b",
+        "explanation": "The respiratory system facilitates oxygen intake and carbon dioxide removal."
+    },
+    {
+        "question": "The digestive system breaks down:",
+        "options": ["Nutrients", "Waste", "Both a and b", "Neither a nor b"],
+        "answer": 0,
+        "correctAnswer": "Nutrients",
+        "explanation": "The digestive system breaks down nutrients for absorption."
+    },
+    {
+        "question": "In anatomical position, the palms face:",
+        "options": ["Backward", "Forward", "Upward", "Downward"],
+        "answer": 1,
+        "correctAnswer": "Forward",
+        "explanation": "In anatomical position, the palms face forward."
+    },
+    {
+        "question": "The heart is ________ to the lungs.",
+        "options": ["Superior", "Inferior", "Medial", "Lateral"],
+        "answer": 2,
+        "correctAnswer": "Medial",
+        "explanation": "The heart is medial to the lungs, located closer to the midline."
+    },
+    {
+        "question": "The diaphragm is located in which cavity?",
+        "options": ["Cranial cavity", "Thoracic cavity", "Abdominopelvic cavity", "Spinal cavity"],
+        "answer": 1,
+        "correctAnswer": "Thoracic cavity",
+        "explanation": "The diaphragm is located in the thoracic cavity, forming its inferior boundary."
+    },
+    {
+        "question": "Which plane would best show the liver and stomach together?",
+        "options": ["Sagittal plane", "Coronal plane", "Transverse plane", "Parasagittal plane"],
+        "answer": 1,
+        "correctAnswer": "Coronal plane",
+        "explanation": "The coronal plane best shows the anterior-posterior relationship between the liver and stomach."
+    },
+    {
+        "question": "The term 'cranial' is synonymous with:",
+        "options": ["Caudal", "Superior", "Inferior", "Posterior"],
+        "answer": 1,
+        "correctAnswer": "Superior",
+        "explanation": "Cranial is synonymous with superior, indicating toward the head."
+    },
+    {
+        "question": "The pelvic cavity is part of the:",
+        "options": ["Dorsal cavity", "Ventral cavity", "Cranial cavity", "Spinal cavity"],
+        "answer": 1,
+        "correctAnswer": "Ventral cavity",
+        "explanation": "The pelvic cavity is part of the ventral cavity, specifically the abdominopelvic subdivision."
+    },
+    {
+        "question": "The parietal peritoneum lines the:",
+        "options": ["Organs", "Abdominal wall", "Lungs", "Heart"],
+        "answer": 1,
+        "correctAnswer": "Abdominal wall",
+        "explanation": "The parietal peritoneum lines the abdominal wall."
+    },
+    {
+        "question": "Which system includes the thymus?",
+        "options": ["Nervous system", "Lymphatic system", "Cardiovascular system", "Respiratory system"],
+        "answer": 1,
+        "correctAnswer": "Lymphatic system",
+        "explanation": "The lymphatic system includes the thymus, involved in immune function."
+    },
+    {
+        "question": "The crural region is the:",
+        "options": ["Thigh", "Lower leg", "Foot", "Arm"],
+        "answer": 1,
+        "correctAnswer": "Lower leg",
+        "explanation": "The crural region refers to the lower leg, from knee to ankle."
+    },
+    {
+        "question": "The mediastinum contains the:",
+        "options": ["Lungs", "Heart", "Liver", "Spleen"],
+        "answer": 1,
+        "correctAnswer": "Heart",
+        "explanation": "The mediastinum, located between the lungs, contains the heart."
+    },
+    {
+        "question": "Which cavity houses the spinal cord?",
+        "options": ["Cranial cavity", "Vertebral canal", "Thoracic cavity", "Pelvic cavity"],
+        "answer": 1,
+        "correctAnswer": "Vertebral canal",
+        "explanation": "The vertebral canal, part of the dorsal cavity, houses the spinal cord."
+    },
+    {
+        "question": "The inguinal region is located:",
+        "options": ["In the neck", "In the groin", "In the chest", "In the lower back"],
+        "answer": 1,
+        "correctAnswer": "In the groin",
+        "explanation": "The inguinal region is the groin, between the thigh and trunk."
+    },
+    {
+        "question": "The transverse plane divides the body into:",
+        "options": ["Right and left", "Front and back", "Upper and lower", "Inner and outer"],
+        "answer": 2,
+        "correctAnswer": "Upper and lower",
+        "explanation": "The transverse plane divides the body into upper (superior) and lower (inferior) parts."
+    },
+    {
+        "question": "The visceral pleura covers the:",
+        "options": ["Chest wall", "Lung surface", "Heart surface", "Diaphragm"],
+        "answer": 1,
+        "correctAnswer": "Lung surface",
+        "explanation": "The visceral pleura covers the lung surface."
+    },
+    {
+        "question": "The skeletal system stores:",
+        "options": ["Hormones", "Minerals", "Blood", "Oxygen"],
+        "answer": 1,
+        "correctAnswer": "Minerals",
+        "explanation": "The skeletal system stores minerals, such as calcium and phosphorus."
+    },
+    {
+        "question": "The lumbar region is part of the:",
+        "options": ["Upper back", "Lower back", "Chest", "Abdomen"],
+        "answer": 1,
+        "correctAnswer": "Lower back",
+        "explanation": "The lumbar region is part of the lower back."
+    },
+    {
+        "question": "The pericardial cavity contains:",
+        "options": ["Pleural fluid", "Pericardial fluid", "Peritoneal fluid", "Cerebrospinal fluid"],
+        "answer": 1,
+        "correctAnswer": "Pericardial fluid",
+        "explanation": "The pericardial cavity contains pericardial fluid, reducing friction around the heart."
+    },
+    {
+        "question": "The carpal region is the:",
+        "options": ["Elbow", "Wrist", "Knee", "Ankle"],
+        "answer": 1,
+        "correctAnswer": "Wrist",
+        "explanation": "The carpal region is the wrist."
+    },
+    {
+        "question": "The endocrine system regulates via:",
+        "options": ["Nerves", "Hormones", "Blood vessels", "Muscles"],
+        "answer": 1,
+        "correctAnswer": "Hormones",
+        "explanation": "The endocrine system regulates body functions via hormones."
+    },
+    {
+        "question": "The abdominopelvic cavity is separated from the thoracic cavity by the:",
+        "options": ["Spine", "Diaphragm", "Sternum", "Ribs"],
+        "answer": 1,
+        "correctAnswer": "Diaphragm",
+        "explanation": "The diaphragm separates the abdominopelvic cavity from the thoracic cavity."
+    },
+    {
+        "question": "The femoral region is the:",
+        "options": ["Lower leg", "Thigh", "Foot", "Arm"],
+        "answer": 1,
+        "correctAnswer": "Thigh",
+        "explanation": "The femoral region is the thigh."
+    },
+    {
+        "question": "The dorsal cavity includes:",
+        "options": ["Thoracic and abdominopelvic cavities", "Cranial and spinal cavities", "Pleural and pericardial cavities", "Abdominal and pelvic cavities"],
+        "answer": 1,
+        "correctAnswer": "Cranial and spinal cavities",
+        "explanation": "The dorsal cavity includes the cranial and spinal cavities."
+    },
+    {
+        "question": "The coronal plane is also known as the:",
+        "options": ["Horizontal plane", "Frontal plane", "Sagittal plane", "Transverse plane"],
+        "answer": 1,
+        "correctAnswer": "Frontal plane",
+        "explanation": "The coronal plane is also known as the frontal plane."
+    },
+    {
+        "question": "The visceral peritoneum covers the:",
+        "options": ["Abdominal wall", "Organs", "Chest wall", "Spine"],
+        "answer": 1,
+        "correctAnswer": "Organs",
+        "explanation": "The visceral peritoneum covers the abdominal organs."
+    },
+    {
+        "question": "The nervous system coordinates via:",
+        "options": ["Hormones", "Nerve impulses", "Blood flow", "Muscle contraction"],
+        "answer": 1,
+        "correctAnswer": "Nerve impulses",
+        "explanation": "The nervous system coordinates via nerve impulses."
+    },
+    {
+        "question": "The patellar region is the:",
+        "options": ["Ankle", "Knee cap", "Wrist", "Elbow"],
+        "answer": 1,
+        "correctAnswer": "Knee cap",
+        "explanation": "The patellar region is the knee cap."
+    },
+    {
+        "question": "The pleural cavity is lined by:",
+        "options": ["Pericardium", "Pleura", "Peritoneum", "Meninges"],
+        "answer": 1,
+        "correctAnswer": "Pleura",
+        "explanation": "The pleural cavity is lined by the pleura."
+    },
+    {
+        "question": "The digestive system includes the:",
+        "options": ["Lungs", "Stomach", "Heart", "Brain"],
+        "answer": 1,
+        "correctAnswer": "Stomach",
+        "explanation": "The digestive system includes the stomach and other organs for nutrient breakdown."
+    },
+    {
+        "question": "The sagittal plane through the midline is the:",
+        "options": ["Parasagittal plane", "Midsagittal plane", "Transverse plane", "Coronal plane"],
+        "answer": 1,
+        "correctAnswer": "Midsagittal plane",
+        "explanation": "The sagittal plane through the midline is the midsagittal plane."
+    },
+    {
+        "question": "The tarsal region is the:",
+        "options": ["Knee", "Ankle", "Wrist", "Shoulder"],
+        "answer": 1,
+        "correctAnswer": "Ankle",
+        "explanation": "The tarsal region is the ankle."
+    },
+    {
+        "question": "The muscular system allows:",
+        "options": ["Digestion", "Locomotion", "Breathing", "Vision"],
+        "answer": 1,
+        "correctAnswer": "Locomotion",
+        "explanation": "The muscular system enables locomotion through muscle contraction."
+    },
+    {
+        "question": "The parietal pericardium lines the:",
+        "options": ["Heart surface", "Chest wall", "Lung surface", "Abdominal wall"],
+        "answer": 1,
+        "correctAnswer": "Chest wall",
+        "explanation": "The parietal pericardium lines the chest wall around the heart."
+    },
+    {
+        "question": "The lumbar region is inferior to the:",
+        "options": ["Thoracic region", "Cervical region", "Sacral region", "Pelvic region"],
+        "answer": 0,
+        "correctAnswer": "Thoracic region",
+        "explanation": "The lumbar region (lower back) is inferior to the thoracic region (chest)."
+    },
+    {
+        "question": "The respiratory system includes the:",
+        "options": ["Trachea", "Liver", "Kidneys", "Spleen"],
+        "answer": 0,
+        "correctAnswer": "Trachea",
+        "explanation": "The respiratory system includes the trachea for gas exchange."
+    },
+    {
+        "question": "The pelvic cavity is bounded dorsally by the:",
+        "options": ["Diaphragm", "Sacrum", "Sternum", "Ribs"],
+        "answer": 1,
+        "correctAnswer": "Sacrum",
+        "explanation": "The pelvic cavity is bounded dorsally by the sacrum."
+    },
+    {
+        "question": "The integumentary system synthesizes:",
+        "options": ["Blood cells", "Vitamin D", "Hormones", "Enzymes"],
+        "answer": 1,
+        "correctAnswer": "Vitamin D",
+        "explanation": "The integumentary system synthesizes vitamin D in the skin."
+    },
+    {
+        "question": "The transverse plane is perpendicular to the:",
+        "options": ["Sagittal plane", "Coronal plane", "Median plane", "All of the above"],
+        "answer": 3,
+        "correctAnswer": "All of the above",
+        "explanation": "The transverse plane is perpendicular to both the sagittal and coronal planes, including the median plane."
+    },
+    {
+        "question": "The brachial region is proximal to the:",
+        "options": ["Carpal region", "Femoral region", "Pedal region", "Crural region"],
+        "answer": 0,
+        "correctAnswer": "Carpal region",
+        "explanation": "The brachial region (upper arm) is proximal to the carpal region (wrist)."
+    },
+    {
+        "question": "The urinary system includes the:",
+        "options": ["Bladder", "Lungs", "Heart", "Brain"],
+        "answer": 0,
+        "correctAnswer": "Bladder",
+        "explanation": "The urinary system includes the bladder for waste excretion."
+    },
+    {
+        "question": "The endocrine system includes:",
+        "options": ["Pituitary gland", "Spinal cord", "Trachea", "Ribs"],
+        "answer": 0,
+        "correctAnswer": "Pituitary gland",
+        "explanation": "The endocrine system includes the pituitary gland, which secretes hormones."
+    }
+]
+
+;
+
+        // DOM Elements
+        let body = document.body;
+        let questionElement = document.getElementById('question');
+        let optionsContainer = document.getElementById('options-container');
+        let currentQuestionElement = document.getElementById('current-question');
+        let totalQuestionsElement = document.getElementById('total-questions');
+        let progressBar = document.getElementById('progress-bar');
+        let prevButton = document.getElementById('prev-btn');
+        let nextButton = document.getElementById('next-btn');
+        let feedbackElement = document.getElementById('feedback');
+        let timerElement = document.getElementById('timer');
+        let scoreElement = document.getElementById('score');
+        let streakElement = document.getElementById('streak');
+        let categoryElement = document.getElementById('category');
+        let explanationContainer = document.getElementById('explanation-container');
+        let explanationTextElement = document.getElementById('explanation-text');
+        let themeToggle = document.getElementById('theme-toggle');
+        let soundToggle = document.getElementById('sound-toggle');
+        let bookmarkBtn = document.getElementById('bookmark-btn');
+        let bookmarksCount = document.getElementById('bookmarks-count');
+        let categoryTag = document.getElementById('category-tag');
+        let difficultyTag = document.getElementById('difficulty-tag');
+        let showExplanationBtn = document.getElementById('show-explanation-btn');
+
+        // Quiz state
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let streak = 0;
+        let selectedOption = null;
+        let timeStarted = null;
+        let timerInterval = null;
+        let timeElapsed = 0;
+        let answers = [];
+        let soundsEnabled = true;
+        let bookmarkedQuestions = [];
+        let quizHistory = [];
+        let performanceMetrics = {
+            categories: {},
+            difficulties: { Easy: 0, Medium: 0, Hard: 0 },
+            totalCorrect: 0,
+            totalQuestions: 0
+        };
+
+        function initQuiz() {
+            // Reset DOM elements
+            scoreElement.textContent = score;
+            streakElement.textContent = streak;
+            timerElement.textContent = '00:00';
+            totalQuestionsElement.textContent = questions.length;
+            
+            loadQuestion();
+            startTimer();
+            
+            // Remove existing event listeners to prevent duplicates
+            const prevBtnClone = prevButton.cloneNode(true);
+            prevButton.parentNode.replaceChild(prevBtnClone, prevButton);
+            const nextBtnClone = nextButton.cloneNode(true);
+            nextButton.parentNode.replaceChild(nextBtnClone, nextButton);
+            const themeToggleClone = themeToggle.cloneNode(true);
+            themeToggle.parentNode.replaceChild(themeToggleClone, themeToggle);
+            const soundToggleClone = soundToggle.cloneNode(true);
+            soundToggle.parentNode.replaceChild(soundToggleClone, soundToggle);
+            const bookmarkBtnClone = bookmarkBtn.cloneNode(true);
+            bookmarkBtn.parentNode.replaceChild(bookmarkBtnClone, bookmarkBtn);
+            const showExplanationBtnClone = showExplanationBtn.cloneNode(true);
+            showExplanationBtn.parentNode.replaceChild(showExplanationBtnClone, showExplanationBtn);
+
+            // Reassign DOM elements after cloning
+            prevButton = document.getElementById('prev-btn');
+            nextButton = document.getElementById('next-btn');
+            themeToggle = document.getElementById('theme-toggle');
+            soundToggle = document.getElementById('sound-toggle');
+            bookmarkBtn = document.getElementById('bookmark-btn');
+            showExplanationBtn = document.getElementById('show-explanation-btn');
+
+            // Add event listeners
+            prevButton.addEventListener('click', goToPreviousQuestion);
+            nextButton.addEventListener('click', goToNextQuestion);
+            themeToggle.addEventListener('click', toggleTheme);
+            soundToggle.addEventListener('click', toggleSound);
+            bookmarkBtn.addEventListener('click', toggleBookmark);
+            showExplanationBtn.addEventListener('click', toggleExplanation);
+            
+            // Keyboard navigation
+            document.removeEventListener('keydown', handleKeydown);
+            document.addEventListener('keydown', handleKeydown);
+            
+            loadPreferences();
+            loadQuizHistory();
+            updateBookmarksCount();
+        }
+
+        function handleKeydown(e) {
+            if (e.key === 'ArrowRight') {
+                goToNextQuestion();
+            } else if (e.key === 'ArrowLeft') {
+                goToPreviousQuestion();
+            } else if (e.key.toLowerCase() === 'a' || e.key === '1') {
+                selectOption(0);
+            } else if (e.key.toLowerCase() === 'b' || e.key === '2') {
+                selectOption(1);
+            } else if (e.key.toLowerCase() === 'c' || e.key === '3') {
+                selectOption(2);
+            } else if (e.key.toLowerCase() === 'd' || e.key === '4') {
+                selectOption(3);
+            } else if (e.key === 'Enter') {
+                if (showExplanationBtn.style.display !== 'none') {
+                    toggleExplanation();
+                }
+            }
+        }
+
+        function loadQuestion() {
+            const question = questions[currentQuestionIndex];
+            questionElement.textContent = question.question;
+            currentQuestionElement.textContent = currentQuestionIndex + 1;
+            categoryTag.textContent = question.category || 'Unknown';
+            difficultyTag.textContent = question.difficulty || 'Medium';
+            categoryElement.textContent = question.category || 'All';
+            
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+            
+            optionsContainer.innerHTML = '';
+            
+            const optionLetters = ['A', 'B', 'C', 'D', 'E'];
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.classList.add('option', 'bounce-in');
+                optionElement.setAttribute('role', 'button');
+                optionElement.setAttribute('tabindex', '0');
+                optionElement.setAttribute('aria-label', `Option ${optionLetters[index]}: ${option}`);
+                
+                const optionLetter = document.createElement('div');
+                optionLetter.classList.add('option-letter');
+                optionLetter.textContent = optionLetters[index];
+                
+                const optionText = document.createElement('div');
+                optionText.classList.add('option-text');
+                optionText.textContent = option;
+                
+                optionElement.appendChild(optionLetter);
+                optionElement.appendChild(optionText);
+                
+                optionElement.addEventListener('click', () => selectOption(index));
+                optionElement.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        selectOption(index);
+                    }
+                });
+                
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            prevButton.disabled = currentQuestionIndex === 0;
+            nextButton.textContent = currentQuestionIndex === questions.length - 1 ? 'Finish Quiz' : 'Next Question';
+            
+            feedbackElement.style.display = 'none';
+            showExplanationBtn.style.display = 'none';
+            explanationContainer.classList.remove('expanded');
+            
+            selectedOption = null;
+            
+            // If the question was previously answered or skipped, display the feedback
+            if (answers[currentQuestionIndex]) {
+                const ans = answers[currentQuestionIndex];
+                const options = document.querySelectorAll('.option');
+                feedbackElement.style.display = 'flex';
+                showExplanationBtn.style.display = 'block';
+                explanationTextElement.textContent = question.explanation;
+                options.forEach(option => option.style.pointerEvents = 'none');
+                
+                if (ans.selected === 'Skipped') {
+                    selectedOption = null;
+                    feedbackElement.classList.add('incorrect');
+                    feedbackElement.innerHTML = '<i class="fas fa-times-circle feedback-icon"></i><div class="feedback-text">Skipped. The right answer is highlighted.</div>';
+                    options[question.answer].classList.add('correct');
+                } else {
+                    const optIndex = question.options.findIndex(opt => opt === ans.selected);
+                    if (optIndex !== -1) {
+                        selectedOption = optIndex;
+                        options[optIndex].classList.add('selected');
+                        if (ans.isCorrect) {
+                            feedbackElement.classList.add('correct');
+                            feedbackElement.innerHTML = '<i class="fas fa-check-circle feedback-icon"></i><div class="feedback-text">Correct! Well done.</div>';
+                        } else {
+                            feedbackElement.classList.add('incorrect');
+                            feedbackElement.innerHTML = '<i class="fas fa-times-circle feedback-icon"></i><div class="feedback-text">Incorrect. The right answer is highlighted.</div>';
+                            options[question.answer].classList.add('correct');
+                        }
+                    }
+                }
+            }
+            
+            updateBookmarkStatus();
+        }
+
+        function selectOption(index) {
+            if (selectedOption !== null || answers[currentQuestionIndex]) return;
+            
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => option.classList.remove('selected'));
+            options[index].classList.add('selected');
+            selectedOption = index;
+            
+            const question = questions[currentQuestionIndex];
+            const isCorrect = index === question.answer;
+            
+            feedbackElement.style.display = 'flex';
+            if (isCorrect) {
+                feedbackElement.classList.remove('incorrect');
+                feedbackElement.classList.add('correct');
+                feedbackElement.innerHTML = '<i class="fas fa-check-circle feedback-icon"></i><div class="feedback-text">Correct! Well done.</div>';
+                score += getScoreForDifficulty(question.difficulty);
+                streak++;
+                playSound('correct');
+            } else {
+                feedbackElement.classList.remove('correct');
+                feedbackElement.classList.add('incorrect');
+                feedbackElement.innerHTML = '<i class="fas fa-times-circle feedback-icon"></i><div class="feedback-text">Incorrect. The right answer is highlighted.</div>';
+                options[question.answer].classList.add('correct');
+                streak = 0;
+                playSound('incorrect');
+            }
+            
+            scoreElement.textContent = score;
+            streakElement.textContent = streak;
+            
+            explanationTextElement.textContent = question.explanation;
+            showExplanationBtn.style.display = 'block';
+            
+            answers[currentQuestionIndex] = {
+                question: question.question,
+                selected: question.options[index],
+                correct: question.options[question.answer],
+                isCorrect: isCorrect,
+                explanation: question.explanation,
+                category: question.category,
+                difficulty: question.difficulty
+            };
+            
+            updatePerformanceMetrics(isCorrect, question);
+            
+            options.forEach(option => option.style.pointerEvents = 'none');
+        }
+
+        function maybeHandleSkip() {
+            if (!answers[currentQuestionIndex] && selectedOption === null) {
+                const question = questions[currentQuestionIndex];
+                answers[currentQuestionIndex] = {
+                    question: question.question,
+                    selected: 'Skipped',
+                    correct: question.options[question.answer],
+                    isCorrect: false,
+                    explanation: question.explanation,
+                    category: question.category,
+                    difficulty: question.difficulty
+                };
+                updatePerformanceMetrics(false, question);
+                streak = 0;
+                streakElement.textContent = streak;
+            }
+        }
+
+        function toggleExplanation() {
+            explanationContainer.classList.toggle('expanded');
+            showExplanationBtn.innerHTML = explanationContainer.classList.contains('expanded') ?
+                '<i class="fas fa-info-circle"></i> Hide Explanation' :
+                '<i class="fas fa-info-circle"></i> Show Explanation';
+        }
+
+        function getScoreForDifficulty(difficulty) {
+            switch (difficulty) {
+                case 'Easy': return 5;
+                case 'Medium': return 10;
+                case 'Hard': return 15;
+                default: return 10;
+            }
+        }
+
+        function updatePerformanceMetrics(isCorrect, question) {
+            performanceMetrics.totalQuestions++;
+            if (isCorrect) performanceMetrics.totalCorrect++;
+            
+            performanceMetrics.categories[question.category] = performanceMetrics.categories[question.category] || { correct: 0, total: 0 };
+            performanceMetrics.categories[question.category].total++;
+            if (isCorrect) performanceMetrics.categories[question.category].correct++;
+            
+            performanceMetrics.difficulties[question.difficulty] = performanceMetrics.difficulties[question.difficulty] || 0;
+            if (isCorrect) performanceMetrics.difficulties[question.difficulty]++;
+        }
+
+        function toggleBookmark() {
+            const questionId = questions[currentQuestionIndex].id;
+            const index = bookmarkedQuestions.indexOf(questionId);
+            if (index === -1) {
+                bookmarkedQuestions.push(questionId);
+                bookmarkBtn.classList.add('bookmarked');
+            } else {
+                bookmarkedQuestions.splice(index, 1);
+                bookmarkBtn.classList.remove('bookmarked');
+            }
+            updateBookmarksCount();
+            saveBookmarks();
+        }
+
+        function updateBookmarkStatus() {
+            const questionId = questions[currentQuestionIndex].id;
+            bookmarkBtn.classList.toggle('bookmarked', bookmarkedQuestions.includes(questionId));
+        }
+
+        function updateBookmarksCount() {
+            bookmarksCount.textContent = bookmarkedQuestions.length;
+        }
+
+        function goToNextQuestion() {
+            maybeHandleSkip();
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                showResults();
+                saveQuizHistory();
+            }
+        }
+
+        function goToPreviousQuestion() {
+            maybeHandleSkip();
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        }
+
+        function startTimer() {
+            timeStarted = new Date();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            timeElapsed++;
+            
+            const minutes = Math.floor(timeElapsed / 60).toString().padStart(2, '0');
+            const seconds = (timeElapsed % 60).toString().padStart(2, '0');
+            timerElement.textContent = `${minutes}:${seconds}`;
+            
+            // Optional: Add warning color for long durations (e.g., after 5 minutes)
+            if (timeElapsed >= 300) {
+                timerElement.style.color = 'var(--danger)';
+                timerElement.classList.add('pulse');
+            } else {
+                timerElement.style.color = 'var(--primary)';
+                timerElement.classList.remove('pulse');
+            }
+        }
+
+        function showResults() {
+            clearInterval(timerInterval);
+            
+            const quizContainer = document.querySelector('.quiz-container');
+            const maxScore = questions.reduce((sum, q) => sum + getScoreForDifficulty(q.difficulty), 0);
+            const percentage = ((score / maxScore) * 100).toFixed(1);
+            const categoryStats = Object.entries(performanceMetrics.categories)
+                .map(([category, stats]) => `${category}: ${((stats.correct / stats.total) * 100).toFixed(1)}%`)
+                .join(', ');
+            
+            quizContainer.innerHTML = `
+                <div class="results-container">
+                    <h2 class="quiz-title">Quiz Completed!</h2>
+                    <p class="quiz-subtitle">You've finished the embryology quiz</p>
+                    
+                    <div class="score-circle" style="--p: ${percentage}%">
+                        <div class="score-text">
+                            <div class="score-value">${score}</div>
+                            <div class="score-label">Points</div>
+                        </div>
+                    </div>
+                    
+                    <div class="results-stats">
+                        <div class="result-stat">
+                            <div class="result-stat-value">${percentage}%</div>
+                            <div class="result-stat-label">Accuracy</div>
+                        </div>
+                        <div class="result-stat">
+                            <div class="result-stat-value">${timeElapsed}s</div>
+                            <div class="result-stat-label">Time Taken</div>
+                        </div>
+                        <div class="result-stat">
+                            <div class="result-stat-value">${streak}</div>
+                            <div class="result-stat-label">Best Streak</div>
+                        </div>
+                        <div class="result-stat">
+                            <div class="result-stat-value">${bookmarkedQuestions.length}</div>
+                            <div class="result-stat-label">Bookmarked</div>
+                        </div>
+                    </div>
+                    
+                    <div class="review-section">
+                        <h3 class="review-title">Performance Analytics</h3>
+                        <div class="review-item">
+                            <div class="review-answer">Category Performance: ${categoryStats}</div>
+                            <div class="review-answer">Difficulty Performance: Easy: ${performanceMetrics.difficulties.Easy || 0}, Medium: ${performanceMetrics.difficulties.Medium || 0}, Hard: ${performanceMetrics.difficulties.Hard || 0}</div>
+                        </div>
+                        
+                        <h3 class="review-title">Review Your Answers</h3>
+                        ${answers.map((answer, index) => `
+                            <div class="review-item ${answer.isCorrect ? 'correct' : 'incorrect'}">
+                                <div class="review-question">Q${index + 1}: ${answer.question} (${answer.category} - ${answer.difficulty})</div>
+                                <div class="review-answer">Your Answer: ${answer.selected}</div>
+                                <div class="review-answer">Correct Answer: ${answer.correct}</div>
+                                <div class="review-explanation">${answer.explanation}</div>
+                            </div>
+                        `).join('')}
+                        
+                        <h3 class="review-title">Bookmarked Questions</h3>
+                        ${bookmarkedQuestions.map(qid => {
+                            const question = questions.find(q => q.id === qid);
+                            return `
+                                <div class="review-item">
+                                    <div class="review-question">${question.question} (${question.category} - ${question.difficulty})</div>
+                                    <div class="review-answer">Correct Answer: ${question.correctAnswer}</div>
+                                    <div class="review-explanation">${question.explanation}</div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    
+                    <button class="btn btn-primary mt-4" id="restart-btn">
+                        <i class="fas fa-redo"></i> Try Again
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('restart-btn').addEventListener('click', restartQuiz);
+        }
+
+        function restartQuiz() {
+            // Reset quiz state
+            currentQuestionIndex = 0;
+            score = 0;
+            streak = 0;
+            timeElapsed = 0;
+            answers = [];
+            selectedOption = null;
+            performanceMetrics = {
+                categories: {},
+                difficulties: { Easy: 0, Medium: 0, Hard: 0 },
+                totalCorrect: 0,
+                totalQuestions: 0
+            };
+            
+            // Clear any existing timer
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            
+            // Reset DOM
+            const quizContainer = document.querySelector('.quiz-container');
+            quizContainer.innerHTML = `
+                <div class="quiz-header">
+                    <div>
+                        <h1 class="quiz-title">Advanced Embryology Quiz</h1>
+                        <p class="quiz-subtitle">Test your knowledge with professional questions and detailed explanations</p>
+                    </div>
+                    <div class="stats-container">
+                        <div class="stat">
+                            <span class="stat-value" id="score">0</span>
+                            <span class="stat-label">Score</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value" id="timer">00:00</span>
+                            <span class="stat-label">Time</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value" id="streak">0</span>
+                            <span class="stat-label">Streak</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value" id="category">All</span>
+                            <span class="stat-label">Category</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar" style="width: 10%"></div>
+                </div>
+
+                <div class="question-meta">
+                    <div class="question-tags">
+                        <span class="tag" id="category-tag">Neuro</span>
+                        <span class="tag" id="difficulty-tag">Medium</span>
+                    </div>
+                    <button class="bookmark-btn" id="bookmark-btn" aria-label="Bookmark question">
+                        <i class="fas fa-bookmark"></i>
+                    </button>
+                </div>
+                <div class="question-number">Question <span id="current-question">1</span> of <span id="total-questions">10</span></div>
+                <div class="question-text" id="question"></div>
+
+                <div class="options-grid" id="options-container"></div>
+
+                <div class="feedback correct" id="feedback" style="display: none;">
+                    <i class="fas fa-check-circle feedback-icon"></i>
+                    <div class="feedback-text">Correct! Well done.</div>
+                </div>
+
+                <button class="btn btn-secondary" id="show-explanation-btn" style="display: none;">
+                    <i class="fas fa-info-circle"></i> Show Explanation
+                </button>
+
+                <div class="explanation-container" id="explanation-container">
+                    <div class="explanation">
+                        <div class="explanation-title">Explanation:</div>
+                        <div id="explanation-text"></div>
+                    </div>
+                </div>
+
+                <div class="navigation">
+                    <button class="btn btn-secondary" id="prev-btn" disabled>
+                        <i class="fas fa-arrow-left"></i> Previous
+                    </button>
+                    <button class="btn btn-primary" id="next-btn">
+                        Next Question <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            `;
+            
+            // Reinitialize DOM elements
+            questionElement = document.getElementById('question');
+            optionsContainer = document.getElementById('options-container');
+            currentQuestionElement = document.getElementById('current-question');
+            totalQuestionsElement = document.getElementById('total-questions');
+            progressBar = document.getElementById('progress-bar');
+            prevButton = document.getElementById('prev-btn');
+            nextButton = document.getElementById('next-btn');
+            feedbackElement = document.getElementById('feedback');
+            timerElement = document.getElementById('timer');
+            scoreElement = document.getElementById('score');
+            streakElement = document.getElementById('streak');
+            categoryElement = document.getElementById('category');
+            explanationContainer = document.getElementById('explanation-container');
+            explanationTextElement = document.getElementById('explanation-text');
+            bookmarkBtn = document.getElementById('bookmark-btn');
+            bookmarksCount = document.getElementById('bookmarks-count');
+            categoryTag = document.getElementById('category-tag');
+            difficultyTag = document.getElementById('difficulty-tag');
+            showExplanationBtn = document.getElementById('show-explanation-btn');
+            
+            // Reinitialize the quiz
+            initQuiz();
+        }
+
+        function toggleTheme() {
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 
+                            currentTheme === 'light' ? 'minimal' : 'dark';
+            
+            body.setAttribute('data-theme', newTheme);
+            themeToggle.innerHTML = newTheme === 'dark' ? '<i class="fas fa-moon"></i>' : 
+                                  newTheme === 'light' ? '<i class="fas fa-sun"></i>' : 
+                                  '<i class="fas fa-paint-brush"></i>';
+            
+            localStorage.setItem('theme', newTheme);
+        }
+
+        function toggleSound() {
+            soundsEnabled = !soundsEnabled;
+            soundToggle.innerHTML = soundsEnabled ? '<i class="fas fa-volume-up"></i>' : '<i class="fas fa-volume-mute"></i>';
+            
+            localStorage.setItem('soundsEnabled', soundsEnabled);
+        }
+
+        function playSound(type) {
+            if (!soundsEnabled) return;
+            console.log(`Playing ${type} sound`);
+        }
+
+        function loadPreferences() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                body.setAttribute('data-theme', savedTheme);
+                themeToggle.innerHTML = savedTheme === 'dark' ? '<i class="fas fa-moon"></i>' : 
+                                      savedTheme === 'light' ? '<i class="fas fa-sun"></i>' : 
+                                      '<i class="fas fa-paint-brush"></i>';
+            }
+            
+            const savedSounds = localStorage.getItem('soundsEnabled');
+            if (savedSounds !== null) {
+                soundsEnabled = savedSounds === 'true';
+                soundToggle.innerHTML = soundsEnabled ? '<i class="fas fa-volume-up"></i>' : '<i class="fas fa-volume-mute"></i>';
+            }
+        }
+
+        function saveBookmarks() {
+            localStorage.setItem('bookmarkedQuestions', JSON.stringify(bookmarkedQuestions));
+        }
+
+        function loadQuizHistory() {
+            const saved = localStorage.getItem('quizHistory');
+            if (saved) {
+                quizHistory = JSON.parse(saved);
+            }
+            loadBookmarks();
+        }
+
+        function saveQuizHistory() {
+            quizHistory.push({
+                timestamp: new Date().toISOString(),
+                score: score,
+                percentage: ((score / (questions.length * 15)) * 100).toFixed(1),
+                timeSpent: timeElapsed,
+                streak: streak,
+                answers: answers,
+                performanceMetrics: performanceMetrics
+            });
+            localStorage.setItem('quizHistory', JSON.stringify(quizHistory));
+        }
+
+        function loadBookmarks() {
+            const saved = localStorage.getItem('bookmarkedQuestions');
+            if (saved) {
+                bookmarkedQuestions = JSON.parse(saved);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', initQuiz);
+    </script>
+</body>
+</html>
