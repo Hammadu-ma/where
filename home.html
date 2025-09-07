@@ -229,7 +229,12 @@
             border: 1px solid var(--border);
             display: flex;
             flex-direction: column;
-            height: 400px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .subject-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px var(--shadow);
         }
 
         .subject-header {
@@ -273,10 +278,16 @@
 
         .quiz-list {
             list-style: none;
-            max-height: 250px;
-            overflow-y: auto;
-            padding: 0.5rem 0;
-            margin-right: 5px;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+        .quiz-list.collapsed {
+            max-height: 210px;
+        }
+
+        .quiz-list.expanded {
+            max-height: 1000px;
         }
 
         /* Custom scrollbar */
@@ -299,6 +310,9 @@
 
         .quiz-item {
             margin-bottom: 0.5rem;
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.3s ease, transform 0.3s ease;
         }
 
         .quiz-link {
@@ -314,6 +328,7 @@
 
         .quiz-link:hover {
             background-color: var(--hover);
+            transform: translateX(5px);
         }
 
         .quiz-link-text {
@@ -324,27 +339,42 @@
 
         .quiz-link i {
             color: var(--primary);
-            opacity: 0;
             transition: var(--transition);
         }
 
         .quiz-link:hover i {
-            opacity: 1;
+            transform: translateX(3px);
         }
 
-        .view-all {
+        .view-all-btn {
             display: block;
+            width: 100%;
             text-align: center;
             padding: 0.8rem;
             color: var(--primary);
             text-decoration: none;
             font-weight: 500;
             border-top: 1px solid var(--border);
-            margin-top: auto;
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
 
-        .view-all:hover {
+        .view-all-btn:hover {
             background-color: var(--hover);
+            color: var(--accent);
+        }
+
+        .view-all-btn i {
+            transition: transform 0.3s ease;
+        }
+
+        .view-all-btn.expanded i {
+            transform: rotate(180deg);
         }
 
         /* Footer */
@@ -403,6 +433,16 @@
         .subject-card {
             animation: fadeIn 0.5s ease-out;
         }
+
+        .quiz-count {
+            display: inline-block;
+            background: rgba(6, 182, 212, 0.1);
+            color: var(--accent);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
     </style>
 </head>
 <body class="light-mode">
@@ -447,10 +487,11 @@
                         <div>
                             <h2 class="subject-title">Embryology</h2>
                             <p class="subject-description">Study of embryo development</p>
+                            <span class="quiz-count">6 quizzes</span>
                         </div>
                     </div>
                     <div class="quiz-list-container">
-                        <ul class="quiz-list">
+                        <ul class="quiz-list collapsed">
                             <li class="quiz-item"><a href="quiz.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-play-circle"></i> Embryology Practice 1</span> <i class="fas fa-arrow-right"></i></a></li>
                             <li class="quiz-item"><a href="2.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-play-circle"></i> Embryology Practice 2</span> <i class="fas fa-arrow-right"></i></a></li>
                             <li class="quiz-item"><a href="equiz3.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-file-alt"></i> 2014 Embryology Exam</span> <i class="fas fa-arrow-right"></i></a></li>
@@ -459,7 +500,10 @@
                             <li class="quiz-item"><a href="#" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> Developmental Biology</span> <i class="fas fa-arrow-right"></i></a></li>
                         </ul>
                     </div>
-                    <a href="#" class="view-all">View All Embryology Quizzes</a>
+                    <button class="view-all-btn">
+                        <span>View All Quizzes</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
                 </div>
                 
                 <!-- Subject 2 -->
@@ -471,10 +515,11 @@
                         <div>
                             <h2 class="subject-title">Anatomy</h2>
                             <p class="subject-description">Study of body structures</p>
+                            <span class="quiz-count">11 quizzes</span>
                         </div>
                     </div>
                     <div class="quiz-list-container">
-                        <ul class="quiz-list">
+                        <ul class="quiz-list collapsed">
                             <li class="quiz-item"><a href="anatquiz1.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-file-alt"></i> 2014 Anatomy Exam</span> <i class="fas fa-arrow-right"></i></a></li>
                             <li class="quiz-item"><a href="anatquiz2.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-play-circle"></i> Anatomy Quiz 2</span> <i class="fas fa-arrow-right"></i></a></li>
                             <li class="quiz-item"><a href="anatomynspart1.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> NS Part 1</span> <i class="fas fa-arrow-right"></i></a></li>
@@ -483,9 +528,15 @@
                             <li class="quiz-item"><a href="anatomynspart4.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> NS Part 4</span> <i class="fas fa-arrow-right"></i></a></li>
                             <li class="quiz-item"><a href="anatomynsfultopic1.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> Full NS Part 1</span> <i class="fas fa-arrow-right"></i></a></li>
                             <li class="quiz-item"><a href="anatomynsfultopic2.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> Full NS Part 2</span> <i class="fas fa-arrow-right"></i></a></li>
+                            <li class="quiz-item"><a href="anatomynsdilabpart1" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> DILAB NS Part 1</span> <i class="fas fa-arrow-right"></i></a></li>
+                            <li class="quiz-item"><a href="masterplexus.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> Master NS Part 1</span> <i class="fas fa-arrow-right"></i></a></li>
+                            <li class="quiz-item"><a href="anatomymedicoinfo1" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> NS Medicoinfo</span> <i class="fas fa-arrow-right"></i></a></li>
                         </ul>
                     </div>
-                    <a href="#" class="view-all">View All Anatomy Quizzes</a>
+                    <button class="view-all-btn">
+                        <span>View All Quizzes</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
                 </div>
                 
                 <!-- Subject 3 -->
@@ -497,10 +548,11 @@
                         <div>
                             <h2 class="subject-title">Physiology</h2>
                             <p class="subject-description">Study of body functions</p>
+                            <span class="quiz-count">7 quizzes</span>
                         </div>
                     </div>
                     <div class="quiz-list-container">
-                        <ul class="quiz-list">
+                        <ul class="quiz-list collapsed">
                             <li class="quiz-item"><a href="physions1.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> PHYSIO NS</span> <i class="fas fa-arrow-right"></i></a></li>
                             <li class="quiz-item"><a href="physions2.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> PHYSIO NS-2</span> <i class="fas fa-arrow-right"></i></a></li>
                             <li class="quiz-item"><a href="physions3.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> PHYSIO NS-3</span> <i class="fas fa-arrow-right"></i></a></li>
@@ -510,7 +562,10 @@
                             <li class="quiz-item"><a href="physions7.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> PHYSIO NS-7</span> <i class="fas fa-arrow-right"></i></a></li>
                         </ul>
                     </div>
-                    <a href="#" class="view-all">View All Physiology Quizzes</a>
+                    <button class="view-all-btn">
+                        <span>View All Quizzes</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
                 </div>
                 
                 <!-- Subject 4 -->
@@ -522,17 +577,21 @@
                         <div>
                             <h2 class="subject-title">Biochemistry</h2>
                             <p class="subject-description">Chemical processes in living organisms</p>
+                            <span class="quiz-count">4 quizzes</span>
                         </div>
                     </div>
                     <div class="quiz-list-container">
-                        <ul class="quiz-list">
+                        <ul class="quiz-list collapsed">
                             <li class="quiz-item"><a href="biochemquiz1.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-play-circle"></i> Biochemistry Quiz 1</span> <i class="fas fa-arrow-right"></i></a></li>
                             <li class="quiz-item"><a href="biochemquiz2.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-play-circle"></i> Biochemistry Quiz 2</span> <i class="fas fa-arrow-right"></i></a></li>
                             <li class="quiz-item"><a href="#" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-file-alt"></i> Metabolic Pathways</span> <i class="fas fa-arrow-right"></i></a></li>
                             <li class="quiz-item"><a href="#" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-dna"></i> Molecular Biology</span> <i class="fas fa-arrow-right"></i></a></li>
                         </ul>
                     </div>
-                    <a href="#" class="view-all">View All Biochemistry Quizzes</a>
+                    <button class="view-all-btn">
+                        <span>View All Quizzes</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
                 </div>
                 
                 <!-- Subject 5 -->
@@ -544,17 +603,21 @@
                         <div>
                             <h2 class="subject-title">Pathology</h2>
                             <p class="subject-description">Study of diseases</p>
+                            <span class="quiz-count">4 quizzes</span>
                         </div>
                     </div>
                     <div class="quiz-list-container">
-                        <ul class="quiz-list">
+                        <ul class="quiz-list collapsed">
                             <li class="quiz-item"><a href="pathoquiz1.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-play-circle"></i> Pathology Quiz 1</span> <i class="fas fa-arrow-right"></i></a></li>
                             <li class="quiz-item"><a href="pathoquiz2.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-play-circle"></i> Pathology Quiz 2</span> <i class="fas fa-arrow-right"></i></a></li>
                             <li class="quiz-item"><a href="#" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-lungs-virus"></i> Systemic Pathology</span> <i class="fas fa-arrow-right"></i></a></li>
                             <li class="quiz-item"><a href="#" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-microscope"></i> Histopathology</span> <i class="fas fa-arrow-right"></i></a></li>
                         </ul>
                     </div>
-                    <a href="#" class="view-all">View All Pathology Quizzes</a>
+                    <button class="view-all-btn">
+                        <span>View All Quizzes</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
                 </div>
                 
                 <!-- Subject 6 -->
@@ -566,17 +629,21 @@
                         <div>
                             <h2 class="subject-title">Pharmacology</h2>
                             <p class="subject-description">Study of drugs and medications</p>
+                            <span class="quiz-count">4 quizzes</span>
                         </div>
                     </div>
                     <div class="quiz-list-container">
-                        <ul class="quiz-list">
+                        <ul class="quiz-list collapsed">
                             <li class="quiz-item"><a href="pharmaquiz1.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-play-circle"></i> Pharmacology Quiz 1</span> <i class="fas fa-arrow-right"></i></a></li>
                             <li class="quiz-item"><a href="pharmaquiz2.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-play-circle"></i> Pharmacology Quiz 2</span> <i class="fas fa-arrow-right"></i></a></li>
                             <li class="quiz-item"><a href="#" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-capsules"></i> Drug Mechanisms</span> <i class="fas fa-arrow-right"></i></a></li>
                             <li class="quiz-item"><a href="#" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-prescription-bottle"></i> Clinical Pharmacology</span> <i class="fas fa-arrow-right"></i></a></li>
                         </ul>
                     </div>
-                    <a href="#" class="view-all">View All Pharmacology Quizzes</a>
+                    <button class="view-all-btn">
+                        <span>View All Quizzes</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
                 </div>
             </main>
         </div>
@@ -651,6 +718,36 @@
                     card.style.display = 'flex';
                 });
             });
+        });
+
+        // Expand/Collapse quiz lists
+        const viewAllButtons = document.querySelectorAll('.view-all-btn');
+        
+        viewAllButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const quizList = button.previousElementSibling.querySelector('.quiz-list');
+                const isExpanded = quizList.classList.contains('expanded');
+                
+                if (isExpanded) {
+                    quizList.classList.remove('expanded');
+                    quizList.classList.add('collapsed');
+                    button.querySelector('span').textContent = 'View All Quizzes';
+                    button.classList.remove('expanded');
+                } else {
+                    quizList.classList.remove('collapsed');
+                    quizList.classList.add('expanded');
+                    button.querySelector('span').textContent = 'Show Less';
+                    button.classList.add('expanded');
+                }
+            });
+        });
+
+        // Initially show only 4 quizzes in each list
+        document.querySelectorAll('.quiz-list').forEach(list => {
+            const quizzes = list.querySelectorAll('.quiz-item');
+            if (quizzes.length > 4) {
+                list.classList.add('collapsed');
+            }
         });
     </script>
 </body>
