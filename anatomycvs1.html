@@ -1,0 +1,2875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Embryology Quiz Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --primary-dark: #3a0ca3;
+            --secondary: #f72585;
+            --success: #4cc9f0;
+            --warning: #f9c74f;
+            --danger: #f94144;
+            --info: #577590;
+            --gray-50: #f8f9fa;
+            --gray-100: #f1f3f5;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --gray-500: #adb5bd;
+            --gray-600: #868e96;
+            --gray-700: #495057;
+            --gray-800: #343a40;
+            --gray-900: #212529;
+            --bg-primary: var(--gray-900);
+            --bg-secondary: #1a1d21;
+            --bg-tertiary: #2c303a;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-tertiary: rgba(255, 255, 255, 0.5);
+            --card-bg: rgba(35, 39, 47, 0.95);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15), 0 5px 10px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.2);
+            --transition-base: all 0.2s ease-in-out;
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --radius-2xl: 24px;
+            --header-height: 70px;
+            --max-width: 900px;
+            --side-padding: 1.5rem;
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f5f7fa;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #eef2f6;
+            --text-primary: #1a1d21;
+            --text-secondary: rgba(26, 29, 33, 0.7);
+            --text-tertiary: rgba(26, 29, 33, 0.5);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-border: rgba(0, 0, 0, 0.1);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.08), 0 5px 10px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        [data-theme="minimal"] {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f1f5f9;
+            --text-primary: #0f172a;
+            --text-secondary: #334155;
+            --text-tertiary: #64748b;
+            --card-bg: #ffffff;
+            --card-border: #e2e8f0;
+            --primary: #0ea5e9;
+            --primary-light: #38bdf8;
+            --primary-dark: #0284c7;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition-base);
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        header {
+            height: var(--header-height);
+            background: var(--bg-secondary);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 var(--side-padding);
+            transition: var(--transition-base);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--primary);
+        }
+
+        .logo-icon {
+            font-size: 1.5rem;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .control-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: var(--transition-base);
+            position: relative;
+        }
+
+        .control-btn:hover {
+            background: var(--bg-tertiary);
+            transform: translateY(-2px);
+        }
+
+        .control-btn i {
+            font-size: 1.1rem;
+        }
+
+        .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--secondary);
+            color: white;
+            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        main {
+            flex: 1;
+            padding: 2rem var(--side-padding);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .quiz-container {
+            width: 100%;
+            max-width: var(--max-width);
+            background: var(--card-bg);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition-smooth);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(10px);
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .quiz-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .quiz-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .stats-container {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.5rem 0.75rem;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            min-width: 70px;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            margin: 1.5rem 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-light), var(--primary));
+            border-radius: var(--radius-lg);
+            transition: width 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            100% { left: 100%; }
+        }
+
+        .question-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-tags {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .tag {
+            padding: 0.25rem 0.75rem;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .question-number {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            line-height: 1.4;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            border: 1px solid transparent;
+        }
+
+        .option:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-light);
+        }
+
+        .option.selected {
+            background: rgba(67, 97, 238, 0.1);
+            border-color: var(--primary);
+            animation: pulse 0.3s ease;
+        }
+
+        .option.correct {
+            background: rgba(76, 201, 240, 0.1);
+            border-color: var(--success);
+        }
+
+        .option.incorrect {
+            background: rgba(249, 65, 68, 0.1);
+            border-color: var(--danger);
+        }
+
+        .option-letter {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-md);
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 1rem;
+            flex-shrink: 0;
+            transition: var(--transition-base);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .option.selected .option-letter {
+            background: var(--primary);
+            color: white;
+        }
+
+        .option.correct .option-letter {
+            background: var(--success);
+            color: white;
+        }
+
+        .option.incorrect .option-letter {
+            background: var(--danger);
+            color: white;
+        }
+
+        .option-text {
+            flex: 1;
+        }
+
+        .bookmark-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: var(--transition-base);
+        }
+
+        .bookmark-btn:hover {
+            color: var(--primary);
+        }
+
+        .bookmark-btn.bookmarked {
+            color: var(--warning);
+        }
+
+        .feedback {
+            padding: 1rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .feedback.correct {
+            background: rgba(76, 201, 240, 0.1);
+            color: var(--success);
+        }
+
+        .feedback.incorrect {
+            background: rgba(249, 65, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .feedback-icon {
+            font-size: 1.5rem;
+        }
+
+        .explanation-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+        .explanation-container.expanded {
+            max-height: 500px;
+        }
+
+        .explanation {
+            padding: 1.25rem;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-lg);
+            margin-top: 1rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .explanation-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-lg);
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition-base);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--bg-secondary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .results-container {
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: conic-gradient(var(--primary) 0% var(--p, 0%), var(--bg-tertiary) var(--p, 0%) 100%);
+            position: relative;
+        }
+
+        .score-circle::before {
+            content: '';
+            position: absolute;
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background: var(--card-bg);
+        }
+
+        .score-text {
+            position: relative;
+            z-index: 1;
+        }
+
+        .score-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .score-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .results-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .result-stat {
+            padding: 1rem;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-lg);
+        }
+
+        .result-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .result-stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .review-section {
+            margin-top: 2rem;
+            text-align: left;
+        }
+
+        .review-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .review-item {
+            padding: 1.25rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 1rem;
+            background: var(--bg-tertiary);
+        }
+
+        .review-item.correct {
+            border-left: 4px solid var(--success);
+        }
+
+        .review-item.incorrect {
+            border-left: 4px solid var(--danger);
+        }
+
+        .review-question {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .review-answer {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .review-explanation {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        footer {
+            padding: 1.5rem var(--side-padding);
+            background: var(--bg-secondary);
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        .pulse {
+            animation: pulse 0.5s ease;
+        }
+
+        .bounce-in {
+            animation: bounceIn 0.5s ease;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-1 { margin-top: 0.5rem; }
+        .mt-2 { margin-top: 1rem; }
+        .mt-3 { margin-top: 1.5rem; }
+        .mt-4 { margin-top: 2rem; }
+
+        @media (max-width: 768px) {
+            :root {
+                --side-padding: 1rem;
+                --header-height: 60px;
+            }
+
+            .quiz-container {
+                padding: 1.5rem;
+            }
+
+            .quiz-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .stats-container {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .results-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .score-circle {
+                width: 120px;
+                height: 120px;
+            }
+
+            .score-circle::before {
+                width: 100px;
+                height: 100px;
+            }
+
+            .score-value {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navigation {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .option {
+                padding: 0.75rem;
+            }
+
+            .option-letter {
+                width: 28px;
+                height: 28px;
+                margin-right: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <header>
+        <div class="logo">
+            <i class="fas fa-brain logo-icon"></i>
+            <span>EmbryoQuiz</span>
+        </div>
+        <div class="header-controls">
+            <button class="control-btn" id="theme-toggle" aria-label="Toggle theme">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button class="control-btn" id="sound-toggle" aria-label="Toggle sound">
+                <i class="fas fa-volume-up"></i>
+            </button>
+            <button class="control-btn" id="stats-btn" aria-label="View statistics">
+                <i class="fas fa-chart-line"></i>
+                <span class="badge" id="bookmarks-count">0</span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <div class="quiz-container">
+            <div class="quiz-header">
+                <div>
+                    <h1 class="quiz-title">Advanced Embryology Quiz</h1>
+                    <p class="quiz-subtitle">Test your knowledge with professional questions and detailed explanations</p>
+                </div>
+                <div class="stats-container">
+                    <div class="stat">
+                        <span class="stat-value" id="score">0</span>
+                        <span class="stat-label">Score</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="timer">00:00</span>
+                        <span class="stat-label">Time</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="streak">0</span>
+                        <span class="stat-label">Streak</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="category">All</span>
+                        <span class="stat-label">Category</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar" style="width: 10%"></div>
+            </div>
+
+            <div class="question-meta">
+                <div class="question-tags">
+                    <span class="tag" id="category-tag">Neuro</span>
+                    <span class="tag" id="difficulty-tag">Medium</span>
+                </div>
+                <button class="bookmark-btn" id="bookmark-btn" aria-label="Bookmark question">
+                    <i class="fas fa-bookmark"></i>
+                </button>
+            </div>
+            <div class="question-number">Question <span id="current-question">1</span> of <span id="total-questions">10</span></div>
+            <div class="question-text" id="question">Which part of the brain is responsible for coordinating skeletal muscle contractions?</div>
+
+            <div class="options-grid" id="options-container">
+                <div class="option">
+                    <div class="option-letter">A</div>
+                    <div class="option-text">Cerebrum</div>
+                </div>
+                <div class="option">
+                    <div class="option-letter">B</div>
+                    <div class="option-text">Cerebellum</div>
+                </div>
+                <div class="option">
+                    <div class="option-letter">C</div>
+                    <div class="option-text">Pons</div>
+                </div>
+                <div class="option">
+                    <div class="option-letter">D</div>
+                    <div class="option-text">Midbrain</div>
+                </div>
+            </div>
+
+            <div class="feedback correct" id="feedback" style="display: none;">
+                <i class="fas fa-check-circle feedback-icon"></i>
+                <div class="feedback-text">Correct! Well done.</div>
+            </div>
+
+            <button class="btn btn-secondary" id="show-explanation-btn" style="display: none;">
+                <i class="fas fa-info-circle"></i> Show Explanation
+            </button>
+
+            <div class="explanation-container" id="explanation-container">
+                <div class="explanation">
+                    <div class="explanation-title">Explanation:</div>
+                    <div id="explanation-text">The cerebellum, located posterior to the brainstem, is the 'little brain.' It compares intended movements with actual movements to ensure smooth, coordinated skeletal muscle activity and maintain posture and balance.</div>
+                </div>
+            </div>
+
+            <div class="navigation">
+                <button class="btn btn-secondary" id="prev-btn" disabled>
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                <button class="btn btn-primary" id="next-btn">
+                    Next Question <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2025 EmbryoQuiz | Advanced Embryology Learning Platform | All Rights Reserved
+    </footer>
+
+    <script>
+        const questions =  
+[
+    {
+        "question": "What is another name for the cardiovascular system?",
+        "options": ["Respiratory system", "Circulatory system", "Digestive system", "Nervous system"],
+        "answer": 1,
+        "correctAnswer": "Circulatory system",
+        "explanation": "The cardiovascular system is also known as the circulatory system."
+    },
+    {
+        "question": "The primary function of the cardiovascular system is to:",
+        "options": ["Produce hormones", "Transport materials to and from cells", "Digest food", "Generate energy"],
+        "answer": 1,
+        "correctAnswer": "Transport materials to and from cells",
+        "explanation": "The main role of the cardiovascular system is to transport oxygen, nutrients, hormones, and waste to and from cells."
+    },
+    {
+        "question": "Which material is transported by the cardiovascular system from the lungs?",
+        "options": ["Nutrients", "Oxygen", "Waste materials", "Hormones"],
+        "answer": 1,
+        "correctAnswer": "Oxygen",
+        "explanation": "Oxygenated blood carries oxygen from the lungs to the body tissues."
+    },
+    {
+        "question": "The cardiovascular system transports nutrients from which system?",
+        "options": ["Endocrine system", "Digestive system", "Respiratory system", "Urinary system"],
+        "answer": 1,
+        "correctAnswer": "Digestive system",
+        "explanation": "Nutrients absorbed from the digestive system are transported via the blood to cells."
+    },
+    {
+        "question": "Hormones are transported by the cardiovascular system from:",
+        "options": ["Muscles", "Glands of the endocrine system", "Liver", "Kidneys"],
+        "answer": 1,
+        "correctAnswer": "Glands of the endocrine system",
+        "explanation": "Endocrine glands secrete hormones into the blood for distribution."
+    },
+    {
+        "question": "Waste materials are removed from cells by the:",
+        "options": ["Nervous system", "Cardiovascular system", "Skeletal system", "Integumentary system"],
+        "answer": 1,
+        "correctAnswer": "Cardiovascular system",
+        "explanation": "The cardiovascular system carries metabolic wastes from cells to excretory organs."
+    },
+    {
+        "question": "The main components of the cardiovascular system include:",
+        "options": ["Heart, lungs, and blood", "Heart, blood vessels, and blood", "Brain, spinal cord, and nerves", "Liver, gallbladder, and pancreas"],
+        "answer": 1,
+        "correctAnswer": "Heart, blood vessels, and blood",
+        "explanation": "The system consists of the heart, blood vessels, and blood."
+    },
+    {
+        "question": "The heart is responsible for:",
+        "options": ["Filtering blood", "Pumping blood through the body", "Producing blood cells", "Storing nutrients"],
+        "answer": 1,
+        "correctAnswer": "Pumping blood through the body",
+        "explanation": "The heart acts as a pump to circulate blood."
+    },
+    {
+        "question": "Blood vessels serve as a:",
+        "options": ["Protective barrier", "Network for material transport", "Energy source", "Waste storage"],
+        "answer": 1,
+        "correctAnswer": "Network for material transport",
+        "explanation": "Blood vessels form a closed system for transporting blood."
+    },
+    {
+        "question": "Blood in the cardiovascular system acts as:",
+        "options": ["A structural support", "A transport medium", "A hormone producer", "A digestive enzyme"],
+        "answer": 1,
+        "correctAnswer": "A transport medium",
+        "explanation": "Blood serves as the medium that carries various substances throughout the body."
+    },
+    {
+        "question": "Oxygenated blood is carried away from the heart by:",
+        "options": ["Veins", "Capillaries", "Arteries", "Lymphatics"],
+        "answer": 2,
+        "correctAnswer": "Arteries",
+        "explanation": "Arteries carry oxygenated blood from the heart to tissues."
+    },
+    {
+        "question": "Deoxygenated blood is typically carried toward the heart by:",
+        "options": ["Arteries", "Capillaries", "Veins", "Arterioles"],
+        "answer": 2,
+        "correctAnswer": "Veins",
+        "explanation": "Veins return deoxygenated blood to the heart."
+    },
+    {
+        "question": "The exchange of substances with cells occurs in:",
+        "options": ["Arteries", "Veins", "Capillaries", "Aorta"],
+        "answer": 2,
+        "correctAnswer": "Capillaries",
+        "explanation": "Capillaries are the site for diffusion of gases and nutrients."
+    },
+    {
+        "question": "The cardiovascular system helps maintain:",
+        "options": ["Bone strength", "Homeostasis", "Muscle contraction", "Digestion"],
+        "answer": 1,
+        "correctAnswer": "Homeostasis",
+        "explanation": "It maintains body temperature, pH, and fluid balance."
+    },
+    {
+        "question": "Which component of the cardiovascular system is a hollow muscular organ?",
+        "options": ["Blood vessels", "Blood", "Heart", "Capillaries"],
+        "answer": 2,
+        "correctAnswer": "Heart",
+        "explanation": "The heart is a muscular pump."
+    },
+    {
+        "question": "The cardiovascular system transports waste to which organ for excretion?",
+        "options": ["Lungs", "Kidneys", "Liver", "All of the above"],
+        "answer": 3,
+        "correctAnswer": "All of the above",
+        "explanation": "Wastes go to lungs (CO2), kidneys (urea), and liver (processing)."
+    },
+    {
+        "question": "The heart lies in which cavity?",
+        "options": ["Cranial cavity", "Pericardial cavity", "Abdominal cavity", "Pelvic cavity"],
+        "answer": 1,
+        "correctAnswer": "Pericardial cavity",
+        "explanation": "The heart is enclosed in the pericardial cavity within the mediastinum."
+    },
+    {
+        "question": "The pericardium encloses the:",
+        "options": ["Lungs", "Heart and roots of great vessels", "Liver", "Kidneys"],
+        "answer": 1,
+        "correctAnswer": "Heart and roots of great vessels",
+        "explanation": "The pericardium surrounds the heart and the bases of the great vessels."
+    },
+    {
+        "question": "The cardiovascular system is essential for delivering:",
+        "options": ["Oxygen and nutrients", "Waste and toxins", "Both a and b", "Neither a nor b"],
+        "answer": 2,
+        "correctAnswer": "Both a and b",
+        "explanation": "It delivers oxygen and nutrients while removing wastes."
+    },
+    {
+        "question": "The circulatory system supports which body function?",
+        "options": ["Vision", "Cellular respiration", "Hearing", "Taste"],
+        "answer": 1,
+        "correctAnswer": "Cellular respiration",
+        "explanation": "It supplies oxygen for cellular respiration."
+    },
+    {
+        "question": "The heart is located in which part of the thorax?",
+        "options": ["Lateral cavity", "Middle mediastinum", "Anterior cavity", "Posterior cavity"],
+        "answer": 1,
+        "correctAnswer": "Middle mediastinum",
+        "explanation": "The heart is in the middle mediastinum."
+    },
+    {
+        "question": "What fraction of the heart lies to the left of the midsternal line?",
+        "options": ["1/3", "1/2", "2/3", "3/4"],
+        "answer": 2,
+        "correctAnswer": "2/3",
+        "explanation": "About two-thirds of the heart is left of the midline."
+    },
+    {
+        "question": "The shape of the heart is best described as:",
+        "options": ["Spherical", "Pyramidal", "Cylindrical", "Cuboidal"],
+        "answer": 1,
+        "correctAnswer": "Pyramidal",
+        "explanation": "The heart has a pyramidal shape with base and apex."
+    },
+    {
+        "question": "The apex of the heart points toward:",
+        "options": ["The right shoulder", "The left hip", "The head", "The right hip"],
+        "answer": 1,
+        "correctAnswer": "The left hip",
+        "explanation": "The apex points inferiorly and to the left."
+    },
+    {
+        "question": "The base of the heart is directed toward:",
+        "options": ["The left side", "The right side", "The head", "The feet"],
+        "answer": 2,
+        "correctAnswer": "The head",
+        "explanation": "The base is superior, directed toward the head."
+    },
+    {
+        "question": "The right side of the heart pumps blood to the:",
+        "options": ["Body", "Lungs", "Brain", "Liver"],
+        "answer": 1,
+        "correctAnswer": "Lungs",
+        "explanation": "Right side handles pulmonary circulation."
+    },
+    {
+        "question": "The left side of the heart pumps blood to the:",
+        "options": ["Lungs", "Body", "Kidneys", "Heart itself"],
+        "answer": 1,
+        "correctAnswer": "Body",
+        "explanation": "Left side handles systemic circulation."
+    },
+    {
+        "question": "How many chambers does the heart have?",
+        "options": ["Two", "Three", "Four", "Five"],
+        "answer": 2,
+        "correctAnswer": "Four",
+        "explanation": "Two atria and two ventricles."
+    },
+    {
+        "question": "The right atrium receives:",
+        "options": ["Oxygenated blood", "Deoxygenated blood", "Mixed blood", "No blood"],
+        "answer": 1,
+        "correctAnswer": "Deoxygenated blood",
+        "explanation": "From superior and inferior vena cava."
+    },
+    {
+        "question": "The left ventricle pumps blood into the:",
+        "options": ["Pulmonary artery", "Aorta", "Pulmonary vein", "Coronary sinus"],
+        "answer": 1,
+        "correctAnswer": "Aorta",
+        "explanation": "Into the aorta for systemic circulation."
+    },
+    {
+        "question": "The outer layer of the pericardium is the:",
+        "options": ["Serous pericardium", "Fibrous pericardium", "Visceral pericardium", "Parietal pericardium"],
+        "answer": 1,
+        "correctAnswer": "Fibrous pericardium",
+        "explanation": "The fibrous layer is the tough outer part."
+    },
+    {
+        "question": "The inner smooth layer of the pericardium is the:",
+        "options": ["Fibrous pericardium", "Serous pericardium", "Epicardium", "Endocardium"],
+        "answer": 1,
+        "correctAnswer": "Serous pericardium",
+        "explanation": "The serous layer provides lubrication."
+    },
+    {
+        "question": "The pericardial cavity is a potential space between:",
+        "options": ["Fibrous and serous pericardium", "Visceral and parietal serous pericardium", "Epicardium and myocardium", "Endocardium and epicardium"],
+        "answer": 1,
+        "correctAnswer": "Visceral and parietal serous pericardium",
+        "explanation": "Between the two serous layers."
+    },
+    {
+        "question": "The heart is supplied by how many major coronary arteries?",
+        "options": ["One", "Two", "Three", "Four"],
+        "answer": 1,
+        "correctAnswer": "Two",
+        "explanation": "Right and left coronary arteries."
+    },
+    {
+        "question": "The right coronary artery primarily supplies:",
+        "options": ["Left ventricle", "Right atrium and ventricle", "Left atrium", "Aorta"],
+        "answer": 1,
+        "correctAnswer": "Right atrium and ventricle",
+        "explanation": "Supplies the right side of the heart."
+    },
+    {
+        "question": "The great cardiac vein drains into the:",
+        "options": ["Coronary artery", "Coronary sinus", "Pulmonary vein", "Aorta"],
+        "answer": 1,
+        "correctAnswer": "Coronary sinus",
+        "explanation": "Most cardiac veins drain into the coronary sinus."
+    },
+    {
+        "question": "The coronary sinus is located in the:",
+        "options": ["Anterior sulcus", "Coronary sulcus", "Interventricular sulcus", "Atrial sulcus"],
+        "answer": 1,
+        "correctAnswer": "Coronary sulcus",
+        "explanation": "In the atrioventricular groove."
+    },
+    {
+        "question": "The middle cardiac vein drains:",
+        "options": ["Left ventricle", "Right ventricle", "Both ventricles", "Atria only"],
+        "answer": 1,
+        "correctAnswer": "Right ventricle",
+        "explanation": "Drains the posterior right ventricle."
+    },
+    {
+        "question": "The small cardiac vein accompanies which artery?",
+        "options": ["Left coronary artery", "Right coronary artery", "Anterior interventricular artery", "Circumflex artery"],
+        "answer": 1,
+        "correctAnswer": "Right coronary artery",
+        "explanation": "Runs along the right coronary artery."
+    },
+    {
+        "question": "The oblique vein of the left atrium drains into:",
+        "options": ["Great cardiac vein", "Coronary sinus", "Pulmonary vein", "Superior vena cava"],
+        "answer": 1,
+        "correctAnswer": "Coronary sinus",
+        "explanation": "Drains into the coronary sinus."
+    },
+    {
+        "question": "Which blood vessel carries blood away from the heart?",
+        "options": ["Vein", "Capillary", "Artery", "Venule"],
+        "answer": 2,
+        "correctAnswer": "Artery",
+        "explanation": "Arteries carry blood away from the heart."
+    },
+    {
+        "question": "Which blood vessel carries blood toward the heart?",
+        "options": ["Artery", "Capillary", "Vein", "Arteriole"],
+        "answer": 2,
+        "correctAnswer": "Vein",
+        "explanation": "Veins carry blood toward the heart."
+    },
+    {
+        "question": "The smallest blood vessels where exchange occurs are:",
+        "options": ["Arteries", "Veins", "Capillaries", "Arterioles"],
+        "answer": 2,
+        "correctAnswer": "Capillaries",
+        "explanation": "Capillaries allow exchange between blood and tissues."
+    },
+    {
+        "question": "Capillaries connect:",
+        "options": ["Arteries and veins", "Arterioles and venules", "Veins and capillaries", "Arteries and arterioles"],
+        "answer": 1,
+        "correctAnswer": "Arterioles and venules",
+        "explanation": "Capillaries are between arterioles and venules."
+    },
+    {
+        "question": "The largest artery in the body is the:",
+        "options": ["Pulmonary artery", "Aorta", "Carotid artery", "Subclavian artery"],
+        "answer": 1,
+        "correctAnswer": "Aorta",
+        "explanation": "The aorta is the main systemic artery."
+    },
+    {
+        "question": "The common carotid artery divides into:",
+        "options": ["Internal and external carotid arteries", "Subclavian and axillary arteries", "Radial and ulnar arteries", "Femoral and popliteal arteries"],
+        "answer": 0,
+        "correctAnswer": "Internal and external carotid arteries",
+        "explanation": "Divides into internal (brain) and external (face/neck)."
+    },
+    {
+        "question": "The internal carotid artery supplies:",
+        "options": ["Upper limbs", "Neck and face", "Brain", "Lower limbs"],
+        "answer": 2,
+        "correctAnswer": "Brain",
+        "explanation": "Supplies the brain."
+    },
+    {
+        "question": "The external carotid artery supplies:",
+        "options": ["Brain", "Neck and face", "Upper limbs", "Heart"],
+        "answer": 1,
+        "correctAnswer": "Neck and face",
+        "explanation": "Supplies structures of the neck and face."
+    },
+    {
+        "question": "The right subclavian artery arises from the:",
+        "options": ["Arch of the aorta", "Brachiocephalic trunk", "Left common carotid", "Axillary artery"],
+        "answer": 1,
+        "correctAnswer": "Brachiocephalic trunk",
+        "explanation": "Right subclavian from brachiocephalic trunk."
+    },
+    {
+        "question": "The left subclavian artery arises from the:",
+        "options": ["Brachiocephalic trunk", "Arch of the aorta", "Axillary artery", "Common carotid artery"],
+        "answer": 1,
+        "correctAnswer": "Arch of the aorta",
+        "explanation": "Left subclavian directly from aortic arch."
+    },
+    {
+        "question": "The axillary artery begins at the:",
+        "options": ["Lateral border of the first rib", "Medial border of the clavicle", "Midpoint of the humerus", "Inferior border of the scapula"],
+        "answer": 0,
+        "correctAnswer": "Lateral border of the first rib",
+        "explanation": "Continues from subclavian at first rib."
+    },
+    {
+        "question": "The brachial artery supplies the:",
+        "options": ["Lower leg", "Upper arm", "Forearm", "Hand"],
+        "answer": 1,
+        "correctAnswer": "Upper arm",
+        "explanation": "Brachial artery is in the upper arm."
+    },
+    {
+        "question": "The radial artery is a branch of the:",
+        "options": ["Ulnar artery", "Brachial artery", "Axillary artery", "Subclavian artery"],
+        "answer": 1,
+        "correctAnswer": "Brachial artery",
+        "explanation": "Radial and ulnar are branches of brachial."
+    },
+    {
+        "question": "The femoral artery supplies the:",
+        "options": ["Upper arm", "Thigh", "Lower leg", "Foot"],
+        "answer": 1,
+        "correctAnswer": "Thigh",
+        "explanation": "Femoral artery supplies the thigh."
+    },
+    {
+        "question": "The anterior tibial artery supplies:",
+        "options": ["Posterior leg", "Anterior leg", "Sole of the foot", "Thigh"],
+        "answer": 1,
+        "correctAnswer": "Anterior leg",
+        "explanation": "Supplies the anterior compartment of the leg."
+    },
+    {
+        "question": "Veins draining the head and neck unite with which veins?",
+        "options": ["Femoral veins", "Subclavian veins", "Iliac veins", "Popliteal veins"],
+        "answer": 1,
+        "correctAnswer": "Subclavian veins",
+        "explanation": "Internal jugular joins subclavian to form brachiocephalic."
+    },
+    {
+        "question": "The external jugular vein drains:",
+        "options": ["Brain", "Superficial neck and face", "Deep neck muscles", "Thorax"],
+        "answer": 1,
+        "correctAnswer": "Superficial neck and face",
+        "explanation": "Drains superficial structures."
+    },
+    {
+        "question": "The internal jugular vein drains:",
+        "options": ["Superficial face", "Skull and brain", "Upper limb", "Lower limb"],
+        "answer": 1,
+        "correctAnswer": "Skull and brain",
+        "explanation": "Drains the brain and dural sinuses."
+    },
+    {
+        "question": "The brachial vein drains the:",
+        "options": ["Upper arm", "Forearm", "Hand", "Shoulder"],
+        "answer": 0,
+        "correctAnswer": "Upper arm",
+        "explanation": "Brachial veins accompany the brachial artery."
+    },
+    {
+        "question": "The great saphenous vein drains into the:",
+        "options": ["Popliteal vein", "Femoral vein", "External iliac vein", "Inferior vena cava"],
+        "answer": 1,
+        "correctAnswer": "Femoral vein",
+        "explanation": "Empties into the femoral vein."
+    },
+    {
+        "question": "About what fraction of the heart's venous drainage is via veins into the coronary sinus?",
+        "options": ["1/3", "1/2", "2/3", "3/4"],
+        "answer": 2,
+        "correctAnswer": "2/3",
+        "explanation": "The coronary sinus receives about two-thirds of cardiac venous blood."
+    },
+    {
+        "question": "The superior vena cava receives blood from:",
+        "options": ["Lower limbs", "Head, neck, and upper limbs", "Abdomen", "Heart"],
+        "answer": 1,
+        "correctAnswer": "Head, neck, and upper limbs",
+        "explanation": "Drains upper body."
+    },
+    {
+        "question": "The azygos vein drains:",
+        "options": ["Upper limbs", "Thoracic and abdominal walls", "Lower limbs", "Brain"],
+        "answer": 1,
+        "correctAnswer": "Thoracic and abdominal walls",
+        "explanation": "Drains the posterior thoracic and abdominal walls."
+    },
+    {
+        "question": "The inferior vena cava is formed by the union of:",
+        "options": ["Common iliac veins", "Femoral veins", "Renal veins", "Hepatic veins"],
+        "answer": 0,
+        "correctAnswer": "Common iliac veins",
+        "explanation": "Common iliac veins unite to form IVC."
+    },
+    {
+        "question": "The popliteal vein is formed by the merger of:",
+        "options": ["Anterior and posterior tibial veins", "Femoral and great saphenous veins", "Iliac veins", "Subclavian veins"],
+        "answer": 0,
+        "correctAnswer": "Anterior and posterior tibial veins",
+        "explanation": "Tibial veins unite to form popliteal."
+    },
+    {
+        "question": "The femoral vein receives blood from the:",
+        "options": ["Great saphenous vein", "Popliteal vein", "Both a and b", "Neither a nor b"],
+        "answer": 2,
+        "correctAnswer": "Both a and b",
+        "explanation": "Receives from popliteal and great saphenous."
+    },
+    {
+        "question": "The external iliac vein is formed by the:",
+        "options": ["Femoral vein", "Popliteal vein", "Great saphenous vein", "Tibial veins"],
+        "answer": 0,
+        "correctAnswer": "Femoral vein",
+        "explanation": "Continuation of the femoral vein."
+    },
+    {
+        "question": "The small saphenous vein empties into the:",
+        "options": ["Femoral vein", "Popliteal vein", "Great saphenous vein", "External iliac vein"],
+        "answer": 1,
+        "correctAnswer": "Popliteal vein",
+        "explanation": "Drains into popliteal vein."
+    },
+    {
+        "question": "The cephalic vein drains into the:",
+        "options": ["Basilic vein", "Axillary vein", "Brachial vein", "Median cubital vein"],
+        "answer": 1,
+        "correctAnswer": "Axillary vein",
+        "explanation": "Cephalic vein joins axillary vein."
+    },
+    {
+        "question": "The median cubital vein connects:",
+        "options": ["Cephalic and basilic veins", "Radial and ulnar veins", "Brachial and axillary veins", "Femoral and popliteal veins"],
+        "answer": 0,
+        "correctAnswer": "Cephalic and basilic veins",
+        "explanation": "Anastomosis between cephalic and basilic."
+    },
+    {
+        "question": "The radial vein drains the:",
+        "options": ["Upper arm", "Forearm", "Hand", "Thigh"],
+        "answer": 1,
+        "correctAnswer": "Forearm",
+        "explanation": "Drains the forearm."
+    },
+    {
+        "question": "The ulnar vein joins the radial vein to form the:",
+        "options": ["Brachial vein", "Axillary vein", "Subclavian vein", "Cephalic vein"],
+        "answer": 0,
+        "correctAnswer": "Brachial vein",
+        "explanation": "Radial and ulnar form brachial veins."
+    },
+    {
+        "question": "The azygos vein empties into the:",
+        "options": ["Inferior vena cava", "Superior vena cava", "Hepatic portal vein", "Coronary sinus"],
+        "answer": 1,
+        "correctAnswer": "Superior vena cava",
+        "explanation": "Azygos drains into SVC."
+    },
+    {
+        "question": "The hepatic veins drain into the:",
+        "options": ["Inferior vena cava", "Superior vena cava", "Portal vein", "Azygos vein"],
+        "answer": 0,
+        "correctAnswer": "Inferior vena cava",
+        "explanation": "Hepatic veins drain liver into IVC."
+    },
+    {
+        "question": "The renal veins drain into the:",
+        "options": ["Inferior vena cava", "Superior vena cava", "Portal vein", "Femoral vein"],
+        "answer": 0,
+        "correctAnswer": "Inferior vena cava",
+        "explanation": "Renal veins drain into IVC."
+    },
+    {
+        "question": "The common iliac veins unite to form the:",
+        "options": ["Femoral vein", "Inferior vena cava", "Superior vena cava", "Portal vein"],
+        "answer": 1,
+        "correctAnswer": "Inferior vena cava",
+        "explanation": "Common iliac veins form IVC."
+    },
+    {
+        "question": "The great saphenous vein originates at the:",
+        "options": ["Dorsal venous arch of the foot", "Popliteal fossa", "Femoral region", "Axillary region"],
+        "answer": 0,
+        "correctAnswer": "Dorsal venous arch of the foot",
+        "explanation": "Starts from dorsal venous arch."
+    },
+    {
+        "question": "The basilic vein merges with the:",
+        "options": ["Cephalic vein", "Brachial vein", "Axillary vein", "Median cubital vein"],
+        "answer": 1,
+        "correctAnswer": "Brachial vein",
+        "explanation": "Basilic joins brachial veins."
+    },
+    {
+        "question": "The internal iliac vein merges with the external iliac vein to form:",
+        "options": ["Common iliac vein", "Femoral vein", "Popliteal vein", "Subclavian vein"],
+        "answer": 0,
+        "correctAnswer": "Common iliac vein",
+        "explanation": "Internal and external iliac form common iliac."
+    },
+    {
+        "question": "The thoracic duct drains into the:",
+        "options": ["Right subclavian vein", "Left subclavian vein", "Superior vena cava", "Inferior vena cava"],
+        "answer": 1,
+        "correctAnswer": "Left subclavian vein",
+        "explanation": "Drains into left subclavian vein."
+    },
+    {
+        "question": "Blood is classified as a:",
+        "options": ["Epithelial tissue", "Liquid connective tissue", "Muscle tissue", "Nervous tissue"],
+        "answer": 1,
+        "correctAnswer": "Liquid connective tissue",
+        "explanation": "Blood is a fluid connective tissue."
+    },
+    {
+        "question": "The non-plasma portion of blood includes:",
+        "options": ["Red blood cells and platelets", "Hormones and enzymes", "Nutrients and waste", "Water and salts"],
+        "answer": 0,
+        "correctAnswer": "Red blood cells and platelets",
+        "explanation": "Formed elements: RBCs, WBCs, platelets."
+    },
+    {
+        "question": "The primary function of blood is:",
+        "options": ["Structural support", "Transportation", "Energy production", "Waste storage"],
+        "answer": 1,
+        "correctAnswer": "Transportation",
+        "explanation": "Transports gases, nutrients, wastes, hormones."
+    },
+    {
+        "question": "Blood regulates which body function?",
+        "options": ["Digestion", "Body temperature", "Muscle contraction", "Bone growth"],
+        "answer": 1,
+        "correctAnswer": "Body temperature",
+        "explanation": "Through heat distribution and buffering."
+    },
+    {
+        "question": "Blood provides protection through:",
+        "options": ["Clotting", "Oxygenation", "Nutrient delivery", "Hormone secretion"],
+        "answer": 0,
+        "correctAnswer": "Clotting",
+        "explanation": "Platelets and clotting factors prevent blood loss."
+    },
+    {
+        "question": "Red blood cells are produced in the:",
+        "options": ["Liver", "Red bone marrow", "Spleen", "Kidneys"],
+        "answer": 1,
+        "correctAnswer": "Red bone marrow",
+        "explanation": "Site of hematopoiesis."
+    },
+    {
+        "question": "The process of red blood cell production is called:",
+        "options": ["Hemopoiesis", "Erythropoiesis", "Leukopoiesis", "Thrombopoiesis"],
+        "answer": 1,
+        "correctAnswer": "Erythropoiesis",
+        "explanation": "Specific to RBC formation."
+    },
+    {
+        "question": "Mature red blood cells lack:",
+        "options": ["Hemoglobin", "Nucleus", "Membrane", "Cytoplasm"],
+        "answer": 1,
+        "correctAnswer": "Nucleus",
+        "explanation": "Anucleate for more space for hemoglobin."
+    },
+    {
+        "question": "The shape of red blood cells is:",
+        "options": ["Spherical", "Biconcave disc", "Cylindrical", "Irregular"],
+        "answer": 1,
+        "correctAnswer": "Biconcave disc",
+        "explanation": "Increases surface area for gas exchange."
+    },
+    {
+        "question": "Platelets are involved in:",
+        "options": ["Oxygen transport", "Blood clotting", "Immune response", "Nutrient absorption"],
+        "answer": 1,
+        "correctAnswer": "Blood clotting",
+        "explanation": "Essential for hemostasis."
+    },
+    {
+        "question": "The lifespan of platelets is approximately:",
+        "options": ["5 days", "10 days", "15 days", "20 days"],
+        "answer": 1,
+        "correctAnswer": "10 days",
+        "explanation": "Platelets live about 10 days."
+    },
+    {
+        "question": "Platelets appear as:",
+        "options": ["Whole cells", "Cell fragments", "Nucleated cells", "Fibers"],
+        "answer": 1,
+        "correctAnswer": "Cell fragments",
+        "explanation": "Megakaryocyte fragments."
+    },
+    {
+        "question": "White blood cells are classified as:",
+        "options": ["Granulocytes and agranulocytes", "Erythrocytes and leukocytes", "Platelets and thrombocytes", "Monocytes and lymphocytes"],
+        "answer": 0,
+        "correctAnswer": "Granulocytes and agranulocytes",
+        "explanation": "Based on presence of granules."
+    },
+    {
+        "question": "Which type of white blood cell has no granules after staining?",
+        "options": ["Granulocytes", "Agranulocytes", "Neutrophils", "Eosinophils"],
+        "answer": 1,
+        "correctAnswer": "Agranulocytes",
+        "explanation": "Lymphocytes and monocytes lack granules."
+    },
+    {
+        "question": "Lymphocytes include:",
+        "options": ["Monocytes and eosinophils", "T-cells and B-cells", "Basophils and neutrophils", "Platelets and erythrocytes"],
+        "answer": 1,
+        "correctAnswer": "T-cells and B-cells",
+        "explanation": "Main types of lymphocytes."
+    },
+    {
+        "question": "Granulocytes include:",
+        "options": ["Monocytes and lymphocytes", "Eosinophils and neutrophils", "T-cells and B-cells", "Red blood cells"],
+        "answer": 1,
+        "correctAnswer": "Eosinophils and neutrophils",
+        "explanation": "Along with basophils."
+    },
+    {
+        "question": "Neutrophils are a type of:",
+        "options": ["Agranulocyte", "Granulocyte", "Platelet", "Erythrocyte"],
+        "answer": 1,
+        "correctAnswer": "Granulocyte",
+        "explanation": "Most abundant granulocyte."
+    },
+    {
+        "question": "The function of white blood cells is:",
+        "options": ["Oxygen transport", "Immune response", "Blood clotting", "Nutrient delivery"],
+        "answer": 1,
+        "correctAnswer": "Immune response",
+        "explanation": "Defend against pathogens."
+    },
+    {
+        "question": "Red blood cells contain:",
+        "options": ["Nucleus", "Hemoglobin", "Granules", "Platelets"],
+        "answer": 1,
+        "correctAnswer": "Hemoglobin",
+        "explanation": "Hemoglobin binds oxygen."
+    },
+    {
+        "question": "The process of forming all blood cells is called:",
+        "options": ["Erythropoiesis", "Hemopoiesis", "Leukopoiesis", "Thrombopoiesis"],
+        "answer": 1,
+        "correctAnswer": "Hemopoiesis",
+        "explanation": "General term for blood cell formation."
+    },
+    {
+        "question": "The mediastinum is located between:",
+        "options": ["Lungs and heart", "Two lungs", "Diaphragm and ribs", "Spine and sternum"],
+        "answer": 1,
+        "correctAnswer": "Two lungs",
+        "explanation": "Between the pleural cavities of the lungs."
+    },
+    {
+        "question": "The superior boundary of the mediastinum is the:",
+        "options": ["Diaphragm", "Superior thoracic aperture", "Sternum", "Thoracic vertebrae"],
+        "answer": 1,
+        "correctAnswer": "Superior thoracic aperture",
+        "explanation": "Thoracic inlet."
+    },
+    {
+        "question": "The inferior boundary of the mediastinum is the:",
+        "options": ["Superior thoracic aperture", "Diaphragm", "Sternum", "Costal cartilages"],
+        "answer": 1,
+        "correctAnswer": "Diaphragm",
+        "explanation": "Inferior boundary is the diaphragm."
+    },
+    {
+        "question": "The mediastinum contains all thoracic viscera except:",
+        "options": ["Heart", "Lungs", "Esophagus", "Trachea"],
+        "answer": 1,
+        "correctAnswer": "Lungs",
+        "explanation": "Lungs are in pleural cavities."
+    },
+    {
+        "question": "The superior mediastinum extends to the:",
+        "options": ["Diaphragm", "Transverse thoracic plane", "Sternum", "Spine"],
+        "answer": 1,
+        "correctAnswer": "Transverse thoracic plane",
+        "explanation": "Divided at T4-T5 level."
+    },
+    {
+        "question": "The superior vena cava is located in the:",
+        "options": ["Inferior mediastinum", "Superior mediastinum", "Anterior mediastinum", "Posterior mediastinum"],
+        "answer": 1,
+        "correctAnswer": "Superior mediastinum",
+        "explanation": "In the superior mediastinum."
+    },
+    {
+        "question": "The arch of the aorta is found in the:",
+        "options": ["Middle mediastinum", "Superior mediastinum", "Anterior mediastinum", "Posterior mediastinum"],
+        "answer": 1,
+        "correctAnswer": "Superior mediastinum",
+        "explanation": "Aortic arch in superior mediastinum."
+    },
+    {
+        "question": "The thymus is located in the:",
+        "options": ["Middle mediastinum", "Superior mediastinum", "Anterior mediastinum", "Posterior mediastinum"],
+        "answer": 2,
+        "correctAnswer": "Anterior mediastinum",
+        "explanation": "Thymus in anterior mediastinum."
+    },
+    {
+        "question": "The inferior mediastinum is subdivided by the:",
+        "options": ["Diaphragm", "Pericardium", "Sternum", "Lungs"],
+        "answer": 1,
+        "correctAnswer": "Pericardium",
+        "explanation": "Into anterior, middle, posterior."
+    },
+    {
+        "question": "The middle mediastinum contains the:",
+        "options": ["Esophagus", "Pericardium and heart", "Thymus", "Thoracic aorta"],
+        "answer": 1,
+        "correctAnswer": "Pericardium and heart",
+        "explanation": "Heart and pericardium in middle."
+    },
+    {
+        "question": "The anterior mediastinum contains:",
+        "options": ["Heart and great vessels", "Remnants of the thymus", "Esophagus and aorta", "Lungs"],
+        "answer": 1,
+        "correctAnswer": "Remnants of the thymus",
+        "explanation": "Loose connective tissue and thymus remnants."
+    },
+    {
+        "question": "The posterior mediastinum contains the:",
+        "options": ["Heart", "Esophagus and thoracic aorta", "Thymus", "Pericardium"],
+        "answer": 1,
+        "correctAnswer": "Esophagus and thoracic aorta",
+        "explanation": "Esophagus, descending aorta, etc."
+    },
+    {
+        "question": "The transverse thoracic plane passes through:",
+        "options": ["Sternum and T4-T5 disc", "Diaphragm", "Lungs", "Spine"],
+        "answer": 0,
+        "correctAnswer": "Sternum and T4-T5 disc",
+        "explanation": "At the level of sternal angle and T4-T5."
+    },
+    {
+        "question": "The phrenic nerves are located in the:",
+        "options": ["Anterior mediastinum", "Superior mediastinum", "Middle mediastinum", "Posterior mediastinum"],
+        "answer": 1,
+        "correctAnswer": "Superior mediastinum",
+        "explanation": "Phrenic nerves in superior mediastinum."
+    },
+    {
+        "question": "The vagus nerves are found in the:",
+        "options": ["Middle mediastinum", "Superior mediastinum", "Anterior mediastinum", "Posterior mediastinum"],
+        "answer": 3,
+        "correctAnswer": "Posterior mediastinum",
+        "explanation": "Vagus in posterior mediastinum."
+    },
+    {
+        "question": "The azygos vein is located in the:",
+        "options": ["Superior mediastinum", "Middle mediastinum", "Posterior mediastinum", "Anterior mediastinum"],
+        "answer": 2,
+        "correctAnswer": "Posterior mediastinum",
+        "explanation": "Azygos in posterior mediastinum."
+    },
+    {
+        "question": "The main bronchi are found in the:",
+        "options": ["Anterior mediastinum", "Middle mediastinum", "Superior mediastinum", "Posterior mediastinum"],
+        "answer": 1,
+        "correctAnswer": "Middle mediastinum",
+        "explanation": "Bifurcation in middle."
+    },
+    {
+        "question": "The thoracic duct is located in the:",
+        "options": ["Superior mediastinum", "Middle mediastinum", "Posterior mediastinum", "Anterior mediastinum"],
+        "answer": 2,
+        "correctAnswer": "Posterior mediastinum",
+        "explanation": "Thoracic duct in posterior."
+    },
+    {
+        "question": "The left recurrent laryngeal nerve is in the:",
+        "options": ["Anterior mediastinum", "Superior mediastinum", "Middle mediastinum", "Posterior mediastinum"],
+        "answer": 2,
+        "correctAnswer": "Posterior mediastinum",
+        "explanation": "Loops under aortic arch in posterior."
+    },
+    {
+        "question": "The heart’s position in the thorax is:",
+        "options": ["Entirely on the right", "2/3 on the left", "1/3 on the left", "Entirely on the left"],
+        "answer": 1,
+        "correctAnswer": "2/3 on the left",
+        "explanation": "Majority to the left."
+    },
+    {
+        "question": "Lymph is similar in composition to:",
+        "options": ["Blood plasma", "Red blood cells", "Platelets", "White blood cells"],
+        "answer": 0,
+        "correctAnswer": "Blood plasma",
+        "explanation": "Lymph is plasma minus proteins."
+    },
+    {
+        "question": "The protein concentration of lymph is:",
+        "options": ["Higher than plasma", "Lower than plasma", "Equal to plasma", "Absent"],
+        "answer": 1,
+        "correctAnswer": "Lower than plasma",
+        "explanation": "Lower protein content."
+    },
+    {
+        "question": "Lymph originates from:",
+        "options": ["Blood plasma", "Interstitial fluid", "Red bone marrow", "Both a and b"],
+        "answer": 3,
+        "correctAnswer": "Both a and b",
+        "explanation": "From plasma that becomes interstitial fluid."
+    },
+    {
+        "question": "Primary lymphatic organs include:",
+        "options": ["Spleen and lymph nodes", "Thymus and bone marrow", "Tonsils and thymus", "Lymphatic nodules"],
+        "answer": 1,
+        "correctAnswer": "Thymus and bone marrow",
+        "explanation": "Sites of lymphocyte maturation."
+    },
+    {
+        "question": "Secondary lymphatic organs include:",
+        "options": ["Thymus and bone marrow", "Spleen and lymph nodes", "Bone marrow and tonsils", "Thymus and spleen"],
+        "answer": 1,
+        "correctAnswer": "Spleen and lymph nodes",
+        "explanation": "Sites where lymphocytes encounter antigens."
+    },
+    {
+        "question": "Lymph nodes are:",
+        "options": ["Large spherical organs", "Small bean-shaped swellings", "Tubular structures", "Flat tissues"],
+        "answer": 1,
+        "correctAnswer": "Small bean-shaped swellings",
+        "explanation": "Bean-shaped structures."
+    },
+    {
+        "question": "Afferent lymphatic vessels carry lymph:",
+        "options": ["Away from lymph nodes", "To lymph nodes", "Between lymph nodes", "To the heart"],
+        "answer": 1,
+        "correctAnswer": "To lymph nodes",
+        "explanation": "Bring lymph into nodes."
+    },
+    {
+        "question": "Efferent lymphatic vessels carry lymph:",
+        "options": ["To lymph nodes", "Away from lymph nodes", "Between lymph nodes", "To the spleen"],
+        "answer": 1,
+        "correctAnswer": "Away from lymph nodes",
+        "explanation": "Exit from nodes."
+    },
+    {
+        "question": "The function of lymph nodes includes:",
+        "options": ["Producing red blood cells", "Filtering lymph", "Storing nutrients", "Generating hormones"],
+        "answer": 1,
+        "correctAnswer": "Filtering lymph",
+        "explanation": "Filter pathogens and debris."
+    },
+    {
+        "question": "Lymphatic nodules are sites of:",
+        "options": ["Lymphocyte proliferation", "Blood cell formation", "Fat storage", "Waste excretion"],
+        "answer": 0,
+        "correctAnswer": "Lymphocyte proliferation",
+        "explanation": "Sites of immune response."
+    },
+    {
+        "question": "Popliteal lymph nodes are located in the:",
+        "options": ["Neck", "Armpit", "Behind the knee", "Groin"],
+        "answer": 2,
+        "correctAnswer": "Behind the knee",
+        "explanation": "In the popliteal fossa."
+    },
+    {
+        "question": "Inguinal lymph nodes are found in the:",
+        "options": ["Arm", "Groin", "Chest", "Back"],
+        "answer": 1,
+        "correctAnswer": "Groin",
+        "explanation": "Drain lower limbs and genitals."
+    },
+    {
+        "question": "Cervical lymph nodes are located in the:",
+        "options": ["Abdomen", "Neck", "Thigh", "Chest"],
+        "answer": 1,
+        "correctAnswer": "Neck",
+        "explanation": "Drain head and neck."
+    },
+    {
+        "question": "Axillary lymph nodes drain the:",
+        "options": ["Lower limbs", "Upper limbs", "Abdomen", "Head"],
+        "answer": 1,
+        "correctAnswer": "Upper limbs",
+        "explanation": "Drain upper limb, breast, etc."
+    },
+    {
+        "question": "The thoracic duct drains into the:",
+        "options": ["Right subclavian vein", "Left subclavian vein", "Inferior vena cava", "Superior vena cava"],
+        "answer": 1,
+        "correctAnswer": "Left subclavian vein",
+        "explanation": "At junction with internal jugular."
+    },
+    {
+        "question": "The right lymphatic duct drains into the:",
+        "options": ["Left subclavian vein", "Right subclavian vein", "Thoracic duct", "Inferior vena cava"],
+        "answer": 1,
+        "correctAnswer": "Right subclavian vein",
+        "explanation": "Drains right upper body."
+    },
+    {
+        "question": "The thoracic duct drains the:",
+        "options": ["Right upper limb", "Left side of the head and neck", "Right thoracic region", "Both a and b"],
+        "answer": 3,
+        "correctAnswer": "Both a and b",
+        "explanation": "Drains left side and lower body."
+    },
+    {
+        "question": "The right lymphatic duct drains the:",
+        "options": ["Lower limbs", "Right upper limb", "Left thoracic region", "Abdomen"],
+        "answer": 1,
+        "correctAnswer": "Right upper limb",
+        "explanation": "Right side of head, neck, upper limb."
+    },
+    {
+        "question": "Lymphatic trunks collect lymph from:",
+        "options": ["Lymph nodes", "Lymph capillaries", "Blood vessels", "Heart"],
+        "answer": 0,
+        "correctAnswer": "Lymph nodes",
+        "explanation": "Trunks receive from regional nodes."
+    },
+    {
+        "question": "The thymus is a primary lymphatic organ located in the:",
+        "options": ["Abdomen", "Thorax", "Pelvis", "Lower limb"],
+        "answer": 1,
+        "correctAnswer": "Thorax",
+        "explanation": "In the mediastinum."
+    },
+    {
+        "question": "The weight of the heart is approximately:",
+        "options": ["250 g", "350 g", "450 g", "550 g"],
+        "answer": 1,
+        "correctAnswer": "350 g",
+        "explanation": "Average adult heart weight is about 350 grams."
+    },
+    {
+        "question": "The heart’s size is compared to a:",
+        "options": ["Closed fist", "Open hand", "Foot", "Head"],
+        "answer": 0,
+        "correctAnswer": "Closed fist",
+        "explanation": "Size of owner's closed fist."
+    },
+    {
+        "question": "The apex of the heart is directed toward the:",
+        "options": ["Right shoulder", "Left hip", "Head", "Right hip"],
+        "answer": 1,
+        "correctAnswer": "Left hip",
+        "explanation": "Points to left hip and inferiorly."
+    },
+    {
+        "question": "The base of the heart is directed toward the:",
+        "options": ["Left hip", "Right shoulder", "Head", "Feet"],
+        "answer": 2,
+        "correctAnswer": "Head",
+        "explanation": "Base is superior."
+    },
+    {
+        "question": "Oxygen-poor blood enters the right atrium from the:",
+        "options": ["Pulmonary veins", "Superior vena cava", "Aorta", "Pulmonary artery"],
+        "answer": 1,
+        "correctAnswer": "Superior vena cava",
+        "explanation": "And inferior vena cava."
+    },
+    {
+        "question": "Oxygenated blood enters the left atrium from the:",
+        "options": ["Pulmonary artery", "Pulmonary veins", "Aorta", "Coronary sinus"],
+        "answer": 1,
+        "correctAnswer": "Pulmonary veins",
+        "explanation": "From lungs via pulmonary veins."
+    },
+    {
+        "question": "The right ventricle pumps blood into the:",
+        "options": ["Aorta", "Pulmonary artery", "Pulmonary vein", "Coronary artery"],
+        "answer": 1,
+        "correctAnswer": "Pulmonary artery",
+        "explanation": "To the lungs."
+    },
+    {
+        "question": "The left ventricle pumps blood into the:",
+        "options": ["Pulmonary artery", "Aorta", "Pulmonary vein", "Superior vena cava"],
+        "answer": 1,
+        "correctAnswer": "Aorta",
+        "explanation": "To the body."
+    },
+    {
+        "question": "The coronary arteries supply:",
+        "options": ["Lungs", "Myocardium and epicardium", "Brain", "Kidneys"],
+        "answer": 1,
+        "correctAnswer": "Myocardium and epicardium",
+        "explanation": "Blood to heart muscle."
+    },
+    {
+        "question": "A blockage in the coronary artery may lead to:",
+        "options": ["Stroke", "Heart attack", "Kidney failure", "Lung collapse"],
+        "answer": 1,
+        "correctAnswer": "Heart attack",
+        "explanation": "Myocardial infarction."
+    },
+    {
+        "question": "The hepatic portal vein drains:",
+        "options": ["Lower limbs", "Abdominal alimentary canal", "Upper limbs", "Head and neck"],
+        "answer": 1,
+        "correctAnswer": "Abdominal alimentary canal",
+        "explanation": "Drains GI tract to liver."
+    },
+    {
+        "question": "The portal vein is formed by the union of:",
+        "options": ["Splenic and superior mesenteric veins", "Inferior and superior vena cava", "Renal and hepatic veins", "Internal and external iliac veins"],
+        "answer": 0,
+        "correctAnswer": "Splenic and superior mesenteric veins",
+        "explanation": "Main tributaries form portal vein."
+    },
+    {
+        "question": "The portal vein carries:",
+        "options": ["Oxygenated blood", "Deoxygenated blood", "Products of digestion", "Waste products"],
+        "answer": 2,
+        "correctAnswer": "Products of digestion",
+        "explanation": "Nutrients from intestines to liver."
+    },
+    {
+        "question": "The inferior vena cava receives blood from the:",
+        "options": ["Head and neck", "Lower limbs and abdomen", "Upper limbs", "Thorax"],
+        "answer": 1,
+        "correctAnswer": "Lower limbs and abdomen",
+        "explanation": "Drains lower body."
+    },
+    {
+        "question": "The superior vena cava drains into the:",
+        "options": ["Right atrium", "Left atrium", "Right ventricle", "Left ventricle"],
+        "answer": 0,
+        "correctAnswer": "Right atrium",
+        "explanation": "Empties into right atrium."
+    },
+    {
+        "question": "Capillaries facilitate the exchange of:",
+        "options": ["Oxygen and carbon dioxide", "Nutrients and waste", "Both a and b", "Neither a nor b"],
+        "answer": 2,
+        "correctAnswer": "Both a and b",
+        "explanation": "Gases, nutrients, wastes."
+    },
+    {
+        "question": "Atherosclerosis affects which blood vessels?",
+        "options": ["Veins", "Arteries", "Capillaries", "Lymphatics"],
+        "answer": 1,
+        "correctAnswer": "Arteries",
+        "explanation": "Plaque buildup in arteries."
+    },
+    {
+        "question": "Hypertension is a condition affecting:",
+        "options": ["Blood pressure", "Heart rate", "Blood volume", "Oxygen levels"],
+        "answer": 0,
+        "correctAnswer": "Blood pressure",
+        "explanation": "High blood pressure."
+    },
+    {
+        "question": "A heart murmur may indicate:",
+        "options": ["Valve dysfunction", "Lung infection", "Kidney failure", "Muscle strain"],
+        "answer": 0,
+        "correctAnswer": "Valve dysfunction",
+        "explanation": "Abnormal valve sounds."
+    },
+    {
+        "question": "The lymphatic system helps prevent:",
+        "options": ["Edema", "Hypertension", "Heart attack", "Stroke"],
+        "answer": 0,
+        "correctAnswer": "Edema",
+        "explanation": "Returns excess fluid to blood."
+    },
+    {
+        "question": "The fibrous pericardium is:",
+        "options": ["Inner smooth layer", "Outer tough layer", "Middle muscular layer", "Inner lining of the heart"],
+        "answer": 1,
+        "correctAnswer": "Outer tough layer",
+        "explanation": "Tough, fibrous sac."
+    },
+    {
+        "question": "The serous pericardium has how many layers?",
+        "options": ["One", "Two", "Three", "Four"],
+        "answer": 1,
+        "correctAnswer": "Two",
+        "explanation": "Visceral and parietal."
+    },
+    {
+        "question": "The visceral pericardium is attached to the:",
+        "options": ["Chest wall", "Heart surface", "Diaphragm", "Lungs"],
+        "answer": 1,
+        "correctAnswer": "Heart surface",
+        "explanation": "Also called epicardium."
+    },
+    {
+        "question": "The left coronary artery supplies the:",
+        "options": ["Right ventricle", "Left ventricle and atrium", "Right atrium", "Pulmonary artery"],
+        "answer": 1,
+        "correctAnswer": "Left ventricle and atrium",
+        "explanation": "Supplies left side."
+    },
+    {
+        "question": "The axillary vein is a continuation of the:",
+        "options": ["Brachial vein", "Subclavian vein", "Femoral vein", "Popliteal vein"],
+        "answer": 0,
+        "correctAnswer": "Brachial vein",
+        "explanation": "Brachial continues as axillary."
+    },
+    {
+        "question": "The popliteal vein becomes the:",
+        "options": ["Femoral vein", "Tibial vein", "Iliac vein", "Saphenous vein"],
+        "answer": 0,
+        "correctAnswer": "Femoral vein",
+        "explanation": "At the adductor hiatus."
+    },
+    {
+        "question": "The great cardiac vein accompanies:",
+        "options": ["Right coronary artery", "Left coronary artery", "Anterior interventricular artery", "Circumflex artery"],
+        "answer": 2,
+        "correctAnswer": "Anterior interventricular artery",
+        "explanation": "Along LAD."
+    },
+    {
+        "question": "The thymus is a primary lymphatic organ located in the:",
+        "options": ["Abdomen", "Thorax", "Pelvis", "Lower limb"],
+        "answer": 1,
+        "correctAnswer": "Thorax",
+        "explanation": "In superior mediastinum."
+    },
+    {
+        "question": "The thoracic duct ascends along the:",
+        "options": ["Sternum", "Spinal column", "Ribs", "Diaphragm"],
+        "answer": 1,
+        "correctAnswer": "Spinal column",
+        "explanation": "Along the thoracic spine."
+    },
+    {
+        "question": "The right lymphatic duct drains into the:",
+        "options": ["Left subclavian vein", "Right subclavian vein", "Inferior vena cava", "Pulmonary vein"],
+        "answer": 1,
+        "correctAnswer": "Right subclavian vein",
+        "explanation": "Into right subclavian."
+    },
+    {
+        "question": "Red blood cells are biconcave to:",
+        "options": ["Increase surface area", "Store oxygen", "Produce energy", "Filter blood"],
+        "answer": 0,
+        "correctAnswer": "Increase surface area",
+        "explanation": "For efficient gas exchange."
+    },
+    {
+        "question": "Eosinophils are a type of:",
+        "options": ["Agranulocyte", "Granulocyte", "Platelet", "Erythrocyte"],
+        "answer": 1,
+        "correctAnswer": "Granulocyte",
+        "explanation": "Acid-loving granulocyte."
+    },
+    {
+        "question": "The middle mediastinum contains:",
+        "options": ["Esophagus", "Pericardium and heart", "Thymus", "Azygos vein"],
+        "answer": 1,
+        "correctAnswer": "Pericardium and heart",
+        "explanation": "Central compartment."
+    },
+    {
+        "question": "The posterior tibial vein drains the:",
+        "options": ["Anterior leg", "Posterior leg", "Thigh", "Foot"],
+        "answer": 1,
+        "correctAnswer": "Posterior leg",
+        "explanation": "Drains posterior compartment."
+    },
+    {
+        "question": "The hepatic portal system drains into the:",
+        "options": ["Inferior vena cava", "Liver", "Superior vena cava", "Heart"],
+        "answer": 1,
+        "correctAnswer": "Liver",
+        "explanation": "Portal system to liver."
+    },
+    {
+        "question": "The basilic vein is a:",
+        "options": ["Deep vein", "Superficial vein", "Arterial branch", "Capillary"],
+        "answer": 1,
+        "correctAnswer": "Superficial vein",
+        "explanation": "Superficial vein of arm."
+    },
+    {
+        "question": "The aorta arises from the:",
+        "options": ["Right ventricle", "Left ventricle", "Right atrium", "Left atrium"],
+        "answer": 1,
+        "correctAnswer": "Left ventricle",
+        "explanation": "From left ventricle."
+    },
+    {
+        "question": "The subclavian artery becomes the axillary artery at the:",
+        "options": ["First rib", "Clavicle", "Humerus", "Scapula"],
+        "answer": 0,
+        "correctAnswer": "First rib",
+        "explanation": "Lateral to first rib."
+    },
+    {
+        "question": "The lymphatic system returns excess fluid to the:",
+        "options": ["Heart", "Lungs", "Kidneys", "Liver"],
+        "answer": 0,
+        "correctAnswer": "Heart",
+        "explanation": "Via veins to bloodstream."
+    },
+    {
+        "question": "The coronary sinus drains into the:",
+        "options": ["Right atrium", "Left atrium", "Right ventricle", "Left ventricle"],
+        "answer": 0,
+        "correctAnswer": "Right atrium",
+        "explanation": "Opens into right atrium."
+    },
+    {
+        "question": "The left atrium receives blood from:",
+        "options": ["Pulmonary artery", "Pulmonary veins", "Aorta", "Superior vena cava"],
+        "answer": 1,
+        "correctAnswer": "Pulmonary veins",
+        "explanation": "Oxygenated blood from lungs."
+    },
+    {
+        "question": "The right ventricle pumps blood through the:",
+        "options": ["Aorta", "Pulmonary artery", "Pulmonary vein", "Coronary artery"],
+        "answer": 1,
+        "correctAnswer": "Pulmonary artery",
+        "explanation": "To pulmonary circulation."
+    },
+    {
+        "question": "The fibrous pericardium provides:",
+        "options": ["Lubrication", "Protection", "Oxygenation", "Contraction"],
+        "answer": 1,
+        "correctAnswer": "Protection",
+        "explanation": "Anchors and protects the heart."
+    },
+    {
+        "question": "The visceral serous pericardium is also called the:",
+        "options": ["Epicardium", "Endocardium", "Myocardium", "Perimysium"],
+        "answer": 0,
+        "correctAnswer": "Epicardium",
+        "explanation": "Outer layer of heart wall."
+    },
+    {
+        "question": "The internal jugular vein drains into the:",
+        "options": ["Subclavian vein", "Femoral vein", "Popliteal vein", "Axillary vein"],
+        "answer": 0,
+        "correctAnswer": "Subclavian vein",
+        "explanation": "Joins subclavian."
+    },
+    {
+        "question": "The great saphenous vein is a:",
+        "options": ["Deep vein", "Superficial vein", "Arterial branch", "Capillary"],
+        "answer": 1,
+        "correctAnswer": "Superficial vein",
+        "explanation": "Longest superficial vein."
+    },
+    {
+        "question": "The azygos vein drains into the:",
+        "options": ["Inferior vena cava", "Superior vena cava", "Portal vein", "Coronary sinus"],
+        "answer": 1,
+        "correctAnswer": "Superior vena cava",
+        "explanation": "Empties into SVC."
+    },
+    {
+        "question": "The femoral artery becomes the popliteal artery at the:",
+        "options": ["Hip", "Knee", "Ankle", "Thigh"],
+        "answer": 1,
+        "correctAnswer": "Knee",
+        "explanation": "Passes through adductor hiatus."
+    },
+    {
+        "question": "The lymphatic nodules are found in:",
+        "options": ["Lymph nodes", "Spleen", "Thymus", "Bone marrow"],
+        "answer": 0,
+        "correctAnswer": "Lymph nodes",
+        "explanation": "Contain nodules for B-cell activation."
+    },
+    {
+        "question": "The thoracic duct drains the majority of the body except:",
+        "options": ["Right upper limb", "Left upper limb", "Lower limbs", "Head"],
+        "answer": 0,
+        "correctAnswer": "Right upper limb",
+        "explanation": "Except right upper quadrant."
+    },
+    {
+        "question": "The right coronary artery supplies the:",
+        "options": ["Left ventricle", "Right atrium and ventricle", "Left atrium", "Pulmonary artery"],
+        "answer": 1,
+        "correctAnswer": "Right atrium and ventricle",
+        "explanation": "Primarily right side."
+    },
+    {
+        "question": "The small cardiac vein drains into the:",
+        "options": ["Great cardiac vein", "Coronary sinus", "Pulmonary vein", "Aorta"],
+        "answer": 1,
+        "correctAnswer": "Coronary sinus",
+        "explanation": "Directly into coronary sinus."
+    },
+    {
+        "question": "The basophils are a type of:",
+        "options": ["Agranulocyte", "Granulocyte", "Platelet", "Erythrocyte"],
+        "answer": 1,
+        "correctAnswer": "Granulocyte",
+        "explanation": "Least common granulocyte."
+    },
+    {
+        "question": "The anterior tibial artery supplies the:",
+        "options": ["Posterior leg", "Anterior leg", "Sole of the foot", "Thigh"],
+        "answer": 1,
+        "correctAnswer": "Anterior leg",
+        "explanation": "Anterior compartment."
+    },
+    {
+        "question": "The inferior vena cava drains into the:",
+        "options": ["Right atrium", "Left atrium", "Right ventricle", "Left ventricle"],
+        "answer": 0,
+        "correctAnswer": "Right atrium",
+        "explanation": "Into right atrium."
+    },
+    {
+        "question": "The portal vein carries blood to the:",
+        "options": ["Heart", "Liver", "Lungs", "Kidneys"],
+        "answer": 1,
+        "correctAnswer": "Liver",
+        "explanation": "To the liver for processing."
+    },
+    {
+        "question": "The axillary artery supplies the:",
+        "options": ["Lower leg", "Upper arm", "Shoulder", "Forearm"],
+        "answer": 2,
+        "correctAnswer": "Shoulder",
+        "explanation": "Supplies axilla and shoulder region."
+    },
+    {
+        "question": "The popliteal lymph nodes are located:",
+        "options": ["In the groin", "Behind the knee", "In the armpit", "In the neck"],
+        "answer": 1,
+        "correctAnswer": "Behind the knee",
+        "explanation": "In popliteal fossa."
+    },
+    {
+        "question": "The median cubital vein is a site for:",
+        "options": ["Blood clotting", "Venipuncture", "Lymph filtration", "Oxygen exchange"],
+        "answer": 1,
+        "correctAnswer": "Venipuncture",
+        "explanation": "Common site for blood draws."
+    },
+    {
+        "question": "The left subclavian vein receives blood from the:",
+        "options": ["Right upper limb", "Left upper limb", "Lower limbs", "Abdomen"],
+        "answer": 1,
+        "correctAnswer": "Left upper limb",
+        "explanation": "Drains left upper limb."
+    }
+]
+
+;
+
+        // DOM Elements
+        let body = document.body;
+        let questionElement = document.getElementById('question');
+        let optionsContainer = document.getElementById('options-container');
+        let currentQuestionElement = document.getElementById('current-question');
+        let totalQuestionsElement = document.getElementById('total-questions');
+        let progressBar = document.getElementById('progress-bar');
+        let prevButton = document.getElementById('prev-btn');
+        let nextButton = document.getElementById('next-btn');
+        let feedbackElement = document.getElementById('feedback');
+        let timerElement = document.getElementById('timer');
+        let scoreElement = document.getElementById('score');
+        let streakElement = document.getElementById('streak');
+        let categoryElement = document.getElementById('category');
+        let explanationContainer = document.getElementById('explanation-container');
+        let explanationTextElement = document.getElementById('explanation-text');
+        let themeToggle = document.getElementById('theme-toggle');
+        let soundToggle = document.getElementById('sound-toggle');
+        let bookmarkBtn = document.getElementById('bookmark-btn');
+        let bookmarksCount = document.getElementById('bookmarks-count');
+        let categoryTag = document.getElementById('category-tag');
+        let difficultyTag = document.getElementById('difficulty-tag');
+        let showExplanationBtn = document.getElementById('show-explanation-btn');
+
+        // Quiz state
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let streak = 0;
+        let selectedOption = null;
+        let timeStarted = null;
+        let timerInterval = null;
+        let timeElapsed = 0;
+        let answers = [];
+        let soundsEnabled = true;
+        let bookmarkedQuestions = [];
+        let quizHistory = [];
+        let performanceMetrics = {
+            categories: {},
+            difficulties: { Easy: 0, Medium: 0, Hard: 0 },
+            totalCorrect: 0,
+            totalQuestions: 0
+        };
+
+        function initQuiz() {
+            // Reset DOM elements
+            scoreElement.textContent = score;
+            streakElement.textContent = streak;
+            timerElement.textContent = '00:00';
+            totalQuestionsElement.textContent = questions.length;
+            
+            loadQuestion();
+            startTimer();
+            
+            // Remove existing event listeners to prevent duplicates
+            const prevBtnClone = prevButton.cloneNode(true);
+            prevButton.parentNode.replaceChild(prevBtnClone, prevButton);
+            const nextBtnClone = nextButton.cloneNode(true);
+            nextButton.parentNode.replaceChild(nextBtnClone, nextButton);
+            const themeToggleClone = themeToggle.cloneNode(true);
+            themeToggle.parentNode.replaceChild(themeToggleClone, themeToggle);
+            const soundToggleClone = soundToggle.cloneNode(true);
+            soundToggle.parentNode.replaceChild(soundToggleClone, soundToggle);
+            const bookmarkBtnClone = bookmarkBtn.cloneNode(true);
+            bookmarkBtn.parentNode.replaceChild(bookmarkBtnClone, bookmarkBtn);
+            const showExplanationBtnClone = showExplanationBtn.cloneNode(true);
+            showExplanationBtn.parentNode.replaceChild(showExplanationBtnClone, showExplanationBtn);
+
+            // Reassign DOM elements after cloning
+            prevButton = document.getElementById('prev-btn');
+            nextButton = document.getElementById('next-btn');
+            themeToggle = document.getElementById('theme-toggle');
+            soundToggle = document.getElementById('sound-toggle');
+            bookmarkBtn = document.getElementById('bookmark-btn');
+            showExplanationBtn = document.getElementById('show-explanation-btn');
+
+            // Add event listeners
+            prevButton.addEventListener('click', goToPreviousQuestion);
+            nextButton.addEventListener('click', goToNextQuestion);
+            themeToggle.addEventListener('click', toggleTheme);
+            soundToggle.addEventListener('click', toggleSound);
+            bookmarkBtn.addEventListener('click', toggleBookmark);
+            showExplanationBtn.addEventListener('click', toggleExplanation);
+            
+            // Keyboard navigation
+            document.removeEventListener('keydown', handleKeydown);
+            document.addEventListener('keydown', handleKeydown);
+            
+            loadPreferences();
+            loadQuizHistory();
+            updateBookmarksCount();
+        }
+
+        function handleKeydown(e) {
+            if (e.key === 'ArrowRight') {
+                goToNextQuestion();
+            } else if (e.key === 'ArrowLeft') {
+                goToPreviousQuestion();
+            } else if (e.key.toLowerCase() === 'a' || e.key === '1') {
+                selectOption(0);
+            } else if (e.key.toLowerCase() === 'b' || e.key === '2') {
+                selectOption(1);
+            } else if (e.key.toLowerCase() === 'c' || e.key === '3') {
+                selectOption(2);
+            } else if (e.key.toLowerCase() === 'd' || e.key === '4') {
+                selectOption(3);
+            } else if (e.key === 'Enter') {
+                if (showExplanationBtn.style.display !== 'none') {
+                    toggleExplanation();
+                }
+            }
+        }
+
+        function loadQuestion() {
+            const question = questions[currentQuestionIndex];
+            questionElement.textContent = question.question;
+            currentQuestionElement.textContent = currentQuestionIndex + 1;
+            categoryTag.textContent = question.category || 'Unknown';
+            difficultyTag.textContent = question.difficulty || 'Medium';
+            categoryElement.textContent = question.category || 'All';
+            
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+            
+            optionsContainer.innerHTML = '';
+            
+            const optionLetters = ['A', 'B', 'C', 'D', 'E'];
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.classList.add('option', 'bounce-in');
+                optionElement.setAttribute('role', 'button');
+                optionElement.setAttribute('tabindex', '0');
+                optionElement.setAttribute('aria-label', `Option ${optionLetters[index]}: ${option}`);
+                
+                const optionLetter = document.createElement('div');
+                optionLetter.classList.add('option-letter');
+                optionLetter.textContent = optionLetters[index];
+                
+                const optionText = document.createElement('div');
+                optionText.classList.add('option-text');
+                optionText.textContent = option;
+                
+                optionElement.appendChild(optionLetter);
+                optionElement.appendChild(optionText);
+                
+                optionElement.addEventListener('click', () => selectOption(index));
+                optionElement.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        selectOption(index);
+                    }
+                });
+                
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            prevButton.disabled = currentQuestionIndex === 0;
+            nextButton.textContent = currentQuestionIndex === questions.length - 1 ? 'Finish Quiz' : 'Next Question';
+            
+            feedbackElement.style.display = 'none';
+            showExplanationBtn.style.display = 'none';
+            explanationContainer.classList.remove('expanded');
+            
+            selectedOption = null;
+            
+            // If the question was previously answered or skipped, display the feedback
+            if (answers[currentQuestionIndex]) {
+                const ans = answers[currentQuestionIndex];
+                const options = document.querySelectorAll('.option');
+                feedbackElement.style.display = 'flex';
+                showExplanationBtn.style.display = 'block';
+                explanationTextElement.textContent = question.explanation;
+                options.forEach(option => option.style.pointerEvents = 'none');
+                
+                if (ans.selected === 'Skipped') {
+                    selectedOption = null;
+                    feedbackElement.classList.add('incorrect');
+                    feedbackElement.innerHTML = '<i class="fas fa-times-circle feedback-icon"></i><div class="feedback-text">Skipped. The right answer is highlighted.</div>';
+                    options[question.answer].classList.add('correct');
+                } else {
+                    const optIndex = question.options.findIndex(opt => opt === ans.selected);
+                    if (optIndex !== -1) {
+                        selectedOption = optIndex;
+                        options[optIndex].classList.add('selected');
+                        if (ans.isCorrect) {
+                            feedbackElement.classList.add('correct');
+                            feedbackElement.innerHTML = '<i class="fas fa-check-circle feedback-icon"></i><div class="feedback-text">Correct! Well done.</div>';
+                        } else {
+                            feedbackElement.classList.add('incorrect');
+                            feedbackElement.innerHTML = '<i class="fas fa-times-circle feedback-icon"></i><div class="feedback-text">Incorrect. The right answer is highlighted.</div>';
+                            options[question.answer].classList.add('correct');
+                        }
+                    }
+                }
+            }
+            
+            updateBookmarkStatus();
+        }
+
+        function selectOption(index) {
+            if (selectedOption !== null || answers[currentQuestionIndex]) return;
+            
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => option.classList.remove('selected'));
+            options[index].classList.add('selected');
+            selectedOption = index;
+            
+            const question = questions[currentQuestionIndex];
+            const isCorrect = index === question.answer;
+            
+            feedbackElement.style.display = 'flex';
+            if (isCorrect) {
+                feedbackElement.classList.remove('incorrect');
+                feedbackElement.classList.add('correct');
+                feedbackElement.innerHTML = '<i class="fas fa-check-circle feedback-icon"></i><div class="feedback-text">Correct! Well done.</div>';
+                score += getScoreForDifficulty(question.difficulty);
+                streak++;
+                playSound('correct');
+            } else {
+                feedbackElement.classList.remove('correct');
+                feedbackElement.classList.add('incorrect');
+                feedbackElement.innerHTML = '<i class="fas fa-times-circle feedback-icon"></i><div class="feedback-text">Incorrect. The right answer is highlighted.</div>';
+                options[question.answer].classList.add('correct');
+                streak = 0;
+                playSound('incorrect');
+            }
+            
+            scoreElement.textContent = score;
+            streakElement.textContent = streak;
+            
+            explanationTextElement.textContent = question.explanation;
+            showExplanationBtn.style.display = 'block';
+            
+            answers[currentQuestionIndex] = {
+                question: question.question,
+                selected: question.options[index],
+                correct: question.options[question.answer],
+                isCorrect: isCorrect,
+                explanation: question.explanation,
+                category: question.category,
+                difficulty: question.difficulty
+            };
+            
+            updatePerformanceMetrics(isCorrect, question);
+            
+            options.forEach(option => option.style.pointerEvents = 'none');
+        }
+
+        function maybeHandleSkip() {
+            if (!answers[currentQuestionIndex] && selectedOption === null) {
+                const question = questions[currentQuestionIndex];
+                answers[currentQuestionIndex] = {
+                    question: question.question,
+                    selected: 'Skipped',
+                    correct: question.options[question.answer],
+                    isCorrect: false,
+                    explanation: question.explanation,
+                    category: question.category,
+                    difficulty: question.difficulty
+                };
+                updatePerformanceMetrics(false, question);
+                streak = 0;
+                streakElement.textContent = streak;
+            }
+        }
+
+        function toggleExplanation() {
+            explanationContainer.classList.toggle('expanded');
+            showExplanationBtn.innerHTML = explanationContainer.classList.contains('expanded') ?
+                '<i class="fas fa-info-circle"></i> Hide Explanation' :
+                '<i class="fas fa-info-circle"></i> Show Explanation';
+        }
+
+        function getScoreForDifficulty(difficulty) {
+            switch (difficulty) {
+                case 'Easy': return 5;
+                case 'Medium': return 10;
+                case 'Hard': return 15;
+                default: return 10;
+            }
+        }
+
+        function updatePerformanceMetrics(isCorrect, question) {
+            performanceMetrics.totalQuestions++;
+            if (isCorrect) performanceMetrics.totalCorrect++;
+            
+            performanceMetrics.categories[question.category] = performanceMetrics.categories[question.category] || { correct: 0, total: 0 };
+            performanceMetrics.categories[question.category].total++;
+            if (isCorrect) performanceMetrics.categories[question.category].correct++;
+            
+            performanceMetrics.difficulties[question.difficulty] = performanceMetrics.difficulties[question.difficulty] || 0;
+            if (isCorrect) performanceMetrics.difficulties[question.difficulty]++;
+        }
+
+        function toggleBookmark() {
+            const questionId = questions[currentQuestionIndex].id;
+            const index = bookmarkedQuestions.indexOf(questionId);
+            if (index === -1) {
+                bookmarkedQuestions.push(questionId);
+                bookmarkBtn.classList.add('bookmarked');
+            } else {
+                bookmarkedQuestions.splice(index, 1);
+                bookmarkBtn.classList.remove('bookmarked');
+            }
+            updateBookmarksCount();
+            saveBookmarks();
+        }
+
+        function updateBookmarkStatus() {
+            const questionId = questions[currentQuestionIndex].id;
+            bookmarkBtn.classList.toggle('bookmarked', bookmarkedQuestions.includes(questionId));
+        }
+
+        function updateBookmarksCount() {
+            bookmarksCount.textContent = bookmarkedQuestions.length;
+        }
+
+        function goToNextQuestion() {
+            maybeHandleSkip();
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                showResults();
+                saveQuizHistory();
+            }
+        }
+
+        function goToPreviousQuestion() {
+            maybeHandleSkip();
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        }
+
+        function startTimer() {
+            timeStarted = new Date();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            timeElapsed++;
+            
+            const minutes = Math.floor(timeElapsed / 60).toString().padStart(2, '0');
+            const seconds = (timeElapsed % 60).toString().padStart(2, '0');
+            timerElement.textContent = `${minutes}:${seconds}`;
+            
+            // Optional: Add warning color for long durations (e.g., after 5 minutes)
+            if (timeElapsed >= 300) {
+                timerElement.style.color = 'var(--danger)';
+                timerElement.classList.add('pulse');
+            } else {
+                timerElement.style.color = 'var(--primary)';
+                timerElement.classList.remove('pulse');
+            }
+        }
+
+        function showResults() {
+            clearInterval(timerInterval);
+            
+            const quizContainer = document.querySelector('.quiz-container');
+            const maxScore = questions.reduce((sum, q) => sum + getScoreForDifficulty(q.difficulty), 0);
+            const percentage = ((score / maxScore) * 100).toFixed(1);
+            const categoryStats = Object.entries(performanceMetrics.categories)
+                .map(([category, stats]) => `${category}: ${((stats.correct / stats.total) * 100).toFixed(1)}%`)
+                .join(', ');
+            
+            quizContainer.innerHTML = `
+                <div class="results-container">
+                    <h2 class="quiz-title">Quiz Completed!</h2>
+                    <p class="quiz-subtitle">You've finished the embryology quiz</p>
+                    
+                    <div class="score-circle" style="--p: ${percentage}%">
+                        <div class="score-text">
+                            <div class="score-value">${score}</div>
+                            <div class="score-label">Points</div>
+                        </div>
+                    </div>
+                    
+                    <div class="results-stats">
+                        <div class="result-stat">
+                            <div class="result-stat-value">${percentage}%</div>
+                            <div class="result-stat-label">Accuracy</div>
+                        </div>
+                        <div class="result-stat">
+                            <div class="result-stat-value">${timeElapsed}s</div>
+                            <div class="result-stat-label">Time Taken</div>
+                        </div>
+                        <div class="result-stat">
+                            <div class="result-stat-value">${streak}</div>
+                            <div class="result-stat-label">Best Streak</div>
+                        </div>
+                        <div class="result-stat">
+                            <div class="result-stat-value">${bookmarkedQuestions.length}</div>
+                            <div class="result-stat-label">Bookmarked</div>
+                        </div>
+                    </div>
+                    
+                    <div class="review-section">
+                        <h3 class="review-title">Performance Analytics</h3>
+                        <div class="review-item">
+                            <div class="review-answer">Category Performance: ${categoryStats}</div>
+                            <div class="review-answer">Difficulty Performance: Easy: ${performanceMetrics.difficulties.Easy || 0}, Medium: ${performanceMetrics.difficulties.Medium || 0}, Hard: ${performanceMetrics.difficulties.Hard || 0}</div>
+                        </div>
+                        
+                        <h3 class="review-title">Review Your Answers</h3>
+                        ${answers.map((answer, index) => `
+                            <div class="review-item ${answer.isCorrect ? 'correct' : 'incorrect'}">
+                                <div class="review-question">Q${index + 1}: ${answer.question} (${answer.category} - ${answer.difficulty})</div>
+                                <div class="review-answer">Your Answer: ${answer.selected}</div>
+                                <div class="review-answer">Correct Answer: ${answer.correct}</div>
+                                <div class="review-explanation">${answer.explanation}</div>
+                            </div>
+                        `).join('')}
+                        
+                        <h3 class="review-title">Bookmarked Questions</h3>
+                        ${bookmarkedQuestions.map(qid => {
+                            const question = questions.find(q => q.id === qid);
+                            return `
+                                <div class="review-item">
+                                    <div class="review-question">${question.question} (${question.category} - ${question.difficulty})</div>
+                                    <div class="review-answer">Correct Answer: ${question.correctAnswer}</div>
+                                    <div class="review-explanation">${question.explanation}</div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    
+                    <button class="btn btn-primary mt-4" id="restart-btn">
+                        <i class="fas fa-redo"></i> Try Again
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('restart-btn').addEventListener('click', restartQuiz);
+        }
+
+        function restartQuiz() {
+            // Reset quiz state
+            currentQuestionIndex = 0;
+            score = 0;
+            streak = 0;
+            timeElapsed = 0;
+            answers = [];
+            selectedOption = null;
+            performanceMetrics = {
+                categories: {},
+                difficulties: { Easy: 0, Medium: 0, Hard: 0 },
+                totalCorrect: 0,
+                totalQuestions: 0
+            };
+            
+            // Clear any existing timer
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            
+            // Reset DOM
+            const quizContainer = document.querySelector('.quiz-container');
+            quizContainer.innerHTML = `
+                <div class="quiz-header">
+                    <div>
+                        <h1 class="quiz-title">Advanced Embryology Quiz</h1>
+                        <p class="quiz-subtitle">Test your knowledge with professional questions and detailed explanations</p>
+                    </div>
+                    <div class="stats-container">
+                        <div class="stat">
+                            <span class="stat-value" id="score">0</span>
+                            <span class="stat-label">Score</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value" id="timer">00:00</span>
+                            <span class="stat-label">Time</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value" id="streak">0</span>
+                            <span class="stat-label">Streak</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value" id="category">All</span>
+                            <span class="stat-label">Category</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar" style="width: 10%"></div>
+                </div>
+
+                <div class="question-meta">
+                    <div class="question-tags">
+                        <span class="tag" id="category-tag">Neuro</span>
+                        <span class="tag" id="difficulty-tag">Medium</span>
+                    </div>
+                    <button class="bookmark-btn" id="bookmark-btn" aria-label="Bookmark question">
+                        <i class="fas fa-bookmark"></i>
+                    </button>
+                </div>
+                <div class="question-number">Question <span id="current-question">1</span> of <span id="total-questions">10</span></div>
+                <div class="question-text" id="question"></div>
+
+                <div class="options-grid" id="options-container"></div>
+
+                <div class="feedback correct" id="feedback" style="display: none;">
+                    <i class="fas fa-check-circle feedback-icon"></i>
+                    <div class="feedback-text">Correct! Well done.</div>
+                </div>
+
+                <button class="btn btn-secondary" id="show-explanation-btn" style="display: none;">
+                    <i class="fas fa-info-circle"></i> Show Explanation
+                </button>
+
+                <div class="explanation-container" id="explanation-container">
+                    <div class="explanation">
+                        <div class="explanation-title">Explanation:</div>
+                        <div id="explanation-text"></div>
+                    </div>
+                </div>
+
+                <div class="navigation">
+                    <button class="btn btn-secondary" id="prev-btn" disabled>
+                        <i class="fas fa-arrow-left"></i> Previous
+                    </button>
+                    <button class="btn btn-primary" id="next-btn">
+                        Next Question <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            `;
+            
+            // Reinitialize DOM elements
+            questionElement = document.getElementById('question');
+            optionsContainer = document.getElementById('options-container');
+            currentQuestionElement = document.getElementById('current-question');
+            totalQuestionsElement = document.getElementById('total-questions');
+            progressBar = document.getElementById('progress-bar');
+            prevButton = document.getElementById('prev-btn');
+            nextButton = document.getElementById('next-btn');
+            feedbackElement = document.getElementById('feedback');
+            timerElement = document.getElementById('timer');
+            scoreElement = document.getElementById('score');
+            streakElement = document.getElementById('streak');
+            categoryElement = document.getElementById('category');
+            explanationContainer = document.getElementById('explanation-container');
+            explanationTextElement = document.getElementById('explanation-text');
+            bookmarkBtn = document.getElementById('bookmark-btn');
+            bookmarksCount = document.getElementById('bookmarks-count');
+            categoryTag = document.getElementById('category-tag');
+            difficultyTag = document.getElementById('difficulty-tag');
+            showExplanationBtn = document.getElementById('show-explanation-btn');
+            
+            // Reinitialize the quiz
+            initQuiz();
+        }
+
+        function toggleTheme() {
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 
+                            currentTheme === 'light' ? 'minimal' : 'dark';
+            
+            body.setAttribute('data-theme', newTheme);
+            themeToggle.innerHTML = newTheme === 'dark' ? '<i class="fas fa-moon"></i>' : 
+                                  newTheme === 'light' ? '<i class="fas fa-sun"></i>' : 
+                                  '<i class="fas fa-paint-brush"></i>';
+            
+            localStorage.setItem('theme', newTheme);
+        }
+
+        function toggleSound() {
+            soundsEnabled = !soundsEnabled;
+            soundToggle.innerHTML = soundsEnabled ? '<i class="fas fa-volume-up"></i>' : '<i class="fas fa-volume-mute"></i>';
+            
+            localStorage.setItem('soundsEnabled', soundsEnabled);
+        }
+
+        function playSound(type) {
+            if (!soundsEnabled) return;
+            console.log(`Playing ${type} sound`);
+        }
+
+        function loadPreferences() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                body.setAttribute('data-theme', savedTheme);
+                themeToggle.innerHTML = savedTheme === 'dark' ? '<i class="fas fa-moon"></i>' : 
+                                      savedTheme === 'light' ? '<i class="fas fa-sun"></i>' : 
+                                      '<i class="fas fa-paint-brush"></i>';
+            }
+            
+            const savedSounds = localStorage.getItem('soundsEnabled');
+            if (savedSounds !== null) {
+                soundsEnabled = savedSounds === 'true';
+                soundToggle.innerHTML = soundsEnabled ? '<i class="fas fa-volume-up"></i>' : '<i class="fas fa-volume-mute"></i>';
+            }
+        }
+
+        function saveBookmarks() {
+            localStorage.setItem('bookmarkedQuestions', JSON.stringify(bookmarkedQuestions));
+        }
+
+        function loadQuizHistory() {
+            const saved = localStorage.getItem('quizHistory');
+            if (saved) {
+                quizHistory = JSON.parse(saved);
+            }
+            loadBookmarks();
+        }
+
+        function saveQuizHistory() {
+            quizHistory.push({
+                timestamp: new Date().toISOString(),
+                score: score,
+                percentage: ((score / (questions.length * 15)) * 100).toFixed(1),
+                timeSpent: timeElapsed,
+                streak: streak,
+                answers: answers,
+                performanceMetrics: performanceMetrics
+            });
+            localStorage.setItem('quizHistory', JSON.stringify(quizHistory));
+        }
+
+        function loadBookmarks() {
+            const saved = localStorage.getItem('bookmarkedQuestions');
+            if (saved) {
+                bookmarkedQuestions = JSON.parse(saved);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', initQuiz);
+    </script>
+</body>
+</html>

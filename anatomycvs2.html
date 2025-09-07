@@ -1,0 +1,2175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Embryology Quiz Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --primary-dark: #3a0ca3;
+            --secondary: #f72585;
+            --success: #4cc9f0;
+            --warning: #f9c74f;
+            --danger: #f94144;
+            --info: #577590;
+            --gray-50: #f8f9fa;
+            --gray-100: #f1f3f5;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --gray-500: #adb5bd;
+            --gray-600: #868e96;
+            --gray-700: #495057;
+            --gray-800: #343a40;
+            --gray-900: #212529;
+            --bg-primary: var(--gray-900);
+            --bg-secondary: #1a1d21;
+            --bg-tertiary: #2c303a;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-tertiary: rgba(255, 255, 255, 0.5);
+            --card-bg: rgba(35, 39, 47, 0.95);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15), 0 5px 10px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.2);
+            --transition-base: all 0.2s ease-in-out;
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --radius-2xl: 24px;
+            --header-height: 70px;
+            --max-width: 900px;
+            --side-padding: 1.5rem;
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f5f7fa;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #eef2f6;
+            --text-primary: #1a1d21;
+            --text-secondary: rgba(26, 29, 33, 0.7);
+            --text-tertiary: rgba(26, 29, 33, 0.5);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-border: rgba(0, 0, 0, 0.1);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.08), 0 5px 10px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        [data-theme="minimal"] {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f1f5f9;
+            --text-primary: #0f172a;
+            --text-secondary: #334155;
+            --text-tertiary: #64748b;
+            --card-bg: #ffffff;
+            --card-border: #e2e8f0;
+            --primary: #0ea5e9;
+            --primary-light: #38bdf8;
+            --primary-dark: #0284c7;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition-base);
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        header {
+            height: var(--header-height);
+            background: var(--bg-secondary);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 var(--side-padding);
+            transition: var(--transition-base);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--primary);
+        }
+
+        .logo-icon {
+            font-size: 1.5rem;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .control-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: var(--transition-base);
+            position: relative;
+        }
+
+        .control-btn:hover {
+            background: var(--bg-tertiary);
+            transform: translateY(-2px);
+        }
+
+        .control-btn i {
+            font-size: 1.1rem;
+        }
+
+        .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--secondary);
+            color: white;
+            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        main {
+            flex: 1;
+            padding: 2rem var(--side-padding);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .quiz-container {
+            width: 100%;
+            max-width: var(--max-width);
+            background: var(--card-bg);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition-smooth);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(10px);
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .quiz-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .quiz-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .stats-container {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.5rem 0.75rem;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            min-width: 70px;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            margin: 1.5rem 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-light), var(--primary));
+            border-radius: var(--radius-lg);
+            transition: width 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            100% { left: 100%; }
+        }
+
+        .question-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-tags {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .tag {
+            padding: 0.25rem 0.75rem;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .question-number {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            line-height: 1.4;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            border: 1px solid transparent;
+        }
+
+        .option:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-light);
+        }
+
+        .option.selected {
+            background: rgba(67, 97, 238, 0.1);
+            border-color: var(--primary);
+            animation: pulse 0.3s ease;
+        }
+
+        .option.correct {
+            background: rgba(76, 201, 240, 0.1);
+            border-color: var(--success);
+        }
+
+        .option.incorrect {
+            background: rgba(249, 65, 68, 0.1);
+            border-color: var(--danger);
+        }
+
+        .option-letter {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-md);
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 1rem;
+            flex-shrink: 0;
+            transition: var(--transition-base);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .option.selected .option-letter {
+            background: var(--primary);
+            color: white;
+        }
+
+        .option.correct .option-letter {
+            background: var(--success);
+            color: white;
+        }
+
+        .option.incorrect .option-letter {
+            background: var(--danger);
+            color: white;
+        }
+
+        .option-text {
+            flex: 1;
+        }
+
+        .bookmark-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: var(--transition-base);
+        }
+
+        .bookmark-btn:hover {
+            color: var(--primary);
+        }
+
+        .bookmark-btn.bookmarked {
+            color: var(--warning);
+        }
+
+        .feedback {
+            padding: 1rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .feedback.correct {
+            background: rgba(76, 201, 240, 0.1);
+            color: var(--success);
+        }
+
+        .feedback.incorrect {
+            background: rgba(249, 65, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .feedback-icon {
+            font-size: 1.5rem;
+        }
+
+        .explanation-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+        .explanation-container.expanded {
+            max-height: 500px;
+        }
+
+        .explanation {
+            padding: 1.25rem;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-lg);
+            margin-top: 1rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .explanation-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-lg);
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition-base);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--bg-secondary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .results-container {
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: conic-gradient(var(--primary) 0% var(--p, 0%), var(--bg-tertiary) var(--p, 0%) 100%);
+            position: relative;
+        }
+
+        .score-circle::before {
+            content: '';
+            position: absolute;
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background: var(--card-bg);
+        }
+
+        .score-text {
+            position: relative;
+            z-index: 1;
+        }
+
+        .score-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .score-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .results-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .result-stat {
+            padding: 1rem;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-lg);
+        }
+
+        .result-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .result-stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .review-section {
+            margin-top: 2rem;
+            text-align: left;
+        }
+
+        .review-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .review-item {
+            padding: 1.25rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 1rem;
+            background: var(--bg-tertiary);
+        }
+
+        .review-item.correct {
+            border-left: 4px solid var(--success);
+        }
+
+        .review-item.incorrect {
+            border-left: 4px solid var(--danger);
+        }
+
+        .review-question {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .review-answer {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .review-explanation {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        footer {
+            padding: 1.5rem var(--side-padding);
+            background: var(--bg-secondary);
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        .pulse {
+            animation: pulse 0.5s ease;
+        }
+
+        .bounce-in {
+            animation: bounceIn 0.5s ease;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-1 { margin-top: 0.5rem; }
+        .mt-2 { margin-top: 1rem; }
+        .mt-3 { margin-top: 1.5rem; }
+        .mt-4 { margin-top: 2rem; }
+
+        @media (max-width: 768px) {
+            :root {
+                --side-padding: 1rem;
+                --header-height: 60px;
+            }
+
+            .quiz-container {
+                padding: 1.5rem;
+            }
+
+            .quiz-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .stats-container {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .results-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .score-circle {
+                width: 120px;
+                height: 120px;
+            }
+
+            .score-circle::before {
+                width: 100px;
+                height: 100px;
+            }
+
+            .score-value {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navigation {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .option {
+                padding: 0.75rem;
+            }
+
+            .option-letter {
+                width: 28px;
+                height: 28px;
+                margin-right: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <header>
+        <div class="logo">
+            <i class="fas fa-brain logo-icon"></i>
+            <span>MedQuiz Pro</span>
+        </div>
+        <div class="header-controls">
+            <button class="control-btn" id="theme-toggle" aria-label="Toggle theme">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button class="control-btn" id="sound-toggle" aria-label="Toggle sound">
+                <i class="fas fa-volume-up"></i>
+            </button>
+            <button class="control-btn" id="stats-btn" aria-label="View statistics">
+                <i class="fas fa-chart-line"></i>
+                <span class="badge" id="bookmarks-count">0</span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <div class="quiz-container">
+            <div class="quiz-header">
+                <div>
+                    <h1 class="quiz-title">MedQuiz Pro</h1>
+                    <p class="quiz-subtitle">Test your knowledge with professional questions and detailed explanations</p>
+                </div>
+                <div class="stats-container">
+                    <div class="stat">
+                        <span class="stat-value" id="score">0</span>
+                        <span class="stat-label">Score</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="timer">00:00</span>
+                        <span class="stat-label">Time</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="streak">0</span>
+                        <span class="stat-label">Streak</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="category">All</span>
+                        <span class="stat-label">Category</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar" style="width: 10%"></div>
+            </div>
+
+            <div class="question-meta">
+                <div class="question-tags">
+                    <span class="tag" id="category-tag">cvs</span>
+                    <span class="tag" id="difficulty-tag">Medium</span>
+                </div>
+                <button class="bookmark-btn" id="bookmark-btn" aria-label="Bookmark question">
+                    <i class="fas fa-bookmark"></i>
+                </button>
+            </div>
+            <div class="question-number">Question <span id="current-question">1</span> of <span id="total-questions">10</span></div>
+            <div class="question-text" id="question">Which part of the brain is responsible for coordinating skeletal muscle contractions?</div>
+
+            <div class="options-grid" id="options-container">
+                <div class="option">
+                    <div class="option-letter">A</div>
+                    <div class="option-text">Cerebrum</div>
+                </div>
+                <div class="option">
+                    <div class="option-letter">B</div>
+                    <div class="option-text">Cerebellum</div>
+                </div>
+                <div class="option">
+                    <div class="option-letter">C</div>
+                    <div class="option-text">Pons</div>
+                </div>
+                <div class="option">
+                    <div class="option-letter">D</div>
+                    <div class="option-text">Midbrain</div>
+                </div>
+            </div>
+
+            <div class="feedback correct" id="feedback" style="display: none;">
+                <i class="fas fa-check-circle feedback-icon"></i>
+                <div class="feedback-text">Correct! Well done.</div>
+            </div>
+
+            <button class="btn btn-secondary" id="show-explanation-btn" style="display: none;">
+                <i class="fas fa-info-circle"></i> Show Explanation
+            </button>
+
+            <div class="explanation-container" id="explanation-container">
+                <div class="explanation">
+                    <div class="explanation-title">Explanation:</div>
+                    <div id="explanation-text">The cerebellum, located posterior to the brainstem, is the 'little brain.' It compares intended movements with actual movements to ensure smooth, coordinated skeletal muscle activity and maintain posture and balance.</div>
+                </div>
+            </div>
+
+            <div class="navigation">
+                <button class="btn btn-secondary" id="prev-btn" disabled>
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                <button class="btn btn-primary" id="next-btn">
+                    Next Question <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2025 MedQuiz Pro || All Rights Reserved
+    </footer>
+
+    <script>
+        const questions =  
+[
+    {
+        "question": "The myocardium is the:",
+        "options": ["Outer layer of the heart", "Middle muscular layer", "Inner lining of the heart", "Protective membrane"],
+        "answer": 1,
+        "correctAnswer": "Middle muscular layer",
+        "explanation": "The myocardium is the thick muscular middle layer responsible for the heart's pumping action."
+    },
+    {
+        "question": "The endocardium lines the:",
+        "options": ["Pericardial cavity", "Heart chambers and valves", "Epicardium", "Coronary arteries"],
+        "answer": 1,
+        "correctAnswer": "Heart chambers and valves",
+        "explanation": "The endocardium is the smooth inner lining that covers the heart chambers and valves."
+    },
+    {
+        "question": "The epicardium is synonymous with:",
+        "options": ["Visceral serous pericardium", "Parietal serous pericardium", "Fibrous pericardium", "Myocardium"],
+        "answer": 0,
+        "correctAnswer": "Visceral serous pericardium",
+        "explanation": "The epicardium is the visceral layer of the serous pericardium, covering the heart's surface."
+    },
+    {
+        "question": "The coronary sulcus separates:",
+        "options": ["Atria and ventricles", "Right and left atria", "Right and left ventricles", "Apex and base"],
+        "answer": 0,
+        "correctAnswer": "Atria and ventricles",
+        "explanation": "The coronary sulcus, or atrioventricular groove, separates the atria from the ventricles."
+    },
+    {
+        "question": "The interventricular sulcus contains:",
+        "options": ["Coronary arteries", "Pulmonary veins", "Aorta", "Superior vena cava"],
+        "answer": 0,
+        "correctAnswer": "Coronary arteries",
+        "explanation": "The interventricular sulcus houses branches of the coronary arteries and veins."
+    },
+    {
+        "question": "The tricuspid valve is located between:",
+        "options": ["Right atrium and right ventricle", "Left atrium and left ventricle", "Right ventricle and pulmonary artery", "Left ventricle and aorta"],
+        "answer": 0,
+        "correctAnswer": "Right atrium and right ventricle",
+        "explanation": "The tricuspid valve regulates blood flow between the right atrium and right ventricle."
+    },
+    {
+        "question": "The mitral valve is located between:",
+        "options": ["Right atrium and right ventricle", "Left atrium and left ventricle", "Left ventricle and aorta", "Right ventricle and pulmonary artery"],
+        "answer": 1,
+        "correctAnswer": "Left atrium and left ventricle",
+        "explanation": "The mitral (bicuspid) valve is between the left atrium and left ventricle."
+    },
+    {
+        "question": "The pulmonary valve prevents backflow into the:",
+        "options": ["Right atrium", "Right ventricle", "Left atrium", "Left ventricle"],
+        "answer": 1,
+        "correctAnswer": "Right ventricle",
+        "explanation": "The pulmonary semilunar valve prevents backflow from the pulmonary artery into the right ventricle."
+    },
+    {
+        "question": "The aortic valve prevents backflow into the:",
+        "options": ["Left atrium", "Left ventricle", "Right atrium", "Right ventricle"],
+        "answer": 1,
+        "correctAnswer": "Left ventricle",
+        "explanation": "The aortic semilunar valve prevents backflow from the aorta into the left ventricle."
+    },
+    {
+        "question": "The sinoatrial (SA) node is located in the:",
+        "options": ["Left atrium", "Right atrium", "Left ventricle", "Right ventricle"],
+        "answer": 1,
+        "correctAnswer": "Right atrium",
+        "explanation": "The SA node, the heart's pacemaker, is located in the wall of the right atrium."
+    },
+    {
+        "question": "The atrioventricular (AV) node is located:",
+        "options": ["Near the tricuspid valve", "In the interventricular septum", "Near the mitral valve", "In the coronary sulcus"],
+        "answer": 0,
+        "correctAnswer": "Near the tricuspid valve",
+        "explanation": "The AV node is located near the tricuspid valve in the right atrium."
+    },
+    {
+        "question": "The heart’s electrical conduction begins at the:",
+        "options": ["AV node", "SA node", "Purkinje fibers", "Bundle of His"],
+        "answer": 1,
+        "correctAnswer": "SA node",
+        "explanation": "The SA node initiates the electrical impulse for each heartbeat."
+    },
+    {
+        "question": "The Bundle of His conducts impulses to the:",
+        "options": ["SA node", "Purkinje fibers", "AV node", "Atria"],
+        "answer": 1,
+        "correctAnswer": "Purkinje fibers",
+        "explanation": "The Bundle of His (AV bundle) transmits impulses from the AV node to the Purkinje fibers."
+    },
+    {
+        "question": "The Purkinje fibers are responsible for:",
+        "options": ["Initiating heartbeat", "Rapid ventricular contraction", "Atrial contraction", "Valve regulation"],
+        "answer": 1,
+        "correctAnswer": "Rapid ventricular contraction",
+        "explanation": "Purkinje fibers distribute the impulse rapidly across the ventricular myocardium."
+    },
+    {
+        "question": "The heart receives oxygenated blood from the:",
+        "options": ["Coronary sinus", "Pulmonary veins", "Superior vena cava", "Pulmonary artery"],
+        "answer": 1,
+        "correctAnswer": "Pulmonary veins",
+        "explanation": "Pulmonary veins carry oxygenated blood from the lungs to the left atrium."
+    },
+    {
+        "question": "The cardiac output is the amount of blood pumped by the heart:",
+        "options": ["Per minute", "Per beat", "Per hour", "Per day"],
+        "answer": 0,
+        "correctAnswer": "Per minute",
+        "explanation": "Cardiac output is the volume of blood pumped per minute (CO = HR × SV)."
+    },
+    {
+        "question": "The average cardiac output for an adult at rest is:",
+        "options": ["2 L/min", "5 L/min", "10 L/min", "15 L/min"],
+        "answer": 1,
+        "correctAnswer": "5 L/min",
+        "explanation": "Typical resting cardiac output is about 5 liters per minute."
+    },
+    {
+        "question": "The heart’s apex is formed by the:",
+        "options": ["Left atrium", "Left ventricle", "Right atrium", "Right ventricle"],
+        "answer": 1,
+        "correctAnswer": "Left ventricle",
+        "explanation": "The apex is the tip of the left ventricle."
+    },
+    {
+        "question": "The base of the heart is formed primarily by the:",
+        "options": ["Left ventricle", "Right ventricle", "Atria", "Coronary arteries"],
+        "answer": 2,
+        "correctAnswer": "Atria",
+        "explanation": "The base is the posterior superior surface formed by the atria."
+    },
+    {
+        "question": "The pericardial cavity contains:",
+        "options": ["Myocardium", "Pericardial fluid", "Blood", "Coronary arteries"],
+        "answer": 1,
+        "correctAnswer": "Pericardial fluid",
+        "explanation": "Pericardial fluid lubricates the cavity to reduce friction during heartbeats."
+    },
+    {
+        "question": "Arterioles regulate:",
+        "options": ["Blood pressure", "Heart rate", "Oxygen levels", "Blood clotting"],
+        "answer": 0,
+        "correctAnswer": "Blood pressure",
+        "explanation": "Arterioles control resistance and thus blood pressure through vasoconstriction/dilation."
+    },
+    {
+        "question": "Venules collect blood from:",
+        "options": ["Arteries", "Capillaries", "Veins", "Arterioles"],
+        "answer": 1,
+        "correctAnswer": "Capillaries",
+        "explanation": "Venules receive blood from capillaries after exchange."
+    },
+    {
+        "question": "The tunica intima is the:",
+        "options": ["Outer layer of a blood vessel", "Middle muscular layer", "Inner lining", "Connective tissue layer"],
+        "answer": 2,
+        "correctAnswer": "Inner lining",
+        "explanation": "Tunica intima is the innermost endothelium-lined layer."
+    },
+    {
+        "question": "The tunica media is composed primarily of:",
+        "options": ["Endothelium", "Smooth muscle", "Connective tissue", "Elastic fibers"],
+        "answer": 1,
+        "correctAnswer": "Smooth muscle",
+        "explanation": "Tunica media contains smooth muscle for vasoconstriction."
+    },
+    {
+        "question": "The tunica adventitia is the:",
+        "options": ["Inner layer", "Middle layer", "Outer layer", "Muscular layer"],
+        "answer": 2,
+        "correctAnswer": "Outer layer",
+        "explanation": "Tunica adventitia is the outermost connective tissue layer."
+    },
+    {
+        "question": "Atherosclerosis is characterized by:",
+        "options": ["Thinning of artery walls", "Plaque buildup in arteries", "Increased vein elasticity", "Capillary dilation"],
+        "answer": 1,
+        "correctAnswer": "Plaque buildup in arteries",
+        "explanation": "Atherosclerosis involves lipid plaque accumulation in arterial walls."
+    },
+    {
+        "question": "An aneurysm is a:",
+        "options": ["Blood clot", "Weakened artery wall", "Valve malfunction", "Heart muscle tear"],
+        "answer": 1,
+        "correctAnswer": "Weakened artery wall",
+        "explanation": "An aneurysm is a localized dilation due to weakened vessel wall."
+    },
+    {
+        "question": "Varicose veins result from:",
+        "options": ["Overactive arteries", "Weakened vein valves", "Capillary leakage", "High blood pressure"],
+        "answer": 1,
+        "correctAnswer": "Weakened vein valves",
+        "explanation": "Faulty valves cause blood pooling and vein dilation."
+    },
+    {
+        "question": "The pulse is most easily felt in the:",
+        "options": ["Radial artery", "Femoral vein", "Capillary bed", "Pulmonary artery"],
+        "answer": 0,
+        "correctAnswer": "Radial artery",
+        "explanation": "Radial artery at the wrist is a common pulse site."
+    },
+    {
+        "question": "The carotid artery pulse is located in the:",
+        "options": ["Wrist", "Neck", "Thigh", "Ankle"],
+        "answer": 1,
+        "correctAnswer": "Neck",
+        "explanation": "Carotid pulse is palpated in the neck."
+    },
+    {
+        "question": "The femoral artery pulse is felt in the:",
+        "options": ["Groin", "Knee", "Foot", "Arm"],
+        "answer": 0,
+        "correctAnswer": "Groin",
+        "explanation": "Femoral pulse in the inguinal region."
+    },
+    {
+        "question": "The popliteal artery pulse is felt:",
+        "options": ["Behind the knee", "In the thigh", "In the ankle", "In the foot"],
+        "answer": 0,
+        "correctAnswer": "Behind the knee",
+        "explanation": "Popliteal pulse in the popliteal fossa."
+    },
+    {
+        "question": "The dorsalis pedis artery supplies the:",
+        "options": ["Thigh", "Foot", "Lower leg", "Upper arm"],
+        "answer": 1,
+        "correctAnswer": "Foot",
+        "explanation": "Dorsalis pedis supplies the dorsal foot."
+    },
+    {
+        "question": "The posterior tibial artery pulse is felt:",
+        "options": ["Behind the ankle", "In the knee", "In the thigh", "In the wrist"],
+        "answer": 0,
+        "correctAnswer": "Behind the ankle",
+        "explanation": "Posterior tibial pulse medial to Achilles tendon."
+    },
+    {
+        "question": "Vasoconstriction is the:",
+        "options": ["Widening of blood vessels", "Narrowing of blood vessels", "Increase in blood flow", "Decrease in blood pressure"],
+        "answer": 1,
+        "correctAnswer": "Narrowing of blood vessels",
+        "explanation": "Vasoconstriction narrows vessels, increasing resistance."
+    },
+    {
+        "question": "Vasodilation leads to:",
+        "options": ["Increased blood pressure", "Decreased blood pressure", "Narrowed vessels", "Clot formation"],
+        "answer": 1,
+        "correctAnswer": "Decreased blood pressure",
+        "explanation": "Vasodilation widens vessels, reducing resistance and pressure."
+    },
+    {
+        "question": "The vasa vasorum supplies:",
+        "options": ["Blood vessel walls", "Heart muscle", "Capillaries", "Vein valves"],
+        "answer": 0,
+        "correctAnswer": "Blood vessel walls",
+        "explanation": "Vasa vasorum are vessels supplying the walls of larger blood vessels."
+    },
+    {
+        "question": "The Circle of Willis is located in the:",
+        "options": ["Neck", "Brain", "Chest", "Abdomen"],
+        "answer": 1,
+        "correctAnswer": "Brain",
+        "explanation": "Anastomotic circle at the base of the brain."
+    },
+    {
+        "question": "A stroke is often caused by:",
+        "options": ["Artery blockage", "Vein dilation", "Capillary rupture", "Heart valve failure"],
+        "answer": 0,
+        "correctAnswer": "Artery blockage",
+        "explanation": "Ischemic stroke from cerebral artery occlusion."
+    },
+    {
+        "question": "Peripheral artery disease affects:",
+        "options": ["Heart", "Limbs", "Lungs", "Brain"],
+        "answer": 1,
+        "correctAnswer": "Limbs",
+        "explanation": "Atherosclerosis in peripheral arteries, mainly legs."
+    },
+    {
+        "question": "Hemoglobin in red blood cells binds with:",
+        "options": ["Carbon dioxide", "Oxygen", "Nitrogen", "Both a and b"],
+        "answer": 1,
+        "correctAnswer": "Oxygen",
+        "explanation": "Hemoglobin primarily binds oxygen in the lungs."
+    },
+    {
+        "question": "The normal red blood cell count in adults is approximately:",
+        "options": ["4-6 million/mm³", "1-2 million/mm³", "7-9 million/mm³", "10-12 million/mm³"],
+        "answer": 0,
+        "correctAnswer": "4-6 million/mm³",
+        "explanation": "Normal RBC count is 4.5-5.9 million/mm³ for males, 4.1-5.1 for females."
+    },
+    {
+        "question": "Anemia is characterized by:",
+        "options": ["High red blood cell count", "Low hemoglobin levels", "Increased platelets", "Excess white blood cells"],
+        "answer": 1,
+        "correctAnswer": "Low hemoglobin levels",
+        "explanation": "Anemia involves reduced hemoglobin or RBCs, impairing oxygen transport."
+    },
+    {
+        "question": "Leukocytosis is an increase in:",
+        "options": ["Red blood cells", "White blood cells", "Platelets", "Plasma"],
+        "answer": 1,
+        "correctAnswer": "White blood cells",
+        "explanation": "Leukocytosis is elevated WBC count, often due to infection."
+    },
+    {
+        "question": "Leukopenia is a decrease in:",
+        "options": ["Red blood cells", "White blood cells", "Platelets", "Hemoglobin"],
+        "answer": 1,
+        "correctAnswer": "White blood cells",
+        "explanation": "Leukopenia is low WBC count, increasing infection risk."
+    },
+    {
+        "question": "Monocytes differentiate into:",
+        "options": ["Neutrophils", "Macrophages", "Eosinophils", "Basophils"],
+        "answer": 1,
+        "correctAnswer": "Macrophages",
+        "explanation": "Monocytes become macrophages or dendritic cells in tissues."
+    },
+    {
+        "question": "Lymphocytes are primarily involved in:",
+        "options": ["Oxygen transport", "Immune response", "Blood clotting", "Nutrient delivery"],
+        "answer": 1,
+        "correctAnswer": "Immune response",
+        "explanation": "Lymphocytes (B, T, NK cells) mediate adaptive immunity."
+    },
+    {
+        "question": "Natural killer cells are a type of:",
+        "options": ["Granulocyte", "Agranulocyte", "Platelet", "Erythrocyte"],
+        "answer": 1,
+        "correctAnswer": "Agranulocyte",
+        "explanation": "NK cells are large granular lymphocytes, but classified as agranulocytes in some contexts; primarily lymphocytes."
+    },
+    {
+        "question": "Basophils release:",
+        "options": ["Histamine", "Oxygen", "Hemoglobin", "Fibrin"],
+        "answer": 0,
+        "correctAnswer": "Histamine",
+        "explanation": "Basophils release histamine and heparin in allergic responses."
+    },
+    {
+        "question": "Eosinophils are increased in:",
+        "options": ["Bacterial infections", "Allergic reactions", "Viral infections", "Blood clotting"],
+        "answer": 1,
+        "correctAnswer": "Allergic reactions",
+        "explanation": "Eosinophils elevate in parasitic infections and allergies."
+    },
+    {
+        "question": "Thrombocytopenia is a condition of:",
+        "options": ["Low platelet count", "High platelet count", "Low red blood cells", "High white blood cells"],
+        "answer": 0,
+        "correctAnswer": "Low platelet count",
+        "explanation": "Thrombocytopenia is reduced platelets, causing bleeding risk."
+    },
+    {
+        "question": "Hemostasis involves:",
+        "options": ["Blood clotting", "Oxygen transport", "Immune response", "Nutrient absorption"],
+        "answer": 0,
+        "correctAnswer": "Blood clotting",
+        "explanation": "Hemostasis is the process to stop bleeding via clotting."
+    },
+    {
+        "question": "The first step in hemostasis is:",
+        "options": ["Platelet plug formation", "Coagulation", "Vasoconstriction", "Fibrinolysis"],
+        "answer": 2,
+        "correctAnswer": "Vasoconstriction",
+        "explanation": "Vasoconstriction reduces blood flow to the injury site."
+    },
+    {
+        "question": "The platelet plug is formed during:",
+        "options": ["Vasoconstriction", "Primary hemostasis", "Secondary hemostasis", "Fibrinolysis"],
+        "answer": 1,
+        "correctAnswer": "Primary hemostasis",
+        "explanation": "Primary hemostasis involves vascular spasm and platelet plug."
+    },
+    {
+        "question": "Coagulation is part of:",
+        "options": ["Primary hemostasis", "Secondary hemostasis", "Vasodilation", "Oxygenation"],
+        "answer": 1,
+        "correctAnswer": "Secondary hemostasis",
+        "explanation": "Secondary hemostasis is the coagulation cascade forming fibrin clot."
+    },
+    {
+        "question": "Fibrin is a key component of:",
+        "options": ["Red blood cells", "Blood clots", "White blood cells", "Platelets"],
+        "answer": 1,
+        "correctAnswer": "Blood clots",
+        "explanation": "Fibrin threads stabilize the platelet plug in clots."
+    },
+    {
+        "question": "Hemophilia is a disorder of:",
+        "options": ["Red blood cell production", "Blood clotting", "White blood cell function", "Platelet formation"],
+        "answer": 1,
+        "correctAnswer": "Blood clotting",
+        "explanation": "Hemophilia is a clotting factor deficiency."
+    },
+    {
+        "question": "The prothrombin time (PT) test measures:",
+        "options": ["Red blood cell count", "Clotting time", "White blood cell function", "Platelet activity"],
+        "answer": 1,
+        "correctAnswer": "Clotting time",
+        "explanation": "PT assesses extrinsic pathway clotting time."
+    },
+    {
+        "question": "Vitamin K is essential for:",
+        "options": ["Red blood cell production", "Blood clotting", "Immune response", "Oxygen transport"],
+        "answer": 1,
+        "correctAnswer": "Blood clotting",
+        "explanation": "Vitamin K is needed for clotting factors II, VII, IX, X."
+    },
+    {
+        "question": "A thrombus is a:",
+        "options": ["Moving blood clot", "Stationary blood clot", "Broken vessel", "Inflamed artery"],
+        "answer": 1,
+        "correctAnswer": "Stationary blood clot",
+        "explanation": "Thrombus is a clot attached to vessel wall; embolus is moving."
+    },
+    {
+        "question": "The lymphatic system returns excess fluid to the:",
+        "options": ["Heart", "Lungs", "Kidneys", "Liver"],
+        "answer": 0,
+        "correctAnswer": "Heart",
+        "explanation": "Returns interstitial fluid (lymph) to venous circulation near the heart."
+    },
+    {
+        "question": "Lymphatic capillaries are most permeable in:",
+        "options": ["Arteries", "Veins", "Capillaries", "Lymph nodes"],
+        "answer": 2,
+        "correctAnswer": "Capillaries",
+        "explanation": "Lymphatic capillaries are highly permeable to collect interstitial fluid."
+    },
+    {
+        "question": "The thoracic duct drains approximately:",
+        "options": ["25% of the body", "50% of the body", "75% of the body", "100% of the body"],
+        "answer": 2,
+        "correctAnswer": "75% of the body",
+        "explanation": "Thoracic duct drains left side and lower body (about 3/4)."
+    },
+    {
+        "question": "The right lymphatic duct drains:",
+        "options": ["Left side of the body", "Right upper quadrant", "Lower limbs", "Abdomen"],
+        "answer": 1,
+        "correctAnswer": "Right upper quadrant",
+        "explanation": "Drains right arm, right side of head/neck/chest."
+    },
+    {
+        "question": "Lymph nodes filter:",
+        "options": ["Blood", "Lymph", "Plasma", "Interstitial fluid"],
+        "answer": 1,
+        "correctAnswer": "Lymph",
+        "explanation": "Lymph nodes filter lymph to remove pathogens and debris."
+    },
+    {
+        "question": "Phagocytic cells in lymph nodes are found in:",
+        "options": ["Reticular tissue", "Endothelium", "Smooth muscle", "Connective tissue"],
+        "answer": 0,
+        "correctAnswer": "Reticular tissue",
+        "explanation": "Macrophages in reticular framework of lymph nodes phagocytose particles."
+    },
+    {
+        "question": "Lymphatic nodules are sites of:",
+        "options": ["Red blood cell production", "Lymphocyte proliferation", "Platelet storage", "Fat metabolism"],
+        "answer": 1,
+        "correctAnswer": "Lymphocyte proliferation",
+        "explanation": "Nodules are where lymphocytes proliferate in response to antigens."
+    },
+    {
+        "question": "Peyer’s patches are located in the:",
+        "options": ["Ileum", "Stomach", "Colon", "Duodenum"],
+        "answer": 0,
+        "correctAnswer": "Ileum",
+        "explanation": "Peyer's patches are lymphoid nodules in the ileum of small intestine."
+    },
+    {
+        "question": "The spleen is a secondary lymphatic organ that:",
+        "options": ["Produces lymphocytes", "Filters blood", "Stores oxygen", "Regulates blood pressure"],
+        "answer": 1,
+        "correctAnswer": "Filters blood",
+        "explanation": "Spleen filters blood, removing old RBCs and pathogens."
+    },
+    {
+        "question": "Tonsils are part of:",
+        "options": ["Primary lymphatic organs", "Secondary lymphatic organs", "Blood vessels", "Heart chambers"],
+        "answer": 1,
+        "correctAnswer": "Secondary lymphatic organs",
+        "explanation": "Tonsils are secondary sites for immune surveillance."
+    },
+    {
+        "question": "Lymphedema is caused by:",
+        "options": ["Excess lymph production", "Lymphatic obstruction", "High blood pressure", "Artery blockage"],
+        "answer": 1,
+        "correctAnswer": "Lymphatic obstruction",
+        "explanation": "Obstruction leads to lymph accumulation and swelling."
+    },
+    {
+        "question": "Hodgkin’s lymphoma affects:",
+        "options": ["Lymph nodes", "Red blood cells", "Platelets", "Heart muscle"],
+        "answer": 0,
+        "correctAnswer": "Lymph nodes",
+        "explanation": "Cancer of lymphocytes, starting in lymph nodes."
+    },
+    {
+        "question": "The thymus is most active during:",
+        "options": ["Childhood", "Adulthood", "Old age", "Infancy"],
+        "answer": 0,
+        "correctAnswer": "Childhood",
+        "explanation": "Thymus peaks in childhood for T-cell maturation, involutes after puberty."
+    },
+    {
+        "question": "The lymphatic system transports:",
+        "options": ["Oxygen", "Fats", "Red blood cells", "Hormones"],
+        "answer": 1,
+        "correctAnswer": "Fats",
+        "explanation": "Absorbs dietary fats via lacteals into lymph (chyle)."
+    },
+    {
+        "question": "Lymphatic trunks drain into:",
+        "options": ["Lymph capillaries", "Lymphatic ducts", "Blood vessels", "Lymph nodes"],
+        "answer": 1,
+        "correctAnswer": "Lymphatic ducts",
+        "explanation": "Trunks converge into thoracic and right lymphatic ducts."
+    },
+    {
+        "question": "The cubital lymph nodes are located in the:",
+        "options": ["Elbow", "Knee", "Neck", "Groin"],
+        "answer": 0,
+        "correctAnswer": "Elbow",
+        "explanation": "Cubital (supratrochlear) nodes in elbow region."
+    },
+    {
+        "question": "The lumbar lymph nodes drain the:",
+        "options": ["Upper limbs", "Lower back", "Head and neck", "Thorax"],
+        "answer": 1,
+        "correctAnswer": "Lower back",
+        "explanation": "Lumbar nodes drain lower abdomen, pelvis, and lower back."
+    },
+    {
+        "question": "The axillary lymph nodes are located in the:",
+        "options": ["Armpit", "Groin", "Neck", "Chest"],
+        "answer": 0,
+        "correctAnswer": "Armpit",
+        "explanation": "Axillary nodes in the axilla (armpit)."
+    },
+    {
+        "question": "The thoracic duct ascends along the:",
+        "options": ["Sternum", "Spinal column", "Ribs", "Diaphragm"],
+        "answer": 1,
+        "correctAnswer": "Spinal column",
+        "explanation": "Thoracic duct runs along the thoracic vertebral column."
+    },
+    {
+        "question": "The right lymphatic duct is shorter than the:",
+        "options": ["Thoracic duct", "Subclavian vein", "Inferior vena cava", "Portal vein"],
+        "answer": 0,
+        "correctAnswer": "Thoracic duct",
+        "explanation": "Right lymphatic duct is short, draining only right upper quadrant."
+    },
+    {
+        "question": "A myocardial infarction is a:",
+        "options": ["Heart attack", "Stroke", "Lung collapse", "Kidney failure"],
+        "answer": 0,
+        "correctAnswer": "Heart attack",
+        "explanation": "Myocardial infarction is death of heart muscle due to coronary occlusion."
+    },
+    {
+        "question": "Angina pectoris is caused by:",
+        "options": ["Reduced blood flow to the heart", "High blood pressure", "Valve leakage", "Lung infection"],
+        "answer": 0,
+        "correctAnswer": "Reduced blood flow to the heart",
+        "explanation": "Angina is chest pain from myocardial ischemia."
+    },
+    {
+        "question": "Congestive heart failure results from:",
+        "options": ["Inability to pump blood effectively", "Excess red blood cells", "High oxygen levels", "Artery dilation"],
+        "answer": 0,
+        "correctAnswer": "Inability to pump blood effectively",
+        "explanation": "Heart cannot pump sufficiently, leading to fluid backup."
+    },
+    {
+        "question": "Pericarditis is inflammation of the:",
+        "options": ["Heart muscle", "Pericardium", "Endocardium", "Myocardium"],
+        "answer": 1,
+        "correctAnswer": "Pericardium",
+        "explanation": "Inflammation of the pericardial sac."
+    },
+    {
+        "question": "Endocarditis affects the:",
+        "options": ["Outer heart layer", "Inner heart lining", "Middle muscle layer", "Pericardial cavity"],
+        "answer": 1,
+        "correctAnswer": "Inner heart lining",
+        "explanation": "Inflammation of the endocardium, often valves."
+    },
+    {
+        "question": "A cardiac catheter is inserted into the:",
+        "options": ["Coronary arteries", "Pulmonary veins", "Aorta", "Superior vena cava"],
+        "answer": 0,
+        "correctAnswer": "Coronary arteries",
+        "explanation": "For angiography to visualize coronary arteries."
+    },
+    {
+        "question": "The ejection fraction measures:",
+        "options": ["Blood pressure", "Percentage of blood pumped per beat", "Heart rate", "Oxygen saturation"],
+        "answer": 1,
+        "correctAnswer": "Percentage of blood pumped per beat",
+        "explanation": "EF = stroke volume / end-diastolic volume × 100."
+    },
+    {
+        "question": "Normal ejection fraction is approximately:",
+        "options": ["20-30%", "40-50%", "50-70%", "80-90%"],
+        "answer": 2,
+        "correctAnswer": "50-70%",
+        "explanation": "Normal EF is 55-70%."
+    },
+    {
+        "question": "An ECG records:",
+        "options": ["Blood flow", "Electrical activity of the heart", "Valve movement", "Muscle contraction"],
+        "answer": 1,
+        "correctAnswer": "Electrical activity of the heart",
+        "explanation": "Electrocardiogram records cardiac electrical impulses."
+    },
+    {
+        "question": "The P wave on an ECG represents:",
+        "options": ["Ventricular depolarization", "Atrial depolarization", "Ventricular repolarization", "Atrial repolarization"],
+        "answer": 1,
+        "correctAnswer": "Atrial depolarization",
+        "explanation": "P wave is atrial depolarization."
+    },
+    {
+        "question": "The QRS complex on an ECG represents:",
+        "options": ["Atrial depolarization", "Ventricular depolarization", "Atrial repolarization", "Ventricular repolarization"],
+        "answer": 1,
+        "correctAnswer": "Ventricular depolarization",
+        "explanation": "QRS is ventricular depolarization."
+    },
+    {
+        "question": "The T wave on an ECG represents:",
+        "options": ["Atrial depolarization", "Ventricular depolarization", "Ventricular repolarization", "Atrial repolarization"],
+        "answer": 2,
+        "correctAnswer": "Ventricular repolarization",
+        "explanation": "T wave is ventricular repolarization."
+    },
+    {
+        "question": "A pacemaker is used to treat:",
+        "options": ["High blood pressure", "Heart block", "Valve stenosis", "Anemia"],
+        "answer": 1,
+        "correctAnswer": "Heart block",
+        "explanation": "Pacemaker maintains heart rhythm in conduction blocks."
+    },
+    {
+        "question": "Coronary artery bypass grafting (CABG) treats:",
+        "options": ["Valve disease", "Coronary artery blockage", "Heart failure", "Pericarditis"],
+        "answer": 1,
+        "correctAnswer": "Coronary artery blockage",
+        "explanation": "CABG bypasses blocked coronary arteries."
+    },
+    {
+        "question": "The systemic circulation carries blood from the:",
+        "options": ["Heart to lungs", "Heart to body", "Lungs to heart", "Body to lungs"],
+        "answer": 1,
+        "correctAnswer": "Heart to body",
+        "explanation": "Systemic circuit supplies body tissues."
+    },
+    {
+        "question": "The pulmonary circulation carries blood from the:",
+        "options": ["Heart to body", "Heart to lungs", "Lungs to heart", "Body to heart"],
+        "answer": 1,
+        "correctAnswer": "Heart to lungs",
+        "explanation": "Pulmonary circuit oxygenates blood in lungs."
+    },
+    {
+        "question": "The foramen ovale is a feature of the fetal:",
+        "options": ["Heart", "Lungs", "Liver", "Kidneys"],
+        "answer": 0,
+        "correctAnswer": "Heart",
+        "explanation": "Shunt between right and left atria in fetal heart."
+    },
+    {
+        "question": "The ductus arteriosus connects the:",
+        "options": ["Aorta and pulmonary artery", "Pulmonary vein and left atrium", "Right atrium and left atrium", "Inferior vena cava and aorta"],
+        "answer": 0,
+        "correctAnswer": "Aorta and pulmonary artery",
+        "explanation": "Bypasses lungs in fetal circulation."
+    },
+    {
+        "question": "Tetralogy of Fallot is a congenital defect involving:",
+        "options": ["Four heart abnormalities", "Two valve issues", "One chamber defect", "Three vessel anomalies"],
+        "answer": 0,
+        "correctAnswer": "Four heart abnormalities",
+        "explanation": "Includes pulmonary stenosis, VSD, overriding aorta, right ventricular hypertrophy."
+    },
+    {
+        "question": "The lymphatic system aids in:",
+        "options": ["Digestion", "Immune defense", "Bone growth", "Muscle contraction"],
+        "answer": 1,
+        "correctAnswer": "Immune defense",
+        "explanation": "Transports lymphocytes and filters pathogens."
+    }
+]
+
+;
+
+        // DOM Elements
+        let body = document.body;
+        let questionElement = document.getElementById('question');
+        let optionsContainer = document.getElementById('options-container');
+        let currentQuestionElement = document.getElementById('current-question');
+        let totalQuestionsElement = document.getElementById('total-questions');
+        let progressBar = document.getElementById('progress-bar');
+        let prevButton = document.getElementById('prev-btn');
+        let nextButton = document.getElementById('next-btn');
+        let feedbackElement = document.getElementById('feedback');
+        let timerElement = document.getElementById('timer');
+        let scoreElement = document.getElementById('score');
+        let streakElement = document.getElementById('streak');
+        let categoryElement = document.getElementById('category');
+        let explanationContainer = document.getElementById('explanation-container');
+        let explanationTextElement = document.getElementById('explanation-text');
+        let themeToggle = document.getElementById('theme-toggle');
+        let soundToggle = document.getElementById('sound-toggle');
+        let bookmarkBtn = document.getElementById('bookmark-btn');
+        let bookmarksCount = document.getElementById('bookmarks-count');
+        let categoryTag = document.getElementById('category-tag');
+        let difficultyTag = document.getElementById('difficulty-tag');
+        let showExplanationBtn = document.getElementById('show-explanation-btn');
+
+        // Quiz state
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let streak = 0;
+        let selectedOption = null;
+        let timeStarted = null;
+        let timerInterval = null;
+        let timeElapsed = 0;
+        let answers = [];
+        let soundsEnabled = true;
+        let bookmarkedQuestions = [];
+        let quizHistory = [];
+        let performanceMetrics = {
+            categories: {},
+            difficulties: { Easy: 0, Medium: 0, Hard: 0 },
+            totalCorrect: 0,
+            totalQuestions: 0
+        };
+
+        function initQuiz() {
+            // Reset DOM elements
+            scoreElement.textContent = score;
+            streakElement.textContent = streak;
+            timerElement.textContent = '00:00';
+            totalQuestionsElement.textContent = questions.length;
+            
+            loadQuestion();
+            startTimer();
+            
+            // Remove existing event listeners to prevent duplicates
+            const prevBtnClone = prevButton.cloneNode(true);
+            prevButton.parentNode.replaceChild(prevBtnClone, prevButton);
+            const nextBtnClone = nextButton.cloneNode(true);
+            nextButton.parentNode.replaceChild(nextBtnClone, nextButton);
+            const themeToggleClone = themeToggle.cloneNode(true);
+            themeToggle.parentNode.replaceChild(themeToggleClone, themeToggle);
+            const soundToggleClone = soundToggle.cloneNode(true);
+            soundToggle.parentNode.replaceChild(soundToggleClone, soundToggle);
+            const bookmarkBtnClone = bookmarkBtn.cloneNode(true);
+            bookmarkBtn.parentNode.replaceChild(bookmarkBtnClone, bookmarkBtn);
+            const showExplanationBtnClone = showExplanationBtn.cloneNode(true);
+            showExplanationBtn.parentNode.replaceChild(showExplanationBtnClone, showExplanationBtn);
+
+            // Reassign DOM elements after cloning
+            prevButton = document.getElementById('prev-btn');
+            nextButton = document.getElementById('next-btn');
+            themeToggle = document.getElementById('theme-toggle');
+            soundToggle = document.getElementById('sound-toggle');
+            bookmarkBtn = document.getElementById('bookmark-btn');
+            showExplanationBtn = document.getElementById('show-explanation-btn');
+
+            // Add event listeners
+            prevButton.addEventListener('click', goToPreviousQuestion);
+            nextButton.addEventListener('click', goToNextQuestion);
+            themeToggle.addEventListener('click', toggleTheme);
+            soundToggle.addEventListener('click', toggleSound);
+            bookmarkBtn.addEventListener('click', toggleBookmark);
+            showExplanationBtn.addEventListener('click', toggleExplanation);
+            
+            // Keyboard navigation
+            document.removeEventListener('keydown', handleKeydown);
+            document.addEventListener('keydown', handleKeydown);
+            
+            loadPreferences();
+            loadQuizHistory();
+            updateBookmarksCount();
+        }
+
+        function handleKeydown(e) {
+            if (e.key === 'ArrowRight') {
+                goToNextQuestion();
+            } else if (e.key === 'ArrowLeft') {
+                goToPreviousQuestion();
+            } else if (e.key.toLowerCase() === 'a' || e.key === '1') {
+                selectOption(0);
+            } else if (e.key.toLowerCase() === 'b' || e.key === '2') {
+                selectOption(1);
+            } else if (e.key.toLowerCase() === 'c' || e.key === '3') {
+                selectOption(2);
+            } else if (e.key.toLowerCase() === 'd' || e.key === '4') {
+                selectOption(3);
+            } else if (e.key === 'Enter') {
+                if (showExplanationBtn.style.display !== 'none') {
+                    toggleExplanation();
+                }
+            }
+        }
+
+        function loadQuestion() {
+            const question = questions[currentQuestionIndex];
+            questionElement.textContent = question.question;
+            currentQuestionElement.textContent = currentQuestionIndex + 1;
+            categoryTag.textContent = question.category || 'Unknown';
+            difficultyTag.textContent = question.difficulty || 'Medium';
+            categoryElement.textContent = question.category || 'All';
+            
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+            
+            optionsContainer.innerHTML = '';
+            
+            const optionLetters = ['A', 'B', 'C', 'D', 'E'];
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.classList.add('option', 'bounce-in');
+                optionElement.setAttribute('role', 'button');
+                optionElement.setAttribute('tabindex', '0');
+                optionElement.setAttribute('aria-label', `Option ${optionLetters[index]}: ${option}`);
+                
+                const optionLetter = document.createElement('div');
+                optionLetter.classList.add('option-letter');
+                optionLetter.textContent = optionLetters[index];
+                
+                const optionText = document.createElement('div');
+                optionText.classList.add('option-text');
+                optionText.textContent = option;
+                
+                optionElement.appendChild(optionLetter);
+                optionElement.appendChild(optionText);
+                
+                optionElement.addEventListener('click', () => selectOption(index));
+                optionElement.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        selectOption(index);
+                    }
+                });
+                
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            prevButton.disabled = currentQuestionIndex === 0;
+            nextButton.textContent = currentQuestionIndex === questions.length - 1 ? 'Finish Quiz' : 'Next Question';
+            
+            feedbackElement.style.display = 'none';
+            showExplanationBtn.style.display = 'none';
+            explanationContainer.classList.remove('expanded');
+            
+            selectedOption = null;
+            
+            // If the question was previously answered or skipped, display the feedback
+            if (answers[currentQuestionIndex]) {
+                const ans = answers[currentQuestionIndex];
+                const options = document.querySelectorAll('.option');
+                feedbackElement.style.display = 'flex';
+                showExplanationBtn.style.display = 'block';
+                explanationTextElement.textContent = question.explanation;
+                options.forEach(option => option.style.pointerEvents = 'none');
+                
+                if (ans.selected === 'Skipped') {
+                    selectedOption = null;
+                    feedbackElement.classList.add('incorrect');
+                    feedbackElement.innerHTML = '<i class="fas fa-times-circle feedback-icon"></i><div class="feedback-text">Skipped. The right answer is highlighted.</div>';
+                    options[question.answer].classList.add('correct');
+                } else {
+                    const optIndex = question.options.findIndex(opt => opt === ans.selected);
+                    if (optIndex !== -1) {
+                        selectedOption = optIndex;
+                        options[optIndex].classList.add('selected');
+                        if (ans.isCorrect) {
+                            feedbackElement.classList.add('correct');
+                            feedbackElement.innerHTML = '<i class="fas fa-check-circle feedback-icon"></i><div class="feedback-text">Correct! Well done.</div>';
+                        } else {
+                            feedbackElement.classList.add('incorrect');
+                            feedbackElement.innerHTML = '<i class="fas fa-times-circle feedback-icon"></i><div class="feedback-text">Incorrect. The right answer is highlighted.</div>';
+                            options[question.answer].classList.add('correct');
+                        }
+                    }
+                }
+            }
+            
+            updateBookmarkStatus();
+        }
+
+        function selectOption(index) {
+            if (selectedOption !== null || answers[currentQuestionIndex]) return;
+            
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => option.classList.remove('selected'));
+            options[index].classList.add('selected');
+            selectedOption = index;
+            
+            const question = questions[currentQuestionIndex];
+            const isCorrect = index === question.answer;
+            
+            feedbackElement.style.display = 'flex';
+            if (isCorrect) {
+                feedbackElement.classList.remove('incorrect');
+                feedbackElement.classList.add('correct');
+                feedbackElement.innerHTML = '<i class="fas fa-check-circle feedback-icon"></i><div class="feedback-text">Correct! Well done.</div>';
+                score += getScoreForDifficulty(question.difficulty);
+                streak++;
+                playSound('correct');
+            } else {
+                feedbackElement.classList.remove('correct');
+                feedbackElement.classList.add('incorrect');
+                feedbackElement.innerHTML = '<i class="fas fa-times-circle feedback-icon"></i><div class="feedback-text">Incorrect. The right answer is highlighted.</div>';
+                options[question.answer].classList.add('correct');
+                streak = 0;
+                playSound('incorrect');
+            }
+            
+            scoreElement.textContent = score;
+            streakElement.textContent = streak;
+            
+            explanationTextElement.textContent = question.explanation;
+            showExplanationBtn.style.display = 'block';
+            
+            answers[currentQuestionIndex] = {
+                question: question.question,
+                selected: question.options[index],
+                correct: question.options[question.answer],
+                isCorrect: isCorrect,
+                explanation: question.explanation,
+                category: question.category,
+                difficulty: question.difficulty
+            };
+            
+            updatePerformanceMetrics(isCorrect, question);
+            
+            options.forEach(option => option.style.pointerEvents = 'none');
+        }
+
+        function maybeHandleSkip() {
+            if (!answers[currentQuestionIndex] && selectedOption === null) {
+                const question = questions[currentQuestionIndex];
+                answers[currentQuestionIndex] = {
+                    question: question.question,
+                    selected: 'Skipped',
+                    correct: question.options[question.answer],
+                    isCorrect: false,
+                    explanation: question.explanation,
+                    category: question.category,
+                    difficulty: question.difficulty
+                };
+                updatePerformanceMetrics(false, question);
+                streak = 0;
+                streakElement.textContent = streak;
+            }
+        }
+
+        function toggleExplanation() {
+            explanationContainer.classList.toggle('expanded');
+            showExplanationBtn.innerHTML = explanationContainer.classList.contains('expanded') ?
+                '<i class="fas fa-info-circle"></i> Hide Explanation' :
+                '<i class="fas fa-info-circle"></i> Show Explanation';
+        }
+
+        function getScoreForDifficulty(difficulty) {
+            switch (difficulty) {
+                case 'Easy': return 5;
+                case 'Medium': return 10;
+                case 'Hard': return 15;
+                default: return 10;
+            }
+        }
+
+        function updatePerformanceMetrics(isCorrect, question) {
+            performanceMetrics.totalQuestions++;
+            if (isCorrect) performanceMetrics.totalCorrect++;
+            
+            performanceMetrics.categories[question.category] = performanceMetrics.categories[question.category] || { correct: 0, total: 0 };
+            performanceMetrics.categories[question.category].total++;
+            if (isCorrect) performanceMetrics.categories[question.category].correct++;
+            
+            performanceMetrics.difficulties[question.difficulty] = performanceMetrics.difficulties[question.difficulty] || 0;
+            if (isCorrect) performanceMetrics.difficulties[question.difficulty]++;
+        }
+
+        function toggleBookmark() {
+            const questionId = questions[currentQuestionIndex].id;
+            const index = bookmarkedQuestions.indexOf(questionId);
+            if (index === -1) {
+                bookmarkedQuestions.push(questionId);
+                bookmarkBtn.classList.add('bookmarked');
+            } else {
+                bookmarkedQuestions.splice(index, 1);
+                bookmarkBtn.classList.remove('bookmarked');
+            }
+            updateBookmarksCount();
+            saveBookmarks();
+        }
+
+        function updateBookmarkStatus() {
+            const questionId = questions[currentQuestionIndex].id;
+            bookmarkBtn.classList.toggle('bookmarked', bookmarkedQuestions.includes(questionId));
+        }
+
+        function updateBookmarksCount() {
+            bookmarksCount.textContent = bookmarkedQuestions.length;
+        }
+
+        function goToNextQuestion() {
+            maybeHandleSkip();
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                showResults();
+                saveQuizHistory();
+            }
+        }
+
+        function goToPreviousQuestion() {
+            maybeHandleSkip();
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        }
+
+        function startTimer() {
+            timeStarted = new Date();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            timeElapsed++;
+            
+            const minutes = Math.floor(timeElapsed / 60).toString().padStart(2, '0');
+            const seconds = (timeElapsed % 60).toString().padStart(2, '0');
+            timerElement.textContent = `${minutes}:${seconds}`;
+            
+            // Optional: Add warning color for long durations (e.g., after 5 minutes)
+            if (timeElapsed >= 300) {
+                timerElement.style.color = 'var(--danger)';
+                timerElement.classList.add('pulse');
+            } else {
+                timerElement.style.color = 'var(--primary)';
+                timerElement.classList.remove('pulse');
+            }
+        }
+
+        function showResults() {
+            clearInterval(timerInterval);
+            
+            const quizContainer = document.querySelector('.quiz-container');
+            const maxScore = questions.reduce((sum, q) => sum + getScoreForDifficulty(q.difficulty), 0);
+            const percentage = ((score / maxScore) * 100).toFixed(1);
+            const categoryStats = Object.entries(performanceMetrics.categories)
+                .map(([category, stats]) => `${category}: ${((stats.correct / stats.total) * 100).toFixed(1)}%`)
+                .join(', ');
+            
+            quizContainer.innerHTML = `
+                <div class="results-container">
+                    <h2 class="quiz-title">Quiz Completed!</h2>
+                    <p class="quiz-subtitle">You've finished the embryology quiz</p>
+                    
+                    <div class="score-circle" style="--p: ${percentage}%">
+                        <div class="score-text">
+                            <div class="score-value">${score}</div>
+                            <div class="score-label">Points</div>
+                        </div>
+                    </div>
+                    
+                    <div class="results-stats">
+                        <div class="result-stat">
+                            <div class="result-stat-value">${percentage}%</div>
+                            <div class="result-stat-label">Accuracy</div>
+                        </div>
+                        <div class="result-stat">
+                            <div class="result-stat-value">${timeElapsed}s</div>
+                            <div class="result-stat-label">Time Taken</div>
+                        </div>
+                        <div class="result-stat">
+                            <div class="result-stat-value">${streak}</div>
+                            <div class="result-stat-label">Best Streak</div>
+                        </div>
+                        <div class="result-stat">
+                            <div class="result-stat-value">${bookmarkedQuestions.length}</div>
+                            <div class="result-stat-label">Bookmarked</div>
+                        </div>
+                    </div>
+                    
+                    <div class="review-section">
+                        <h3 class="review-title">Performance Analytics</h3>
+                        <div class="review-item">
+                            <div class="review-answer">Category Performance: ${categoryStats}</div>
+                            <div class="review-answer">Difficulty Performance: Easy: ${performanceMetrics.difficulties.Easy || 0}, Medium: ${performanceMetrics.difficulties.Medium || 0}, Hard: ${performanceMetrics.difficulties.Hard || 0}</div>
+                        </div>
+                        
+                        <h3 class="review-title">Review Your Answers</h3>
+                        ${answers.map((answer, index) => `
+                            <div class="review-item ${answer.isCorrect ? 'correct' : 'incorrect'}">
+                                <div class="review-question">Q${index + 1}: ${answer.question} (${answer.category} - ${answer.difficulty})</div>
+                                <div class="review-answer">Your Answer: ${answer.selected}</div>
+                                <div class="review-answer">Correct Answer: ${answer.correct}</div>
+                                <div class="review-explanation">${answer.explanation}</div>
+                            </div>
+                        `).join('')}
+                        
+                        <h3 class="review-title">Bookmarked Questions</h3>
+                        ${bookmarkedQuestions.map(qid => {
+                            const question = questions.find(q => q.id === qid);
+                            return `
+                                <div class="review-item">
+                                    <div class="review-question">${question.question} (${question.category} - ${question.difficulty})</div>
+                                    <div class="review-answer">Correct Answer: ${question.correctAnswer}</div>
+                                    <div class="review-explanation">${question.explanation}</div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    
+                    <button class="btn btn-primary mt-4" id="restart-btn">
+                        <i class="fas fa-redo"></i> Try Again
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('restart-btn').addEventListener('click', restartQuiz);
+        }
+
+        function restartQuiz() {
+            // Reset quiz state
+            currentQuestionIndex = 0;
+            score = 0;
+            streak = 0;
+            timeElapsed = 0;
+            answers = [];
+            selectedOption = null;
+            performanceMetrics = {
+                categories: {},
+                difficulties: { Easy: 0, Medium: 0, Hard: 0 },
+                totalCorrect: 0,
+                totalQuestions: 0
+            };
+            
+            // Clear any existing timer
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            
+            // Reset DOM
+            const quizContainer = document.querySelector('.quiz-container');
+            quizContainer.innerHTML = `
+                <div class="quiz-header">
+                    <div>
+                        <h1 class="quiz-title">Advanced Embryology Quiz</h1>
+                        <p class="quiz-subtitle">Test your knowledge with professional questions and detailed explanations</p>
+                    </div>
+                    <div class="stats-container">
+                        <div class="stat">
+                            <span class="stat-value" id="score">0</span>
+                            <span class="stat-label">Score</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value" id="timer">00:00</span>
+                            <span class="stat-label">Time</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value" id="streak">0</span>
+                            <span class="stat-label">Streak</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value" id="category">All</span>
+                            <span class="stat-label">Category</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar" style="width: 10%"></div>
+                </div>
+
+                <div class="question-meta">
+                    <div class="question-tags">
+                        <span class="tag" id="category-tag">Neuro</span>
+                        <span class="tag" id="difficulty-tag">Medium</span>
+                    </div>
+                    <button class="bookmark-btn" id="bookmark-btn" aria-label="Bookmark question">
+                        <i class="fas fa-bookmark"></i>
+                    </button>
+                </div>
+                <div class="question-number">Question <span id="current-question">1</span> of <span id="total-questions">10</span></div>
+                <div class="question-text" id="question"></div>
+
+                <div class="options-grid" id="options-container"></div>
+
+                <div class="feedback correct" id="feedback" style="display: none;">
+                    <i class="fas fa-check-circle feedback-icon"></i>
+                    <div class="feedback-text">Correct! Well done.</div>
+                </div>
+
+                <button class="btn btn-secondary" id="show-explanation-btn" style="display: none;">
+                    <i class="fas fa-info-circle"></i> Show Explanation
+                </button>
+
+                <div class="explanation-container" id="explanation-container">
+                    <div class="explanation">
+                        <div class="explanation-title">Explanation:</div>
+                        <div id="explanation-text"></div>
+                    </div>
+                </div>
+
+                <div class="navigation">
+                    <button class="btn btn-secondary" id="prev-btn" disabled>
+                        <i class="fas fa-arrow-left"></i> Previous
+                    </button>
+                    <button class="btn btn-primary" id="next-btn">
+                        Next Question <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            `;
+            
+            // Reinitialize DOM elements
+            questionElement = document.getElementById('question');
+            optionsContainer = document.getElementById('options-container');
+            currentQuestionElement = document.getElementById('current-question');
+            totalQuestionsElement = document.getElementById('total-questions');
+            progressBar = document.getElementById('progress-bar');
+            prevButton = document.getElementById('prev-btn');
+            nextButton = document.getElementById('next-btn');
+            feedbackElement = document.getElementById('feedback');
+            timerElement = document.getElementById('timer');
+            scoreElement = document.getElementById('score');
+            streakElement = document.getElementById('streak');
+            categoryElement = document.getElementById('category');
+            explanationContainer = document.getElementById('explanation-container');
+            explanationTextElement = document.getElementById('explanation-text');
+            bookmarkBtn = document.getElementById('bookmark-btn');
+            bookmarksCount = document.getElementById('bookmarks-count');
+            categoryTag = document.getElementById('category-tag');
+            difficultyTag = document.getElementById('difficulty-tag');
+            showExplanationBtn = document.getElementById('show-explanation-btn');
+            
+            // Reinitialize the quiz
+            initQuiz();
+        }
+
+        function toggleTheme() {
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 
+                            currentTheme === 'light' ? 'minimal' : 'dark';
+            
+            body.setAttribute('data-theme', newTheme);
+            themeToggle.innerHTML = newTheme === 'dark' ? '<i class="fas fa-moon"></i>' : 
+                                  newTheme === 'light' ? '<i class="fas fa-sun"></i>' : 
+                                  '<i class="fas fa-paint-brush"></i>';
+            
+            localStorage.setItem('theme', newTheme);
+        }
+
+        function toggleSound() {
+            soundsEnabled = !soundsEnabled;
+            soundToggle.innerHTML = soundsEnabled ? '<i class="fas fa-volume-up"></i>' : '<i class="fas fa-volume-mute"></i>';
+            
+            localStorage.setItem('soundsEnabled', soundsEnabled);
+        }
+
+        function playSound(type) {
+            if (!soundsEnabled) return;
+            console.log(`Playing ${type} sound`);
+        }
+
+        function loadPreferences() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                body.setAttribute('data-theme', savedTheme);
+                themeToggle.innerHTML = savedTheme === 'dark' ? '<i class="fas fa-moon"></i>' : 
+                                      savedTheme === 'light' ? '<i class="fas fa-sun"></i>' : 
+                                      '<i class="fas fa-paint-brush"></i>';
+            }
+            
+            const savedSounds = localStorage.getItem('soundsEnabled');
+            if (savedSounds !== null) {
+                soundsEnabled = savedSounds === 'true';
+                soundToggle.innerHTML = soundsEnabled ? '<i class="fas fa-volume-up"></i>' : '<i class="fas fa-volume-mute"></i>';
+            }
+        }
+
+        function saveBookmarks() {
+            localStorage.setItem('bookmarkedQuestions', JSON.stringify(bookmarkedQuestions));
+        }
+
+        function loadQuizHistory() {
+            const saved = localStorage.getItem('quizHistory');
+            if (saved) {
+                quizHistory = JSON.parse(saved);
+            }
+            loadBookmarks();
+        }
+
+        function saveQuizHistory() {
+            quizHistory.push({
+                timestamp: new Date().toISOString(),
+                score: score,
+                percentage: ((score / (questions.length * 15)) * 100).toFixed(1),
+                timeSpent: timeElapsed,
+                streak: streak,
+                answers: answers,
+                performanceMetrics: performanceMetrics
+            });
+            localStorage.setItem('quizHistory', JSON.stringify(quizHistory));
+        }
+
+        function loadBookmarks() {
+            const saved = localStorage.getItem('bookmarkedQuestions');
+            if (saved) {
+                bookmarkedQuestions = JSON.parse(saved);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', initQuiz);
+    </script>
+</body>
+</html>
