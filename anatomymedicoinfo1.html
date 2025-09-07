@@ -7,15 +7,30 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-light: #f5f7fa;
-            --bg-dark: #0a192f;
+            /* Shared variables */
+            --accent: #2a9d8f;
+            --accent-hover: #248b80;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            --text-dark: #ffffff;
             --text-light: #1a202c;
-            --text-dark: #e0e1dd;
-            --accent: #5f9ea0;
-            --accent-hover: #4a8c8e;
-            --card-bg-light: #ffffff;
-            --card-bg-dark: rgba(13, 27, 42, 0.95);
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+
+            /* Modern Dark Theme */
+            --modern-dark-bg: linear-gradient(135deg, #111827, #1f2937);
+            --modern-dark-card: rgba(31, 41, 55, 0.95);
+            --modern-dark-button: linear-gradient(90deg, #2a9d8f, #34d399);
+            --modern-dark-button-hover: linear-gradient(90deg, #248b80, #2fb686);
+
+            /* Modern Light Theme */
+            --modern-light-bg: linear-gradient(135deg, #e5e7eb, #f3f4f6);
+            --modern-light-card: #ffffff;
+            --modern-light-button: #2a9d8f;
+            --modern-light-button-hover: #248b80;
+
+            /* Minimal Theme */
+            --minimal-bg: #f8fafc;
+            --minimal-card: #ffffff;
+            --minimal-button: #2a9d8f;
+            --minimal-button-hover: #248b80;
         }
 
         * {
@@ -29,22 +44,15 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            transition: background-color 0.3s, color 0.3s;
+            transition: all 0.3s ease;
         }
 
-        body.light {
-            background: var(--bg-light);
-            color: var(--text-light);
-        }
-
-        body.dark {
-            background: linear-gradient(135deg, var(--bg-dark), #0d1b2a);
-            color: var(--text-dark);
-        }
+        body.modern-dark { background: var(--modern-dark-bg); color: var(--text-dark); }
+        body.modern-light { background: var(--modern-light-bg); color: var(--text-light); }
+        body.minimal { background: var(--minimal-bg); color: var(--text-light); }
 
         header {
-            background: var(--card-bg-dark);
-            padding: 1rem;
+            padding: 0.8rem 1rem;
             box-shadow: var(--shadow);
             position: sticky;
             top: 0;
@@ -52,121 +60,195 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: all 0.3s ease;
         }
 
-        header.light {
-            background: var(--card-bg-light);
+        header.modern-dark { background: var(--modern-dark-card); }
+        header.modern-light { background: var(--modern-light-card); }
+        header.minimal { background: var(--minimal-card); }
+
+        .header-controls {
+            display: flex;
+            gap: 0.5rem;
         }
 
-        .theme-toggle {
+        .theme-toggle, .layout-toggle {
             background: none;
             border: none;
-            color: inherit;
             font-size: 1.2rem;
             cursor: pointer;
             padding: 0.5rem;
             border-radius: 50%;
-            transition: background-color 0.3s;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            color: inherit;
         }
 
-        .theme-toggle:hover {
-            background: rgba(95, 158, 160, 0.2);
+        .theme-toggle:hover, .layout-toggle:hover {
+            background: rgba(42, 157, 143, 0.2);
+            transform: scale(1.1);
+        }
+
+        .theme-toggle i, .layout-toggle i {
+            transition: transform 0.3s ease;
+        }
+
+        .theme-toggle:hover i {
+            transform: rotate(20deg);
+        }
+
+        .layout-selector {
+            position: relative;
+        }
+
+        .layout-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            background: var(--modern-dark-card);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            min-width: 120px;
+            overflow: hidden;
+        }
+
+        .layout-dropdown.modern-light { background: var(--modern-light-card); }
+        .layout-dropdown.minimal { background: var(--minimal-card); }
+
+        .layout-dropdown.show {
+            display: block;
+        }
+
+        .layout-option {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .layout-option.modern-dark { color: var(--text-dark); }
+        .layout-option.modern-light { color: var(--text-light); }
+        .layout-option.minimal { color: var(--text-light); }
+
+        .layout-option:hover {
+            background: var(--accent);
+            color: #fff;
         }
 
         .quiz-container {
             width: 100%;
-            max-width: 900px;
-            margin: 1.5rem auto;
-            background: var(--card-bg-dark);
+            max-width: 800px;
+            margin: 1rem auto;
             border-radius: 12px;
-            padding: 2rem;
+            padding: 1.5rem;
             box-shadow: var(--shadow);
-            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
         }
 
-        .quiz-container.light {
-            background: var(--card-bg-light);
-        }
+        .quiz-container.modern-dark { background: var(--modern-dark-card); }
+        .quiz-container.modern-light { background: var(--modern-light-card); }
+        .quiz-container.minimal { background: var(--minimal-card); }
 
         .header {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
 
         h1 {
-            font-size: 1.8rem;
-            font-weight: 600;
+            font-size: 1.6rem;
+            font-weight: 700;
             color: var(--accent);
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
 
         .subtitle {
-            font-size: 1rem;
-            opacity: 0.8;
-            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-top: 0.3rem;
         }
 
         .progress-container {
             background: rgba(0, 0, 0, 0.1);
-            border-radius: 12px;
-            height: 6px;
-            margin: 1.5rem 0;
+            border-radius: 10px;
+            height: 5px;
+            margin: 1rem 0;
             overflow: hidden;
         }
 
         .progress-bar {
             height: 100%;
-            background: linear-gradient(90deg, var(--accent), #7cb9e8);
-            width: 0%;
             transition: width 0.5s ease;
         }
 
+        .progress-bar.modern-dark { background: var(--modern-dark-button); }
+        .progress-bar.modern-light { background: var(--modern-light-button); }
+        .progress-bar.minimal { background: var(--minimal-button); }
+
         .question-number {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             margin-bottom: 1rem;
             color: var(--accent);
             font-weight: 600;
         }
 
         .question-text {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 500;
-            margin-bottom: 1.5rem;
-            line-height: 1.5;
+            margin-bottom: 1rem;
+            line-height: 1.4;
+            animation: fadeIn 0.5s ease;
         }
 
         .options-container {
             display: grid;
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
         }
 
         .option {
-            background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--accent);
             border-radius: 8px;
-            padding: 1rem;
+            padding: 0.8rem;
             cursor: pointer;
-            transition: all 0.3s;
-            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
             display: flex;
             align-items: center;
+            position: relative;
+            overflow: hidden;
         }
 
-        .option.light {
-            background: rgba(0, 0, 0, 0.05);
-        }
+        .option.modern-dark { background: rgba(255, 255, 255, 0.1); }
+        .option.modern-light { background: rgba(0, 0, 0, 0.05); }
+        .option.minimal { background: rgba(0, 0, 0, 0.05); }
 
         .option:hover {
-            background: rgba(95, 158, 160, 0.2);
             transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(42, 157, 143, 0.2);
+        }
+
+        .option::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(42, 157, 143, 0.2), transparent);
+            transition: 0.4s;
+        }
+
+        .option:hover::after {
+            left: 100%;
         }
 
         .option.selected {
-            background: rgba(95, 158, 160, 0.3);
+            background: rgba(42, 157, 143, 0.3);
             border-color: var(--accent);
-            box-shadow: 0 0 10px rgba(95, 158, 160, 0.3);
+            box-shadow: 0 0 8px rgba(42, 157, 143, 0.3);
         }
 
         .option.correct {
@@ -181,55 +263,59 @@
 
         .option-letter {
             font-weight: 600;
-            margin-right: 0.75rem;
+            margin-right: 0.5rem;
             color: var(--accent);
-            width: 1.5rem;
-            height: 1.5rem;
+            width: 1.4rem;
+            height: 1.4rem;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 50%;
-            background: rgba(95, 158, 160, 0.2);
+            background: rgba(42, 157, 143, 0.2);
         }
 
         .navigation {
             display: flex;
             justify-content: space-between;
-            margin-top: 1.5rem;
-            gap: 1rem;
+            margin-top: 1rem;
+            gap: 0.5rem;
         }
 
         button {
-            padding: 0.75rem 1.5rem;
+            padding: 0.6rem 1.2rem;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
-            transition: all 0.3s;
-            background: var(--accent);
-            color: #fff;
-            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.4rem;
+            color: #fff;
         }
 
-        button.light {
-            color: var(--text-light);
-        }
+        button.modern-dark { background: var(--modern-dark-button); }
+        button.modern-light { background: var(--modern-light-button); color: var(--text-light); }
+        button.minimal { background: var(--minimal-button); color: var(--text-light); }
 
         #prev-btn {
-            background: rgba(95, 158, 160, 0.2);
+            background: rgba(42, 157, 143, 0.2);
+            color: inherit;
         }
 
         #prev-btn:hover:not(:disabled) {
-            background: rgba(95, 158, 160, 0.4);
+            background: rgba(42, 157, 143, 0.3);
         }
 
-        #next-btn:hover {
-            background: var(--accent-hover);
-            box-shadow: 0 0 10px rgba(95, 158, 160, 0.4);
+        #next-btn:hover, #restart-btn:hover {
+            box-shadow: 0 0 8px rgba(42, 157, 143, 0.3);
+            transform: translateY(-2px);
         }
+
+        #next-btn.modern-dark:hover { background: var(--modern-dark-button-hover); }
+        #next-btn.modern-light:hover { background: var(--modern-light-button-hover); }
+        #next-btn.minimal:hover { background: var(--minimal-button-hover); }
 
         button:disabled {
             opacity: 0.5;
@@ -238,180 +324,299 @@
 
         .quiz-completed {
             text-align: center;
-            padding: 2rem 1rem;
+            padding: 1.5rem;
+            animation: fadeIn 0.5s ease;
         }
 
         .score-text {
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
+            font-size: 1rem;
+            margin-bottom: 0.8rem;
         }
 
         .score-value {
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 700;
             color: var(--accent);
-            margin-bottom: 1rem;
+            margin-bottom: 0.8rem;
         }
 
         .mark-percentage {
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
             color: var(--accent);
         }
 
         #restart-btn {
-            background: linear-gradient(90deg, var(--accent), #7cb9e8);
-            padding: 1rem 2rem;
-            font-size: 1rem;
-        }
-
-        #restart-btn:hover {
-            background: linear-gradient(90deg, var(--accent-hover), #6aa6d6);
+            padding: 0.8rem 1.5rem;
+            font-size: 0.9rem;
         }
 
         .feedback {
             text-align: center;
-            margin-top: 1rem;
+            margin-top: 0.8rem;
             font-weight: 500;
-            min-height: 1.5rem;
+            min-height: 1.2rem;
             color: var(--accent);
+            animation: fadeIn 0.3s ease;
         }
 
         .explanation-toggle {
-            background: rgba(95, 158, 160, 0.2);
             border: none;
-            padding: 0.75rem 1.5rem;
+            padding: 0.6rem 1.2rem;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
-            color: var(--text-dark);
-            margin: 1rem auto;
+            margin: 0.8rem auto;
             display: block;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
+            color: #fff;
         }
 
-        .explanation-toggle.light {
-            color: var(--text-light);
-        }
+        .explanation-toggle.modern-dark { background: var(--modern-dark-button); }
+        .explanation-toggle.modern-light { background: var(--modern-light-button); color: var(--text-light); }
+        .explanation-toggle.minimal { background: var(--minimal-button); color: var(--text-light); }
 
         .explanation-toggle:hover {
-            background: rgba(95, 158, 160, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(42, 157, 143, 0.3);
         }
 
         .explanation {
-            background: rgba(95, 158, 160, 0.1);
+            background: rgba(42, 157, 143, 0.1);
             border-left: 3px solid var(--accent);
-            padding: 1rem;
+            padding: 0.8rem;
             border-radius: 8px;
-            margin-top: 1rem;
-            display: none;
+            margin-top: 0.8rem;
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.3s ease;
+            transition: max-height 0.5s ease;
         }
 
         .explanation.show {
-            display: block;
-            max-height: 500px;
+            max-height: 400px;
         }
 
         .explanation-title {
             font-weight: 600;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.4rem;
             color: var(--accent);
         }
 
         .timer {
             text-align: right;
-            margin-bottom: 1rem;
-            font-size: 1rem;
+            margin-bottom: 0.8rem;
+            font-size: 0.9rem;
             color: var(--accent);
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            gap: 0.5rem;
+            gap: 0.4rem;
+        }
+
+        .review-section {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 8px;
+            background: rgba(42, 157, 143, 0.1);
+        }
+
+        .review-item {
+            margin-bottom: 0.8rem;
+            padding: 0.8rem;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .review-item.correct { background: rgba(0, 184, 148, 0.2); }
+        .review-item.incorrect { background: rgba(214, 48, 49, 0.2); }
+
+        .review-question {
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            font-size: 0.95rem;
+        }
+
+        .review-answer {
+            font-size: 0.85rem;
+            opacity: 0.9;
         }
 
         footer {
-            background: var(--card-bg-dark);
-            padding: 1rem;
+            padding: 0.8rem;
             text-align: center;
-            font-size: 0.9rem;
-            opacity: 0.8;
+            font-size: 0.8rem;
+            opacity: 0.7;
             margin-top: auto;
+            transition: all 0.3s ease;
         }
 
-        footer.light {
-            background: var(--card-bg-light);
-        }
+        footer.modern-dark { background: var(--modern-dark-card); }
+        footer.modern-light { background: var(--modern-light-card); }
+        footer.minimal { background: var(--minimal-card); }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         .fade-in {
-            animation: fadeIn 0.3s ease;
+            animation: fadeIn 0.5s ease;
         }
 
+        /* Responsive Design */
         @media (max-width: 768px) {
             .quiz-container {
-                margin: 1rem;
-                padding: 1.5rem;
-            }
-
-            h1 {
-                font-size: 1.5rem;
-            }
-
-            .question-text {
-                font-size: 1.1rem;
-            }
-
-            .option {
-                padding: 0.75rem;
-                font-size: 0.9rem;
-            }
-
-            button {
-                padding: 0.6rem 1rem;
-                font-size: 0.85rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .quiz-container {
+                margin: 0.5rem;
                 padding: 1rem;
             }
 
             h1 {
-                font-size: 1.3rem;
+                font-size: 1.4rem;
             }
 
             .question-text {
                 font-size: 1rem;
             }
 
+            .option {
+                padding: 0.6rem;
+                font-size: 0.85rem;
+            }
+
+            .option-letter {
+                width: 1.2rem;
+                height: 1.2rem;
+                font-size: 0.8rem;
+            }
+
+            button {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+
+            .header-controls {
+                gap: 0.3rem;
+            }
+
+            .theme-toggle, .layout-toggle {
+                font-size: 1rem;
+                padding: 0.4rem;
+            }
+
+            .score-value {
+                font-size: 1.8rem;
+            }
+
+            .mark-percentage {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .quiz-container {
+                padding: 0.8rem;
+            }
+
+            h1 {
+                font-size: 1.2rem;
+            }
+
+            .subtitle {
+                font-size: 0.8rem;
+            }
+
+            .question-text {
+                font-size: 0.9rem;
+            }
+
+            .question-number {
+                font-size: 0.8rem;
+            }
+
+            .option {
+                padding: 0.5rem;
+                font-size: 0.8rem;
+            }
+
+            .option-letter {
+                width: 1.1rem;
+                height: 1.1rem;
+                font-size: 0.75rem;
+            }
+
             .navigation {
                 flex-direction: column;
-                gap: 0.5rem;
+                gap: 0.4rem;
             }
 
             button {
                 width: 100%;
+                padding: 0.5rem;
+                font-size: 0.8rem;
+            }
+
+            .explanation-toggle {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+
+            .explanation {
+                padding: 0.6rem;
+            }
+
+            .review-question {
+                font-size: 0.85rem;
+            }
+
+            .review-answer {
+                font-size: 0.75rem;
+            }
+
+            .layout-dropdown {
+                right: -5px;
+                min-width: 100px;
+            }
+
+            .layout-option {
+                font-size: 0.8rem;
+                padding: 0.4rem 0.8rem;
+            }
+
+            .score-value {
+                font-size: 1.5rem;
+            }
+
+            .mark-percentage {
+                font-size: 1rem;
+            }
+
+            .timer {
+                font-size: 0.8rem;
             }
         }
     </style>
 </head>
-<body class="dark">
-    <header>
+<body class="modern-dark">
+    <header class="modern-dark">
         <h1>Embryology Quiz</h1>
-        <button class="theme-toggle" id="theme-toggle">
-            <i class="fas fa-moon"></i>
-        </button>
+        <div class="header-controls">
+            <div class="layout-selector">
+                <button class="layout-toggle" id="layout-toggle">
+                    <i class="fas fa-paint-brush"></i>
+                </button>
+                <div class="layout-dropdown modern-dark" id="layout-dropdown">
+                    <div class="layout-option modern-dark" data-layout="modern-dark">Modern Dark</div>
+                    <div class="layout-option modern-light" data-layout="modern-light">Modern Light</div>
+                    <div class="layout-option minimal" data-layout="minimal">Minimal</div>
+                </div>
+            </div>
+            <button class="theme-toggle" id="theme-toggle">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
     </header>
 
-    <div class="quiz-container">
+    <div class="quiz-container modern-dark">
         <div class="timer">
             <i class="fas fa-clock"></i>
             <span id="timer">00:00</span>
@@ -422,7 +627,7 @@
         </div>
         
         <div class="progress-container">
-            <div class="progress-bar" id="progress-bar"></div>
+            <div class="progress-bar modern-dark" id="progress-bar"></div>
         </div>
         
         <div class="question-number">Question <span id="current-question">1</span> of <span id="total-questions">1</span></div>
@@ -431,7 +636,7 @@
         
         <div class="options-container" id="options-container"></div>
         
-        <button class="explanation-toggle" id="explanation-toggle">Show Explanation</button>
+        <button class="explanation-toggle modern-dark" id="explanation-toggle">Show Explanation</button>
         <div class="explanation" id="explanation">
             <div class="explanation-title">Explanation:</div>
             <div id="explanation-text"></div>
@@ -440,737 +645,318 @@
         <div class="feedback" id="feedback"></div>
         
         <div class="navigation">
-            <button id="prev-btn" disabled>
+            <button id="prev-btn" class="modern-dark" disabled>
                 <i class="fas fa-arrow-left"></i> Previous
             </button>
-            <button id="next-btn">
+            <button id="next-btn" class="modern-dark">
                 Next <i class="fas fa-arrow-right"></i>
             </button>
         </div>
     </div>
 
-    <footer>
+    <footer class="modern-dark">
         &copy; 2025 Embryology Quiz | All Rights Reserved
     </footer>
 
     <script>
         const questions = [
     {
-        "question": "Which is the basic structural and functional unit of the nervous system?",
-        "options": ["Neuron", "Axon", "Dendrite", "Synapse"],
-        "answer": 0,
-        "correctAnswer": "Neuron",
-        "explanation": "The neuron is the fundamental unit of the nervous system, responsible for transmitting electrical and chemical signals. It consists of dendrites, a cell body, and an axon, enabling communication throughout the body."
-    },
-    {
-        "question": "Which part of the brain controls voluntary actions?",
-        "options": ["Cerebrum", "Cerebellum", "Medulla oblongata", "Hypothalamus"],
-        "answer": 0,
-        "correctAnswer": "Cerebrum",
-        "explanation": "The cerebrum, the largest brain region, controls voluntary actions, sensory processing, and cognitive functions like thinking and memory. Its motor cortex initiates voluntary muscle movements."
-    },
-    {
-        "question": "What type of neurons carry impulses from the sensory organs to the central nervous system?",
-        "options": ["Motor neurons", "Sensory neurons", "Interneurons", "Association neurons"],
+        "question": "Which nerve plexus is formed by the anterior rami of C1-C4 and a portion of C5?",
+        "options": ["Brachial plexus", "Cervical plexus", "Lumbar plexus", "Sacral plexus"],
         "answer": 1,
-        "correctAnswer": "Sensory neurons",
-        "explanation": "Sensory neurons, or afferent neurons, transmit impulses from sensory organs (e.g., eyes, skin) to the CNS, enabling the perception of external stimuli."
+        "correctAnswer": "Cervical plexus",
+        "explanation": "The cervical plexus is formed by the anterior rami of spinal nerves C1-C4 and a portion of C5, innervating the neck and upper shoulders."
     },
     {
-        "question": "Which part of the brain is responsible for coordination and balance?",
-        "options": ["Cerebrum", "Cerebellum", "Pons", "Thalamus"],
+        "question": "The cervical plexus primarily innervates which body region?",
+        "options": ["Lower limb", "Neck and upper shoulders", "Upper limb", "Thorax"],
         "answer": 1,
-        "correctAnswer": "Cerebellum",
-        "explanation": "The cerebellum, located at the back of the brain, coordinates voluntary movements, maintains balance, and ensures smooth motor activities."
+        "correctAnswer": "Neck and upper shoulders",
+        "explanation": "The cervical plexus primarily innervates the neck and upper shoulders, including muscles and skin in these regions."
     },
     {
-        "question": "What is the functional gap between two neurons called?",
-        "options": ["Synapse", "Axon terminal", "Dendrite", "Myelin sheath"],
-        "answer": 0,
-        "correctAnswer": "Synapse",
-        "explanation": "The synapse is the junction between neurons where neurotransmitters are released to transmit signals across a small gap called the synaptic cleft."
-    },
-    {
-        "question": "What is the protective covering of the brain and spinal cord called?",
-        "options": ["Myelin sheath", "Meninges", "Dura mater", "White matter"],
-        "answer": 1,
-        "correctAnswer": "Meninges",
-        "explanation": "The meninges are three protective layers (dura mater, arachnoid mater, pia mater) surrounding the brain and spinal cord, providing structural support and protection."
-    },
-    {
-        "question": "Which part of the nervous system controls involuntary actions?",
-        "options": ["Somatic nervous system", "Autonomic nervous system", "Central nervous system", "Peripheral nervous system"],
-        "answer": 1,
-        "correctAnswer": "Autonomic nervous system",
-        "explanation": "The autonomic nervous system regulates involuntary functions like heart rate, digestion, and breathing through its sympathetic and parasympathetic divisions."
-    },
-    {
-        "question": "What type of nerve fibers carry impulses away from the central nervous system to muscles?",
-        "options": ["Sensory fibers", "Afferent fibers", "Efferent fibers", "Interneurons"],
-        "answer": 2,
-        "correctAnswer": "Efferent fibers",
-        "explanation": "Efferent fibers, or motor neurons, carry impulses from the CNS to muscles and glands, enabling voluntary and involuntary actions."
-    },
-    {
-        "question": "Which neurotransmitter is primarily involved in muscle contraction?",
-        "options": ["Dopamine", "Serotonin", "Acetylcholine", "GABA"],
-        "answer": 2,
-        "correctAnswer": "Acetylcholine",
-        "explanation": "Acetylcholine is released at neuromuscular junctions, binding to muscle cell receptors to trigger contraction."
-    },
-    {
-        "question": "What is the main function of the myelin sheath?",
-        "options": ["Store neurotransmitters", "Protect the brain", "Insulate axons", "Produce hormones"],
-        "answer": 2,
-        "correctAnswer": "Insulate axons",
-        "explanation": "The myelin sheath insulates axons, increasing the speed of nerve impulse conduction via saltatory conduction."
-    },
-    {
-        "question": "Which cranial nerve is responsible for vision?",
-        "options": ["Optic nerve", "Oculomotor nerve", "Trigeminal nerve", "Facial nerve"],
-        "answer": 0,
-        "correctAnswer": "Optic nerve",
-        "explanation": "The optic nerve (cranial nerve II) transmits visual information from the retina to the brain, enabling vision."
-    },
-    {
-        "question": "Which part of the brain regulates body temperature?",
-        "options": ["Cerebrum", "Cerebellum", "Hypothalamus", "Medulla oblongata"],
-        "answer": 2,
-        "correctAnswer": "Hypothalamus",
-        "explanation": "The hypothalamus maintains homeostasis by regulating body temperature, hunger, thirst, and sleep."
-    },
-    {
-        "question": "Which ion is essential for the generation of an action potential?",
-        "options": ["Calcium", "Sodium", "Potassium", "Chloride"],
-        "answer": 1,
-        "correctAnswer": "Sodium",
-        "explanation": "Sodium ions (Na⁺) enter the neuron during depolarization, generating the action potential for signal transmission."
-    },
-    {
-        "question": "Which division of the nervous system includes the brain and spinal cord?",
-        "options": ["Autonomic nervous system", "Central nervous system", "Peripheral nervous system", "Somatic nervous system"],
-        "answer": 1,
-        "correctAnswer": "Central nervous system",
-        "explanation": "The central nervous system (CNS) consists of the brain and spinal cord, processing and integrating sensory and motor information."
-    },
-    {
-        "question": "Which lobe of the brain is responsible for processing visual information?",
-        "options": ["Frontal lobe", "Parietal lobe", "Temporal lobe", "Occipital lobe"],
-        "answer": 3,
-        "correctAnswer": "Occipital lobe",
-        "explanation": "The occipital lobe processes visual information, interpreting light, color, and shapes from the eyes."
-    },
-    {
-        "question": "What is the primary function of the spinal cord?",
-        "options": ["Control voluntary actions", "Transmit signals between the brain and body", "Regulate hormonal balance", "Control reflex actions"],
-        "answer": 1,
-        "correctAnswer": "Transmit signals between the brain and body",
-        "explanation": "The spinal cord relays sensory and motor signals between the brain and body and mediates reflex actions."
-    },
-    {
-        "question": "Which nervous system division is responsible for the fight-or-flight response?",
-        "options": ["Somatic nervous system", "Parasympathetic nervous system", "Sympathetic nervous system", "Central nervous system"],
-        "answer": 2,
-        "correctAnswer": "Sympathetic nervous system",
-        "explanation": "The sympathetic nervous system activates the fight-or-flight response, increasing heart rate and redirecting blood flow during stress."
-    },
-    {
-        "question": "What structure connects the two hemispheres of the brain?",
-        "options": ["Corpus callosum", "Medulla oblongata", "Pons", "Cerebellum"],
-        "answer": 0,
-        "correctAnswer": "Corpus callosum",
-        "explanation": "The corpus callosum is a bundle of nerve fibers connecting the brain’s hemispheres, facilitating interhemispheric communication."
-    },
-    {
-        "question": "Which cranial nerve controls movements of the tongue?",
-        "options": ["Hypoglossal nerve", "Glossopharyngeal nerve", "Vagus nerve", "Facial nerve"],
-        "answer": 0,
-        "correctAnswer": "Hypoglossal nerve",
-        "explanation": "The hypoglossal nerve (cranial nerve XII) controls tongue movements, essential for speech and swallowing."
-    },
-    {
-        "question": "What type of glial cell produces myelin in the central nervous system?",
-        "options": ["Astrocytes", "Oligodendrocytes", "Schwann cells", "Microglia"],
-        "answer": 1,
-        "correctAnswer": "Oligodendrocytes",
-        "explanation": "Oligodendrocytes produce myelin sheaths around axons in the CNS, enhancing signal transmission."
-    },
-    {
-        "question": "Which part of the brainstem controls basic life functions like breathing and heart rate?",
-        "options": ["Pons", "Medulla oblongata", "Thalamus", "Cerebellum"],
-        "answer": 1,
-        "correctAnswer": "Medulla oblongata",
-        "explanation": "The medulla oblongata regulates vital functions like breathing, heart rate, and blood pressure."
-    },
-    {
-        "question": "What is the role of the thalamus in the nervous system?",
-        "options": ["Regulate balance and posture", "Act as a relay center for sensory information", "Control voluntary movements", "Produce cerebrospinal fluid"],
-        "answer": 1,
-        "correctAnswer": "Act as a relay center for sensory information",
-        "explanation": "The thalamus relays sensory information to the cerebral cortex, except for olfactory signals."
-    },
-    {
-        "question": "Which neurotransmitter is primarily inhibitory in the central nervous system?",
-        "options": ["Glutamate", "GABA (Gamma-Aminobutyric Acid)", "Serotonin", "Acetylcholine"],
-        "answer": 1,
-        "correctAnswer": "GABA (Gamma-Aminobutyric Acid)",
-        "explanation": "GABA is the primary inhibitory neurotransmitter in the CNS, reducing neuronal excitability."
-    },
-    {
-        "question": "What is the outermost layer of the meninges called?",
-        "options": ["Dura mater", "Arachnoid mater", "Pia mater", "Epidural space"],
-        "answer": 0,
-        "correctAnswer": "Dura mater",
-        "explanation": "The dura mater is the tough, outermost meningeal layer, providing robust protection to the CNS."
-    },
-    {
-        "question": "What is the purpose of cerebrospinal fluid (CSF)?",
-        "options": ["Lubricate joints", "Cushion and protect the brain and spinal cord", "Aid in digestion", "Stimulate muscle contraction"],
-        "answer": 1,
-        "correctAnswer": "Cushion and protect the brain and spinal cord",
-        "explanation": "CSF cushions the brain and spinal cord, provides nutrients, and removes waste."
-    },
-    {
-        "question": "Which part of the neuron receives signals from other neurons?",
-        "options": ["Axon", "Dendrite", "Synaptic cleft", "Node of Ranvier"],
-        "answer": 1,
-        "correctAnswer": "Dendrite",
-        "explanation": "Dendrites receive signals from other neurons or sensory receptors, transmitting them to the cell body."
-    },
-    {
-        "question": "Which nerve controls the diaphragm?",
-        "options": ["Vagus nerve", "Phrenic nerve", "Hypoglossal nerve", "Trigeminal nerve"],
+        "question": "Which nerve of the cervical plexus innervates the diaphragm?",
+        "options": ["Lesser occipital nerve", "Phrenic nerve", "Great auricular nerve", "Transverse cervical nerve"],
         "answer": 1,
         "correctAnswer": "Phrenic nerve",
-        "explanation": "The phrenic nerve, arising from C3-C5, controls the diaphragm, enabling breathing."
+        "explanation": "The phrenic nerve, arising from the cervical plexus, innervates the diaphragm, facilitating breathing."
     },
     {
-        "question": "What is the primary role of interneurons?",
-        "options": ["Transmit signals to muscles", "Connect sensory and motor neurons", "Produce cerebrospinal fluid", "Protect the brain from injury"],
+        "question": "The phrenic nerve receives fibers from which spinal nerves?",
+        "options": ["C1-C3", "C3-C5", "C5-C7", "T1-T3"],
         "answer": 1,
-        "correctAnswer": "Connect sensory and motor neurons",
-        "explanation": "Interneurons connect sensory and motor neurons in the CNS, facilitating signal integration."
+        "correctAnswer": "C3-C5",
+        "explanation": "The phrenic nerve receives fibers from spinal nerves C3-C5, primarily responsible for diaphragmatic movement."
     },
     {
-        "question": "Which structure produces cerebrospinal fluid (CSF)?",
-        "options": ["Choroid plexus", "Hypothalamus", "Pineal gland", "Pituitary gland"],
+        "question": "The lesser occipital nerve of the cervical plexus supplies which area?",
+        "options": ["Anterior neck", "Skin of the neck and scalp posterior to the auricle", "Clavicular region", "Upper back"],
+        "answer": 1,
+        "correctAnswer": "Skin of the neck and scalp posterior to the auricle",
+        "explanation": "The lesser occipital nerve supplies the skin of the neck and scalp posterior to the auricle, contributing to sensory innervation."
+    },
+    {
+        "question": "The great auricular nerve innervates which structures?",
+        "options": ["Diaphragm", "Skin of the ear and over the parotid gland", "Anterior cervical region", "Shoulder"],
+        "answer": 1,
+        "correctAnswer": "Skin of the ear and over the parotid gland",
+        "explanation": "The great auricular nerve innervates the skin of the ear and the area over the parotid gland, providing sensory input."
+    },
+    {
+        "question": "The transverse cervical nerve supplies which region?",
+        "options": ["Posterior scalp", "Skin covering the anterior cervical region", "Upper shoulder", "Lower neck"],
+        "answer": 1,
+        "correctAnswer": "Skin covering the anterior cervical region",
+        "explanation": "The transverse cervical nerve supplies the skin covering the anterior cervical region, contributing to sensory innervation."
+    },
+    {
+        "question": "The supraclavicular nerves of the cervical plexus innervate which area?",
+        "options": ["Neck muscles", "Skin of the shoulder and clavicular region", "Diaphragm", "Upper limb"],
+        "answer": 1,
+        "correctAnswer": "Skin of the shoulder and clavicular region",
+        "explanation": "The supraclavicular nerves innervate the skin of the shoulder and clavicular region, providing sensory innervation."
+    },
+    {
+        "question": "The ansa cervicalis of the cervical plexus innervates which muscles?",
+        "options": ["Diaphragm", "Omohyoid, sternothyroid, and sternohyoid", "Pharyngeal muscles", "Facial muscles"],
+        "answer": 1,
+        "correctAnswer": "Omohyoid, sternothyroid, and sternohyoid",
+        "explanation": "The ansa cervicalis innervates infrahyoid muscles, including the omohyoid, sternothyroid, and sternohyoid, aiding in neck movements."
+    },
+    {
+        "question": "Which nerve of the cervical plexus receives fibers from C1?",
+        "options": ["Phrenic nerve", "Nerve to geniohyoid and thyrohyoid", "Lesser occipital nerve", "Great auricular nerve"],
+        "answer": 1,
+        "correctAnswer": "Nerve to geniohyoid and thyrohyoid",
+        "explanation": "The nerve to geniohyoid and thyrohyoid, part of the cervical plexus, receives fibers from C1, innervating these suprahyoid muscles."
+    },
+    {
+        "question": "Which nerve plexus is formed by the anterior rami of C5-C8 and T1?",
+        "options": ["Cervical plexus", "Brachial plexus", "Lumbar plexus", "Sacral plexus"],
+        "answer": 1,
+        "correctAnswer": "Brachial plexus",
+        "explanation": "The brachial plexus is formed by the anterior rami of C5-C8 and T1, innervating the upper limb."
+    },
+    {
+        "question": "The brachial plexus begins in which anatomical region?",
+        "options": ["Thorax", "Neck and extends into the axilla", "Lower abdomen", "Pelvis"],
+        "answer": 1,
+        "correctAnswer": "Neck and extends into the axilla",
+        "explanation": "The brachial plexus begins in the neck and extends into the axilla, distributing nerves to the upper limb."
+    },
+    {
+        "question": "The dorsal scapular nerve arises from which root of the brachial plexus?",
+        "options": ["C5", "C6", "T1", "C8"],
         "answer": 0,
-        "correctAnswer": "Choroid plexus",
-        "explanation": "The choroid plexus, located in the brain’s ventricles, produces CSF to protect and nourish the CNS."
+        "correctAnswer": "C5",
+        "explanation": "The dorsal scapular nerve arises from the C5 root of the brachial plexus, innervating the rhomboid muscles and levator scapulae."
     },
     {
-        "question": "Which part of the nervous system regulates digestion and glandular secretions?",
-        "options": ["Sympathetic nervous system", "Parasympathetic nervous system", "Central nervous system", "Somatic nervous system"],
+        "question": "The long thoracic nerve arises from which roots of the brachial plexus?",
+        "options": ["C5-C6", "C5-C7", "C6-C8", "T1-T2"],
         "answer": 1,
-        "correctAnswer": "Parasympathetic nervous system",
-        "explanation": "The parasympathetic nervous system promotes digestion and glandular secretions during 'rest and digest' activities."
+        "correctAnswer": "C5-C7",
+        "explanation": "The long thoracic nerve arises from the C5-C7 roots, innervating the serratus anterior muscle."
     },
     {
-        "question": "What is the gap between the presynaptic and postsynaptic neuron called?",
-        "options": ["Axon", "Synaptic cleft", "Node of Ranvier", "Synaptic vesicle"],
+        "question": "The suprascapular nerve originates from which part of the brachial plexus?",
+        "options": ["Lateral cord", "Superior trunk", "Posterior cord", "Medial cord"],
         "answer": 1,
-        "correctAnswer": "Synaptic cleft",
-        "explanation": "The synaptic cleft is the gap between presynaptic and postsynaptic neurons where neurotransmitters are released."
+        "correctAnswer": "Superior trunk",
+        "explanation": "The suprascapular nerve originates from the superior trunk of the brachial plexus, innervating the supraspinatus and infraspinatus muscles."
     },
     {
-        "question": "Which type of cells form the blood-brain barrier?",
-        "options": ["Microglia", "Astrocytes", "Oligodendrocytes", "Schwann cells"],
+        "question": "The lateral pectoral nerve is a branch of which cord of the brachial plexus?",
+        "options": ["Posterior cord", "Lateral cord", "Medial cord", "Superior trunk"],
         "answer": 1,
-        "correctAnswer": "Astrocytes",
-        "explanation": "Astrocytes help form the blood-brain barrier, regulating substance exchange between blood and brain."
+        "correctAnswer": "Lateral cord",
+        "explanation": "The lateral pectoral nerve is a branch of the lateral cord, innervating the pectoralis major muscle."
     },
     {
-        "question": "Which nerve is the longest in the human body?",
-        "options": ["Sciatic nerve", "Vagus nerve", "Phrenic nerve", "Optic nerve"],
+        "question": "The musculocutaneous nerve innervates which compartment of the arm?",
+        "options": ["Posterior", "Anterior", "Medial", "Lateral"],
+        "answer": 1,
+        "correctAnswer": "Anterior",
+        "explanation": "The musculocutaneous nerve innervates the anterior compartment of the arm, including muscles like the biceps brachii."
+    },
+    {
+        "question": "The radial nerve originates from which cord of the brachial plexus?",
+        "options": ["Lateral cord", "Posterior cord", "Medial cord", "Superior trunk"],
+        "answer": 1,
+        "correctAnswer": "Posterior cord",
+        "explanation": "The radial nerve originates from the posterior cord, innervating the posterior arm and forearm compartments."
+    },
+    {
+        "question": "The axillary nerve innervates which muscles?",
+        "options": ["Deltoid and teres minor", "Biceps brachii", "Triceps brachii", "Pectoralis major"],
         "answer": 0,
-        "correctAnswer": "Sciatic nerve",
-        "explanation": "The sciatic nerve, extending from the lower back to the legs, is the longest nerve in the body."
+        "correctAnswer": "Deltoid and teres minor",
+        "explanation": "The axillary nerve, from the posterior cord, innervates the deltoid and teres minor muscles for shoulder movement."
     },
     {
-        "question": "Which part of the brain is involved in the production of speech?",
-        "options": ["Broca's area", "Wernicke's area", "Occipital lobe", "Cerebellum"],
-        "answer": 0,
-        "correctAnswer": "Broca's area",
-        "explanation": "Broca's area, in the frontal lobe, controls speech production and articulation."
-    },
-    {
-        "question": "Which cranial nerve is responsible for hearing and balance?",
-        "options": ["Facial nerve", "Vestibulocochlear nerve", "Vagus nerve", "Trigeminal nerve"],
-        "answer": 1,
-        "correctAnswer": "Vestibulocochlear nerve",
-        "explanation": "The vestibulocochlear nerve (cranial nerve VIII) transmits signals for hearing and balance."
-    },
-    {
-        "question": "What is the role of the Nodes of Ranvier in a neuron?",
-        "options": ["Generate neurotransmitters", "Speed up nerve impulse conduction", "Store sodium ions", "Support axonal branching"],
-        "answer": 1,
-        "correctAnswer": "Speed up nerve impulse conduction",
-        "explanation": "Nodes of Ranvier enable saltatory conduction, speeding up nerve impulses by allowing them to jump between nodes."
-    },
-    {
-        "question": "What is the role of the autonomic ganglia in the nervous system?",
-        "options": ["Process sensory inputs", "Relay motor commands", "Transmit autonomic nerve signals", "Protect neurons from injury"],
+        "question": "The ulnar nerve is a branch of which cord of the brachial plexus?",
+        "options": ["Lateral cord", "Posterior cord", "Medial cord", "Superior trunk"],
         "answer": 2,
-        "correctAnswer": "Transmit autonomic nerve signals",
-        "explanation": "Autonomic ganglia relay signals from the CNS to target organs in the autonomic nervous system."
+        "correctAnswer": "Medial cord",
+        "explanation": "The ulnar nerve is a branch of the medial cord, innervating the medial forearm and hand muscles."
     },
     {
-        "question": "What does the term 'afferent' refer to in the nervous system?",
-        "options": ["Nerves carrying signals toward the CNS", "Nerves carrying signals away from the CNS", "Nerves connecting neurons", "Nerves regulating hormones"],
+        "question": "The median nerve receives contributions from which cords of the brachial plexus?",
+        "options": ["Lateral and posterior", "Lateral and medial", "Posterior and medial", "Superior and inferior"],
+        "answer": 1,
+        "correctAnswer": "Lateral and medial",
+        "explanation": "The median nerve receives contributions from both the lateral and medial cords, innervating the anterior forearm and parts of the hand."
+    },
+    {
+        "question": "The lumbar plexus is formed by the anterior rami of which spinal nerves?",
+        "options": ["T1-T4", "L1-L4", "L5-S1", "S2-S4"],
+        "answer": 1,
+        "correctAnswer": "L1-L4",
+        "explanation": "The lumbar plexus is formed by the anterior rami of L1-L4, innervating parts of the lower abdomen and thigh."
+    },
+    {
+        "question": "The lumbar plexus is located within which muscle?",
+        "options": ["Quadriceps", "Psoas major", "Gluteus maximus", "Rectus abdominis"],
+        "answer": 1,
+        "correctAnswer": "Psoas major",
+        "explanation": "The lumbar plexus is embedded within the psoas major muscle, from which its nerves emerge to supply the lower limb."
+    },
+    {
+        "question": "The lumbar plexus innervates which body regions?",
+        "options": ["Upper limb and thorax", "Lower abdominal wall, thigh, and external genitals", "Neck and shoulders", "Pelvis and perineum"],
+        "answer": 1,
+        "correctAnswer": "Lower abdominal wall, thigh, and external genitals",
+        "explanation": "The lumbar plexus innervates the lower abdominal wall, anterior and medial thigh, and external genitals."
+    },
+    {
+        "question": "The femoral nerve, the largest nerve of the lumbar plexus, supplies which muscles?",
+        "options": ["Medial adductor muscles", "Anterior thigh muscles", "Posterior leg muscles", "Plantar foot muscles"],
+        "answer": 1,
+        "correctAnswer": "Anterior thigh muscles",
+        "explanation": "The femoral nerve supplies the anterior thigh muscles, such as the quadriceps femoris, for knee extension."
+    },
+    {
+        "question": "The iliohypogastric nerve arises from which spinal nerve?",
+        "options": ["L1", "L2", "L3", "L4"],
         "answer": 0,
-        "correctAnswer": "Nerves carrying signals toward the CNS",
-        "explanation": "Afferent nerves, or sensory nerves, carry signals from receptors to the CNS."
+        "correctAnswer": "L1",
+        "explanation": "The iliohypogastric nerve arises from the L1 spinal nerve, innervating the skin of the lower abdomen and gluteal region."
     },
     {
-        "question": "Which part of the brain regulates emotions and memory?",
-        "options": ["Amygdala", "Hippocampus", "Cerebrum", "Both a and b"],
+        "question": "The ilioinguinal nerve originates from which spinal nerve?",
+        "options": ["L1", "L2", "L3", "L4"],
+        "answer": 0,
+        "correctAnswer": "L1",
+        "explanation": "The ilioinguinal nerve originates from the L1 spinal nerve, supplying the skin of the upper thigh and external genitals."
+    },
+    {
+        "question": "The genitofemoral nerve is formed by which spinal nerves?",
+        "options": ["L1-L2", "L2-L3", "L3-L4", "L4-S1"],
+        "answer": 0,
+        "correctAnswer": "L1-L2",
+        "explanation": "The genitofemoral nerve is formed by the L1-L2 spinal nerves, innervating the skin of the thigh and external genitals."
+    },
+    {
+        "question": "The lateral cutaneous nerve of the thigh arises from which spinal nerves?",
+        "options": ["L1-L2", "L2-L3", "L3-L4", "L4-S1"],
+        "answer": 1,
+        "correctAnswer": "L2-L3",
+        "explanation": "The lateral cutaneous nerve of the thigh arises from L2-L3, supplying the skin on the lateral aspect of the thigh."
+    },
+    {
+        "question": "The obturator nerve is formed by which spinal nerves?",
+        "options": ["L1-L2", "L2-L3 and L4", "L3-L4", "L4-S1"],
+        "answer": 1,
+        "correctAnswer": "L2-L3 and L4",
+        "explanation": "The obturator nerve is formed by the anterior divisions of L2-L4, innervating the medial adductor muscles of the thigh."
+    },
+    {
+        "question": "The sacral plexus arises from which spinal nerves?",
+        "options": ["C5-T1", "L1-L4", "L4-S4", "S1-S5"],
+        "answer": 2,
+        "correctAnswer": "L4-S4",
+        "explanation": "The sacral plexus is formed by the anterior rami of L4-S4, innervating the pelvis and lower limbs."
+    },
+    {
+        "question": "The sacral plexus is considered together with the lumbar plexus due to contributions from which structure?",
+        "options": ["Lumbosacral trunk", "Coccygeal nerve", "Phrenic nerve", "Sciatic nerve"],
+        "answer": 0,
+        "correctAnswer": "Lumbosacral trunk",
+        "explanation": "The sacral plexus is linked to the lumbar plexus via the lumbosacral trunk, which includes fibers from L4-L5."
+    },
+    {
+        "question": "The sacral plexus innervates which body regions?",
+        "options": ["Neck and shoulders", "Buttock, lower limb, pelvis, and perineum", "Upper limb and thorax", "Lower abdomen"],
+        "answer": 1,
+        "correctAnswer": "Buttock, lower limb, pelvis, and perineum",
+        "explanation": "The sacral plexus innervates the buttock, lower limb, pelvis, and perineum, including major muscles and skin."
+    },
+    {
+        "question": "The superior gluteal nerve arises from which spinal nerves?",
+        "options": ["L4-L5 and S1", "L5-S1 and S2", "S1-S2 and S3", "S2-S3 and S4"],
+        "answer": 0,
+        "correctAnswer": "L4-L5 and S1",
+        "explanation": "The superior gluteal nerve arises from L4-L5 and S1, innervating the gluteus medius, minimus, and tensor fasciae latae."
+    },
+    {
+        "question": "The inferior gluteal nerve is formed by which spinal nerves?",
+        "options": ["L4-L5 and S1", "L5-S1 and S2", "S1-S2 and S3", "S2-S3 and S4"],
+        "answer": 1,
+        "correctAnswer": "L5-S1 and S2",
+        "explanation": "The inferior gluteal nerve is formed by L5-S1 and S2, innervating the gluteus maximus."
+    },
+    {
+        "question": "The posterior cutaneous nerve of the thigh arises from which spinal nerves?",
+        "options": ["L4-L5 and S1", "S1-S2 and S3", "S2-S3 and S4", "L5-S1 and S2"],
+        "answer": 1,
+        "correctAnswer": "S1-S2 and S3",
+        "explanation": "The posterior cutaneous nerve of the thigh arises from S1-S2 and S3, supplying the skin of the posterior thigh."
+    },
+    {
+        "question": "The sciatic nerve is composed of which two nerves?",
+        "options": ["Femoral and obturator", "Tibial and common fibular", "Median and ulnar", "Radial and musculocutaneous"],
+        "answer": 1,
+        "correctAnswer": "Tibial and common fibular",
+        "explanation": "The sciatic nerve is composed of the tibial and common fibular nerves, which innervate different parts of the lower limb."
+    },
+    {
+        "question": "The sciatic nerve supplies all of the lower limb except which regions?",
+        "options": ["Posterior thigh and leg", "Anterior and medial thigh", "Anterior leg and foot", "Posterior leg and foot"],
+        "answer": 1,
+        "correctAnswer": "Anterior and medial thigh",
+        "explanation": "The sciatic nerve supplies most of the lower limb, except the anterior and medial thigh, which are innervated by the femoral and obturator nerves."
+    },
+    {
+        "question": "The pudendal nerve arises from which spinal nerves?",
+        "options": ["L4-L5 and S1", "S2-S3 and S4", "L5-S1 and S2", "S1-S2 and S3"],
+        "answer": 1,
+        "correctAnswer": "S2-S3 and S4",
+        "explanation": "The pudendal nerve arises from S2-S3 and S4, innervating the pelvis and perineum, including the external genitalia."
+    },
+    {
+        "question": "The coccygeal plexus is formed by which spinal nerves?",
+        "options": ["C1-C4", "L1-L4", "S1-S4", "Coccygeal nerves"],
         "answer": 3,
-        "correctAnswer": "Both a and b",
-        "explanation": "The amygdala regulates emotions like fear, while the hippocampus is key for memory formation."
-    },
-    {
-        "question": "What is the role of Schwann cells in the nervous system?",
-        "options": ["Form the blood-brain barrier", "Produce myelin in the PNS", "Remove cellular debris", "Support synaptic transmission"],
-        "answer": 1,
-        "correctAnswer": "Produce myelin in the PNS",
-        "explanation": "Schwann cells produce myelin in the PNS, insulating axons and aiding regeneration."
-    },
-    {
-        "question": "Which part of the nervous system controls reflex actions?",
-        "options": ["Brain", "Spinal cord", "Medulla oblongata", "Hypothalamus"],
-        "answer": 1,
-        "correctAnswer": "Spinal cord",
-        "explanation": "The spinal cord mediates reflex actions via reflex arcs, bypassing the brain for rapid responses."
-    },
-    {
-        "question": "What is the function of the temporal lobe?",
-        "options": ["Process vision", "Regulate balance", "Interpret auditory information", "Control motor functions"],
-        "answer": 2,
-        "correctAnswer": "Interpret auditory information",
-        "explanation": "The temporal lobe processes auditory information and is involved in memory and language comprehension."
-    },
-    {
-        "question": "What is the function of the parasympathetic nervous system?",
-        "options": ["Prepare the body for fight or flight", "Stimulate rest and digest activities", "Regulate voluntary movements", "Transmit sensory signals"],
-        "answer": 1,
-        "correctAnswer": "Stimulate rest and digest activities",
-        "explanation": "The parasympathetic nervous system promotes rest and digest functions, conserving energy."
-    },
-    {
-        "question": "Which part of the brainstem is responsible for relaying signals between the cerebrum and cerebellum?",
-        "options": ["Medulla oblongata", "Pons", "Midbrain", "Thalamus"],
-        "answer": 1,
-        "correctAnswer": "Pons",
-        "explanation": "The pons relays signals between the cerebrum and cerebellum and regulates sleep and breathing."
-    },
-    {
-        "question": "Which lobe of the brain is primarily responsible for vision?",
-        "options": ["Parietal lobe", "Temporal lobe", "Occipital lobe", "Frontal lobe"],
-        "answer": 2,
-        "correctAnswer": "Occipital lobe",
-        "explanation": "The occipital lobe processes visual information, interpreting light, color, and shapes."
-    },
-    {
-        "question": "What is the term for the electrical charge that travels along a neuron?",
-        "options": ["Action potential", "Resting potential", "Synaptic transmission", "Membrane potential"],
-        "answer": 0,
-        "correctAnswer": "Action potential",
-        "explanation": "An action potential is the electrical impulse that travels along a neuron’s axon, enabling signal transmission."
-    },
-    {
-        "question": "Which cranial nerve controls facial expressions?",
-        "options": ["Trigeminal nerve", "Facial nerve", "Hypoglossal nerve", "Glossopharyngeal nerve"],
-        "answer": 1,
-        "correctAnswer": "Facial nerve",
-        "explanation": "The facial nerve (cranial nerve VII) controls facial expression muscles and taste sensation."
-    },
-    {
-        "question": "What type of receptors detects pain?",
-        "options": ["Mechanoreceptors", "Nociceptors", "Thermoreceptors", "Photoreceptors"],
-        "answer": 1,
-        "correctAnswer": "Nociceptors",
-        "explanation": "Nociceptors detect pain in response to harmful stimuli like heat or pressure."
-    },
-    {
-        "question": "Which part of the brain controls balance and coordination?",
-        "options": ["Cerebellum", "Medulla oblongata", "Cerebrum", "Thalamus"],
-        "answer": 0,
-        "correctAnswer": "Cerebellum",
-        "explanation": "The cerebellum coordinates balance and voluntary movements for smooth motor activity."
-    },
-    {
-        "question": "What is the functional unit of the nervous system?",
-        "options": ["Axon", "Neuron", "Synapse", "Ganglion"],
-        "answer": 1,
-        "correctAnswer": "Neuron",
-        "explanation": "The neuron is the functional unit, transmitting signals via its dendrites, cell body, and axon."
-    },
-    {
-        "question": "What structure in the brain regulates body temperature?",
-        "options": ["Hypothalamus", "Pituitary gland", "Cerebellum", "Medulla oblongata"],
-        "answer": 0,
-        "correctAnswer": "Hypothalamus",
-        "explanation": "The hypothalamus regulates body temperature, maintaining homeostasis through feedback mechanisms."
-    },
-    {
-        "question": "Which neurotransmitter is associated with mood and emotional regulation?",
-        "options": ["Dopamine", "Serotonin", "Acetylcholine", "GABA"],
-        "answer": 1,
-        "correctAnswer": "Serotonin",
-        "explanation": "Serotonin regulates mood, sleep, and appetite; low levels are linked to depression."
-    },
-    {
-        "question": "What is the role of microglial cells in the nervous system?",
-        "options": ["Form myelin in the CNS", "Protect neurons by phagocytosis", "Regulate blood flow", "Relay sensory signals"],
-        "answer": 1,
-        "correctAnswer": "Protect neurons by phagocytosis",
-        "explanation": "Microglial cells act as CNS immune cells, removing debris and pathogens via phagocytosis."
-    },
-    {
-        "question": "What is the term for the chemical messengers in the nervous system?",
-        "options": ["Hormones", "Neurotransmitters", "Enzymes", "Receptors"],
-        "answer": 1,
-        "correctAnswer": "Neurotransmitters",
-        "explanation": "Neurotransmitters are chemical messengers that transmit signals across synapses between neurons."
-    },
-    {
-        "question": "Which cranial nerve is also known as the vagus nerve?",
-        "options": ["Cranial nerve IX", "Cranial nerve X", "Cranial nerve XI", "Cranial nerve XII"],
-        "answer": 1,
-        "correctAnswer": "Cranial nerve X",
-        "explanation": "The vagus nerve (cranial nerve X) regulates parasympathetic functions in the thorax and abdomen."
-    },
-    {
-        "question": "What is the primary role of the somatic nervous system?",
-        "options": ["Regulate involuntary functions", "Control voluntary muscle movements", "Process sensory information", "Maintain homeostasis"],
-        "answer": 1,
-        "correctAnswer": "Control voluntary muscle movements",
-        "explanation": "The somatic nervous system controls voluntary muscle movements and processes sensory input."
-    },
-    {
-        "question": "Which part of the neuron transmits signals to other cells?",
-        "options": ["Axon", "Dendrite", "Cell body", "Synaptic cleft"],
-        "answer": 0,
-        "correctAnswer": "Axon",
-        "explanation": "The axon transmits signals from the neuron to other neurons or effector cells."
-    },
-    {
-        "question": "What is the role of the frontal lobe in the brain?",
-        "options": ["Control vision", "Regulate emotions, planning, and decision-making", "Process auditory information", "Maintain balance and coordination"],
-        "answer": 1,
-        "correctAnswer": "Regulate emotions, planning, and decision-making",
-        "explanation": "The frontal lobe handles cognitive functions like planning, decision-making, and emotional regulation."
-    },
-    {
-        "question": "Which type of neuron carries signals from the CNS to muscles and glands?",
-        "options": ["Sensory neurons", "Interneurons", "Motor neurons", "Glial cells"],
-        "answer": 2,
-        "correctAnswer": "Motor neurons",
-        "explanation": "Motor neurons transmit signals from the CNS to muscles and glands, initiating actions."
-    },
-    {
-        "question": "What is the main function of the myelin sheath?",
-        "options": ["Protect the neuron from injury", "Speed up nerve impulse conduction", "Store neurotransmitters", "Connect neurons to blood vessels"],
-        "answer": 1,
-        "correctAnswer": "Speed up nerve impulse conduction",
-        "explanation": "The myelin sheath insulates axons, enabling faster impulse conduction via saltatory conduction."
-    },
-    {
-        "question": "Which cranial nerve is responsible for vision?",
-        "options": ["Optic nerve", "Oculomotor nerve", "Trochlear nerve", "Abducens nerve"],
-        "answer": 0,
-        "correctAnswer": "Optic nerve",
-        "explanation": "The optic nerve (cranial nerve II) carries visual signals from the retina to the brain."
-    },
-    {
-        "question": "What structure connects the two hemispheres of the brain?",
-        "options": ["Corpus callosum", "Hypothalamus", "Thalamus", "Brainstem"],
-        "answer": 0,
-        "correctAnswer": "Corpus callosum",
-        "explanation": "The corpus callosum connects the brain’s hemispheres, enabling communication."
-    },
-    {
-        "question": "What is the role of the hypothalamus in the nervous system?",
-        "options": ["Control movement", "Regulate homeostasis", "Process sensory input", "Interpret auditory signals"],
-        "answer": 1,
-        "correctAnswer": "Regulate homeostasis",
-        "explanation": "The hypothalamus regulates homeostasis, including temperature, hunger, and sleep."
-    },
-    {
-        "question": "Which ion is essential for the propagation of an action potential?",
-        "options": ["Calcium", "Sodium", "Potassium", "Chloride"],
-        "answer": 1,
-        "correctAnswer": "Sodium",
-        "explanation": "Sodium ions drive depolarization, propagating the action potential along the axon."
-    },
-    {
-        "question": "Which part of the nervous system is responsible for the fight-or-flight response?",
-        "options": ["Parasympathetic nervous system", "Sympathetic nervous system", "Somatic nervous system", "Central nervous system"],
-        "answer": 1,
-        "correctAnswer": "Sympathetic nervous system",
-        "explanation": "The sympathetic nervous system triggers the fight-or-flight response during stress."
-    },
-    {
-        "question": "Which type of glial cell produces myelin in the central nervous system?",
-        "options": ["Schwann cells", "Oligodendrocytes", "Astrocytes", "Microglia"],
-        "answer": 1,
-        "correctAnswer": "Oligodendrocytes",
-        "explanation": "Oligodendrocytes produce myelin in the CNS, insulating axons for faster signal transmission."
-    },
-    {
-        "question": "Which part of the brainstem regulates vital functions such as heart rate and breathing?",
-        "options": ["Midbrain", "Pons", "Medulla oblongata", "Thalamus"],
-        "answer": 2,
-        "correctAnswer": "Medulla oblongata",
-        "explanation": "The medulla oblongata controls vital functions like heart rate and breathing."
-    },
-    {
-        "question": "What is the term for a junction between two neurons?",
-        "options": ["Dendrite", "Synapse", "Axon hillock", "Neurolemma"],
-        "answer": 1,
-        "correctAnswer": "Synapse",
-        "explanation": "A synapse is the junction where neurons communicate via neurotransmitters."
-    },
-    {
-        "question": "Which neurotransmitter is involved in muscle contraction?",
-        "options": ["Dopamine", "Serotonin", "Acetylcholine", "Glutamate"],
-        "answer": 2,
-        "correctAnswer": "Acetylcholine",
-        "explanation": "Acetylcholine triggers muscle contraction at neuromuscular junctions."
-    },
-    {
-        "question": "What is the function of the thalamus in the brain?",
-        "options": ["Control voluntary movements", "Relay sensory information to the cerebrum", "Regulate body temperature", "Process visual signals"],
-        "answer": 1,
-        "correctAnswer": "Relay sensory information to the cerebrum",
-        "explanation": "The thalamus relays sensory signals to the cerebral cortex for processing."
-    },
-    {
-        "question": "What is the primary function of the spinal cord?",
-        "options": ["Process emotions", "Relay messages between the brain and body", "Store long-term memory", "Control balance and coordination"],
-        "answer": 1,
-        "correctAnswer": "Relay messages between the brain and body",
-        "explanation": "The spinal cord relays sensory and motor signals between the brain and body."
-    },
-    {
-        "question": "Which cranial nerve is responsible for smell?",
-        "options": ["Optic nerve", "Olfactory nerve", "Trigeminal nerve", "Vagus nerve"],
-        "answer": 1,
-        "correctAnswer": "Olfactory nerve",
-        "explanation": "The olfactory nerve (cranial nerve I) transmits smell signals to the brain."
-    },
-    {
-        "question": "What is the function of the midbrain?",
-        "options": ["Regulate autonomic functions", "Control visual and auditory reflexes", "Maintain balance and posture", "Relay sensory signals"],
-        "answer": 1,
-        "correctAnswer": "Control visual and auditory reflexes",
-        "explanation": "The midbrain controls reflexes related to vision and hearing and aids motor movement."
-    },
-    {
-        "question": "What is the resting potential of a neuron?",
-        "options": ["+70 mV", "-70 mV", "0 mV", "-55 mV"],
-        "answer": 1,
-        "correctAnswer": "-70 mV",
-        "explanation": "The resting potential of a neuron is approximately -70 mV, maintained by ion gradients."
-    },
-    {
-        "question": "Which part of the brain is responsible for language comprehension?",
-        "options": ["Wernicke's area", "Broca's area", "Frontal lobe", "Cerebellum"],
-        "answer": 0,
-        "correctAnswer": "Wernicke's area",
-        "explanation": "Wernicke's area, in the temporal lobe, is responsible for language comprehension."
-    },
-    {
-        "question": "Which structure in the nervous system connects the brain to the spinal cord?",
-        "options": ["Cerebellum", "Brainstem", "Thalamus", "Corpus callosum"],
-        "answer": 1,
-        "correctAnswer": "Brainstem",
-        "explanation": "The brainstem connects the brain to the spinal cord, regulating vital functions."
-    },
-    {
-        "question": "Which ion is most abundant inside a resting neuron?",
-        "options": ["Sodium (Na⁺)", "Potassium (K⁺)", "Calcium (Ca²⁺)", "Chloride (Cl⁻)"],
-        "answer": 1,
-        "correctAnswer": "Potassium (K⁺)",
-        "explanation": "Potassium ions are most abundant inside a resting neuron, maintaining the resting potential."
-    },
-    {
-        "question": "What is the main neurotransmitter in the parasympathetic nervous system?",
-        "options": ["Dopamine", "Acetylcholine", "Norepinephrine", "Serotonin"],
-        "answer": 1,
-        "correctAnswer": "Acetylcholine",
-        "explanation": "Acetylcholine is the primary neurotransmitter in the parasympathetic nervous system, promoting rest and digest functions."
-    },
-    {
-        "question": "Which type of neuron transmits signals from sensory organs to the central nervous system?",
-        "options": ["Motor neurons", "Interneurons", "Sensory neurons", "Glial cells"],
-        "answer": 2,
-        "correctAnswer": "Sensory neurons",
-        "explanation": "Sensory neurons carry signals from sensory organs to the CNS for processing."
-    },
-    {
-        "question": "What is the primary function of cerebrospinal fluid (CSF)?",
-        "options": ["Insulate axons", "Transport oxygen to the brain", "Protect the brain and spinal cord", "Generate action potentials"],
-        "answer": 2,
-        "correctAnswer": "Protect the brain and spinal cord",
-        "explanation": "CSF cushions and protects the brain and spinal cord, also providing nutrients."
-    },
-    {
-        "question": "Which part of the neuron receives incoming signals?",
-        "options": ["Axon", "Cell body", "Dendrites", "Myelin sheath"],
-        "answer": 2,
-        "correctAnswer": "Dendrites",
-        "explanation": "Dendrites receive incoming signals from other neurons or sensory receptors."
-    },
-    {
-        "question": "What is the gap between two neurons called?",
-        "options": ["Axon terminal", "Synaptic cleft", "Node of Ranvier", "Neurolemma"],
-        "answer": 1,
-        "correctAnswer": "Synaptic cleft",
-        "explanation": "The synaptic cleft is the gap where neurotransmitters transmit signals between neurons."
-    },
-    {
-        "question": "Which region of the brain is associated with memory formation?",
-        "options": ["Hypothalamus", "Cerebellum", "Hippocampus", "Medulla oblongata"],
-        "answer": 2,
-        "correctAnswer": "Hippocampus",
-        "explanation": "The hippocampus, in the limbic system, is critical for memory formation and spatial navigation."
-    },
-    {
-        "question": "What are Schwann cells responsible for in the peripheral nervous system?",
-        "options": ["Transmitting sensory signals", "Producing myelin", "Regulating neurotransmitters", "Phagocytosis"],
-        "answer": 1,
-        "correctAnswer": "Producing myelin",
-        "explanation": "Schwann cells produce myelin in the PNS, insulating axons and aiding regeneration."
-    },
-    {
-        "question": "What is the function of the nodes of Ranvier?",
-        "options": ["Generate neurotransmitters", "Allow saltatory conduction", "Store potassium ions", "Connect neurons"],
-        "answer": 1,
-        "correctAnswer": "Allow saltatory conduction",
-        "explanation": "Nodes of Ranvier enable saltatory conduction, speeding up nerve impulse transmission."
-    },
-    {
-        "question": "Which part of the autonomic nervous system is active during relaxation?",
-        "options": ["Sympathetic nervous system", "Parasympathetic nervous system", "Central nervous system", "Somatic nervous system"],
-        "answer": 1,
-        "correctAnswer": "Parasympathetic nervous system",
-        "explanation": "The parasympathetic nervous system promotes relaxation and rest-and-digest activities."
-    },
-    {
-        "question": "What is the term for the protective membranes surrounding the brain and spinal cord?",
-        "options": ["Dura mater", "Meninges", "Pia mater", "Arachnoid mater"],
-        "answer": 1,
-        "correctAnswer": "Meninges",
-        "explanation": "The meninges (dura mater, arachnoid mater, pia mater) protect the brain and spinal cord."
-    },
-    {
-        "question": "What does the term 'neuroplasticity' refer to?",
-        "options": ["Growth of neurons", "Formation of myelin", "Ability of the brain to adapt and change", "Propagation of action potentials"],
-        "answer": 2,
-        "correctAnswer": "Ability of the brain to adapt and change",
-        "explanation": "Neuroplasticity is the brain’s ability to reorganize neural connections for learning and recovery."
-    },
-    {
-        "question": "Which part of the brain is known as the 'relay station'?",
-        "options": ["Thalamus", "Hypothalamus", "Medulla oblongata", "Cerebellum"],
-        "answer": 0,
-        "correctAnswer": "Thalamus",
-        "explanation": "The thalamus relays sensory information to the cerebral cortex."
-    },
-    {
-        "question": "What is the primary role of astrocytes in the nervous system?",
-        "options": ["Form the blood-brain barrier", "Produce cerebrospinal fluid", "Generate action potentials", "Insulate axons"],
-        "answer": 0,
-        "correctAnswer": "Form the blood-brain barrier",
-        "explanation": "Astrocytes help form the blood-brain barrier, regulating brain environment."
-    },
-    {
-        "question": "Which lobe of the brain is responsible for processing visual information?",
-        "options": ["Frontal lobe", "Parietal lobe", "Occipital lobe", "Temporal lobe"],
-        "answer": 2,
-        "correctAnswer": "Occipital lobe",
-        "explanation": "The occipital lobe processes visual information from the eyes."
-    },
-    {
-        "question": "Which neurotransmitter is associated with mood regulation and is often linked to depression when levels are low?",
-        "options": ["Dopamine", "Serotonin", "Glutamate", "GABA"],
-        "answer": 1,
-        "correctAnswer": "Serotonin",
-        "explanation": "Serotonin regulates mood; low levels are associated with depression."
-    },
-    {
-        "question": "What is the function of the cerebellum in the nervous system?",
-        "options": ["Regulate heart rate", "Control voluntary movements and balance", "Process emotions", "Transmit sensory signals"],
-        "answer": 1,
-        "correctAnswer": "Control voluntary movements and balance",
-        "explanation": "The cerebellum coordinates voluntary movements and balance."
-    },
-    {
-        "question": "Which part of the neuron is responsible for transmitting signals to other neurons or effectors?",
-        "options": ["Dendrites", "Axon", "Cell body", "Synapse"],
-        "answer": 1,
-        "correctAnswer": "Axon",
-        "explanation": "The axon transmits signals to other neurons or effectors via its terminals."
-    },
-    {
-        "question": "What is the role of microglial cells in the central nervous system?",
-        "options": ["Produce cerebrospinal fluid", "Act as immune cells", "Generate myelin", "Relay sensory signals"],
-        "answer": 1,
-        "correctAnswer": "Act as immune cells",
-        "explanation": "Microglial cells act as immune cells, removing debris and pathogens in the CNS."
-    },
-    {
-        "question": "What triggers the release of neurotransmitters at a synapse?",
-        "options": ["Sodium influx", "Potassium efflux", "Calcium influx", "Chloride efflux"],
-        "answer": 2,
-        "correctAnswer": "Calcium influx",
-        "explanation": "Calcium influx into the presynaptic terminal triggers neurotransmitter release."
-    },
-    {
-        "question": "Which part of the nervous system controls involuntary actions like digestion and heart rate?",
-        "options": ["Somatic nervous system", "Central nervous system", "Autonomic nervous system", "Peripheral nervous system"],
-        "answer": 2,
-        "correctAnswer": "Autonomic nervous system",
-        "explanation": "The autonomic nervous system controls involuntary actions like digestion and heart rate."
-    },
-    {
-        "question": "What is the primary function of the frontal lobe?",
-        "options": ["Visual processing", "Auditory processing", "Decision-making and motor control", "Language comprehension"],
-        "answer": 2,
-        "correctAnswer": "Decision-making and motor control",
-        "explanation": "The frontal lobe handles decision-making, planning, and motor control."
-    },
-    {
-        "question": "Which cranial nerve controls facial expressions?",
-        "options": ["Trigeminal nerve", "Facial nerve", "Glossopharyngeal nerve", "Hypoglossal nerve"],
-        "answer": 1,
-        "correctAnswer": "Facial nerve",
-        "explanation": "The facial nerve (cranial nerve VII) controls facial expressions and taste."
-    },
-    {
-        "question": "Which area of the brain regulates the sleep-wake cycle?",
-        "options": ["Amygdala", "Pineal gland", "Hypothalamus", "Cerebellum"],
-        "answer": 2,
-        "correctAnswer": "Hypothalamus",
-        "explanation": "The hypothalamus regulates the sleep-wake cycle via melatonin and circadian rhythms."
+        "correctAnswer": "Coccygeal nerves",
+        "explanation": "The coccygeal plexus is formed by the coccygeal nerve (Co1) and contributions from S4-S5, supplying the coccygeal region."
     }
-]
-    ;
+];
 
-        const questionElement = document.getElementById('question');
-        const optionsContainer = document.getElementById('options-container');
-        const currentQuestionElement = document.getElementById('current-question');
-        const totalQuestionsElement = document.getElementById('total-questions');
-        const progressBar = document.getElementById('progress-bar');
-        const prevButton = document.getElementById('prev-btn');
-        const nextButton = document.getElementById('next-btn');
-        const feedbackElement = document.getElementById('feedback');
-        const timerElement = document.getElementById('timer');
-        const explanationElement = document.getElementById('explanation');
-        const explanationTextElement = document.getElementById('explanation-text');
-        const explanationToggle = document.getElementById('explanation-toggle');
-        const themeToggle = document.getElementById('theme-toggle');
+        let questionElement = document.getElementById('question');
+        let optionsContainer = document.getElementById('options-container');
+        let currentQuestionElement = document.getElementById('current-question');
+        let totalQuestionsElement = document.getElementById('total-questions');
+        let progressBar = document.getElementById('progress-bar');
+        let prevButton = document.getElementById('prev-btn');
+        let nextButton = document.getElementById('next-btn');
+        let feedbackElement = document.getElementById('feedback');
+        let timerElement = document.getElementById('timer');
+        let explanationElement = document.getElementById('explanation');
+        let explanationTextElement = document.getElementById('explanation-text');
+        let explanationToggle = document.getElementById('explanation-toggle');
+        let themeToggle = document.getElementById('theme-toggle');
+        let layoutToggle = document.getElementById('layout-toggle');
+        let layoutDropdown = document.getElementById('layout-dropdown');
         const body = document.body;
 
         let currentQuestionIndex = 0;
@@ -1178,6 +964,7 @@
         let selectedOption = null;
         let timeStarted = null;
         let timerInterval = null;
+        let answers = [];
 
         function initQuiz() {
             totalQuestionsElement.textContent = questions.length;
@@ -1187,25 +974,55 @@
             nextButton.addEventListener('click', goToNextQuestion);
             themeToggle.addEventListener('click', toggleTheme);
             explanationToggle.addEventListener('click', toggleExplanation);
+            layoutToggle.addEventListener('click', () => layoutDropdown.classList.toggle('show'));
+            document.querySelectorAll('.layout-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    changeLayout(option.dataset.layout);
+                    layoutDropdown.classList.remove('show');
+                });
+            });
             loadTheme();
+            loadLayout();
         }
 
         function loadTheme() {
-            const theme = localStorage.getItem('theme') || 'dark';
-            body.className = theme;
-            themeToggle.innerHTML = theme === 'dark' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
-            document.querySelectorAll('.quiz-container, header, footer, .explanation-toggle').forEach(el => {
-                el.className = el.className.replace(/light|dark/g, '') + ` ${theme}`;
-            });
+            const theme = localStorage.getItem('theme') || 'modern-dark';
+            body.classList.add(theme);
+            themeToggle.innerHTML = theme === 'modern-dark' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+            updateThemeClasses(theme);
         }
 
         function toggleTheme() {
-            const newTheme = body.className === 'dark' ? 'light' : 'dark';
-            body.className = newTheme;
+            const newTheme = body.classList.contains('modern-dark') ? 'modern-light' : 'modern-dark';
+            body.classList.remove('modern-dark', 'modern-light', 'minimal');
+            body.classList.add(newTheme);
             localStorage.setItem('theme', newTheme);
-            themeToggle.innerHTML = newTheme === 'dark' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
-            document.querySelectorAll('.quiz-container, header, footer, .explanation-toggle').forEach(el => {
-                el.className = el.className.replace(/light|dark/g, '') + ` ${newTheme}`;
+            themeToggle.innerHTML = newTheme === 'modern-dark' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+            updateThemeClasses(newTheme);
+        }
+
+        function updateThemeClasses(theme) {
+            document.querySelectorAll('.quiz-container, header, footer, .explanation-toggle, .progress-bar, button, .layout-option, .layout-dropdown').forEach(el => {
+                el.className = el.className.replace(/modern-dark|modern-light|minimal/g, '') + ` ${theme}`;
+            });
+            document.querySelectorAll('.option').forEach(el => {
+                el.className = el.className.replace(/modern-dark|modern-light|minimal/g, '') + ` ${theme}`;
+            });
+        }
+
+        function loadLayout() {
+            const layout = localStorage.getItem('theme') || 'modern-dark';
+            changeLayout(layout);
+        }
+
+        function changeLayout(layout) {
+            localStorage.setItem('theme', layout);
+            body.className = layout;
+            document.querySelectorAll('.quiz-container, header, footer, .explanation-toggle, .progress-bar, button').forEach(el => {
+                el.className = el.className.replace(/modern-dark|modern-light|minimal/g, '') + ` ${layout}`;
+            });
+            document.querySelectorAll('.option').forEach(el => {
+                el.className = el.className.replace(/modern-dark|modern-light|minimal/g, '') + ` ${layout}`;
             });
         }
 
@@ -1270,6 +1087,14 @@
                 options[questions[currentQuestionIndex].answer].classList.add('correct');
             }
 
+            answers[currentQuestionIndex] = {
+                question: questions[currentQuestionIndex].question,
+                selected: questions[currentQuestionIndex].options[index],
+                correct: questions[currentQuestionIndex].correctAnswer,
+                isCorrect: isCorrect,
+                explanation: questions[currentQuestionIndex].explanation
+            };
+
             explanationTextElement.textContent = questions[currentQuestionIndex].explanation;
             explanationToggle.style.display = 'block';
             options.forEach(option => {
@@ -1314,13 +1139,27 @@
             const minutes = diff.getMinutes().toString().padStart(2, '0');
             const seconds = diff.getSeconds().toString().padStart(2, '0');
 
+            let reviewHTML = '<div class="review-section"><h2>Review Your Answers</h2>';
+            answers.forEach((answer, index) => {
+                reviewHTML += `
+                    <div class="review-item ${answer.isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="review-question">Q${index + 1}: ${answer.question}</div>
+                        <div class="review-answer">Your Answer: ${answer.selected}</div>
+                        <div class="review-answer">Correct Answer: ${answer.correct}</div>
+                        <div class="review-answer">Explanation: ${answer.explanation}</div>
+                    </div>
+                `;
+            });
+            reviewHTML += '</div>';
+
             quizContainer.innerHTML = `
                 <div class="quiz-completed">
                     <div class="score-text">Your Score</div>
                     <div class="score-value">${score}/${questions.length}</div>
                     <div class="mark-percentage">${percentage}%</div>
                     <div class="score-text">Time: ${minutes}:${seconds}</div>
-                    <button id="restart-btn">
+                    ${reviewHTML}
+                    <button id="restart-btn" class="${body.className}">
                         <i class="fas fa-redo"></i> Restart Quiz
                     </button>
                 </div>
@@ -1329,6 +1168,8 @@
             document.getElementById('restart-btn').addEventListener('click', () => {
                 currentQuestionIndex = 0;
                 score = 0;
+                answers = [];
+                clearInterval(timerInterval);
                 quizContainer.classList.remove('fade-in');
                 quizContainer.innerHTML = `
                     <div class="timer">
@@ -1339,7 +1180,7 @@
                         <div class="subtitle">Professional Questions with Detailed Explanations</div>
                     </div>
                     <div class="progress-container">
-                        <div class="progress-bar" id="progress-bar"></div>
+                        <div class="progress-bar ${body.className}" id="progress-bar"></div>
                     </div>
                     <div class="question-number">Question <span id="current-question">1</span> of <span id="total-questions">1</span></div>
                     <div class="question-text" id="question"></div>
@@ -1351,15 +1192,15 @@
                     </div>
                     <div class="feedback" id="feedback"></div>
                     <div class="navigation">
-                        <button id="prev-btn" disabled>
+                        <button id="prev-btn" class="${body.className}" disabled>
                             <i class="fas fa-arrow-left"></i> Previous
                         </button>
-                        <button id="next-btn">
+                        <button id="next-btn" class="${body.className}">
                             Next <i class="fas fa-arrow-right"></i>
                         </button>
                     </div>
                 `;
-                // Reassign DOM elements after resetting HTML
+                // Reassign DOM elements
                 questionElement = document.getElementById('question');
                 optionsContainer = document.getElementById('options-container');
                 currentQuestionElement = document.getElementById('current-question');
@@ -1372,6 +1213,8 @@
                 explanationElement = document.getElementById('explanation');
                 explanationTextElement = document.getElementById('explanation-text');
                 explanationToggle = document.getElementById('explanation-toggle');
+                layoutToggle = document.getElementById('layout-toggle');
+                layoutDropdown = document.getElementById('layout-dropdown');
                 initQuiz();
             });
         }
