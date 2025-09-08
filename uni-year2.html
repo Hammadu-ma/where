@@ -340,7 +340,7 @@ select:focus{outline:none;box-shadow:var(--ring);border-color:transparent}
     // --- Sample catalog: 14 subjects, Units, many videos (YouTube IDs used) ---
     const SUBJECTS = [
       "Embryology","Anatomy","Physiology","Biochem","English","Civics",
-      "Pharmacology","Histology","immunology"
+      "Pharmacology","Histology","immunology", "OTHER"
     ];
   
     // Minimal demo thumbnails via https://img.youtube.com
@@ -388,7 +388,7 @@ select:focus{outline:none;box-shadow:var(--ring);border-color:transparent}
     });
     addVideo({
       title: "Embryology 1",
-      subject: "Mathematics",
+      subject: "Embryology",
       unit: 1,
       yt: "BtLyik7oAxc",
       duration: "12:00"
@@ -396,7 +396,7 @@ select:focus{outline:none;box-shadow:var(--ring);border-color:transparent}
 
     addVideo({
       title: "Embryology Playlist",
-      subject: "Mathematics",
+      subject: "Embryology",
       unit: 2,
       yt: "PLTF9h-T1TcJiNRCzNPen0m4AO6VQZ6YCl",
       duration: "1:00:00"
@@ -404,7 +404,7 @@ select:focus{outline:none;box-shadow:var(--ring);border-color:transparent}
     
     addVideo({
       title: "embryology 1",
-      subject: "ICT",
+      subject: "Embryology",
       unit: 1,
       yt: "BtLyik7oAxc",
       duration: "12:00"
@@ -412,15 +412,15 @@ select:focus{outline:none;box-shadow:var(--ring);border-color:transparent}
     
     addVideo({
       title: "dr sung",
-      subject: "Mathematics",
-      unit: 1,
+      subject: "OTHER",
+      unit: ,
       yt: "V8RxHtoLVTk",
       duration: "16:00"
     });
     
     addVideo({
-      title: "Your Playlist Title Here",
-      subject: "Your Subject Here",
+      title: "Embryology",
+      subject: "Embryology",
       unit: 1,
       yt: "PLtpriW2pnN_5MPy17cCxQ30F8D8swlf_c", // Playlist ID
       duration: "1:00:00" // optional placeholder
@@ -718,3 +718,4 @@ select:focus{outline:none;box-shadow:var(--ring);border-color:transparent}
   </script>  
 </body>
 </html>
+
