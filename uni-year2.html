@@ -339,9 +339,8 @@ select:focus{outline:none;box-shadow:var(--ring);border-color:transparent}
   <script>
     // --- Sample catalog: 14 subjects, Units, many videos (YouTube IDs used) ---
     const SUBJECTS = [
-      "Mathematics","Physics","Chemistry","Biology","English","Civics",
-      "Geography","History","Economics","ICT","Amharic","Afan Oromo",
-      "HPE","Art"
+      "Embryology","Anatomy","Physiology","Biochem","English","Civics",
+      "Pharmacology","Histology","immunology"
     ];
   
     // Minimal demo thumbnails via https://img.youtube.com
@@ -350,27 +349,23 @@ select:focus{outline:none;box-shadow:var(--ring);border-color:transparent}
       return id.startsWith("PL") ? "https://img.youtube.com/vi/BtLyik7oAxc/hqdefault.jpg" : `https://img.youtube.com/vi/${id}/hqdefault.jpg`; 
     }
 
-    function videoUrl(video) {
-  if (video.type === "youtube") {
-    if (video.yt.startsWith("PL")) {
-      return `https://www.youtube.com/embed/videoseries?list=${video.yt}&rel=0&modestbranding=1&autoplay=1`;
+    function ytUrl(id){ 
+      // If it starts with "PL", treat as playlist
+      if(id.startsWith("PL")) {
+        return `https://www.youtube.com/embed/videoseries?list=${id}&rel=0&modestbranding=1&autoplay=1`;
+      }
+      return `https://www.youtube.com/embed/${id}?rel=0&modestbranding=1&autoplay=1`; 
     }
-    return `https://www.youtube.com/embed/${video.yt}?rel=0&modestbranding=1&autoplay=1`;
-  } else if (video.type === "file") {
-    return video.file; // direct link to .mp4
-  }
-  return "";
-}
 
-// Example data
-let videos = [];
-let idSeed = 1000;
+    // Generate sample data
+    let videos = [];
+    let idSeed = 1000;
+    function addVideo({title,subject,unit,yt, duration="10:12"}){
+      videos.push({id: idSeed++, title, subject, unit, yt, duration});
+    }
 
-function addVideo({title, subject, unit, type="youtube", yt, file, duration="10:12"}) {
-  videos.push({id: idSeed++, title, subject, unit, type, yt, file, duration});
-}
-
- addVideo({
+    // Add sample videos
+     addVideo({
       title: "CVS:venous drainage",
       subject: "Anatomy",
       unit: 1,
@@ -391,7 +386,46 @@ function addVideo({title, subject, unit, type="youtube", yt, file, duration="10:
       yt: "PH73pljqpGY",
       duration: "09:00"
     });
+    addVideo({
+      title: "Embryology 1",
+      subject: "Mathematics",
+      unit: 1,
+      yt: "BtLyik7oAxc",
+      duration: "12:00"
+    });
+
+    addVideo({
+      title: "Embryology Playlist",
+      subject: "Mathematics",
+      unit: 2,
+      yt: "PLTF9h-T1TcJiNRCzNPen0m4AO6VQZ6YCl",
+      duration: "1:00:00"
+    });
     
+    addVideo({
+      title: "embryology 1",
+      subject: "ICT",
+      unit: 1,
+      yt: "BtLyik7oAxc",
+      duration: "12:00"
+    });
+    
+    addVideo({
+      title: "dr sung",
+      subject: "Mathematics",
+      unit: 1,
+      yt: "V8RxHtoLVTk",
+      duration: "16:00"
+    });
+    
+    addVideo({
+      title: "Your Playlist Title Here",
+      subject: "Your Subject Here",
+      unit: 1,
+      yt: "PLtpriW2pnN_5MPy17cCxQ30F8D8swlf_c", // Playlist ID
+      duration: "1:00:00" // optional placeholder
+    });
+
     // Some reusable YouTube IDs for demo
     const YT_IDS = [];
   
@@ -683,6 +717,4 @@ function addVideo({title, subject, unit, type="youtube", yt, file, duration="10:
     }, 800); // skeleton delay
   </script>  
 </body>
-
 </html>
-
