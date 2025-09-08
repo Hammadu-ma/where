@@ -1,0 +1,1881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Embryology Quiz Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --primary-dark: #3a0ca3;
+            --secondary: #f72585;
+            --success: #4cc9f0;
+            --warning: #f9c74f;
+            --danger: #f94144;
+            --info: #577590;
+            --gray-50: #f8f9fa;
+            --gray-100: #f1f3f5;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --gray-500: #adb5bd;
+            --gray-600: #868e96;
+            --gray-700: #495057;
+            --gray-800: #343a40;
+            --gray-900: #212529;
+            --bg-primary: var(--gray-900);
+            --bg-secondary: #1a1d21;
+            --bg-tertiary: #2c303a;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-tertiary: rgba(255, 255, 255, 0.5);
+            --card-bg: rgba(35, 39, 47, 0.95);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15), 0 5px 10px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.2);
+            --transition-base: all 0.2s ease-in-out;
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --radius-2xl: 24px;
+            --header-height: 70px;
+            --max-width: 900px;
+            --side-padding: 1.5rem;
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f5f7fa;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #eef2f6;
+            --text-primary: #1a1d21;
+            --text-secondary: rgba(26, 29, 33, 0.7);
+            --text-tertiary: rgba(26, 29, 33, 0.5);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-border: rgba(0, 0, 0, 0.1);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.08), 0 5px 10px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        [data-theme="minimal"] {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f1f5f9;
+            --text-primary: #0f172a;
+            --text-secondary: #334155;
+            --text-tertiary: #64748b;
+            --card-bg: #ffffff;
+            --card-border: #e2e8f0;
+            --primary: #0ea5e9;
+            --primary-light: #38bdf8;
+            --primary-dark: #0284c7;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition-base);
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        header {
+            height: var(--header-height);
+            background: var(--bg-secondary);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 var(--side-padding);
+            transition: var(--transition-base);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--primary);
+        }
+
+        .logo-icon {
+            font-size: 1.5rem;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .control-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: var(--transition-base);
+            position: relative;
+        }
+
+        .control-btn:hover {
+            background: var(--bg-tertiary);
+            transform: translateY(-2px);
+        }
+
+        .control-btn i {
+            font-size: 1.1rem;
+        }
+
+        .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--secondary);
+            color: white;
+            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        main {
+            flex: 1;
+            padding: 2rem var(--side-padding);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .quiz-container {
+            width: 100%;
+            max-width: var(--max-width);
+            background: var(--card-bg);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition-smooth);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(10px);
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .quiz-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .quiz-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .stats-container {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.5rem 0.75rem;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            min-width: 70px;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            margin: 1.5rem 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-light), var(--primary));
+            border-radius: var(--radius-lg);
+            transition: width 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            100% { left: 100%; }
+        }
+
+        .question-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-tags {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .tag {
+            padding: 0.25rem 0.75rem;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .question-number {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            line-height: 1.4;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            border: 1px solid transparent;
+        }
+
+        .option:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-light);
+        }
+
+        .option.selected {
+            background: rgba(67, 97, 238, 0.1);
+            border-color: var(--primary);
+            animation: pulse 0.3s ease;
+        }
+
+        .option.correct {
+            background: rgba(76, 201, 240, 0.1);
+            border-color: var(--success);
+        }
+
+        .option.incorrect {
+            background: rgba(249, 65, 68, 0.1);
+            border-color: var(--danger);
+        }
+
+        .option-letter {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-md);
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 1rem;
+            flex-shrink: 0;
+            transition: var(--transition-base);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .option.selected .option-letter {
+            background: var(--primary);
+            color: white;
+        }
+
+        .option.correct .option-letter {
+            background: var(--success);
+            color: white;
+        }
+
+        .option.incorrect .option-letter {
+            background: var(--danger);
+            color: white;
+        }
+
+        .option-text {
+            flex: 1;
+        }
+
+        .bookmark-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: var(--transition-base);
+        }
+
+        .bookmark-btn:hover {
+            color: var(--primary);
+        }
+
+        .bookmark-btn.bookmarked {
+            color: var(--warning);
+        }
+
+        .feedback {
+            padding: 1rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .feedback.correct {
+            background: rgba(76, 201, 240, 0.1);
+            color: var(--success);
+        }
+
+        .feedback.incorrect {
+            background: rgba(249, 65, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .feedback-icon {
+            font-size: 1.5rem;
+        }
+
+        .explanation-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+        .explanation-container.expanded {
+            max-height: 500px;
+        }
+
+        .explanation {
+            padding: 1.25rem;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-lg);
+            margin-top: 1rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .explanation-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-lg);
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition-base);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--bg-secondary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .results-container {
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: conic-gradient(var(--primary) 0% var(--p, 0%), var(--bg-tertiary) var(--p, 0%) 100%);
+            position: relative;
+        }
+
+        .score-circle::before {
+            content: '';
+            position: absolute;
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background: var(--card-bg);
+        }
+
+        .score-text {
+            position: relative;
+            z-index: 1;
+        }
+
+        .score-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .score-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .results-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .result-stat {
+            padding: 1rem;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-lg);
+        }
+
+        .result-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .result-stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .review-section {
+            margin-top: 2rem;
+            text-align: left;
+        }
+
+        .review-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .review-item {
+            padding: 1.25rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 1rem;
+            background: var(--bg-tertiary);
+        }
+
+        .review-item.correct {
+            border-left: 4px solid var(--success);
+        }
+
+        .review-item.incorrect {
+            border-left: 4px solid var(--danger);
+        }
+
+        .review-question {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .review-answer {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .review-explanation {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        footer {
+            padding: 1.5rem var(--side-padding);
+            background: var(--bg-secondary);
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        .pulse {
+            animation: pulse 0.5s ease;
+        }
+
+        .bounce-in {
+            animation: bounceIn 0.5s ease;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-1 { margin-top: 0.5rem; }
+        .mt-2 { margin-top: 1rem; }
+        .mt-3 { margin-top: 1.5rem; }
+        .mt-4 { margin-top: 2rem; }
+
+        @media (max-width: 768px) {
+            :root {
+                --side-padding: 1rem;
+                --header-height: 60px;
+            }
+
+            .quiz-container {
+                padding: 1.5rem;
+            }
+
+            .quiz-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .stats-container {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .results-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .score-circle {
+                width: 120px;
+                height: 120px;
+            }
+
+            .score-circle::before {
+                width: 100px;
+                height: 100px;
+            }
+
+            .score-value {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navigation {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .option {
+                padding: 0.75rem;
+            }
+
+            .option-letter {
+                width: 28px;
+                height: 28px;
+                margin-right: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <header>
+        <div class="logo">
+            <i class="fas fa-brain logo-icon"></i>
+            <span>MedQuiz Pro</span>
+        </div>
+        <div class="header-controls">
+            <button class="control-btn" id="theme-toggle" aria-label="Toggle theme">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button class="control-btn" id="sound-toggle" aria-label="Toggle sound">
+                <i class="fas fa-volume-up"></i>
+            </button>
+            <button class="control-btn" id="stats-btn" aria-label="View statistics">
+                <i class="fas fa-chart-line"></i>
+                <span class="badge" id="bookmarks-count">0</span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <div class="quiz-container">
+            <div class="quiz-header">
+                <div>
+                    <h1 class="quiz-title">MedQuiz Pro</h1>
+                    <p class="quiz-subtitle">Test your knowledge with professional questions and detailed explanations</p>
+                </div>
+                <div class="stats-container">
+                    <div class="stat">
+                        <span class="stat-value" id="score">0</span>
+                        <span class="stat-label">Score</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="timer">00:00</span>
+                        <span class="stat-label">Time</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="streak">0</span>
+                        <span class="stat-label">Streak</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="category">All</span>
+                        <span class="stat-label">Category</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar" style="width: 10%"></div>
+            </div>
+
+            <div class="question-meta">
+                <div class="question-tags">
+                    <span class="tag" id="category-tag">cvs</span>
+                    <span class="tag" id="difficulty-tag">Medium</span>
+                </div>
+                <button class="bookmark-btn" id="bookmark-btn" aria-label="Bookmark question">
+                    <i class="fas fa-bookmark"></i>
+                </button>
+            </div>
+            <div class="question-number">Question <span id="current-question">1</span> of <span id="total-questions">10</span></div>
+            <div class="question-text" id="question">Which part of the brain is responsible for coordinating skeletal muscle contractions?</div>
+
+            <div class="options-grid" id="options-container">
+                <div class="option">
+                    <div class="option-letter">A</div>
+                    <div class="option-text">Cerebrum</div>
+                </div>
+                <div class="option">
+                    <div class="option-letter">B</div>
+                    <div class="option-text">Cerebellum</div>
+                </div>
+                <div class="option">
+                    <div class="option-letter">C</div>
+                    <div class="option-text">Pons</div>
+                </div>
+                <div class="option">
+                    <div class="option-letter">D</div>
+                    <div class="option-text">Midbrain</div>
+                </div>
+            </div>
+
+            <div class="feedback correct" id="feedback" style="display: none;">
+                <i class="fas fa-check-circle feedback-icon"></i>
+                <div class="feedback-text">Correct! Well done.</div>
+            </div>
+
+            <button class="btn btn-secondary" id="show-explanation-btn" style="display: none;">
+                <i class="fas fa-info-circle"></i> Show Explanation
+            </button>
+
+            <div class="explanation-container" id="explanation-container">
+                <div class="explanation">
+                    <div class="explanation-title">Explanation:</div>
+                    <div id="explanation-text">The cerebellum, located posterior to the brainstem, is the 'little brain.' It compares intended movements with actual movements to ensure smooth, coordinated skeletal muscle activity and maintain posture and balance.</div>
+                </div>
+            </div>
+
+            <div class="navigation">
+                <button class="btn btn-secondary" id="prev-btn" disabled>
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                <button class="btn btn-primary" id="next-btn">
+                    Next Question <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2025 MedQuiz Pro || All Rights Reserved
+    </footer>
+
+    <script>
+        const questions =  
+[
+    {
+        "question": "Anatomical position could be described as which of the following",
+        "options": ["Lying down prone", "Lying down supine", "Standing displaying ventral surface of the body", "Standing with arms and legs abducted"],
+        "answer": 2,
+        "correctAnswer": "Standing displaying ventral surface of the body",
+        "explanation": "Anatomical position refers to a standard reference where the person stands upright with the forehead and eyes directed anteriorly, arms adjacent to the sides and palms facing anteriorly, lower limbs close together with feet parallel and toes facing forward. This displays the ventral (anterior) surface."
+    },
+    {
+        "question": "What happens during dorsiflexion?",
+        "options": ["The bottom of the foot moves toward the calf, decreasing the angle between those two surfaces, which leaves the toes pointing away from the body.", "The top of the foot moves toward the shin, decreasing the angle between those two surfaces, leaving the toes pointing toward the head", "The foot twists to the left", "The foot twists to the right"],
+        "answer": 1,
+        "correctAnswer": "The top of the foot moves toward the shin, decreasing the angle between those two surfaces, leaving the toes pointing toward the head",
+        "explanation": "Dorsiflexion is the movement where the top of the foot moves toward the shin, decreasing the angle and pointing toes upward/toward the head."
+    },
+    {
+        "question": "Which motion best describes retraction?",
+        "options": ["The scapulae move in a posterior/medial direction (posteromedial)", "The scapulae move in an anterior/lateral direction (anterolateral)", "The scapulae only move anteriorly", "The scapulae only move posteriorly"],
+        "answer": 0,
+        "correctAnswer": "The scapulae move in a posterior/medial direction (posteromedial)",
+        "explanation": "Retraction is the movement of the scapula posteriorly and medially (posteromedial), as in pulling shoulders back."
+    },
+    {
+        "question": "Which cranial nerve is the largest?",
+        "options": ["Vagus", "Trigeminal", "Facial", "None"],
+        "answer": 1,
+        "correctAnswer": "Trigeminal",
+        "explanation": "The trigeminal nerve is the largest cranial nerve, providing facial sensory innervation and motor to mastication muscles."
+    },
+    {
+        "question": "Thoracic aorta passes through diaphragm via the Aortic Hiatus at the level of",
+        "options": ["L5", "T12", "T8", "T10"],
+        "answer": 1,
+        "correctAnswer": "T12",
+        "explanation": "Thoracic aorta passes through the diaphragm at T12 via aortic hiatus."
+    },
+    {
+        "question": "___ is a network of blood capillaries in the walls of the ventricles",
+        "options": ["Ependymal cells", "Choroid plexuses", "Cerebrospinal fluid", "All"],
+        "answer": 1,
+        "correctAnswer": "Choroid plexuses",
+        "explanation": "Choroid plexuses are networks of capillaries in ventricle walls producing CSF."
+    },
+    {
+        "question": "___ is the seat of intelligence",
+        "options": ["Cerebellum", "Thalamus", "Cerebrum", "Midbrain"],
+        "answer": 2,
+        "correctAnswer": "Cerebrum",
+        "explanation": "Cerebrum is the seat of intelligence."
+    },
+    {
+        "question": "Blockage of which of the following arteries would lead to ischemia of the apex of the heart?",
+        "options": ["Left circumflex", "Posterior interventricular (descending)", "Right marginal", "Anterior interventricular (descending)", "Right coronary"],
+        "answer": 3,
+        "correctAnswer": "Anterior interventricular (descending)",
+        "explanation": "Anterior interventricular (descending) supplies the apex."
+    },
+    {
+        "question": "A 3rd-year medical student was doing her first physical exam. In order to properly place her stethoscope to listen to heart sounds, she palpated bony landmarks. She began at the jugular notch, and then slid her fingers down to the sternal angle. At which rib (costal cartilage) level were her fingers?",
+        "options": ["1", "2", "3", "4"],
+        "answer": 1,
+        "correctAnswer": "2",
+        "explanation": "Sternal angle is at level of 2nd rib, standard for heart exam placement."
+    },
+    {
+        "question": "Which of the following is nerve contains both sensory and motor nerve fibers?",
+        "options": ["Olfactory nerve", "Glossopharyngeal nerve", "Accessory nerve", "Trochlear"],
+        "answer": 1,
+        "correctAnswer": "Glossopharyngeal nerve",
+        "explanation": "Glossopharyngeal nerve (IX) has both sensory (taste, pharynx) and motor (swallowing) fibers."
+    },
+    {
+        "question": "Which chamber pumps out oxygenated blood",
+        "options": ["Right Atrium", "Left Atrium", "Left Ventricle", "Right Ventricle"],
+        "answer": 2,
+        "correctAnswer": "Left Ventricle",
+        "explanation": "Left ventricle pumps oxygenated blood to body."
+    },
+    {
+        "question": "The right common carotid artery is a branch of",
+        "options": ["Ascending aorta", "Aortic arch", "Brachiocephalic artery", "Right subclavian artery"],
+        "answer": 2,
+        "correctAnswer": "Brachiocephalic artery",
+        "explanation": "Right common carotid branches from brachiocephalic trunk."
+    },
+    {
+        "question": "Which of the following nerves is involved in affecting the heart rate?",
+        "options": ["Trigeminal", "Abducens", "Vagus", "None"],
+        "answer": 2,
+        "correctAnswer": "Vagus",
+        "explanation": "Vagus nerve affects heart rate via parasympathetic control, slowing it."
+    },
+    {
+        "question": "The human vertebrae are classified as which type of bone?",
+        "options": ["Long", "Irregular", "Flat", "Short"],
+        "answer": 1,
+        "correctAnswer": "Irregular",
+        "explanation": "Vertebrae are irregular bones."
+    },
+    {
+        "question": "Which of these bones is not a part of the axial skeleton?",
+        "options": ["Clavicle", "Skull", "Sternum", "Ribs"],
+        "answer": 0,
+        "correctAnswer": "Clavicle",
+        "explanation": "Clavicle is part of appendicular skeleton (pectoral girdle)."
+    },
+    {
+        "question": "Which layer of the epidermis contains its melanocytes?",
+        "options": ["Stratum basale", "Stratum lucidum", "Stratum spinosum", "Stratum corneum", "Stratum granulosum"],
+        "answer": 0,
+        "correctAnswer": "Stratum basale",
+        "explanation": "Melanocytes are in stratum basale, producing melanin."
+    },
+    {
+        "question": "Both the epidermis and the dermis are continually shed and regenerated.",
+        "options": ["True", "False"],
+        "answer": 1,
+        "correctAnswer": "False",
+        "explanation": "Only epidermis is continually shed and regenerated; dermis is not."
+    },
+    {
+        "question": "Which layer of the skin contains cells that are undergoing mitosis?",
+        "options": ["Stratum granulosum", "Stratum corneum", "Stratum spinosum", "Stratum basale"],
+        "answer": 3,
+        "correctAnswer": "Stratum basale",
+        "explanation": "Stratum basale has stem cells undergoing mitosis."
+    },
+    {
+        "question": "The intricate and miraculous process by which a single cell gives rise to a highly developed multi-cellular human being in term is ag;",
+        "options": ["Developmental anatomy", "Ontogeny", "Teratology", "Embryology", "All, except 'C'"],
+        "answer": 4,
+        "correctAnswer": "All, except 'C'",
+        "explanation": "The process is embryology, ontogeny, developmental anatomy; teratology is anomalies."
+    },
+    {
+        "question": "Which of the following contains as this incorrect number of chromosomes?",
+        "options": ["Zygote/46, XX or XY", "Zygote/46, X or Y", "Oogonia/46, XX", "Spermatids/23, X or Y", "Primary spermatocytes/46, XY"],
+        "answer": 1,
+        "correctAnswer": "Zygote/46, X or Y",
+        "explanation": "Zygote is 46, XX or XY; not 46, X or Y."
+    },
+    {
+        "question": "Which of the following statements about hair follicles is true?",
+        "options": ["They are always associated with an eccrine sweat gland.", "Their associated arrector pili muscle is composed of striated fibers.", "Their hair shaft inserts into the papillary layer of the epidermis.", "They do not extend into the dermis.", "None of the above."],
+        "answer": 4,
+        "correctAnswer": "None of the above.",
+        "explanation": "None true; hair follicles associate with sebaceous/apocrine, arrector pili is smooth, shaft through epidermis to surface, extend into dermis."
+    },
+    {
+        "question": "Which one is a wrong analogy of terms of relationship?",
+        "options": ["Anterior - Ventral", "Superior - Cranial", "Posterior - Dorsal", "Inferior - Distal"],
+        "answer": 3,
+        "correctAnswer": "Inferior - Distal",
+        "explanation": "Inferior is caudal, distal is away from trunk; not analogous."
+    },
+    {
+        "question": "Which one of the following anatomical movements not occur at the foot?",
+        "options": ["Eversion - Inversion", "Plantarflexion - Dorsiflexion", "Pronation - Supination", "Protraction - Retraction"],
+        "answer": 3,
+        "correctAnswer": "Protraction - Retraction",
+        "explanation": "Protraction-retraction not at foot; for scapula/jaw."
+    },
+    {
+        "question": "Myelination of peripheral nerves is accomplished by",
+        "options": ["Astrocytes", "Oligodendrocytes", "Schwann cells", "Basket cells"],
+        "answer": 2,
+        "correctAnswer": "Schwann cells",
+        "explanation": "Schwann cells myelinate peripheral nerves."
+    },
+    {
+        "question": "The correct statement about epiblast the heart. It is",
+        "options": ["Continuous with the endocardium", "Capable of decreasing the rate of contraction", "Composed of modified cardiac muscle cells", "Composed of modified cardiac muscle cells"],
+        "answer": 2,
+        "correctAnswer": "Composed of modified cardiac muscle cells",
+        "explanation": "Likely Purkinje fibers, composed of modified cardiac muscle."
+    },
+    {
+        "question": "Synaptic vesicles possess which of the following characteristics?",
+        "options": ["Manufacture neurotransmitter", "Enter the neurotransmitter", "Become incorporated into the presynaptic membrane", "Release neurotransmitter via endocytosis"],
+        "answer": 2,
+        "correctAnswer": "Become incorporated into the presynaptic membrane",
+        "explanation": "Synaptic vesicles become incorporated into presynaptic membrane during exocytosis."
+    },
+    {
+        "question": "Episodes of demyelination are associated with",
+        "options": ["Meningitis", "Huntington chorea", "Multiple sclerosis", "Parkinson disease"],
+        "answer": 2,
+        "correctAnswer": "Multiple sclerosis",
+        "explanation": "Multiple sclerosis involves demyelination episodes."
+    },
+    {
+        "question": "The most common vein used to withdraw blood for laboratory analysis in the upper limb is:",
+        "options": ["Brachial vein", "Cephalic vein", "Median cubital vein"],
+        "answer": 2,
+        "correctAnswer": "Median cubital vein",
+        "explanation": "Median cubital vein is most common for venipuncture."
+    },
+    {
+        "question": "Select mismatched?",
+        "options": ["Elastic arteries - conducting arteries", "Tunica media - less muscular", "Medium sized arteries - distributing arteries", "Aorta - conducting artery", "None of the above"],
+        "answer": 1,
+        "correctAnswer": "Tunica media - less muscular",
+        "explanation": "Tunica media in elastic arteries is muscular with elastic, not less muscular."
+    },
+    {
+        "question": "A congenital diaphragmatic hernia may result from failure of the",
+        "options": ["Septum transversum to develop", "Pleuroperitoneal membranes to fuse in a normal fashion", "Pleuropericardial membrane to develop completely", "Dorsal mesentery of the esophagus to develop", "Body wall to form the peripheral part of the diaphragm"],
+        "answer": 1,
+        "correctAnswer": "Pleuroperitoneal membranes to fuse in a normal fashion",
+        "explanation": "CDH from failure of pleuroperitoneal membranes to fuse."
+    },
+    {
+        "question": "Which of the following is not true about birth defect of Turner syndrome",
+        "options": ["Short stature is one of the classic features", "A weak catlike cry and microcephaly indicate the clinical diagnosis of Klinefelter’s", "Sparse body hair and gynecomastia may indicate the clinical diagnosis of Klinefelter’s", "Tetracycline would cause stained teeth and hypoplasia of enamel", "Microtia is a minor anomaly"],
+        "answer": 1,
+        "correctAnswer": "A weak catlike cry and microcephaly indicate the clinical diagnosis of Klinefelter’s",
+        "explanation": "Weak catlike cry and microcephaly are for cri du chat, not Klinefelter."
+    },
+    {
+        "question": "All are important parameters revealed by ultrasound except",
+        "options": ["Fetal age and growth", "Presence or absence of congenital anomalies", "Amount of amniotic fluid", "Placental position and umbilical blood flow"],
+        "answer": null,
+        "correctAnswer": "None",
+        "explanation": "All listed options are important parameters revealed by ultrasound."
+    },
+    {
+        "question": "Which of the following extraembryonic membrane are the early stages of blood cells",
+        "options": ["Chorion", "Allantois", "Amnion", "Yolk sac"],
+        "answer": 3,
+        "correctAnswer": "Yolk sac",
+        "explanation": "Yolk sac produces early blood cells."
+    },
+    {
+        "question": "The structure which implants in the endometrium is termed as:",
+        "options": ["Embryo", "Blastocyst", "Morula", "Zygote"],
+        "answer": 1,
+        "correctAnswer": "Blastocyst",
+        "explanation": "Blastocyst implants in the endometrium."
+    },
+    {
+        "question": "At what stage of development is it flat for different cells of the conceptus that form embryo proper?",
+        "options": ["Zygote", "Two-cell stage", "Blastocyst", "Eight-cell stage"],
+        "answer": 2,
+        "correctAnswer": "Blastocyst",
+        "explanation": "Blastocyst has inner cell mass for embryo proper."
+    },
+    {
+        "question": "Which of the following changes occur as result embryonic folding?",
+        "options": ["Incorporation of part of the yolk sac into the embryo and formation of the gut tube", "The embryo surrounded by of the amniotic cavity", "Formation of the vitelline duct", "Fully separation of the intra-embryonic coelom from extra embryonic coelom", "All of the above"],
+        "answer": 4,
+        "correctAnswer": "All of the above",
+        "explanation": "All listed changes occur during embryonic folding."
+    },
+    {
+        "question": "What keep the oocyte so long; in the immature prolonged resting state (dictyate) of prophase I metaphase II of meiosis?",
+        "options": ["Oocyte maturation inhibitor", "Dictyate maturation", "Follicle inhibiting hormone", "Early pregnancy factor"],
+        "answer": 0,
+        "correctAnswer": "Oocyte maturation inhibitor",
+        "explanation": "Oocyte maturation inhibitor keeps oocyte in dictyate."
+    },
+    {
+        "question": "Acrosomal reaction occur:",
+        "options": ["During the 1st phase of fertilization", "During the 2nd phase of fertilization", "During the 3rd phase of fertilization", "During the 4th phase of fertilization", "After fertilization"],
+        "answer": 1,
+        "correctAnswer": "During the 2nd phase of fertilization",
+        "explanation": "Acrosomal reaction occurs during the 2nd phase (penetration) of fertilization."
+    },
+    {
+        "question": "A 20-year old female presented to Jimma Medical Center Dermatology Unit for skin problem on her face. After examination, the dermatologist diagnosed her problem as cystic acne and advised her a retinoic acid therapy. Retinoic acid is a known and potent teratogenic effect. She realized that her last normal menstrual period started eight weeks ago, and her home pregnancy test was also positive. She and her dermatologist are concerned about the effect of the retinoic acid on the developing conceptus. Based on the information above, you advise her.",
+        "options": ["Not to worry because she didn’t take the retinoic acid during critical period of development", "That there is significant reason for her concern, since she took the retinoic acid during a highly sensitive period of development", "Not to worry, since the placenta has not yet formed and the conceptus is protected", "Not to worry, since the process of organogenesis is not yet started", "That there relatively little risk of birth defects, since the process of organogenesis is already completed"],
+        "answer": 1,
+        "correctAnswer": "That there is significant reason for her concern, since she took the retinoic acid during a highly sensitive period of development",
+        "explanation": "8 weeks is during organogenesis (3-8 weeks), sensitive to teratogens like retinoic acid causing defects."
+    },
+    {
+        "question": "Which of the following structure acts as the primary inductor (signaling center) in the early embryo?",
+        "options": ["Notochord", "Neural groove", "Primitive streak", "Hypoblast", "Neural crest cells"],
+        "answer": 0,
+        "correctAnswer": "Notochord",
+        "explanation": "Notochord is the primary inductor in the early embryo."
+    },
+    {
+        "question": "After folding of the head region, the structure lying just caudal to the pericardial cavity is the:",
+        "options": ["Developing heart", "Connecting stalk", "Primitive streak", "Liver", "Septum transversum"],
+        "answer": 4,
+        "correctAnswer": "Septum transversum",
+        "explanation": "Septum transversum lies caudal to pericardial cavity after head folding."
+    },
+    {
+        "question": "The coelom originally located cranial to the prochordal plate becomes the:",
+        "options": ["Mouth cavity", "Stomodeum", "Pericardial cavity", "Pharyngeal cavity", "Pleural cavity"],
+        "answer": 2,
+        "correctAnswer": "Pericardial cavity",
+        "explanation": "Coelom cranial to prochordal plate becomes pericardial cavity."
+    },
+    {
+        "question": "The intraembryonic mesoderm that forms body wall and body cavities?",
+        "options": ["Lateral plate mesoderm", "Intermediate mesoderm", "Paraxial mesoderm", "Notochord"],
+        "answer": 0,
+        "correctAnswer": "Lateral plate mesoderm",
+        "explanation": "Lateral plate mesoderm forms body wall and cavities."
+    },
+    {
+        "question": "One of the following branches of anatomy is the basis for physical examination of the body that forms a part of physical diagnosis?",
+        "options": ["Surgical anatomy", "Surface anatomy", "Radiological anatomy", "Cardiac anatomy"],
+        "answer": 1,
+        "correctAnswer": "Surface anatomy",
+        "explanation": "Surface anatomy is the basis for physical examination."
+    },
+    {
+        "question": "Which of the following is true about anatomical position",
+        "options": ["Palms of the subject stands erect facing forwards", "The upper extremities are placed at the sides", "The palms of the hands are turned forward", "The head and eyes are facing forwards", "None of the above"],
+        "answer": 2,
+        "correctAnswer": "The palms of the hands are turned forward",
+        "explanation": "In anatomical position, the palms face forward, upper extremities are at sides, and head/eyes face forward. Option A is poorly phrased."
+    },
+    {
+        "question": "Which of the following pairs of anatomical planes are at right angle to each other?",
+        "options": ["Sagittal and frontal planes", "Sagittal and median planes", "Sagittal and transverse planes", "Both 'A' and 'C'"],
+        "answer": 3,
+        "correctAnswer": "Both 'A' and 'C'",
+        "explanation": "Sagittal and frontal planes, and sagittal and transverse planes, are at right angles."
+    },
+    {
+        "question": "Which body membrane is not epithelium?",
+        "options": ["Serous membrane", "Cutaneous membrane", "Synovial membrane", "Mucous membrane"],
+        "answer": 2,
+        "correctAnswer": "Synovial membrane",
+        "explanation": "Synovial membrane is connective, not epithelium."
+    },
+    {
+        "question": "The movement of the sole of the foot outward or laterally is",
+        "options": ["Inversion", "Eversion", "Adduction", "Abduction"],
+        "answer": 1,
+        "correctAnswer": "Eversion",
+        "explanation": "Eversion is the movement of the sole outward or laterally."
+    },
+    {
+        "question": "Which of the following statements concerning thin skin is true?",
+        "options": ["It does not contain sweat glands.", "It is less abundant than thick skin.", "It lacks a stratum corneum.", "It contains hair follicles.", "Its epidermis does not rest on a basement membrane."],
+        "answer": 3,
+        "correctAnswer": "It contains hair follicles.",
+        "explanation": "Thin skin contains hair follicles."
+    },
+    {
+        "question": "Which of the following statements about merocrine sweat glands is true?",
+        "options": ["They are absent in thick skin.", "They are holocrine glands", "They secrete an oily material called sebum.", "They empty into hair follicles.", "Simple coiled tubular glands."],
+        "answer": 4,
+        "correctAnswer": "Simple coiled tubular glands.",
+        "explanation": "Merocrine sweat glands are simple coiled tubular glands."
+    },
+    {
+        "question": "Which of the following statements concerning sebaceous glands is true?",
+        "options": ["They do not begin to function until puberty.", "They are present in thick skin.", "They secrete only in response to hormones.", "They produce a watery enzyme-rich secretion.", "Larger than merocrine sweat glands."],
+        "answer": 0,
+        "correctAnswer": "They do not begin to function until puberty.",
+        "explanation": "Sebaceous glands begin to function at puberty."
+    },
+    {
+        "question": "The most critical period for the exposure to teratogens:",
+        "options": ["Pre-embryonic period", "Embryonic period", "Fetal period", "Infancy"],
+        "answer": 1,
+        "correctAnswer": "Embryonic period",
+        "explanation": "Embryonic period (3-8 weeks) is most critical for major anomalies."
+    },
+    {
+        "question": "Right and left pleural cavities develop from:",
+        "options": ["Pleuroperitoneal membrane", "Pericardioperitoneal canal", "Pleuropericardial membrane", "Septum transversum", "Pleuroperitoneal canal"],
+        "answer": 1,
+        "correctAnswer": "Pericardioperitoneal canal",
+        "explanation": "Pleural cavities develop from pericardioperitoneal canals."
+    },
+    {
+        "question": "In what joint is the root of a tooth attached to a periodontal ligament and held into a socket?",
+        "options": ["Gomphosis", "Symphysis", "Syndesmosis", "Synchondrosis"],
+        "answer": 0,
+        "correctAnswer": "Gomphosis",
+        "explanation": "Gomphosis is the fibrous joint for tooth in socket with periodontal ligament."
+    },
+    {
+        "question": "Which one of the following statements is correct concerning the periosteum?",
+        "options": ["It is devoid of a blood supply.", "It produces osteoclasts.", "It is responsible for interstitial/in length growth of bone.", "Its inner layer contains osteoprogenitor cells.", "Its outer layer is devoid of fibers."],
+        "answer": 3,
+        "correctAnswer": "Its inner layer contains osteoprogenitor cells.",
+        "explanation": "The inner layer of the periosteum contains osteoprogenitor cells."
+    },
+    {
+        "question": "The portion of the placenta contributed by the embryo is the",
+        "options": ["Chorion", "Allantois", "Amnion", "Yolk sac"],
+        "answer": 0,
+        "correctAnswer": "Chorion",
+        "explanation": "The chorion is the fetal portion of the placenta."
+    },
+    {
+        "question": "The skeletal muscle of the diaphragm is derived primarily from",
+        "options": ["Myoblasts from cervical somites", "Neural crest cells", "Myoblasts from thoracic somites", "Intermediate mesoderm", "Neural crest cells"],
+        "answer": 0,
+        "correctAnswer": "Myoblasts from cervical somites",
+        "explanation": "The diaphragm's skeletal muscle is derived primarily from cervical somites."
+    },
+    {
+        "question": "The smooth muscle in the wall of the respiratory tract is derived from",
+        "options": ["Foregut endoderm", "Splanchnic mesoderm", "Somatic mesoderm", "Intermediate mesoderm", "Neural crest cells"],
+        "answer": 1,
+        "correctAnswer": "Splanchnic mesoderm",
+        "explanation": "Smooth muscle in the respiratory tract is derived from splanchnic mesoderm."
+    }
+]
+
+;
+
+        // DOM Elements
+        let body = document.body;
+        let questionElement = document.getElementById('question');
+        let optionsContainer = document.getElementById('options-container');
+        let currentQuestionElement = document.getElementById('current-question');
+        let totalQuestionsElement = document.getElementById('total-questions');
+        let progressBar = document.getElementById('progress-bar');
+        let prevButton = document.getElementById('prev-btn');
+        let nextButton = document.getElementById('next-btn');
+        let feedbackElement = document.getElementById('feedback');
+        let timerElement = document.getElementById('timer');
+        let scoreElement = document.getElementById('score');
+        let streakElement = document.getElementById('streak');
+        let categoryElement = document.getElementById('category');
+        let explanationContainer = document.getElementById('explanation-container');
+        let explanationTextElement = document.getElementById('explanation-text');
+        let themeToggle = document.getElementById('theme-toggle');
+        let soundToggle = document.getElementById('sound-toggle');
+        let bookmarkBtn = document.getElementById('bookmark-btn');
+        let bookmarksCount = document.getElementById('bookmarks-count');
+        let categoryTag = document.getElementById('category-tag');
+        let difficultyTag = document.getElementById('difficulty-tag');
+        let showExplanationBtn = document.getElementById('show-explanation-btn');
+
+        // Quiz state
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let streak = 0;
+        let selectedOption = null;
+        let timeStarted = null;
+        let timerInterval = null;
+        let timeElapsed = 0;
+        let answers = [];
+        let soundsEnabled = true;
+        let bookmarkedQuestions = [];
+        let quizHistory = [];
+        let performanceMetrics = {
+            categories: {},
+            difficulties: { Easy: 0, Medium: 0, Hard: 0 },
+            totalCorrect: 0,
+            totalQuestions: 0
+        };
+
+        function initQuiz() {
+            // Reset DOM elements
+            scoreElement.textContent = score;
+            streakElement.textContent = streak;
+            timerElement.textContent = '00:00';
+            totalQuestionsElement.textContent = questions.length;
+            
+            loadQuestion();
+            startTimer();
+            
+            // Remove existing event listeners to prevent duplicates
+            const prevBtnClone = prevButton.cloneNode(true);
+            prevButton.parentNode.replaceChild(prevBtnClone, prevButton);
+            const nextBtnClone = nextButton.cloneNode(true);
+            nextButton.parentNode.replaceChild(nextBtnClone, nextButton);
+            const themeToggleClone = themeToggle.cloneNode(true);
+            themeToggle.parentNode.replaceChild(themeToggleClone, themeToggle);
+            const soundToggleClone = soundToggle.cloneNode(true);
+            soundToggle.parentNode.replaceChild(soundToggleClone, soundToggle);
+            const bookmarkBtnClone = bookmarkBtn.cloneNode(true);
+            bookmarkBtn.parentNode.replaceChild(bookmarkBtnClone, bookmarkBtn);
+            const showExplanationBtnClone = showExplanationBtn.cloneNode(true);
+            showExplanationBtn.parentNode.replaceChild(showExplanationBtnClone, showExplanationBtn);
+
+            // Reassign DOM elements after cloning
+            prevButton = document.getElementById('prev-btn');
+            nextButton = document.getElementById('next-btn');
+            themeToggle = document.getElementById('theme-toggle');
+            soundToggle = document.getElementById('sound-toggle');
+            bookmarkBtn = document.getElementById('bookmark-btn');
+            showExplanationBtn = document.getElementById('show-explanation-btn');
+
+            // Add event listeners
+            prevButton.addEventListener('click', goToPreviousQuestion);
+            nextButton.addEventListener('click', goToNextQuestion);
+            themeToggle.addEventListener('click', toggleTheme);
+            soundToggle.addEventListener('click', toggleSound);
+            bookmarkBtn.addEventListener('click', toggleBookmark);
+            showExplanationBtn.addEventListener('click', toggleExplanation);
+            
+            // Keyboard navigation
+            document.removeEventListener('keydown', handleKeydown);
+            document.addEventListener('keydown', handleKeydown);
+            
+            loadPreferences();
+            loadQuizHistory();
+            updateBookmarksCount();
+        }
+
+        function handleKeydown(e) {
+            if (e.key === 'ArrowRight') {
+                goToNextQuestion();
+            } else if (e.key === 'ArrowLeft') {
+                goToPreviousQuestion();
+            } else if (e.key.toLowerCase() === 'a' || e.key === '1') {
+                selectOption(0);
+            } else if (e.key.toLowerCase() === 'b' || e.key === '2') {
+                selectOption(1);
+            } else if (e.key.toLowerCase() === 'c' || e.key === '3') {
+                selectOption(2);
+            } else if (e.key.toLowerCase() === 'd' || e.key === '4') {
+                selectOption(3);
+            } else if (e.key === 'Enter') {
+                if (showExplanationBtn.style.display !== 'none') {
+                    toggleExplanation();
+                }
+            }
+        }
+
+        function loadQuestion() {
+            const question = questions[currentQuestionIndex];
+            questionElement.textContent = question.question;
+            currentQuestionElement.textContent = currentQuestionIndex + 1;
+            categoryTag.textContent = question.category || 'Unknown';
+            difficultyTag.textContent = question.difficulty || 'Medium';
+            categoryElement.textContent = question.category || 'All';
+            
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+            
+            optionsContainer.innerHTML = '';
+            
+            const optionLetters = ['A', 'B', 'C', 'D', 'E'];
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.classList.add('option', 'bounce-in');
+                optionElement.setAttribute('role', 'button');
+                optionElement.setAttribute('tabindex', '0');
+                optionElement.setAttribute('aria-label', `Option ${optionLetters[index]}: ${option}`);
+                
+                const optionLetter = document.createElement('div');
+                optionLetter.classList.add('option-letter');
+                optionLetter.textContent = optionLetters[index];
+                
+                const optionText = document.createElement('div');
+                optionText.classList.add('option-text');
+                optionText.textContent = option;
+                
+                optionElement.appendChild(optionLetter);
+                optionElement.appendChild(optionText);
+                
+                optionElement.addEventListener('click', () => selectOption(index));
+                optionElement.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        selectOption(index);
+                    }
+                });
+                
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            prevButton.disabled = currentQuestionIndex === 0;
+            nextButton.textContent = currentQuestionIndex === questions.length - 1 ? 'Finish Quiz' : 'Next Question';
+            
+            feedbackElement.style.display = 'none';
+            showExplanationBtn.style.display = 'none';
+            explanationContainer.classList.remove('expanded');
+            
+            selectedOption = null;
+            
+            // If the question was previously answered or skipped, display the feedback
+            if (answers[currentQuestionIndex]) {
+                const ans = answers[currentQuestionIndex];
+                const options = document.querySelectorAll('.option');
+                feedbackElement.style.display = 'flex';
+                showExplanationBtn.style.display = 'block';
+                explanationTextElement.textContent = question.explanation;
+                options.forEach(option => option.style.pointerEvents = 'none');
+                
+                if (ans.selected === 'Skipped') {
+                    selectedOption = null;
+                    feedbackElement.classList.add('incorrect');
+                    feedbackElement.innerHTML = '<i class="fas fa-times-circle feedback-icon"></i><div class="feedback-text">Skipped. The right answer is highlighted.</div>';
+                    options[question.answer].classList.add('correct');
+                } else {
+                    const optIndex = question.options.findIndex(opt => opt === ans.selected);
+                    if (optIndex !== -1) {
+                        selectedOption = optIndex;
+                        options[optIndex].classList.add('selected');
+                        if (ans.isCorrect) {
+                            feedbackElement.classList.add('correct');
+                            feedbackElement.innerHTML = '<i class="fas fa-check-circle feedback-icon"></i><div class="feedback-text">Correct! Well done.</div>';
+                        } else {
+                            feedbackElement.classList.add('incorrect');
+                            feedbackElement.innerHTML = '<i class="fas fa-times-circle feedback-icon"></i><div class="feedback-text">Incorrect. The right answer is highlighted.</div>';
+                            options[question.answer].classList.add('correct');
+                        }
+                    }
+                }
+            }
+            
+            updateBookmarkStatus();
+        }
+
+        function selectOption(index) {
+            if (selectedOption !== null || answers[currentQuestionIndex]) return;
+            
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => option.classList.remove('selected'));
+            options[index].classList.add('selected');
+            selectedOption = index;
+            
+            const question = questions[currentQuestionIndex];
+            const isCorrect = index === question.answer;
+            
+            feedbackElement.style.display = 'flex';
+            if (isCorrect) {
+                feedbackElement.classList.remove('incorrect');
+                feedbackElement.classList.add('correct');
+                feedbackElement.innerHTML = '<i class="fas fa-check-circle feedback-icon"></i><div class="feedback-text">Correct! Well done.</div>';
+                score += getScoreForDifficulty(question.difficulty);
+                streak++;
+                playSound('correct');
+            } else {
+                feedbackElement.classList.remove('correct');
+                feedbackElement.classList.add('incorrect');
+                feedbackElement.innerHTML = '<i class="fas fa-times-circle feedback-icon"></i><div class="feedback-text">Incorrect. The right answer is highlighted.</div>';
+                options[question.answer].classList.add('correct');
+                streak = 0;
+                playSound('incorrect');
+            }
+            
+            scoreElement.textContent = score;
+            streakElement.textContent = streak;
+            
+            explanationTextElement.textContent = question.explanation;
+            showExplanationBtn.style.display = 'block';
+            
+            answers[currentQuestionIndex] = {
+                question: question.question,
+                selected: question.options[index],
+                correct: question.options[question.answer],
+                isCorrect: isCorrect,
+                explanation: question.explanation,
+                category: question.category,
+                difficulty: question.difficulty
+            };
+            
+            updatePerformanceMetrics(isCorrect, question);
+            
+            options.forEach(option => option.style.pointerEvents = 'none');
+        }
+
+        function maybeHandleSkip() {
+            if (!answers[currentQuestionIndex] && selectedOption === null) {
+                const question = questions[currentQuestionIndex];
+                answers[currentQuestionIndex] = {
+                    question: question.question,
+                    selected: 'Skipped',
+                    correct: question.options[question.answer],
+                    isCorrect: false,
+                    explanation: question.explanation,
+                    category: question.category,
+                    difficulty: question.difficulty
+                };
+                updatePerformanceMetrics(false, question);
+                streak = 0;
+                streakElement.textContent = streak;
+            }
+        }
+
+        function toggleExplanation() {
+            explanationContainer.classList.toggle('expanded');
+            showExplanationBtn.innerHTML = explanationContainer.classList.contains('expanded') ?
+                '<i class="fas fa-info-circle"></i> Hide Explanation' :
+                '<i class="fas fa-info-circle"></i> Show Explanation';
+        }
+
+        function getScoreForDifficulty(difficulty) {
+            switch (difficulty) {
+                case 'Easy': return 5;
+                case 'Medium': return 10;
+                case 'Hard': return 15;
+                default: return 10;
+            }
+        }
+
+        function updatePerformanceMetrics(isCorrect, question) {
+            performanceMetrics.totalQuestions++;
+            if (isCorrect) performanceMetrics.totalCorrect++;
+            
+            performanceMetrics.categories[question.category] = performanceMetrics.categories[question.category] || { correct: 0, total: 0 };
+            performanceMetrics.categories[question.category].total++;
+            if (isCorrect) performanceMetrics.categories[question.category].correct++;
+            
+            performanceMetrics.difficulties[question.difficulty] = performanceMetrics.difficulties[question.difficulty] || 0;
+            if (isCorrect) performanceMetrics.difficulties[question.difficulty]++;
+        }
+
+        function toggleBookmark() {
+            const questionId = questions[currentQuestionIndex].id;
+            const index = bookmarkedQuestions.indexOf(questionId);
+            if (index === -1) {
+                bookmarkedQuestions.push(questionId);
+                bookmarkBtn.classList.add('bookmarked');
+            } else {
+                bookmarkedQuestions.splice(index, 1);
+                bookmarkBtn.classList.remove('bookmarked');
+            }
+            updateBookmarksCount();
+            saveBookmarks();
+        }
+
+        function updateBookmarkStatus() {
+            const questionId = questions[currentQuestionIndex].id;
+            bookmarkBtn.classList.toggle('bookmarked', bookmarkedQuestions.includes(questionId));
+        }
+
+        function updateBookmarksCount() {
+            bookmarksCount.textContent = bookmarkedQuestions.length;
+        }
+
+        function goToNextQuestion() {
+            maybeHandleSkip();
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                showResults();
+                saveQuizHistory();
+            }
+        }
+
+        function goToPreviousQuestion() {
+            maybeHandleSkip();
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        }
+
+        function startTimer() {
+            timeStarted = new Date();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            timeElapsed++;
+            
+            const minutes = Math.floor(timeElapsed / 60).toString().padStart(2, '0');
+            const seconds = (timeElapsed % 60).toString().padStart(2, '0');
+            timerElement.textContent = `${minutes}:${seconds}`;
+            
+            // Optional: Add warning color for long durations (e.g., after 5 minutes)
+            if (timeElapsed >= 300) {
+                timerElement.style.color = 'var(--danger)';
+                timerElement.classList.add('pulse');
+            } else {
+                timerElement.style.color = 'var(--primary)';
+                timerElement.classList.remove('pulse');
+            }
+        }
+
+        function showResults() {
+            clearInterval(timerInterval);
+            
+            const quizContainer = document.querySelector('.quiz-container');
+            const maxScore = questions.reduce((sum, q) => sum + getScoreForDifficulty(q.difficulty), 0);
+            const percentage = ((score / maxScore) * 100).toFixed(1);
+            const categoryStats = Object.entries(performanceMetrics.categories)
+                .map(([category, stats]) => `${category}: ${((stats.correct / stats.total) * 100).toFixed(1)}%`)
+                .join(', ');
+            
+            quizContainer.innerHTML = `
+                <div class="results-container">
+                    <h2 class="quiz-title">Quiz Completed!</h2>
+                    <p class="quiz-subtitle">You've finished the embryology quiz</p>
+                    
+                    <div class="score-circle" style="--p: ${percentage}%">
+                        <div class="score-text">
+                            <div class="score-value">${score}</div>
+                            <div class="score-label">Points</div>
+                        </div>
+                    </div>
+                    
+                    <div class="results-stats">
+                        <div class="result-stat">
+                            <div class="result-stat-value">${percentage}%</div>
+                            <div class="result-stat-label">Accuracy</div>
+                        </div>
+                        <div class="result-stat">
+                            <div class="result-stat-value">${timeElapsed}s</div>
+                            <div class="result-stat-label">Time Taken</div>
+                        </div>
+                        <div class="result-stat">
+                            <div class="result-stat-value">${streak}</div>
+                            <div class="result-stat-label">Best Streak</div>
+                        </div>
+                        <div class="result-stat">
+                            <div class="result-stat-value">${bookmarkedQuestions.length}</div>
+                            <div class="result-stat-label">Bookmarked</div>
+                        </div>
+                    </div>
+                    
+                    <div class="review-section">
+                        <h3 class="review-title">Performance Analytics</h3>
+                        <div class="review-item">
+                            <div class="review-answer">Category Performance: ${categoryStats}</div>
+                            <div class="review-answer">Difficulty Performance: Easy: ${performanceMetrics.difficulties.Easy || 0}, Medium: ${performanceMetrics.difficulties.Medium || 0}, Hard: ${performanceMetrics.difficulties.Hard || 0}</div>
+                        </div>
+                        
+                        <h3 class="review-title">Review Your Answers</h3>
+                        ${answers.map((answer, index) => `
+                            <div class="review-item ${answer.isCorrect ? 'correct' : 'incorrect'}">
+                                <div class="review-question">Q${index + 1}: ${answer.question} (${answer.category} - ${answer.difficulty})</div>
+                                <div class="review-answer">Your Answer: ${answer.selected}</div>
+                                <div class="review-answer">Correct Answer: ${answer.correct}</div>
+                                <div class="review-explanation">${answer.explanation}</div>
+                            </div>
+                        `).join('')}
+                        
+                        <h3 class="review-title">Bookmarked Questions</h3>
+                        ${bookmarkedQuestions.map(qid => {
+                            const question = questions.find(q => q.id === qid);
+                            return `
+                                <div class="review-item">
+                                    <div class="review-question">${question.question} (${question.category} - ${question.difficulty})</div>
+                                    <div class="review-answer">Correct Answer: ${question.correctAnswer}</div>
+                                    <div class="review-explanation">${question.explanation}</div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    
+                    <button class="btn btn-primary mt-4" id="restart-btn">
+                        <i class="fas fa-redo"></i> Try Again
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('restart-btn').addEventListener('click', restartQuiz);
+        }
+
+        function restartQuiz() {
+            // Reset quiz state
+            currentQuestionIndex = 0;
+            score = 0;
+            streak = 0;
+            timeElapsed = 0;
+            answers = [];
+            selectedOption = null;
+            performanceMetrics = {
+                categories: {},
+                difficulties: { Easy: 0, Medium: 0, Hard: 0 },
+                totalCorrect: 0,
+                totalQuestions: 0
+            };
+            
+            // Clear any existing timer
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            
+            // Reset DOM
+            const quizContainer = document.querySelector('.quiz-container');
+            quizContainer.innerHTML = `
+                <div class="quiz-header">
+                    <div>
+                        <h1 class="quiz-title">Advanced Embryology Quiz</h1>
+                        <p class="quiz-subtitle">Test your knowledge with professional questions and detailed explanations</p>
+                    </div>
+                    <div class="stats-container">
+                        <div class="stat">
+                            <span class="stat-value" id="score">0</span>
+                            <span class="stat-label">Score</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value" id="timer">00:00</span>
+                            <span class="stat-label">Time</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value" id="streak">0</span>
+                            <span class="stat-label">Streak</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value" id="category">All</span>
+                            <span class="stat-label">Category</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar" style="width: 10%"></div>
+                </div>
+
+                <div class="question-meta">
+                    <div class="question-tags">
+                        <span class="tag" id="category-tag">Neuro</span>
+                        <span class="tag" id="difficulty-tag">Medium</span>
+                    </div>
+                    <button class="bookmark-btn" id="bookmark-btn" aria-label="Bookmark question">
+                        <i class="fas fa-bookmark"></i>
+                    </button>
+                </div>
+                <div class="question-number">Question <span id="current-question">1</span> of <span id="total-questions">10</span></div>
+                <div class="question-text" id="question"></div>
+
+                <div class="options-grid" id="options-container"></div>
+
+                <div class="feedback correct" id="feedback" style="display: none;">
+                    <i class="fas fa-check-circle feedback-icon"></i>
+                    <div class="feedback-text">Correct! Well done.</div>
+                </div>
+
+                <button class="btn btn-secondary" id="show-explanation-btn" style="display: none;">
+                    <i class="fas fa-info-circle"></i> Show Explanation
+                </button>
+
+                <div class="explanation-container" id="explanation-container">
+                    <div class="explanation">
+                        <div class="explanation-title">Explanation:</div>
+                        <div id="explanation-text"></div>
+                    </div>
+                </div>
+
+                <div class="navigation">
+                    <button class="btn btn-secondary" id="prev-btn" disabled>
+                        <i class="fas fa-arrow-left"></i> Previous
+                    </button>
+                    <button class="btn btn-primary" id="next-btn">
+                        Next Question <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            `;
+            
+            // Reinitialize DOM elements
+            questionElement = document.getElementById('question');
+            optionsContainer = document.getElementById('options-container');
+            currentQuestionElement = document.getElementById('current-question');
+            totalQuestionsElement = document.getElementById('total-questions');
+            progressBar = document.getElementById('progress-bar');
+            prevButton = document.getElementById('prev-btn');
+            nextButton = document.getElementById('next-btn');
+            feedbackElement = document.getElementById('feedback');
+            timerElement = document.getElementById('timer');
+            scoreElement = document.getElementById('score');
+            streakElement = document.getElementById('streak');
+            categoryElement = document.getElementById('category');
+            explanationContainer = document.getElementById('explanation-container');
+            explanationTextElement = document.getElementById('explanation-text');
+            bookmarkBtn = document.getElementById('bookmark-btn');
+            bookmarksCount = document.getElementById('bookmarks-count');
+            categoryTag = document.getElementById('category-tag');
+            difficultyTag = document.getElementById('difficulty-tag');
+            showExplanationBtn = document.getElementById('show-explanation-btn');
+            
+            // Reinitialize the quiz
+            initQuiz();
+        }
+
+        function toggleTheme() {
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 
+                            currentTheme === 'light' ? 'minimal' : 'dark';
+            
+            body.setAttribute('data-theme', newTheme);
+            themeToggle.innerHTML = newTheme === 'dark' ? '<i class="fas fa-moon"></i>' : 
+                                  newTheme === 'light' ? '<i class="fas fa-sun"></i>' : 
+                                  '<i class="fas fa-paint-brush"></i>';
+            
+            localStorage.setItem('theme', newTheme);
+        }
+
+        function toggleSound() {
+            soundsEnabled = !soundsEnabled;
+            soundToggle.innerHTML = soundsEnabled ? '<i class="fas fa-volume-up"></i>' : '<i class="fas fa-volume-mute"></i>';
+            
+            localStorage.setItem('soundsEnabled', soundsEnabled);
+        }
+
+        function playSound(type) {
+            if (!soundsEnabled) return;
+            console.log(`Playing ${type} sound`);
+        }
+
+        function loadPreferences() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                body.setAttribute('data-theme', savedTheme);
+                themeToggle.innerHTML = savedTheme === 'dark' ? '<i class="fas fa-moon"></i>' : 
+                                      savedTheme === 'light' ? '<i class="fas fa-sun"></i>' : 
+                                      '<i class="fas fa-paint-brush"></i>';
+            }
+            
+            const savedSounds = localStorage.getItem('soundsEnabled');
+            if (savedSounds !== null) {
+                soundsEnabled = savedSounds === 'true';
+                soundToggle.innerHTML = soundsEnabled ? '<i class="fas fa-volume-up"></i>' : '<i class="fas fa-volume-mute"></i>';
+            }
+        }
+
+        function saveBookmarks() {
+            localStorage.setItem('bookmarkedQuestions', JSON.stringify(bookmarkedQuestions));
+        }
+
+        function loadQuizHistory() {
+            const saved = localStorage.getItem('quizHistory');
+            if (saved) {
+                quizHistory = JSON.parse(saved);
+            }
+            loadBookmarks();
+        }
+
+        function saveQuizHistory() {
+            quizHistory.push({
+                timestamp: new Date().toISOString(),
+                score: score,
+                percentage: ((score / (questions.length * 15)) * 100).toFixed(1),
+                timeSpent: timeElapsed,
+                streak: streak,
+                answers: answers,
+                performanceMetrics: performanceMetrics
+            });
+            localStorage.setItem('quizHistory', JSON.stringify(quizHistory));
+        }
+
+        function loadBookmarks() {
+            const saved = localStorage.getItem('bookmarkedQuestions');
+            if (saved) {
+                bookmarkedQuestions = JSON.parse(saved);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', initQuiz);
+    </script>
+</body>
+</html>
