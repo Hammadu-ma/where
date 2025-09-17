@@ -10,21 +10,31 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         :root {
-            --bg-primary: #0f0f12;
-            --bg-secondary: #1a1a23;
-            --accent-red: #ff2e63;
-            --accent-orange: #ff8a30;
-            --accent-pink: #ff2e9d;
-            --accent-purple: #9d4edd;
-            --text-primary: #ffffff;
-            --text-secondary: #b0b0b8;
-            --neu-dark: #0a0a0e;
-            --neu-light: #24242e;
-            --transition: all 0.3s ease;
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #5f6368;
+            --accent-primary: #4285f4;
+            --accent-secondary: #34a853;
+            --accent-tertiary: #ea4335;
+            --neu-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --neu-inset: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --card-radius: 16px;
+            --element-radius: 12px;
+        }
+
+        .dark-mode {
+            --bg-primary: #121212;
+            --bg-secondary: #1e1e1e;
+            --text-primary: #e0e0e0;
+            --text-secondary: #9e9e9e;
+            --neu-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            --neu-inset: inset 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         body {
@@ -32,6 +42,7 @@
             color: var(--text-primary);
             min-height: 100vh;
             overflow-x: hidden;
+            transition: var(--transition);
         }
 
         .container {
@@ -47,10 +58,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+            box-shadow: var(--neu-shadow);
             position: sticky;
             top: 0;
             z-index: 100;
+            transition: var(--transition);
         }
 
         .logo {
@@ -59,7 +71,11 @@
             gap: 0.5rem;
             font-size: 1.8rem;
             font-weight: 700;
-            background: linear-gradient(45deg, var(--accent-red), var(--accent-orange), var(--accent-pink), var(--accent-purple));
+            color: var(--accent-primary);
+        }
+
+        .logo-icon {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -68,11 +84,15 @@
             display: flex;
             align-items: center;
             background: var(--bg-primary);
-            border-radius: 30px;
-            padding: 0.5rem 1rem;
+            border-radius: 24px;
+            padding: 0.6rem 1.2rem;
             width: 40%;
-            box-shadow: inset 5px 5px 10px var(--neu-dark), 
-                        inset -5px -5px 10px var(--neu-light);
+            box-shadow: var(--neu-inset);
+            transition: var(--transition);
+        }
+
+        .search-bar:focus-within {
+            box-shadow: 0 0 0 2px var(--accent-primary);
         }
 
         .search-bar input {
@@ -91,27 +111,30 @@
             align-items: center;
         }
 
-        .user-actions i {
+        .user-actions i, .theme-toggle {
             font-size: 1.3rem;
             color: var(--text-secondary);
             cursor: pointer;
             transition: var(--transition);
         }
 
-        .user-actions i:hover {
-            color: var(--accent-purple);
+        .user-actions i:hover, .theme-toggle:hover {
+            color: var(--accent-primary);
+            transform: translateY(-2px);
         }
 
         .menu-btn {
             display: none;
             font-size: 1.5rem;
             cursor: pointer;
+            color: var(--text-primary);
         }
 
         /* Main Content Layout */
         .main-content {
             display: flex;
             flex: 1;
+            padding: 1rem;
         }
 
         /* Sidebar Styles */
@@ -119,10 +142,13 @@
             width: 240px;
             background-color: var(--bg-secondary);
             padding: 1.5rem 1rem;
+            border-radius: var(--card-radius);
             overflow-y: auto;
-            height: calc(100vh - 70px);
+            height: calc(100vh - 90px);
             position: sticky;
-            top: 70px;
+            top: 90px;
+            box-shadow: var(--neu-shadow);
+            transition: var(--transition);
         }
 
         .sidebar-category {
@@ -132,7 +158,7 @@
         .sidebar-category h3 {
             font-size: 1.1rem;
             margin-bottom: 1rem;
-            color: var(--accent-orange);
+            color: var(--accent-primary);
             padding-left: 0.5rem;
         }
 
@@ -143,7 +169,7 @@
         .subject-list li {
             padding: 0.7rem 1rem;
             margin-bottom: 0.5rem;
-            border-radius: 10px;
+            border-radius: var(--element-radius);
             cursor: pointer;
             transition: var(--transition);
             display: flex;
@@ -152,20 +178,19 @@
         }
 
         .subject-list li:hover {
-            background: linear-gradient(45deg, rgba(157, 78, 221, 0.2), rgba(255, 46, 157, 0.2));
-            color: var(--accent-pink);
+            background-color: var(--bg-primary);
+            color: var(--accent-primary);
         }
 
         .subject-list li.active {
-            background: linear-gradient(45deg, var(--accent-purple), var(--accent-pink));
+            background-color: var(--accent-primary);
             color: white;
-            box-shadow: 0 4px 15px rgba(157, 78, 221, 0.4);
         }
 
         /* Content Area Styles */
         .content-area {
             flex: 1;
-            padding: 2rem;
+            padding: 1rem 2rem;
             display: flex;
             flex-direction: column;
             gap: 2rem;
@@ -174,19 +199,31 @@
         .book-display {
             display: flex;
             gap: 2rem;
+            background: var(--bg-secondary);
+            padding: 2rem;
+            border-radius: var(--card-radius);
+            box-shadow: var(--neu-shadow);
+            transition: var(--transition);
         }
 
         .book-cover {
-            flex: 0 0 300px;
-            border-radius: 15px;
+            flex: 0 0 280px;
+            border-radius: var(--card-radius);
             overflow: hidden;
-            box-shadow: 8px 8px 16px var(--neu-dark), 
-                        -8px -8px 16px var(--neu-light);
+            position: relative;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+            transition: var(--transition);
+        }
+
+        .book-cover:hover {
+            transform: translateY(-5px) rotate(2deg);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
         }
 
         .book-cover img {
             width: 100%;
-            height: auto;
+            height: 100%;
+            object-fit: cover;
             display: block;
         }
 
@@ -197,9 +234,8 @@
         .book-title {
             font-size: 2.2rem;
             margin-bottom: 0.5rem;
-            background: linear-gradient(45deg, var(--accent-red), var(--accent-orange));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--text-primary);
+            font-weight: 700;
         }
 
         .book-author {
@@ -229,7 +265,7 @@
         .meta-value {
             font-size: 1.2rem;
             font-weight: 700;
-            color: var(--accent-purple);
+            color: var(--accent-primary);
         }
 
         .meta-label {
@@ -245,7 +281,7 @@
 
         .btn {
             padding: 0.8rem 1.5rem;
-            border-radius: 30px;
+            border-radius: var(--element-radius);
             border: none;
             font-weight: 600;
             cursor: pointer;
@@ -256,30 +292,29 @@
         }
 
         .btn-primary {
-            background: linear-gradient(45deg, var(--accent-purple), var(--accent-pink));
+            background-color: var(--accent-primary);
             color: white;
+            box-shadow: 0 4px 12px rgba(66, 133, 244, 0.3);
         }
 
         .btn-secondary {
-            background: transparent;
+            background-color: var(--bg-primary);
             color: var(--text-primary);
-            box-shadow: inset 3px 3px 6px var(--neu-dark), 
-                        inset -3px -3px 6px var(--neu-light);
+            box-shadow: var(--neu-shadow);
         }
 
         .btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 7px 15px rgba(157, 78, 221, 0.4);
+            box-shadow: 0 7px 15px rgba(66, 133, 244, 0.4);
         }
 
         /* Download Progress */
         .download-progress {
             margin-top: 1.5rem;
-            background: var(--bg-secondary);
+            background: var(--bg-primary);
             padding: 1.5rem;
-            border-radius: 15px;
-            box-shadow: 5px 5px 15px var(--neu-dark), 
-                        -5px -5px 15px var(--neu-light);
+            border-radius: var(--element-radius);
+            box-shadow: var(--neu-shadow);
             display: none;
         }
 
@@ -291,7 +326,7 @@
 
         .progress-bar {
             height: 8px;
-            background: var(--bg-primary);
+            background: var(--bg-secondary);
             border-radius: 4px;
             overflow: hidden;
             margin-bottom: 0.5rem;
@@ -299,7 +334,7 @@
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--accent-red), var(--accent-orange));
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
             border-radius: 4px;
             width: 0%;
             transition: width 0.5s ease;
@@ -312,7 +347,70 @@
             font-size: 0.9rem;
         }
 
-        /* PDF Viewer - Enhanced for Mobile */
+        /* Book Preview Modal */
+        .book-preview-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .preview-content {
+            width: 90%;
+            max-width: 900px;
+            height: 80%;
+            background: var(--bg-secondary);
+            border-radius: var(--card-radius);
+            overflow: hidden;
+            display: flex;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .preview-cover {
+            flex: 0 0 40%;
+            background: var(--bg-primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .preview-cover img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .preview-details {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .preview-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .preview-close:hover {
+            color: var(--accent-tertiary);
+            transform: rotate(90deg);
+        }
+
+        /* PDF Viewer */
         .pdf-viewer {
             display: none;
             position: fixed;
@@ -320,7 +418,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.95);
+            background-color: var(--bg-primary);
             z-index: 1000;
             flex-direction: column;
         }
@@ -331,8 +429,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: relative;
-            z-index: 1001;
+            box-shadow: var(--neu-shadow);
         }
 
         .pdf-viewer-title {
@@ -342,6 +439,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            color: var(--text-primary);
         }
 
         .pdf-viewer-controls {
@@ -358,7 +456,7 @@
         }
 
         .pdf-viewer-controls i:hover {
-            color: var(--accent-purple);
+            color: var(--accent-primary);
         }
 
         .pdf-viewer-close {
@@ -368,7 +466,7 @@
         }
 
         .pdf-viewer-close:hover {
-            color: var(--accent-red);
+            color: var(--accent-tertiary);
         }
 
         .pdf-viewer-body {
@@ -384,32 +482,45 @@
         .pdf-viewer-body iframe {
             width: 100%;
             height: 100%;
-            border-radius: 10px;
-            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            box-shadow: var(--neu-shadow);
             border: none;
         }
 
-        /* Mobile Controls */
-        .mobile-controls {
+        /* Loading Animation */
+        .loading-overlay {
             display: none;
             position: fixed;
-            bottom: 0;
+            top: 0;
             left: 0;
             width: 100%;
-            background: var(--bg-secondary);
-            padding: 1rem;
-            justify-content: space-around;
-            z-index: 1002;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
         }
 
-        .mobile-controls i {
-            font-size: 1.5rem;
-            color: var(--text-secondary);
-            cursor: pointer;
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            border-top: 4px solid var(--accent-primary);
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
         }
 
-        .mobile-controls i:hover {
-            color: var(--accent-purple);
+        .loading-text {
+            color: white;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         /* Related Books Section */
@@ -420,34 +531,78 @@
         .section-title {
             font-size: 1.5rem;
             margin-bottom: 1.5rem;
-            color: var(--accent-orange);
+            color: var(--text-primary);
+            font-weight: 600;
         }
 
         .book-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             gap: 1.5rem;
         }
 
         .book-card {
             background: var(--bg-secondary);
-            border-radius: 15px;
+            border-radius: var(--card-radius);
             overflow: hidden;
             transition: var(--transition);
-            box-shadow: 5px 5px 15px var(--neu-dark), 
-                        -5px -5px 15px var(--neu-light);
+            box-shadow: var(--neu-shadow);
             cursor: pointer;
+            position: relative;
         }
 
         .book-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .book-card:hover .book-card-overlay {
+            opacity: 1;
         }
 
         .book-card-img {
             width: 100%;
             height: 250px;
             object-fit: cover;
+        }
+
+        .book-card-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: var(--transition);
+            gap: 1rem;
+        }
+
+        .overlay-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: var(--transition);
+            transform: translateY(20px);
+        }
+
+        .book-card:hover .overlay-btn {
+            transform: translateY(0);
+        }
+
+        .overlay-btn:hover {
+            background: var(--accent-secondary);
+            transform: scale(1.1);
         }
 
         .book-card-content {
@@ -460,6 +615,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            color: var(--text-primary);
         }
 
         .book-card-author {
@@ -471,11 +627,17 @@
         .book-card-meta {
             display: flex;
             justify-content: space-between;
-            color: var(--accent-purple);
+            color: var(--accent-primary);
             font-size: 0.8rem;
         }
 
         /* Responsive Design */
+        @media (max-width: 1200px) {
+            .search-bar {
+                width: 30%;
+            }
+        }
+
         @media (max-width: 992px) {
             .search-bar {
                 width: 30%;
@@ -487,6 +649,16 @@
             
             .book-cover {
                 align-self: center;
+                margin-bottom: 2rem;
+            }
+
+            .preview-content {
+                flex-direction: column;
+                height: 90%;
+            }
+
+            .preview-cover {
+                flex: 0 0 40%;
             }
         }
 
@@ -520,18 +692,9 @@
                 border-radius: 0;
             }
 
-            .pdf-viewer-header {
-                padding: 0.8rem;
-            }
-
-            .pdf-viewer-title {
-                font-size: 1rem;
-                max-width: 60%;
-            }
-
-            /* Show mobile controls on mobile */
-            .mobile-controls {
-                display: flex;
+            .preview-content {
+                width: 95%;
+                height: 95%;
             }
         }
 
@@ -549,7 +712,7 @@
             }
             
             .content-area {
-                padding: 1rem;
+                padding: 0.5rem;
             }
             
             .book-title {
@@ -569,31 +732,12 @@
                 justify-content: center;
             }
 
-            .pdf-viewer-header {
-                padding: 0.7rem;
+            .book-grid {
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
             }
 
-            .pdf-viewer-title {
-                font-size: 0.9rem;
-                max-width: 50%;
-            }
-
-            .pdf-viewer-controls i {
-                font-size: 1.1rem;
-            }
-
-            .mobile-controls i {
-                font-size: 1.3rem;
-            }
-        }
-
-        @media (max-width: 400px) {
-            .pdf-viewer-title {
-                max-width: 40%;
-            }
-            
-            .book-cover {
-                flex: 0 0 250px;
+            .book-card-img {
+                height: 200px;
             }
         }
 
@@ -607,39 +751,13 @@
         .pulse {
             animation: pulse 2s infinite;
         }
-
-        /* Loading spinner */
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            border-top: 4px solid var(--accent-purple);
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Fullscreen class for PDF viewer */
-        .fullscreen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 9999;
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <div class="logo">
-                <i class="fas fa-book-open"></i>
+                <i class="fas fa-book-open logo-icon"></i>
                 <span>NexReads</span>
             </div>
             
@@ -651,6 +769,7 @@
             <div class="user-actions">
                 <i class="fas fa-bell"></i>
                 <i class="fas fa-user-circle"></i>
+                <i class="fas fa-moon theme-toggle" id="theme-toggle"></i>
             </div>
             
             <div class="menu-btn">
@@ -731,6 +850,9 @@
                             <button class="btn btn-secondary" id="download-btn">
                                 <i class="fas fa-download"></i> Download
                             </button>
+                            <button class="btn btn-secondary" id="preview-btn">
+                                <i class="fas fa-eye"></i> Preview
+                            </button>
                             <button class="btn btn-secondary" id="bookmark-btn">
                                 <i class="fas fa-bookmark"></i> Bookmark
                             </button>
@@ -763,7 +885,53 @@
         </div>
     </div>
 
-    <!-- PDF Viewer with Enhanced Mobile Support -->
+    <!-- Book Preview Modal -->
+    <div class="book-preview-modal" id="preview-modal">
+        <div class="preview-content">
+            <span class="preview-close" id="close-preview"><i class="fas fa-times"></i></span>
+            <div class="preview-cover">
+                <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80" alt="Book Cover">
+            </div>
+            <div class="preview-details">
+                <h2>Neon Genesis: Digital Souls</h2>
+                <p class="book-author">By Alex Ryder</p>
+                <div class="book-meta">
+                    <div class="meta-item">
+                        <span class="meta-value">4.8</span>
+                        <span class="meta-label">Rating</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-value">428</span>
+                        <span class="meta-label">Pages</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-value">12k</span>
+                        <span class="meta-label">Downloads</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-value">EN</span>
+                        <span class="meta-label">Language</span>
+                    </div>
+                </div>
+                <p class="book-description">
+                    In the year 2150, humanity exists in a digitized world where consciousness can be uploaded to the cloud. Follow the journey of Kairo, a neural engineer who discovers a dark secret within the system that threatens to unravel reality itself. This cyberpunk thriller explores the boundaries of technology and humanity.
+                </p>
+                <p class="book-description">
+                    Kairo's discovery leads him on a dangerous path through the neon-lit streets of Neo-Tokyo and the virtual realms of the cyberverse. With the help of an rogue AI and a group of underground hackers, he must uncover the truth before the corporation that controls the digital afterlife silences him forever.
+                </p>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" id="preview-read-btn">
+                        <i class="fas fa-play"></i> Read Now
+                    </button>
+                    <button class="btn btn-secondary" id="preview-download-btn">
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PDF Viewer -->
     <div class="pdf-viewer" id="pdf-viewer">
         <div class="pdf-viewer-header">
             <div class="pdf-viewer-title" id="pdf-title">Book Title</div>
@@ -776,14 +944,12 @@
         <div class="pdf-viewer-body">
             <iframe id="pdf-frame" src="" frameborder="0"></iframe>
         </div>
-        
-        <!-- Mobile Controls -->
-        <div class="mobile-controls">
-            <i class="fas fa-chevron-left" id="prev-page"></i>
-            <i class="fas fa-search-minus" id="zoom-out"></i>
-            <i class="fas fa-search-plus" id="zoom-in"></i>
-            <i class="fas fa-chevron-right" id="next-page"></i>
-        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loader"></div>
+        <div class="loading-text">LOADING</div>
     </div>
 
     <script>
@@ -876,6 +1042,7 @@
         const bookGrid = document.getElementById('book-grid');
         const readBtn = document.getElementById('read-btn');
         const downloadBtn = document.getElementById('download-btn');
+        const previewBtn = document.getElementById('preview-btn');
         const bookmarkBtn = document.getElementById('bookmark-btn');
         const downloadProgress = document.getElementById('download-progress');
         const progressFill = document.getElementById('progress-fill');
@@ -888,21 +1055,28 @@
         const pdfTitle = document.getElementById('pdf-title');
         const fullscreenBtn = document.getElementById('fullscreen-btn');
         const pdfDownloadBtn = document.getElementById('pdf-download-btn');
-        const prevPageBtn = document.getElementById('prev-page');
-        const nextPageBtn = document.getElementById('next-page');
-        const zoomInBtn = document.getElementById('zoom-in');
-        const zoomOutBtn = document.getElementById('zoom-out');
+        const previewModal = document.getElementById('preview-modal');
+        const closePreview = document.getElementById('close-preview');
+        const previewReadBtn = document.getElementById('preview-read-btn');
+        const previewDownloadBtn = document.getElementById('preview-download-btn');
+        const themeToggle = document.getElementById('theme-toggle');
+        const loadingOverlay = document.getElementById('loading-overlay');
 
         // Current book state
         let currentBook = books[0];
         let downloadInterval = null;
         let bookmarked = false;
-        let isFullscreen = false;
+        let isDarkMode = false;
 
         // Initialize the page
         function init() {
             populateBookGrid('all');
             setupEventListeners();
+            
+            // Check for saved theme preference
+            if (localStorage.getItem('theme') === 'dark') {
+                enableDarkMode();
+            }
         }
 
         // Set up event listeners
@@ -930,6 +1104,11 @@
             // Download button
             downloadBtn.addEventListener('click', startDownload);
 
+            // Preview button
+            previewBtn.addEventListener('click', () => {
+                previewModal.style.display = 'flex';
+            });
+
             // Bookmark button
             bookmarkBtn.addEventListener('click', toggleBookmark);
 
@@ -938,17 +1117,31 @@
                 closePdfViewer();
             });
 
+            // Close preview modal
+            closePreview.addEventListener('click', () => {
+                previewModal.style.display = 'none';
+            });
+
+            // Preview read button
+            previewReadBtn.addEventListener('click', () => {
+                previewModal.style.display = 'none';
+                openPdfViewer(currentBook);
+            });
+
+            // Preview download button
+            previewDownloadBtn.addEventListener('click', () => {
+                previewModal.style.display = 'none';
+                startDownload();
+            });
+
             // Fullscreen button
             fullscreenBtn.addEventListener('click', toggleFullscreen);
 
             // PDF download button
             pdfDownloadBtn.addEventListener('click', downloadPdf);
 
-            // Mobile controls
-            prevPageBtn.addEventListener('click', goToPrevPage);
-            nextPageBtn.addEventListener('click', goToNextPage);
-            zoomInBtn.addEventListener('click', zoomIn);
-            zoomOutBtn.addEventListener('click', zoomOut);
+            // Theme toggle
+            themeToggle.addEventListener('click', toggleTheme);
 
             // Close PDF viewer when clicking outside (on overlay)
             pdfViewer.addEventListener('click', (e) => {
@@ -957,12 +1150,37 @@
                 }
             });
 
-            // Handle escape key to exit fullscreen
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && isFullscreen) {
-                    toggleFullscreen();
+            // Close preview when clicking outside
+            previewModal.addEventListener('click', (e) => {
+                if (e.target === previewModal) {
+                    previewModal.style.display = 'none';
                 }
             });
+        }
+
+        // Toggle theme
+        function toggleTheme() {
+            if (isDarkMode) {
+                disableDarkMode();
+            } else {
+                enableDarkMode();
+            }
+        }
+
+        function enableDarkMode() {
+            document.body.classList.add('dark-mode');
+            themeToggle.classList.remove('fa-moon');
+            themeToggle.classList.add('fa-sun');
+            isDarkMode = true;
+            localStorage.setItem('theme', 'dark');
+        }
+
+        function disableDarkMode() {
+            document.body.classList.remove('dark-mode');
+            themeToggle.classList.remove('fa-sun');
+            themeToggle.classList.add('fa-moon');
+            isDarkMode = false;
+            localStorage.setItem('theme', 'light');
         }
 
         // Populate book grid based on subject filter
@@ -980,6 +1198,17 @@
                 bookCard.className = 'book-card';
                 bookCard.innerHTML = `
                     <img class="book-card-img" src="${book.cover}" alt="${book.title}">
+                    <div class="book-card-overlay">
+                        <div class="overlay-btn" data-action="preview" data-book-id="${book.id}">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <div class="overlay-btn" data-action="read" data-book-id="${book.id}">
+                            <i class="fas fa-play"></i>
+                        </div>
+                        <div class="overlay-btn" data-action="download" data-book-id="${book.id}">
+                            <i class="fas fa-download"></i>
+                        </div>
+                    </div>
                     <div class="book-card-content">
                         <h3 class="book-card-title">${book.title}</h3>
                         <p class="book-card-author">${book.author}</p>
@@ -990,12 +1219,59 @@
                     </div>
                 `;
                 
+                // Add event listeners to overlay buttons
+                const overlayButtons = bookCard.querySelectorAll('.overlay-btn');
+                overlayButtons.forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const action = btn.getAttribute('data-action');
+                        const bookId = parseInt(btn.getAttribute('data-book-id'));
+                        const targetBook = books.find(b => b.id === bookId);
+                        
+                        if (action === 'preview') {
+                            currentBook = targetBook;
+                            updatePreviewModal();
+                            previewModal.style.display = 'flex';
+                        } else if (action === 'read') {
+                            currentBook = targetBook;
+                            openPdfViewer(targetBook);
+                        } else if (action === 'download') {
+                            currentBook = targetBook;
+                            startDownload();
+                        }
+                    });
+                });
+                
+                // Clicking on the card itself will show preview
                 bookCard.addEventListener('click', () => {
-                    selectBook(book);
+                    currentBook = book;
+                    updatePreviewModal();
+                    previewModal.style.display = 'flex';
                 });
                 
                 bookGrid.appendChild(bookCard);
             });
+        }
+
+        // Update preview modal with current book details
+        function updatePreviewModal() {
+            const previewCover = previewModal.querySelector('.preview-cover img');
+            const previewTitle = previewModal.querySelector('h2');
+            const previewAuthor = previewModal.querySelector('.book-author');
+            const previewRating = previewModal.querySelector('.meta-value:first-child');
+            const previewPages = previewModal.querySelector('.meta-value:nth-child(2)');
+            const previewDownloads = previewModal.querySelector('.meta-value:nth-child(3)');
+            const previewLanguage = previewModal.querySelector('.meta-value:nth-child(4)');
+            const previewDescription = previewModal.querySelector('.book-description');
+            
+            previewCover.src = currentBook.cover;
+            previewTitle.textContent = currentBook.title;
+            previewAuthor.textContent = `By ${currentBook.author}`;
+            previewRating.textContent = currentBook.rating;
+            previewPages.textContent = currentBook.pages;
+            previewDownloads.textContent = `${currentBook.downloads/1000}k`;
+            previewLanguage.textContent = currentBook.language;
+            previewDescription.textContent = currentBook.description;
         }
 
         // Select a book to display
@@ -1082,46 +1358,50 @@
             
             if (bookmarked) {
                 bookmarkBtn.innerHTML = '<i class="fas fa-bookmark"></i> Bookmarked';
-                bookmarkBtn.style.color = 'var(--accent-purple)';
+                bookmarkBtn.style.background = 'var(--accent-primary)';
+                bookmarkBtn.style.color = 'white';
             } else {
                 bookmarkBtn.innerHTML = '<i class="fas fa-bookmark"></i> Bookmark';
-                bookmarkBtn.style.color = 'var(--text-primary)';
+                bookmarkBtn.style.background = '';
+                bookmarkBtn.style.color = '';
             }
         }
 
-        // Open PDF viewer
+        // Open PDF viewer with loading animation
         function openPdfViewer(book) {
-            pdfTitle.textContent = book.title;
-            pdfFrame.src = book.pdfUrl;
-            pdfViewer.style.display = 'flex';
+            loadingOverlay.style.display = 'flex';
             
-            // Prevent body scrolling when PDF viewer is open
-            document.body.style.overflow = 'hidden';
+            setTimeout(() => {
+                pdfTitle.textContent = book.title;
+                pdfFrame.src = book.pdfUrl;
+                pdfViewer.style.display = 'flex';
+                loadingOverlay.style.display = 'none';
+                
+                // Prevent body scrolling when PDF viewer is open
+                document.body.style.overflow = 'hidden';
+            }, 1500);
         }
 
         // Close PDF viewer
         function closePdfViewer() {
             pdfViewer.style.display = 'none';
             document.body.style.overflow = 'auto';
-            
-            // Exit fullscreen if active
-            if (isFullscreen) {
-                toggleFullscreen();
-            }
         }
 
         // Toggle fullscreen mode
         function toggleFullscreen() {
-            if (!isFullscreen) {
-                pdfViewer.classList.add('fullscreen');
+            if (!document.fullscreenElement) {
+                pdfViewer.requestFullscreen().catch(err => {
+                    alert(`Error attempting to enable full-screen mode: ${err.message}`);
+                });
                 fullscreenBtn.classList.remove('fa-expand');
                 fullscreenBtn.classList.add('fa-compress');
-                isFullscreen = true;
             } else {
-                pdfViewer.classList.remove('fullscreen');
-                fullscreenBtn.classList.remove('fa-compress');
-                fullscreenBtn.classList.add('fa-expand');
-                isFullscreen = false;
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                    fullscreenBtn.classList.remove('fa-compress');
+                    fullscreenBtn.classList.add('fa-expand');
+                }
             }
         }
 
@@ -1133,27 +1413,6 @@
             document.body.appendChild(downloadLink);
             downloadLink.click();
             document.body.removeChild(downloadLink);
-        }
-
-        // Mobile control functions
-        function goToPrevPage() {
-            // This would require PDF.js for proper implementation
-            alert("Previous page feature would require PDF.js integration");
-        }
-
-        function goToNextPage() {
-            // This would require PDF.js for proper implementation
-            alert("Next page feature would require PDF.js integration");
-        }
-
-        function zoomIn() {
-            // This would require PDF.js for proper implementation
-            alert("Zoom in feature would require PDF.js integration");
-        }
-
-        function zoomOut() {
-            // This would require PDF.js for proper implementation
-            alert("Zoom out feature would require PDF.js integration");
         }
 
         // Initialize the application
