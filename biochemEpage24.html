@@ -1,0 +1,2572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MED QUIZ Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --primary-dark: #3a0ca3;
+            --secondary: #f72585;
+            --success: #4cc9f0;
+            --warning: #f9c74f;
+            --danger: #f94144;
+            --gray-50: #f8f9fa;
+            --gray-100: #f1f3f5;
+            --gray-800: #343a40;
+            --gray-900: #212529;
+            --bg-primary: var(--gray-900);
+            --bg-secondary: #1a1d21;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --card-bg: rgba(35, 39, 47, 0.95);
+            --card-border: #4cc9f0;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+            --transition: all 0.2s ease-in-out;
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --header-height: 50px;
+            --max-width: 800px;
+            --side-padding: 1rem;
+            --gradient-primary: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f5f7fa;
+            --bg-secondary: #ffffff;
+            --text-primary: #1a1d21;
+            --text-secondary: rgba(26, 29, 33, 0.7);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            line-height: 1.5;
+            font-weight: 400;
+            overflow-x: hidden;
+            padding: 0;
+        }
+
+        /* Compact Header */
+        header {
+            height: var(--header-height);
+            background: var(--gradient-primary);
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 var(--side-padding);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: white;
+        }
+
+        .logo-icon {
+            font-size: 1.25rem;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .control-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .control-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--secondary);
+            color: white;
+            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            padding: 1.5rem var(--side-padding);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .quiz-container {
+            width: 100%;
+            max-width: var(--max-width);
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition);
+            border: 1px solid var(--card-border);
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .quiz-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .quiz-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .stats-container {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.5rem 0.75rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius-md);
+            min-width: 60px;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            margin: 1.5rem 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-md);
+            transition: width 0.4s ease;
+        }
+
+        /* Question Meta */
+        .question-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .question-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            padding: 0.25rem 0.5rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .difficulty-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        .difficulty-easy { background-color: var(--success); }
+        .difficulty-medium { background-color: var(--warning); }
+        .difficulty-hard { background-color: var(--danger); }
+
+        .bookmark-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: var(--transition);
+        }
+
+        .bookmark-btn.bookmarked {
+            color: var(--warning);
+        }
+
+        /* Question */
+        .question-number {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.75rem;
+            text-align: center;
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        /* Options */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .option:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+            border-color: var(--primary-light);
+        }
+
+        .option.selected {
+            background: rgba(67, 97, 238, 0.15);
+            border-color: var(--primary);
+        }
+
+        .option.correct {
+            background: rgba(76, 201, 240, 0.15);
+            border-color: var(--success);
+        }
+
+        .option.incorrect {
+            background: rgba(249, 65, 68, 0.15);
+            border-color: var(--danger);
+        }
+
+        .option-letter {
+            width: 28px;
+            height: 28px;
+            border-radius: var(--radius-sm);
+            background: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 1rem;
+            flex-shrink: 0;
+            font-size: 0.9rem;
+        }
+
+        .option.selected .option-letter {
+            background: var(--primary);
+            color: white;
+        }
+
+        .option.correct .option-letter {
+            background: var(--success);
+            color: white;
+        }
+
+        .option.incorrect .option-letter {
+            background: var(--danger);
+            color: white;
+        }
+
+        .option-text {
+            flex: 1;
+            font-size: 0.95rem;
+        }
+
+        /* Feedback */
+        .feedback {
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .feedback.correct {
+            background: rgba(76, 201, 240, 0.15);
+            color: var(--success);
+        }
+
+        .feedback.incorrect {
+            background: rgba(249, 65, 68, 0.15);
+            color: var(--danger);
+        }
+
+        .feedback.skipped {
+            background: rgba(67, 97, 238, 0.15);
+            color: var(--primary);
+        }
+
+        .feedback-icon {
+            font-size: 1.25rem;
+        }
+
+        /* Explanation */
+        .explanation-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .explanation-container.expanded {
+            max-height: 500px;
+        }
+
+        .explanation {
+            padding: 1rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius-md);
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .explanation-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        /* Navigation */
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+            gap: 0.75rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-md);
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            font-size: 0.9rem;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* Study Mode Toggle */
+        .study-mode-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius-md);
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255,255,255,0.1);
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Results */
+        .results-container {
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: conic-gradient(var(--gradient-primary) 0% var(--p, 0%), var(--bg-secondary) var(--p, 0%) 100%);
+            position: relative;
+        }
+
+        .score-circle::before {
+            content: '';
+            position: absolute;
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: var(--card-bg);
+        }
+
+        .score-text {
+            position: relative;
+            z-index: 1;
+        }
+
+        .score-value {
+            font-size: 1.75rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .score-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .results-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .result-stat {
+            padding: 1rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius-md);
+        }
+
+        .result-stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .result-stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .review-section {
+            margin-top: 2rem;
+            text-align: left;
+        }
+
+        .review-title {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            text-align: center;
+        }
+
+        .review-item {
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+            background: rgba(255,255,255,0.05);
+            font-size: 0.9rem;
+        }
+
+        .review-item.correct {
+            border-left: 3px solid var(--success);
+        }
+
+        .review-item.incorrect {
+            border-left: 3px solid var(--danger);
+        }
+
+        .review-item.skipped {
+            border-left: 3px solid var(--primary);
+        }
+
+        .review-question {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .review-answer {
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius-sm);
+        }
+
+        .review-explanation {
+            color: var(--text-secondary);
+            padding-top: 0.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        footer {
+            padding: 2rem var(--side-padding);
+            background: var(--bg-secondary);
+            text-align: center;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            margin-top: auto;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(5px);
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal {
+            background: var(--card-bg);
+            border-radius: var(--radius-2xl);
+            padding: 2.5rem;
+            width: 90%;
+            max-width: 600px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-xl);
+            transform: translateY(-50px) scale(0.95);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--card-border);
+        }
+        .modal-overlay.active .modal {
+            transform: translateY(0) scale(1);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        .modal-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.75rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition-base);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-close:hover {
+            background: rgba(255,255,255,0.1);
+            color: var(--primary);
+        }
+        .modal-body {
+            margin-bottom: 2rem;
+        }
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+        .difficulty-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 0.75rem;
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+        }
+        .difficulty-easy {
+            background-color: var(--success);
+            box-shadow: 0 0 10px var(--success);
+        }
+        .difficulty-medium {
+            background-color: var(--warning);
+            box-shadow: 0 0 10px var(--warning);
+        }
+        .difficulty-hard {
+            background-color: var(--danger);
+            box-shadow: 0 0 10px var(--danger);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius-xl);
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: var(--transition-base);
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        .stat-card-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        .stat-card-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        .confetti {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: var(--gradient-primary);
+            opacity: 0;
+            border-radius: 2px;
+        }
+        @keyframes confettiFall {
+            0% {
+                opacity: 1;
+                transform: translateY(-100px) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(100vh) rotate(720deg);
+            }
+        }
+        .fab {
+            position: fixed;
+            bottom: 2.5rem;
+            right: 2.5rem;
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            box-shadow: var(--shadow-xl);
+            cursor: pointer;
+            z-index: 100;
+            transition: var(--transition-smooth);
+            border: 3px solid rgba(255,255,255,0.2);
+        }
+        .fab:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 20px 40px rgba(67, 97, 238, 0.3);
+        }
+        .study-mode-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius-lg);
+            justify-content: center;
+        }
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 28px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255,255,255,0.1);
+            transition: .4s;
+            border-radius: 34px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        input:checked + .toggle-slider {
+            background-color: var(--primary);
+            box-shadow: 0 0 10px rgba(67, 97, 238, 0.5);
+        }
+        input:checked + .toggle-slider:before {
+            transform: translateX(32px);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        @keyframes bounceIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        .fade-in {
+            animation: fadeIn 0.6s ease;
+        }
+        .pulse {
+            animation: pulse 1s infinite;
+        }
+        .bounce-in {
+            animation: bounceIn 0.6s ease;
+        }
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .mt-1 { margin-top: 0.5rem; }
+        .mt-2 { margin-top: 1rem; }
+        .mt-3 { margin-top: 1.5rem; }
+        .mt-4 { margin-top: 2rem; }
+        .full-width {
+            width: 100%;
+        }
+        @media (max-width: 768px) {
+            :root {
+                --side-padding: 1rem;
+                --header-height: 50px;
+            }
+            .quiz-container {
+                padding: 2rem;
+                border-radius: var(--radius-xl);
+            }
+            .quiz-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1.5rem;
+            }
+            .stats-container {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .results-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .score-circle {
+                width: 140px;
+                height: 140px;
+            }
+            .score-circle::before {
+                width: 110px;
+                height: 110px;
+            }
+            .score-value {
+                font-size: 2.25rem;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .fab {
+                bottom: 1.5rem;
+                right: 1.5rem;
+                width: 55px;
+                height: 55px;
+                font-size: 1.5rem;
+            }
+            .navigation {
+                flex-direction: column;
+            }
+            .btn {
+                width: 100%;
+            }
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+            .options-grid .option:nth-child(1),
+            .options-grid .option:nth-child(2),
+            .options-grid .option:nth-child(3),
+            .options-grid .option:nth-child(4) {
+                grid-column: auto;
+            }
+        }
+        @media (max-width: 480px) {
+            .option {
+                padding: 1rem;
+            }
+            .option-letter {
+                width: 32px;
+                height: 32px;
+                margin-right: 1rem;
+            }
+            .quiz-title {
+                font-size: 1.5rem;
+            }
+            .question-text {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body data-theme="dark" data-progress="0">
+    <header>
+        <div class="logo">
+            <i class="fas fa-brain logo-icon"></i>
+            <span>MedQuiz</span>
+        </div>
+        <div class="header-controls">
+            <button class="control-btn" id="theme-toggle" aria-label="Toggle theme">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button class="control-btn" id="sound-toggle" aria-label="Toggle sound">
+                <i class="fas fa-volume-up"></i>
+            </button>
+            <button class="control-btn" id="stats-btn" aria-label="View statistics">
+                <i class="fas fa-chart-line"></i>
+                <span class="badge" id="bookmarks-count">0</span>
+            </button>
+        </div>
+    </header>
+    <main>
+        <div class="quiz-container">
+            <div class="quiz-header">
+                <div>
+                    <h1 class="quiz-title">MED QUIZ</h1>
+                    <p class="quiz-subtitle">Test your medical knowledge</p>
+                </div>
+                <div class="stats-container">
+                    <div class="stat">
+                        <span class="stat-value" id="timer">00:00</span>
+                        <span class="stat-label">Time</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="category">All</span>
+                        <span class="stat-label">Category</span>
+                    </div>
+                </div>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar" style="width: 10%"></div>
+            </div>
+            <div class="question-meta">
+                <div class="question-tags">
+                    <span class="tag" id="category-tag">Biochemistry</span>
+                    <span class="tag" id="difficulty-tag">
+                        <span class="difficulty-indicator difficulty-medium"></span>
+                        Medium
+                    </span>
+                </div>
+                <button class="bookmark-btn" id="bookmark-btn" aria-label="Bookmark question">
+                    <i class="fas fa-bookmark"></i>
+                </button>
+            </div>
+            <div class="question-number">Question <span id="current-question">1</span> of <span id="total-questions">15</span></div>
+            <div class="question-text" id="question">Which part of the brain is responsible for coordinating skeletal muscle contractions?</div>
+            <div class="options-grid" id="options-container">
+                <div class="option">
+                    <div class="option-letter">A</div>
+                    <div class="option-text">Cerebrum</div>
+                </div>
+                <div class="option">
+                    <div class="option-letter">B</div>
+                    <div class="option-text">Cerebellum</div>
+                </div>
+                <div class="option">
+                    <div class="option-letter">C</div>
+                    <div class="option-text">Pons</div>
+                </div>
+                <div class="option">
+                    <div class="option-letter">D</div>
+                    <div class="option-text">Midbrain</div>
+                </div>
+            </div>
+            <div class="feedback correct" id="feedback" style="display: none;">
+                <i class="fas fa-check-circle feedback-icon"></i>
+                <div class="feedback-text">Correct! Well done.</div>
+            </div>
+            <button class="btn btn-secondary" id="show-explanation-btn" style="display: none;">
+                <i class="fas fa-info-circle"></i> Show Explanation
+            </button>
+            <div class="explanation-container" id="explanation-container">
+                <div class="explanation">
+                    <div class="explanation-title">Explanation:</div>
+                    <div id="explanation-text">The cerebellum, located posterior to the brainstem, is the 'little brain.' It compares intended movements with actual movements to ensure smooth, coordinated skeletal muscle activity and maintain posture and balance.</div>
+                </div>
+            </div>
+            <div class="navigation">
+                <button class="btn btn-secondary" id="prev-btn" disabled>
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                <button class="btn btn-primary" id="next-btn">
+                    Next Question <i class="fas fa-arrow-right"></i>
+                </button>
+                <button class="btn btn-danger" id="skip-btn">
+                    <i class="fas fa-forward"></i> Skip
+                </button>
+            </div>
+        </div>
+    </main>
+    <div class="fab" id="quick-actions-btn" style="display: none;">
+        <i class="fas fa-bolt"></i>
+    </div>
+    <div class="confetti-container" id="confetti-container"></div>
+    <div class="modal-overlay" id="stats-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Your Statistics</h2>
+                <button class="modal-close" id="close-stats-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card-value" id="modal-total-questions">0</div>
+                        <div class="stat-card-label">Total Questions</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-value" id="modal-correct-answers">0</div>
+                        <div class="stat-card-label">Correct Answers</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-value" id="modal-accuracy">0%</div>
+                        <div class="stat-card-label">Accuracy</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-value" id="modal-avg-time">0s</div>
+                        <div class="stat-card-label">Avg. Time</div>
+                    </div>
+                </div>
+                <h3 class="review-title">Performance by Category</h3>
+                <div id="category-stats"></div>
+                <h3 class="review-title mt-2">Performance by Difficulty</h3>
+                <div id="difficulty-stats"></div>
+                <h3 class="review-title mt-2">Quiz History</h3>
+                <div id="history-stats"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="close-stats-btn">Close</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal-overlay" id="quick-actions-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Quick Actions</h2>
+                <button class="modal-close" id="close-actions-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <button class="btn btn-primary full-width mt-1" id="mark-for-review-btn">
+                    <i class="fas fa-flag"></i> Mark for Review
+                </button>
+                <button class="btn btn-secondary full-width mt-1" id="view-explanation-btn">
+                    <i class="fas fa-info-circle"></i> View Explanation
+                </button>
+                <button class="btn btn-success full-width mt-1" id="hint-btn">
+                    <i class="fas fa-lightbulb"></i> Get a Hint
+                </button>
+                <button class="btn btn-danger full-width mt-1" id="report-question-btn">
+                    <i class="fas fa-exclamation-triangle"></i> Report Question
+                </button>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="close-actions-btn">Close</button>
+            </div>
+        </div>
+    </div>
+    <footer>
+        &copy; 2025 MedQuiz | MED Practice Platform | All Rights Reserved
+    </footer>
+    <script>
+        const questions = [
+    {
+        "id": 171,
+        "question": "An enzyme is named 'lactate dehydrogenase'. Based on the recommended nomenclature rules, this name most likely indicates:",
+        "options": ["The enzyme hydrolyzes lactate", "The enzyme's substrate is lactate and it performs a dehydrogenation action", "The enzyme is a ligase that joins lactate to another molecule", "The enzyme is a transferase that moves a dehydrogenase group"],
+        "answer": 1,
+        "correctAnswer": "The enzyme's substrate is lactate and it performs a dehydrogenation action",
+        "explanation": "Lactate dehydrogenase oxidizes lactate, using NAD⁺ in a dehydrogenation reaction, consistent with its name. It does not hydrolyze, join, or transfer dehydrogenase groups. Errors can affect enzyme nomenclature understanding.",
+        "category": "Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 172,
+        "question": "Enzymes like trypsin and pepsin are exceptions to the standard naming convention because:",
+        "options": ["They are not actually proteins", "They are isomerases, which are difficult to name", "They retain old trivial names that don't describe their reaction", "Their systematic names are too long and complex to use"],
+        "answer": 2,
+        "correctAnswer": "They retain old trivial names that don't describe their reaction",
+        "explanation": "Trypsin and pepsin have historical trivial names (-in suffix) that don’t reflect their substrate or reaction, unlike the -ase convention. They are proteins and not isomerases. Errors can affect nomenclature studies.",
+        "category": "Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 173,
+        "question": "The enzyme pyruvate decarboxylase (Pyruvate → Acetaldehyde + CO₂) is most accurately classified as a:",
+        "options": ["Hydrolase", "Oxidoreductase", "Lyase", "Ligase"],
+        "answer": 2,
+        "correctAnswer": "Lyase",
+        "explanation": "Pyruvate decarboxylase removes CO₂ without hydrolysis or oxidation, a lyase reaction. Other classes are incorrect for this mechanism. Errors can affect enzyme classification.",
+        "category": "Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 174,
+        "question": "The enzyme pyruvate carboxylase (Pyruvate + CO₂ + ATP → Oxaloacetate + ADP + Pi) is classified as a ligase because it:",
+        "options": ["Cleaves a C-C bond without using water", "Catalyzes an oxidation-reduction reaction", "Joins two molecules using energy from ATP", "Transfers a carboxyl group from one molecule to another"],
+        "answer": 2,
+        "correctAnswer": "Joins two molecules using energy from ATP",
+        "explanation": "Pyruvate carboxylase uses ATP to join pyruvate and CO₂, forming oxaloacetate, a ligase function. It doesn’t cleave bonds or transfer groups. Errors can affect classification studies.",
+        "category": "Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 175,
+        "question": "Why is enzyme activity expressed in katals (moles/sec) rather than in mass concentration (mg/mL)?",
+        "options": ["Mass concentration is not a precise measurement", "Enzyme activity is dependent on the catalytic efficiency, not just the amount of protein", "The katal is an SI unit, while mg is not", "It is easier to measure the rate of product formation than to weigh an enzyme"],
+        "answer": 1,
+        "correctAnswer": "Enzyme activity is dependent on the catalytic efficiency, not just the amount of protein",
+        "explanation": "Katals measure catalytic efficiency (moles of product per second), not just enzyme mass, which varies in activity. Precision and SI units are secondary. Errors can affect activity measurement.",
+        "category": "Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 176,
+        "question": "According to the Michaelis-Menten model, which factor does an enzyme change about a chemical reaction?",
+        "options": ["The equilibrium constant (Keq)", "The overall free energy change (ΔG)", "The activation energy (Ea)", "The substrate concentration ([S])"],
+        "answer": 2,
+        "correctAnswer": "The activation energy (Ea)",
+        "explanation": "Enzymes lower the activation energy (Ea) to increase reaction rate, not affecting Keq, ΔG, or [S]. Errors can affect understanding enzyme catalysis.",
+        "category": "Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 177,
+        "question": "On a Michaelis-Menten plot (V₀ vs. [S]), the point where the curve begins to plateau and approach a horizontal line signifies:",
+        "options": ["The point where [S] is much less than Km", "The point where the enzyme is becoming saturated with substrate", "The point where the reaction is first-order with respect to substrate", "The point where all enzyme active sites are occupied and V₀ = Vmax"],
+        "answer": 3,
+        "correctAnswer": "The point where all enzyme active sites are occupied and V₀ = Vmax",
+        "explanation": "The plateau indicates enzyme saturation, where V₀ = Vmax and all active sites are occupied. First-order kinetics occurs at low [S]. Errors can affect kinetics interpretation.",
+        "category": "Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 178,
+        "question": "In the reaction mechanism E + S ⇌ ES → E + P, the rate constant k₃ represents the:",
+        "options": ["Rate of ES complex formation", "Rate of the reverse reaction (ES dissociation to E + S)", "Catalytic rate constant (the rate of product formation)", "Michaelis constant"],
+        "answer": 2,
+        "correctAnswer": "Catalytic rate constant (the rate of product formation)",
+        "explanation": "k₃ (kcat) is the rate constant for product formation from the ES complex. k₁ and k₂ handle ES formation/dissociation. Errors can affect mechanistic understanding.",
+        "category": "Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 179,
+        "question": "The Michaelis constant (Km) is defined as:",
+        "options": ["The maximum rate achievable by the enzyme", "The substrate concentration at which V₀ = ½ Vmax", "The dissociation constant for the ES complex, always equal to k₂/k₁", "The concentration of enzyme required to achieve half-maximal velocity"],
+        "answer": 1,
+        "correctAnswer": "The substrate concentration at which V₀ = ½ Vmax",
+        "explanation": "Km is the substrate concentration at V₀ = ½ Vmax, reflecting affinity. It’s not always k₂/k₁. Errors can affect kinetics studies.",
+        "category": "Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 180,
+        "question": "An enzyme with a Km of 1.0 x 10⁻⁵ M has a higher affinity for its substrate than an enzyme with a Km of 1.0 x 10⁻³ M because:",
+        "options": ["It requires a lower concentration of substrate to become half-saturated", "It has a higher Vmax value", "It is not affected by inhibitors", "It operates closer to its maximum velocity at all substrate concentrations"],
+        "answer": 0,
+        "correctAnswer": "It requires a lower concentration of substrate to become half-saturated",
+        "explanation": "Lower Km (10⁻⁵ M) indicates higher substrate affinity, needing less [S] for half Vmax. Vmax and inhibitors are unrelated. Errors can affect affinity studies.",
+        "category": "Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 181,
+        "question": "In a region of the Michaelis-Menten curve where [S] << Km, the reaction velocity is:",
+        "options": ["At its maximum (Vmax)", "Half of Vmax", "Directly proportional to [S] (first-order kinetics)", "Unchanged by increases in [S] (zero-order kinetics)"],
+        "answer": 2,
+        "correctAnswer": "Directly proportional to [S] (first-order kinetics)",
+        "explanation": "When [S] << Km, velocity is proportional to [S], indicating first-order kinetics. Zero-order occurs at high [S]. Errors can affect kinetics understanding.",
+        "category": "Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 182,
+        "question": "The primary reason for using a Lineweaver-Burk plot instead of a standard Michaelis-Menten plot is to:",
+        "options": ["Determine the enzyme's molecular weight", "Obtain more accurate values for Vmax and Km by linearizing the data", "Measure the effect of temperature on enzyme activity", "Identify the type of enzyme inhibition occurring"],
+        "answer": 1,
+        "correctAnswer": "Obtain more accurate values for Vmax and Km by linearizing the data",
+        "explanation": "The Lineweaver-Burk plot linearizes the hyperbolic Michaelis-Menten curve, aiding Vmax and Km determination. It’s also used for inhibition studies. Errors can affect plot usage.",
+        "category": "Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 183,
+        "question": "On a Lineweaver-Burk plot, the y-intercept provides a value for:",
+        "options": ["-1/Km", "1/Km", "1/Vmax", "Km/Vmax"],
+        "answer": 2,
+        "correctAnswer": "1/Vmax",
+        "explanation": "The y-intercept of a Lineweaver-Burk plot is 1/Vmax. The x-intercept is -1/Km, and slope is Km/Vmax. Errors can affect plot interpretation.",
+        "category": "Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 184,
+        "question": "A key assumption of Michaelis-Menten kinetics is that only the initial velocity (V₀) is measured. This is crucial because:",
+        "options": ["The enzyme becomes denatured as the reaction proceeds", "The product concentration is negligible, preventing the reverse reaction", "The substrate concentration is exactly equal to Km at the start", "It allows for the accurate measurement of enzyme concentration"],
+        "answer": 1,
+        "correctAnswer": "The product concentration is negligible, preventing the reverse reaction",
+        "explanation": "Measuring V₀ minimizes product inhibition and reverse reactions. Substrate isn’t necessarily Km, and denaturation is not assumed. Errors can affect kinetics assumptions.",
+        "category": "Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 185,
+        "question": "The bell-shaped curve of enzyme activity vs. temperature is due to two competing effects:",
+        "options": ["Increasing molecular motion and decreasing pH", "Increasing reaction rate and increasing enzyme denaturation", "Decreasing substrate affinity and increasing product inhibition", "Saturation kinetics and first-order kinetics"],
+        "answer": 1,
+        "correctAnswer": "Increasing reaction rate and increasing enzyme denaturation",
+        "explanation": "Higher temperatures increase reaction rates but cause denaturation, forming a bell-shaped curve. pH and inhibition are unrelated. Errors can affect temperature studies.",
+        "category": "Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 186,
+        "question": "Pepsin, a digestive enzyme in the stomach, shows optimal activity at pH ~2, while most enzymes function best at neutral pH. This is best explained by:",
+        "options": ["Pepsin is a denatured enzyme", "The ionization state of its active site residues is optimal at low pH", "Its substrate is only stable at very acidic pH", "It is a cofactor-independent enzyme"],
+        "answer": 1,
+        "correctAnswer": "The ionization state of its active site residues is optimal at low pH",
+        "explanation": "Pepsin’s active site residues are optimally ionized at pH ~2, suiting its gastric environment. Substrates and cofactors are unrelated. Errors can affect pH studies.",
+        "category": "Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 187,
+        "question": "If the concentration of an enzyme is doubled, the reaction rate V₀ will also double, provided that:",
+        "options": ["The temperature is at the optimum", "The substrate concentration is held constant and is not limiting", "The pH is precisely 7.0", "The substrate concentration is much higher than the Km"],
+        "answer": 1,
+        "correctAnswer": "The substrate concentration is held constant and is not limiting",
+        "explanation": "With non-limiting substrate, V₀ is proportional to enzyme concentration. High [S] (> Km) ensures saturation, but it’s not the only condition. Errors can affect rate studies.",
+        "category": "Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 188,
+        "question": "Molecules like Mg²⁺ or Cl⁻ that bind to an enzyme and increase its activity are known as:",
+        "options": ["Inhibitors", "Coenzymes", "Activators", "Substrates"],
+        "answer": 2,
+        "correctAnswer": "Activators",
+        "explanation": "Mg²⁺ and Cl⁻ are activators, enhancing enzyme activity. Coenzymes are organic, and inhibitors reduce activity. Errors can affect cofactor terminology.",
+        "category": "Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 189,
+        "question": "Allopurinol, a drug used to treat gout, acts by inhibiting the enzyme xanthine oxidase. This is a significant application of enzyme inhibition because it:",
+        "options": ["Helps study the structure of the enzyme", "Is used to design new drugs that target specific metabolic pathways", "Increases the production of uric acid", "Acts as a non-specific activator for other enzymes"],
+        "answer": 1,
+        "correctAnswer": "Is used to design new drugs that target specific metabolic pathways",
+        "explanation": "Allopurinol inhibits xanthine oxidase to reduce uric acid, aiding drug design. It doesn’t increase uric acid or act non-specifically. Errors can affect therapeutic studies.",
+        "category": "Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 190,
+        "question": "In the Michaelis-Menten equation, V = (Vmax [S]) / (Km + [S]), the term (Km + [S]) in the denominator represents:",
+        "options": ["The total enzyme concentration", "The concentration of the ES complex", "The theoretical maximum rate", "The substrate concentration required for half-maximal velocity"],
+        "answer": 1,
+        "correctAnswer": "The concentration of the ES complex",
+        "explanation": "Km + [S] relates to the formation of the ES complex, influencing velocity. It’s not enzyme concentration or maximum rate. Errors can affect equation interpretation.",
+        "category": "Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 191,
+        "question": "For an enzyme obeying Michaelis-Menten kinetics, if V₀ = 40 μM/min at [S] = 0.5 Km, what is the Vmax?",
+        "options": ["20 μM/min", "40 μM/min", "80 μM/min", "120 μM/min"],
+        "answer": 3,
+        "correctAnswer": "120 μM/min",
+        "explanation": "V₀ = Vmax * (0.5Km) / (Km + 0.5Km) = Vmax * 0.5 / 1.5 = Vmax / 3. Thus, Vmax = 3 * V₀ = 3 * 40 = 120 μM/min. Errors can affect kinetic calculations.",
+        "category": "Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 192,
+        "question": "The value Km is equal to the substrate concentration at V₀ = Vmax/2. This also implies that:",
+        "options": ["k₃ must be much larger than k₂", "The rate of ES formation equals the rate of ES breakdown", "Half of the enzyme's active sites are occupied by substrate", "The enzyme is fully saturated"],
+        "answer": 2,
+        "correctAnswer": "Half of the enzyme's active sites are occupied by substrate",
+        "explanation": "At V₀ = Vmax/2, [S] = Km, meaning half the enzyme’s active sites are occupied. Formation/breakdown rates are not necessarily equal. Errors can affect kinetics interpretation.",
+        "category": "Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 193,
+        "question": "The slope of a Lineweaver-Burk plot is equal to:",
+        "options": ["-Km", "Km / Vmax", "1 / Vmax", "-1 / Km"],
+        "answer": 1,
+        "correctAnswer": "Km / Vmax",
+        "explanation": "The slope of a Lineweaver-Burk plot is Km/Vmax. Intercepts provide -1/Km (x) and 1/Vmax (y). Errors can affect plot analysis.",
+        "category": "Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 194,
+        "question": "A non-linear regression software fit of V₀ vs. [S] data is now preferred over a Lineweaver-Burk plot because:",
+        "options": ["Lineweaver-Burk plots cannot determine Km", "Lineweaver-Burk plots distort error structure and give undue weight to data points at low [S]", "The double-reciprocal transformation is mathematically invalid", "Modern computers cannot graph hyperbolic curves"],
+        "answer": 1,
+        "correctAnswer": "Lineweaver-Burk plots distort error structure and give undue weight to data points at low [S]",
+        "explanation": "Lineweaver-Burk plots skew errors at low [S], making non-linear regression more accurate. The transformation is valid but less precise. Errors can affect data analysis.",
+        "category": "Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 195,
+        "question": "The catalytic efficiency of an enzyme can be best approximated by the ratio:",
+        "options": ["Vmax / [E]ₜ", "Vmax / Km", "k₃ (or k_cat) / Km", "1 / Km"],
+        "answer": 2,
+        "correctAnswer": "k₃ (or k_cat) / Km",
+        "explanation": "Catalytic efficiency is kcat/Km, reflecting turnover rate per substrate affinity. Other ratios are incorrect. Errors can affect efficiency studies.",
+        "category": "Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 196,
+        "question": "The EC number 2.7.1.2 for hexokinase indicates that it is primarily a:",
+        "options": ["Hydrolase (EC 3)", "Transferase (EC 2) that transfers a phosphate group (7.1)", "Lyase (EC 4) that acts on a C-O bond (7)", "Oxidoreductase (EC 1) using NAD+ (1.1)"],
+        "answer": 1,
+        "correctAnswer": "Transferase (EC 2) that transfers a phosphate group (7.1)",
+        "explanation": "EC 2.7.1.2 indicates a transferase (2) transferring a phosphate group (7.1). Other options misinterpret the EC number. Errors can affect classification.",
+        "category": "Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 197,
+        "question": "The activity of carboxypeptidase A, which cleaves the C-terminal amino acid from a polypeptide using water, classifies it as a:",
+        "options": ["Lyase", "Ligase", "Hydrolase", "Isomerase"],
+        "answer": 2,
+        "correctAnswer": "Hydrolase",
+        "explanation": "Carboxypeptidase A uses water to cleave peptide bonds, a hydrolase function. Other classes are incorrect. Errors can affect enzyme classification.",
+        "category": "Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 198,
+        "question": "The theoretical maximal rate, Vmax, is never achieved in reality because:",
+        "options": ["The Michaelis-Menten equation is only a model", "It is impossible to have an infinitely high substrate concentration", "Enzymes denature instantly at high [S]", "The value of Km decreases as [S] increases"],
+        "answer": 1,
+        "correctAnswer": "It is impossible to have an infinitely high substrate concentration",
+        "explanation": "Vmax requires infinite [S], which is impractical. Km doesn’t decrease, and denaturation isn’t immediate. Errors can affect kinetics studies.",
+        "category": "Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 199,
+        "question": "An enzyme inhibitor that is a 'normal body metabolite' would most accurately be described as:",
+        "options": ["A foreign toxin", "A drug like allopurinol", "A molecule involved in natural metabolic regulation", "A denaturing agent"],
+        "answer": 2,
+        "correctAnswer": "A molecule involved in natural metabolic regulation",
+        "explanation": "Metabolite inhibitors (e.g., feedback inhibitors) regulate metabolism naturally. Allopurinol is a drug, not a metabolite. Errors can affect inhibition studies.",
+        "category": "Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 200,
+        "question": "The x-intercept on a Lineweaver-Burk plot provides a value for:",
+        "options": ["1 / Vmax", "-1 / Km", "-Km", "Vmax / Km"],
+        "answer": 1,
+        "correctAnswer": "-1 / Km",
+        "explanation": "The x-intercept of a Lineweaver-Burk plot is -1/Km, reflecting substrate affinity. The y-intercept is 1/Vmax. Errors can affect plot analysis.",
+        "category": "Biochemistry",
+        "difficulty": "Hard"
+    }
+]
+        ;
+        // Store original questions for restart functionality (moved to global scope for cross-browser compatibility)
+        const originalQuestions = [...questions];
+        // DOM Elements (global for cross-browser)
+        let body = document.body;
+        let questionElement, optionsContainer, currentQuestionElement, totalQuestionsElement, progressBar, prevButton, nextButton, skipButton, feedbackElement, timerElement, scoreElement, streakElement, categoryElement, explanationContainer, explanationTextElement, themeToggle, soundToggle, bookmarkBtn, bookmarksCount, categoryTag, difficultyTag, showExplanationBtn, statsBtn, statsModal, closeStatsModal, closeStatsBtn, quickActionsBtn, quickActionsModal, closeActionsModal, closeActionsBtn, studyModeToggle, confettiContainer;
+        // Quiz state
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let streak = 0;
+        let selectedOption = null;
+        let timeStarted = null;
+        let timerInterval = null;
+        let timeElapsed = 0;
+        let answers = [];
+        let soundsEnabled = true;
+        let bookmarkedQuestions = [];
+        let quizHistory = [];
+        let studyMode = false;
+        let performanceMetrics = {
+            categories: {},
+            difficulties: { Easy: 0, Medium: 0, Hard: 0, "Very Hard": 0 },
+            totalCorrect: 0,
+            totalQuestions: 0,
+            totalTime: 0
+        };
+        function initQuiz() {
+            try {
+            // Assign DOM elements safely
+            questionElement = document.getElementById('question') || questionElement;
+            optionsContainer = document.getElementById('options-container') || optionsContainer;
+            currentQuestionElement = document.getElementById('current-question') || currentQuestionElement;
+            totalQuestionsElement = document.getElementById('total-questions') || totalQuestionsElement;
+            progressBar = document.getElementById('progress-bar') || progressBar;
+            prevButton = document.getElementById('prev-btn') || prevButton;
+            nextButton = document.getElementById('next-btn') || nextButton;
+            skipButton = document.getElementById('skip-btn') || skipButton;
+            feedbackElement = document.getElementById('feedback') || feedbackElement;
+            timerElement = document.getElementById('timer') || timerElement;
+            scoreElement = document.getElementById('score') || scoreElement;
+            streakElement = document.getElementById('streak') || streakElement;
+            categoryElement = document.getElementById('category') || categoryElement;
+            explanationContainer = document.getElementById('explanation-container') || explanationContainer;
+            explanationTextElement = document.getElementById('explanation-text') || explanationTextElement;
+            themeToggle = document.getElementById('theme-toggle') || themeToggle;
+            soundToggle = document.getElementById('sound-toggle') || soundToggle;
+            bookmarkBtn = document.getElementById('bookmark-btn') || bookmarkBtn;
+            bookmarksCount = document.getElementById('bookmarks-count') || bookmarksCount;
+            categoryTag = document.getElementById('category-tag') || categoryTag;
+            difficultyTag = document.getElementById('difficulty-tag') || difficultyTag;
+            showExplanationBtn = document.getElementById('show-explanation-btn') || showExplanationBtn;
+            statsBtn = document.getElementById('stats-btn') || statsBtn;
+            statsModal = document.getElementById('stats-modal') || statsModal;
+            closeStatsModal = document.getElementById('close-stats-modal') || closeStatsModal;
+            closeStatsBtn = document.getElementById('close-stats-btn') || closeStatsBtn;
+            quickActionsBtn = document.getElementById('quick-actions-btn') || quickActionsBtn;
+            quickActionsModal = document.getElementById('quick-actions-modal') || quickActionsModal;
+            closeActionsModal = document.getElementById('close-actions-modal') || closeActionsModal;
+            closeActionsBtn = document.getElementById('close-actions-btn') || closeActionsBtn;
+            studyModeToggle = document.getElementById('study-mode-toggle') || studyModeToggle;
+            confettiContainer = document.getElementById('confetti-container') || confettiContainer;
+            // Reset DOM elements
+            if (scoreElement) scoreElement.textContent = score;
+            if (streakElement) streakElement.textContent = streak;
+            if (timerElement) timerElement.textContent = '00:00';
+            if (totalQuestionsElement) totalQuestionsElement.textContent = questions.length;
+           
+            loadQuestion();
+            startTimer();
+           
+            // Clone elements to remove old listeners (cross-browser safe)
+            if (prevButton) {
+                const prevBtnClone = prevButton.cloneNode(true);
+                prevButton.parentNode.replaceChild(prevBtnClone, prevButton);
+                prevButton = prevBtnClone;
+            }
+            if (nextButton) {
+                const nextBtnClone = nextButton.cloneNode(true);
+                nextButton.parentNode.replaceChild(nextBtnClone, nextButton);
+                nextButton = nextBtnClone;
+            }
+            if (skipButton) {
+                const skipBtnClone = skipButton.cloneNode(true);
+                skipButton.parentNode.replaceChild(skipBtnClone, skipButton);
+                skipButton = skipBtnClone;
+            }
+            if (themeToggle) {
+                const themeToggleClone = themeToggle.cloneNode(true);
+                themeToggle.parentNode.replaceChild(themeToggleClone, themeToggle);
+                themeToggle = themeToggleClone;
+            }
+            if (soundToggle) {
+                const soundToggleClone = soundToggle.cloneNode(true);
+                soundToggle.parentNode.replaceChild(soundToggleClone, soundToggle);
+                soundToggle = soundToggleClone;
+            }
+            if (bookmarkBtn) {
+                const bookmarkBtnClone = bookmarkBtn.cloneNode(true);
+                bookmarkBtn.parentNode.replaceChild(bookmarkBtnClone, bookmarkBtn);
+                bookmarkBtn = bookmarkBtnClone;
+            }
+            if (showExplanationBtn) {
+                const showExplanationBtnClone = showExplanationBtn.cloneNode(true);
+                showExplanationBtn.parentNode.replaceChild(showExplanationBtnClone, showExplanationBtn);
+                showExplanationBtn = showExplanationBtnClone;
+            }
+            if (statsBtn) {
+                const statsBtnClone = statsBtn.cloneNode(true);
+                statsBtn.parentNode.replaceChild(statsBtnClone, statsBtn);
+                statsBtn = statsBtnClone;
+            }
+            // Add event listeners safely
+            if (prevButton) prevButton.addEventListener('click', goToPreviousQuestion);
+            if (nextButton) nextButton.addEventListener('click', goToNextQuestion);
+            if (skipButton) skipButton.addEventListener('click', skipQuestion);
+            if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
+            if (soundToggle) soundToggle.addEventListener('click', toggleSound);
+            if (bookmarkBtn) bookmarkBtn.addEventListener('click', toggleBookmark);
+            if (showExplanationBtn) showExplanationBtn.addEventListener('click', toggleExplanation);
+            if (statsBtn) statsBtn.addEventListener('click', showStatsModal);
+            if (closeStatsModal) closeStatsModal.addEventListener('click', hideStatsModal);
+            if (closeStatsBtn) closeStatsBtn.addEventListener('click', hideStatsModal);
+            if (quickActionsBtn) quickActionsBtn.addEventListener('click', showQuickActionsModal);
+            if (closeActionsModal) closeActionsModal.addEventListener('click', hideQuickActionsModal);
+            if (closeActionsBtn) closeActionsBtn.addEventListener('click', hideQuickActionsModal);
+            if (studyModeToggle) studyModeToggle.addEventListener('change', toggleStudyMode);
+           
+            const markForReviewBtn = document.getElementById('mark-for-review-btn');
+            if (markForReviewBtn) markForReviewBtn.addEventListener('click', markForReview);
+            const viewExplanationBtn = document.getElementById('view-explanation-btn');
+            if (viewExplanationBtn) viewExplanationBtn.addEventListener('click', viewExplanation);
+            const hintBtn = document.getElementById('hint-btn');
+            if (hintBtn) hintBtn.addEventListener('click', getHint);
+            const reportBtn = document.getElementById('report-question-btn');
+            if (reportBtn) reportBtn.addEventListener('click', reportQuestion);
+           
+            // Keyboard navigation
+            document.removeEventListener('keydown', handleKeydown);
+            document.addEventListener('keydown', handleKeydown);
+           
+            loadPreferences();
+            loadQuizHistory();
+            updateBookmarksCount();
+            } catch (e) {
+                console.error('Error initializing quiz:', e);
+            }
+        }
+        function handleKeydown(e) {
+            if (e.key === 'ArrowRight') {
+                goToNextQuestion();
+            } else if (e.key === 'ArrowLeft') {
+                goToPreviousQuestion();
+            } else if (e.key.toLowerCase() === 'a' || e.key === '1') {
+                selectOption(0);
+            } else if (e.key.toLowerCase() === 'b' || e.key === '2') {
+                selectOption(1);
+            } else if (e.key.toLowerCase() === 'c' || e.key === '3') {
+                selectOption(2);
+            } else if (e.key.toLowerCase() === 'd' || e.key === '4') {
+                selectOption(3);
+            } else if (e.key === 'Enter') {
+                if (showExplanationBtn && showExplanationBtn.style.display !== 'none') {
+                    toggleExplanation();
+                }
+            } else if (e.key === 's' || e.key === '5') {
+                skipQuestion();
+            }
+        }
+        function loadQuestion() {
+            if (!questionElement || !optionsContainer) return; // Safety check
+            const question = questions[currentQuestionIndex];
+            if (!question) return;
+            questionElement.textContent = question.question;
+            currentQuestionElement.textContent = currentQuestionIndex + 1;
+            if (categoryTag) categoryTag.textContent = question.category || 'Unknown';
+           
+            // Update difficulty tag with indicator
+            if (difficultyTag) {
+                difficultyTag.innerHTML = `
+                    <span class="difficulty-indicator difficulty-${question.difficulty.toLowerCase().replace(' ', '-')}"></span>
+                    ${question.difficulty}
+                `;
+            }
+           
+            if (categoryElement) categoryElement.textContent = question.category || 'All';
+           
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            if (progressBar) progressBar.style.width = `${progress}%`;
+           
+            // Update progress level for appearance change
+            let progressLevel = 0;
+            if (progress > 75) progressLevel = 75;
+            else if (progress > 50) progressLevel = 50;
+            else if (progress > 25) progressLevel = 25;
+            body.setAttribute('data-progress', progressLevel);
+           
+            optionsContainer.innerHTML = '';
+           
+            const optionLetters = ['A', 'B', 'C', 'D'];
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.classList.add('option', 'fade-in');
+                optionElement.setAttribute('role', 'button');
+                optionElement.setAttribute('tabindex', '0');
+                optionElement.setAttribute('aria-label', `Option ${optionLetters[index]}: ${option}`);
+               
+                const optionLetter = document.createElement('div');
+                optionLetter.classList.add('option-letter');
+                optionLetter.textContent = optionLetters[index];
+               
+                const optionText = document.createElement('div');
+                optionText.classList.add('option-text');
+                optionText.textContent = option;
+               
+                optionElement.appendChild(optionLetter);
+                optionElement.appendChild(optionText);
+               
+                optionElement.addEventListener('click', () => selectOption(index));
+                optionElement.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        selectOption(index);
+                    }
+                });
+               
+                optionsContainer.appendChild(optionElement);
+            });
+           
+            if (prevButton) prevButton.disabled = currentQuestionIndex === 0;
+            if (nextButton) nextButton.textContent = currentQuestionIndex === questions.length - 1 ? 'Finish Quiz' : 'Next Question';
+            if (nextButton) nextButton.innerHTML = currentQuestionIndex === questions.length - 1 ? 'Finish Quiz <i class="fas fa-flag-checkered"></i>' : 'Next Question <i class="fas fa-arrow-right"></i>';
+           
+            if (feedbackElement) feedbackElement.style.display = 'none';
+            if (showExplanationBtn) showExplanationBtn.style.display = 'none';
+            if (explanationContainer) explanationContainer.classList.remove('expanded');
+           
+            selectedOption = null;
+           
+            // Show quick actions button
+            if (quickActionsBtn) quickActionsBtn.style.display = 'flex';
+           
+            // If the question was previously answered or skipped, display the feedback
+            if (answers[currentQuestionIndex]) {
+                const ans = answers[currentQuestionIndex];
+                const options = document.querySelectorAll('.option');
+                if (feedbackElement) feedbackElement.style.display = 'flex';
+                if (showExplanationBtn) showExplanationBtn.style.display = 'block';
+                if (explanationTextElement) explanationTextElement.textContent = question.explanation;
+                options.forEach(option => option.style.pointerEvents = 'none');
+               
+                if (ans.selected === 'Skipped') {
+                    selectedOption = null;
+                    if (feedbackElement) {
+                        feedbackElement.classList.add('skipped');
+                        feedbackElement.innerHTML = '<i class="fas fa-forward feedback-icon"></i><div class="feedback-text">Skipped. The right answer is highlighted.</div>';
+                    }
+                    options[question.answer].classList.add('correct');
+                } else {
+                    const optIndex = question.options.findIndex(opt => opt === ans.selected);
+                    if (optIndex !== -1) {
+                        selectedOption = optIndex;
+                        options[optIndex].classList.add('selected');
+                        if (ans.isCorrect) {
+                            if (feedbackElement) {
+                                feedbackElement.classList.add('correct');
+                                feedbackElement.innerHTML = '<i class="fas fa-check-circle feedback-icon"></i><div class="feedback-text">Correct! Well done.</div>';
+                            }
+                        } else {
+                            if (feedbackElement) {
+                                feedbackElement.classList.add('incorrect');
+                                feedbackElement.innerHTML = '<i class="fas fa-times-circle feedback-icon"></i><div class="feedback-text">Incorrect. The right answer is highlighted.</div>';
+                            }
+                            options[question.answer].classList.add('correct');
+                            options[optIndex].classList.add('incorrect'); // Highlight selected as incorrect
+                        }
+                    }
+                }
+            }
+           
+            updateBookmarkStatus();
+        }
+        function selectOption(index) {
+            if (selectedOption !== null || answers[currentQuestionIndex]) return;
+           
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => option.classList.remove('selected', 'incorrect'));
+            options[index].classList.add('selected');
+            selectedOption = index;
+           
+            const question = questions[currentQuestionIndex];
+            const isCorrect = index === question.answer;
+           
+            if (feedbackElement) feedbackElement.style.display = 'flex';
+            if (isCorrect) {
+                if (feedbackElement) {
+                    feedbackElement.classList.remove('incorrect');
+                    feedbackElement.classList.add('correct');
+                    feedbackElement.innerHTML = '<i class="fas fa-check-circle feedback-icon"></i><div class="feedback-text">Correct! Well done.</div>';
+                }
+                score += getScoreForDifficulty(question.difficulty);
+                streak++;
+                playSound('correct');
+               
+                // Show confetti for correct answers on hard questions
+                if (question.difficulty === 'Hard' || question.difficulty === 'Very Hard') {
+                    createConfetti();
+                }
+            } else {
+                if (feedbackElement) {
+                    feedbackElement.classList.remove('correct');
+                    feedbackElement.classList.add('incorrect');
+                    feedbackElement.innerHTML = '<i class="fas fa-times-circle feedback-icon"></i><div class="feedback-text">Incorrect. The right answer is highlighted.</div>';
+                }
+                options[question.answer].classList.add('correct');
+                options[index].classList.add('incorrect'); // Highlight selected as incorrect
+                streak = 0;
+                playSound('incorrect');
+            }
+           
+            if (scoreElement) scoreElement.textContent = score;
+            if (streakElement) streakElement.textContent = streak;
+           
+            if (explanationTextElement) explanationTextElement.textContent = question.explanation;
+            if (showExplanationBtn) showExplanationBtn.style.display = 'block';
+           
+            answers[currentQuestionIndex] = {
+                question: question.question,
+                selected: question.options[index],
+                correct: question.options[question.answer],
+                isCorrect: isCorrect,
+                explanation: question.explanation,
+                category: question.category,
+                difficulty: question.difficulty
+            };
+           
+            updatePerformanceMetrics(isCorrect, question);
+           
+            options.forEach(option => option.style.pointerEvents = 'none');
+        }
+        function skipQuestion() {
+            if (answers[currentQuestionIndex]) return;
+           
+            const question = questions[currentQuestionIndex];
+            const options = document.querySelectorAll('.option');
+           
+            if (feedbackElement) {
+                feedbackElement.style.display = 'flex';
+                feedbackElement.classList.add('skipped');
+                feedbackElement.innerHTML = '<i class="fas fa-forward feedback-icon"></i><div class="feedback-text">Skipped. The right answer is highlighted.</div>';
+            }
+           
+            options[question.answer].classList.add('correct');
+            if (showExplanationBtn) showExplanationBtn.style.display = 'block';
+            if (explanationTextElement) explanationTextElement.textContent = question.explanation;
+           
+            answers[currentQuestionIndex] = {
+                question: question.question,
+                selected: 'Skipped',
+                correct: question.options[question.answer],
+                isCorrect: false,
+                explanation: question.explanation,
+                category: question.category,
+                difficulty: question.difficulty
+            };
+           
+            updatePerformanceMetrics(false, question);
+            streak = 0;
+            if (streakElement) streakElement.textContent = streak;
+           
+            options.forEach(option => option.style.pointerEvents = 'none');
+        }
+        function maybeHandleSkip() {
+            if (!answers[currentQuestionIndex] && selectedOption === null) {
+                skipQuestion();
+            }
+        }
+        function toggleExplanation() {
+            if (!explanationContainer) return;
+            explanationContainer.classList.toggle('expanded');
+            if (!showExplanationBtn) return;
+            showExplanationBtn.innerHTML = explanationContainer.classList.contains('expanded') ?
+                '<i class="fas fa-info-circle"></i> Hide Explanation' :
+                '<i class="fas fa-info-circle"></i> Show Explanation';
+        }
+        function getScoreForDifficulty(difficulty) {
+            switch (difficulty) {
+                case 'Easy': return 5;
+                case 'Medium': return 10;
+                case 'Hard': return 15;
+                case 'Very Hard': return 20;
+                default: return 10;
+            }
+        }
+        function updatePerformanceMetrics(isCorrect, question) {
+            performanceMetrics.totalQuestions++;
+            performanceMetrics.totalTime += timeElapsed;
+            if (isCorrect) performanceMetrics.totalCorrect++;
+           
+            performanceMetrics.categories[question.category] = performanceMetrics.categories[question.category] || { correct: 0, total: 0 };
+            performanceMetrics.categories[question.category].total++;
+            if (isCorrect) performanceMetrics.categories[question.category].correct++;
+           
+            if (!performanceMetrics.difficulties[question.difficulty]) performanceMetrics.difficulties[question.difficulty] = 0;
+            if (isCorrect) performanceMetrics.difficulties[question.difficulty]++;
+        }
+        function toggleBookmark() {
+            if (!bookmarkBtn) return;
+            const questionId = questions[currentQuestionIndex].id;
+            const index = bookmarkedQuestions.indexOf(questionId);
+            if (index === -1) {
+                bookmarkedQuestions.push(questionId);
+                bookmarkBtn.classList.add('bookmarked');
+                playSound('bookmark');
+            } else {
+                bookmarkedQuestions.splice(index, 1);
+                bookmarkBtn.classList.remove('bookmarked');
+            }
+            updateBookmarksCount();
+            saveBookmarks();
+        }
+        function updateBookmarkStatus() {
+            if (!bookmarkBtn) return;
+            const questionId = questions[currentQuestionIndex].id;
+            bookmarkBtn.classList.toggle('bookmarked', bookmarkedQuestions.includes(questionId));
+        }
+        function updateBookmarksCount() {
+            if (!bookmarksCount) return;
+            bookmarksCount.textContent = bookmarkedQuestions.length;
+        }
+        function goToNextQuestion() {
+            maybeHandleSkip();
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                body.setAttribute('data-progress', '100');
+                showResults();
+                saveQuizHistory();
+            }
+        }
+        function goToPreviousQuestion() {
+            maybeHandleSkip();
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        }
+        function startTimer() {
+            timeStarted = new Date();
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+        function updateTimer() {
+            timeElapsed++;
+           
+            const minutes = Math.floor(timeElapsed / 60).toString().padStart(2, '0');
+            const seconds = (timeElapsed % 60).toString().padStart(2, '0');
+            if (timerElement) timerElement.textContent = `${minutes}:${seconds}`;
+           
+            // Optional: Add warning color for long durations (e.g., after 5 minutes)
+            if (timeElapsed >= 300) {
+                if (timerElement) {
+                    timerElement.style.color = 'var(--danger)';
+                    timerElement.classList.add('pulse');
+                }
+            } else {
+                if (timerElement) {
+                    timerElement.style.color = 'var(--primary)';
+                    timerElement.classList.remove('pulse');
+                }
+            }
+        }
+        function showResults() {
+            if (timerInterval) clearInterval(timerInterval);
+            if (quickActionsBtn) quickActionsBtn.style.display = 'none';
+           
+            const quizContainer = document.querySelector('.quiz-container');
+            if (!quizContainer) return;
+            const maxScore = questions.reduce((sum, q) => sum + getScoreForDifficulty(q.difficulty), 0);
+            const percentage = ((score / maxScore) * 100).toFixed(1);
+            const accuracy = ((performanceMetrics.totalCorrect / performanceMetrics.totalQuestions) * 100).toFixed(1);
+            const avgTime = Math.round(performanceMetrics.totalTime / performanceMetrics.totalQuestions);
+           
+            quizContainer.innerHTML = `
+                <div class="results-container">
+                    <h2 class="quiz-title">Quiz Completed!</h2>
+                    <p class="quiz-subtitle">You've finished the MED QUIZ</p>
+                   
+                    <div class="score-circle" style="--p: ${percentage}%">
+                        <div class="score-text">
+                            <div class="score-value">${score}</div>
+                            <div class="score-label">Points</div>
+                        </div>
+                    </div>
+                   
+                    <div class="results-stats">
+                        <div class="result-stat">
+                            <div class="result-stat-value">${accuracy}%</div>
+                            <div class="result-stat-label">Accuracy</div>
+                        </div>
+                        <div class="result-stat">
+                            <div class="result-stat-value">${timeElapsed}s</div>
+                            <div class="result-stat-label">Time Taken</div>
+                        </div>
+                        <div class="result-stat">
+                            <div class="result-stat-value">${streak}</div>
+                            <div class="result-stat-label">Best Streak</div>
+                        </div>
+                        <div class="result-stat">
+                            <div class="result-stat-value">${bookmarkedQuestions.length}</div>
+                            <div class="result-stat-label">Bookmarked</div>
+                        </div>
+                    </div>
+                   
+                    <div class="review-section">
+                        <h3 class="review-title">Performance Analytics</h3>
+                        <div class="review-item">
+                            <div class="review-answer">Average Time Per Question: ${avgTime}s</div>
+                            <div class="review-answer">Difficulty Performance:
+                                Easy: ${performanceMetrics.difficulties.Easy || 0},
+                                Medium: ${performanceMetrics.difficulties.Medium || 0},
+                                Hard: ${performanceMetrics.difficulties.Hard || 0},
+                                Very Hard: ${performanceMetrics.difficulties['Very Hard'] || 0}
+                            </div>
+                        </div>
+                       
+                        <h3 class="review-title">Review Your Answers</h3>
+                        ${answers.map((answer, index) => `
+                            <div class="review-item ${answer.isCorrect ? 'correct' : answer.selected === 'Skipped' ? 'skipped' : 'incorrect'}">
+                                <div class="review-question">Q${index + 1}: ${answer.question} (${answer.category} - ${answer.difficulty})</div>
+                                <div class="review-answer">Your Answer: ${answer.selected}</div>
+                                <div class="review-answer">Correct Answer: ${answer.correct}</div>
+                                <div class="review-explanation">${answer.explanation}</div>
+                            </div>
+                        `).join('')}
+                       
+                        ${bookmarkedQuestions.length > 0 ? `
+                            <h3 class="review-title">Bookmarked Questions</h3>
+                            ${bookmarkedQuestions.map(qid => {
+                                const question = questions.find(q => q.id === qid);
+                                if (!question) return '';
+                                return `
+                                    <div class="review-item">
+                                        <div class="review-question">${question.question} (${question.category} - ${question.difficulty})</div>
+                                        <div class="review-answer">Correct Answer: ${question.correctAnswer}</div>
+                                        <div class="review-explanation">${question.explanation}</div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        ` : ''}
+                    </div>
+                   
+                    <button class="btn btn-primary mt-4" id="restart-btn">
+                        <i class="fas fa-redo"></i> Try Again
+                    </button>
+                    <button class="btn btn-secondary mt-2" id="review-wrong-btn">
+                        <i class="fas fa-search"></i> Review Incorrect Answers
+                    </button>
+                </div>
+            `;
+           
+            // Add event listeners after DOM update
+            const restartBtn = document.getElementById('restart-btn');
+            const reviewWrongBtn = document.getElementById('review-wrong-btn');
+            if (restartBtn) restartBtn.addEventListener('click', restartQuiz);
+            if (reviewWrongBtn) reviewWrongBtn.addEventListener('click', reviewWrongAnswers);
+        }
+        function reviewWrongAnswers() {
+            const wrongAnswers = answers.filter(answer => !answer.isCorrect && answer.selected !== 'Skipped');
+           
+            if (wrongAnswers.length === 0) {
+                alert("You don't have any incorrect answers to review!");
+                return;
+            }
+           
+            // Filter questions to only include wrong answers
+            const wrongQuestions = questions.filter((q, index) =>
+                answers[index] && !answers[index].isCorrect && answers[index].selected !== 'Skipped'
+            );
+           
+            // Reset quiz state for review mode
+            questions.length = 0; // Clear array
+            questions.push(...wrongQuestions); // Add wrong ones
+            currentQuestionIndex = 0;
+            score = 0;
+            streak = 0;
+            timeElapsed = 0;
+            answers = [];
+            selectedOption = null;
+            performanceMetrics = {
+                categories: {},
+                difficulties: { Easy: 0, Medium: 0, Hard: 0, "Very Hard": 0 },
+                totalCorrect: 0,
+                totalQuestions: 0,
+                totalTime: 0
+            };
+           
+            // Clear any existing timer
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+           
+            body.setAttribute('data-progress', '0');
+           
+            // Rebuild HTML with dynamic category (fix hardcoded "Neuro")
+            const quizContainer = document.querySelector('.quiz-container');
+            if (quizContainer) {
+                quizContainer.innerHTML = `
+                    <div class="quiz-header">
+                        <div>
+                            <h1 class="quiz-title">MED QUIZ</h1>
+                            <p class="quiz-subtitle">Reviewing Incorrect Answers</p>
+                        </div>
+                        <div class="stats-container">
+                            <div class="stat">
+                                <span class="stat-value" id="score">0</span>
+                                <span class="stat-label">Score</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-value" id="timer">00:00</span>
+                                <span class="stat-label">Time</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-value" id="streak">0</span>
+                                <span class="stat-label">Streak</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-value" id="category">Review</span>
+                                <span class="stat-label">Mode</span>
+                            </div>
+                        </div>
+                    </div>
+                  
+                    <div class="progress-container">
+                        <div class="progress-bar" id="progress-bar" style="width: 10%"></div>
+                    </div>
+                    <div class="question-meta">
+                        <div class="question-tags">
+                            <span class="tag" id="category-tag">Biochemistry</span>
+                            <span class="tag" id="difficulty-tag">
+                                <span class="difficulty-indicator difficulty-medium"></span>
+                                Medium
+                            </span>
+                        </div>
+                        <button class="bookmark-btn" id="bookmark-btn" aria-label="Bookmark question">
+                            <i class="fas fa-bookmark"></i>
+                        </button>
+                    </div>
+                    <div class="question-number">Question <span id="current-question">1</span> of <span id="total-questions">${wrongQuestions.length}</span></div>
+                    <div class="question-text" id="question"></div>
+                    <div class="options-grid" id="options-container"></div>
+                    <div class="feedback correct" id="feedback" style="display: none;">
+                        <i class="fas fa-check-circle feedback-icon"></i>
+                        <div class="feedback-text">Correct! Well done.</div>
+                    </div>
+                    <button class="btn btn-secondary" id="show-explanation-btn" style="display: none;">
+                        <i class="fas fa-info-circle"></i> Show Explanation
+                    </button>
+                    <div class="explanation-container" id="explanation-container">
+                        <div class="explanation">
+                            <div class="explanation-title">Explanation:</div>
+                            <div id="explanation-text"></div>
+                        </div>
+                    </div>
+                    <div class="navigation">
+                        <button class="btn btn-secondary" id="prev-btn" disabled>
+                            <i class="fas fa-arrow-left"></i> Previous
+                        </button>
+                        <button class="btn btn-primary" id="next-btn">
+                            Next Question <i class="fas fa-arrow-right"></i>
+                        </button>
+                        <button class="btn btn-danger" id="skip-btn">
+                            <i class="fas fa-forward"></i> Skip
+                        </button>
+                    </div>
+                `;
+            }
+           
+            // Reinitialize after DOM update
+            initQuiz();
+        }
+        function restartQuiz() {
+            // Reset quiz state
+            currentQuestionIndex = 0;
+            score = 0;
+            streak = 0;
+            timeElapsed = 0;
+            answers = [];
+            selectedOption = null;
+            performanceMetrics = {
+                categories: {},
+                difficulties: { Easy: 0, Medium: 0, Hard: 0, "Very Hard": 0 },
+                totalCorrect: 0,
+                totalQuestions: 0,
+                totalTime: 0
+            };
+           
+            // Reset questions to original set (use length = 0 for cross-browser)
+            questions.length = 0;
+            questions.push(...originalQuestions);
+           
+            // Clear any existing timer
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+           
+            body.setAttribute('data-progress', '0');
+           
+            // Rebuild HTML
+            const quizContainer = document.querySelector('.quiz-container');
+            if (quizContainer) {
+                quizContainer.innerHTML = `
+                    <div class="quiz-header">
+                        <div>
+                            <h1 class="quiz-title">MED QUIZ</h1>
+                            <p class="quiz-subtitle">Test your medical knowledge</p>
+                        </div>
+                        <div class="stats-container">
+                            <div class="stat">
+                                <span class="stat-value" id="score">0</span>
+                                <span class="stat-label">Score</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-value" id="timer">00:00</span>
+                                <span class="stat-label">Time</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-value" id="streak">0</span>
+                                <span class="stat-label">Streak</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-value" id="category">All</span>
+                                <span class="stat-label">Category</span>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <div class="progress-container">
+                        <div class="progress-bar" id="progress-bar" style="width: 10%"></div>
+                    </div>
+                    <div class="question-meta">
+                        <div class="question-tags">
+                            <span class="tag" id="category-tag">Biochemistry</span>
+                            <span class="tag" id="difficulty-tag">
+                                <span class="difficulty-indicator difficulty-medium"></span>
+                                Medium
+                            </span>
+                        </div>
+                        <button class="bookmark-btn" id="bookmark-btn" aria-label="Bookmark question">
+                            <i class="fas fa-bookmark"></i>
+                        </button>
+                    </div>
+                    <div class="question-number">Question <span id="current-question">1</span> of <span id="total-questions">15</span></div>
+                    <div class="question-text" id="question"></div>
+                    <div class="options-grid" id="options-container"></div>
+                    <div class="feedback correct" id="feedback" style="display: none;">
+                        <i class="fas fa-check-circle feedback-icon"></i>
+                        <div class="feedback-text">Correct! Well done.</div>
+                    </div>
+                    <button class="btn btn-secondary" id="show-explanation-btn" style="display: none;">
+                        <i class="fas fa-info-circle"></i> Show Explanation
+                    </button>
+                    <div class="explanation-container" id="explanation-container">
+                        <div class="explanation">
+                            <div class="explanation-title">Explanation:</div>
+                            <div id="explanation-text"></div>
+                        </div>
+                    </div>
+                    <div class="navigation">
+                        <button class="btn btn-secondary" id="prev-btn" disabled>
+                            <i class="fas fa-arrow-left"></i> Previous
+                        </button>
+                        <button class="btn btn-primary" id="next-btn">
+                            Next Question <i class="fas fa-arrow-right"></i>
+                        </button>
+                        <button class="btn btn-danger" id="skip-btn">
+                            <i class="fas fa-forward"></i> Skip
+                        </button>
+                    </div>
+                `;
+            }
+           
+            // Reinitialize after DOM update
+            initQuiz();
+        }
+        function markForReview() {
+            toggleBookmark();
+            hideQuickActionsModal();
+        }
+        function viewExplanation() {
+            if (!answers[currentQuestionIndex]) return;
+            toggleExplanation();
+            hideQuickActionsModal();
+        }
+        function getHint() {
+            if (answers[currentQuestionIndex]) return;
+            const wrongOptions = Array.from(document.querySelectorAll('.option')).filter((opt, idx) => idx !== questions[currentQuestionIndex].answer);
+            const randomWrong = wrongOptions[Math.floor(Math.random() * wrongOptions.length)];
+            randomWrong.style.opacity = '0.5';
+            randomWrong.style.pointerEvents = 'none';
+            const hintText = document.createElement('div');
+            hintText.textContent = 'Hint: One wrong option eliminated!';
+            hintText.classList.add('feedback', 'skipped');
+            optionsContainer.before(hintText);
+            setTimeout(() => hintText.remove(), 3000);
+            hideQuickActionsModal();
+        }
+        function reportQuestion() {
+            alert('Question reported. Thank you for your feedback!');
+            hideQuickActionsModal();
+        }
+        function toggleTheme() {
+            if (!body || !themeToggle) return;
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' :
+                            currentTheme === 'light' ? 'minimal' : 'dark';
+           
+            body.setAttribute('data-theme', newTheme);
+            themeToggle.innerHTML = newTheme === 'dark' ? '<i class="fas fa-moon"></i>' :
+                                  newTheme === 'light' ? '<i class="fas fa-sun"></i>' :
+                                  '<i class="fas fa-paint-brush"></i>';
+           
+            localStorage.setItem('theme', newTheme);
+        }
+        function toggleSound() {
+            if (!soundToggle) return;
+            soundsEnabled = !soundsEnabled;
+            soundToggle.innerHTML = soundsEnabled ? '<i class="fas fa-volume-up"></i>' : '<i class="fas fa-volume-mute"></i>';
+           
+            localStorage.setItem('soundsEnabled', soundsEnabled);
+        }
+        function toggleStudyMode() {
+            if (!studyModeToggle) return;
+            studyMode = studyModeToggle.checked;
+            if (showExplanationBtn && explanationContainer) {
+                if (studyMode) {
+                    showExplanationBtn.style.display = 'block';
+                    explanationContainer.classList.add('expanded');
+                    showExplanationBtn.innerHTML = '<i class="fas fa-info-circle"></i> Hide Explanation';
+                } else {
+                    showExplanationBtn.style.display = 'none';
+                    explanationContainer.classList.remove('expanded');
+                }
+            }
+            localStorage.setItem('studyMode', studyMode);
+        }
+        function playSound(type) {
+            if (!soundsEnabled) return;
+           
+            // Enhanced Web Audio for better sounds (reward chime for correct, buzz for incorrect)
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+               
+                if (type === 'correct') {
+                    // Rising chime for reward
+                    const notes = [523.25, 659.25, 783.99]; // C5, E5, G5
+                    notes.forEach((freq, i) => {
+                        setTimeout(() => {
+                            const oscillator = audioContext.createOscillator();
+                            const gainNode = audioContext.createGain();
+                            oscillator.connect(gainNode);
+                            gainNode.connect(audioContext.destination);
+                            oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
+                            oscillator.type = 'sine';
+                            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                            oscillator.start(audioContext.currentTime + i * 0.1);
+                            oscillator.stop(audioContext.currentTime + i * 0.1 + 0.3);
+                        }, i * 100);
+                    });
+                } else if (type === 'incorrect') {
+                    // Low buzz for wrong
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+                    oscillator.type = 'sawtooth';
+                    gainNode.gain.setValueAtTime(0.05, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+                    oscillator.start();
+                    oscillator.stop(audioContext.currentTime + 0.4);
+                } else if (type === 'bookmark') {
+                    // Short ding
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                    oscillator.type = 'triangle';
+                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                    oscillator.start();
+                    oscillator.stop(audioContext.currentTime + 0.2);
+                }
+            } catch (e) {
+                console.log('Web Audio API not supported');
+            }
+        }
+        function createConfetti() {
+            if (!confettiContainer) return;
+            const colors = ['#4361ee', '#4cc9f0', '#f72585', '#f9c74f', '#7209b7'];
+           
+            for (let i = 0; i < 60; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.width = (6 + Math.random() * 12) + 'px';
+                confetti.style.height = (6 + Math.random() * 12) + 'px';
+                confetti.style.animation = `confettiFall ${1.5 + Math.random() * 2.5}s linear forwards`;
+                confettiContainer.appendChild(confetti);
+               
+                // Remove confetti after animation
+                setTimeout(() => {
+                    if (confetti.parentNode) confetti.remove();
+                }, 4000);
+            }
+        }
+        function showStatsModal() {
+            if (!statsModal) return;
+            // Calculate stats
+            const totalQuestions = performanceMetrics.totalQuestions;
+            const correctAnswers = performanceMetrics.totalCorrect;
+            const accuracy = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
+            const avgTime = totalQuestions > 0 ? Math.round(performanceMetrics.totalTime / totalQuestions) : 0;
+           
+            // Update modal stats safely
+            const modalTotal = document.getElementById('modal-total-questions');
+            const modalCorrect = document.getElementById('modal-correct-answers');
+            const modalAccuracy = document.getElementById('modal-accuracy');
+            const modalAvgTime = document.getElementById('modal-avg-time');
+            if (modalTotal) modalTotal.textContent = totalQuestions;
+            if (modalCorrect) modalCorrect.textContent = correctAnswers;
+            if (modalAccuracy) modalAccuracy.textContent = `${accuracy}%`;
+            if (modalAvgTime) modalAvgTime.textContent = `${avgTime}s`;
+           
+            // Update category stats
+            const categoryStatsContainer = document.getElementById('category-stats');
+            if (categoryStatsContainer) {
+                categoryStatsContainer.innerHTML = `
+                    <table style="width:100%; border-collapse: collapse;">
+                        <thead>
+                            <tr><th>Category</th><th>Accuracy</th><th>Correct/Total</th></tr>
+                        </thead>
+                        <tbody>
+                            ${Object.entries(performanceMetrics.categories).map(([category, stats]) => {
+                                const categoryAccuracy = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
+                                return `<tr><td>${category}</td><td>${categoryAccuracy}%</td><td>${stats.correct}/${stats.total}</td></tr>`;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                `;
+            }
+           
+            // Update difficulty stats (fix calculation - use per-difficulty total)
+            const difficultyStatsContainer = document.getElementById('difficulty-stats');
+            if (difficultyStatsContainer) {
+                difficultyStatsContainer.innerHTML = `
+                    <table style="width:100%; border-collapse: collapse;">
+                        <thead>
+                            <tr><th>Difficulty</th><th>Accuracy</th><th>Correct/Total</th></tr>
+                        </thead>
+                        <tbody>
+                            ${Object.entries(performanceMetrics.difficulties).map(([difficulty, correctCount]) => {
+                                const diffTotals = {};
+                                answers.forEach(ans => {
+                                    if (ans.difficulty && ans.isCorrect !== undefined) {
+                                        if (!diffTotals[ans.difficulty]) diffTotals[ans.difficulty] = { correct: 0, total: 0 };
+                                        diffTotals[ans.difficulty].total++;
+                                        if (ans.isCorrect) diffTotals[ans.difficulty].correct++;
+                                    }
+                                });
+                                const totalForDifficulty = diffTotals[difficulty] ? diffTotals[difficulty].total : 0;
+                                if (totalForDifficulty > 0) {
+                                    const difficultyAccuracy = Math.round((correctCount / totalForDifficulty) * 100);
+                                    return `<tr><td>${difficulty}</td><td>${difficultyAccuracy}%</td><td>${correctCount}/${totalForDifficulty}</td></tr>`;
+                                }
+                                return '';
+                            }).join('')}
+                        </tbody>
+                    </table>
+                `;
+            }
+           
+            // Update history
+            const historyContainer = document.getElementById('history-stats');
+            if (historyContainer) {
+              if (quizHistory.length === 0) {
+                historyContainer.innerHTML = '<p>No history yet.</p>';
+              } else {
+                historyContainer.innerHTML = `
+                  <table style="width:100%; border-collapse: collapse;">
+                    <thead>
+                      <tr><th>Date</th><th>Score</th><th>Percentage</th><th>Time</th><th>Streak</th></tr>
+                    </thead>
+                    <tbody>
+                      ${quizHistory.map(h => {
+                        const date = new Date(h.timestamp).toLocaleString();
+                        return `<tr><td>${date}</td><td>${h.score}</td><td>${h.percentage}%</td><td>${h.timeSpent}s</td><td>${h.streak}</td></tr>`;
+                      }).join('')}
+                    </tbody>
+                  </table>
+                `;
+              }
+            }
+           
+            statsModal.classList.add('active');
+        }
+        function hideStatsModal() {
+            if (statsModal) statsModal.classList.remove('active');
+        }
+        function showQuickActionsModal() {
+            if (quickActionsModal) quickActionsModal.classList.add('active');
+        }
+        function hideQuickActionsModal() {
+            if (quickActionsModal) quickActionsModal.classList.remove('active');
+        }
+        function loadPreferences() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme && body) {
+                body.setAttribute('data-theme', savedTheme);
+                if (themeToggle) {
+                    themeToggle.innerHTML = savedTheme === 'dark' ? '<i class="fas fa-moon"></i>' :
+                                          savedTheme === 'light' ? '<i class="fas fa-sun"></i>' :
+                                          '<i class="fas fa-paint-brush"></i>';
+                }
+            }
+           
+            const savedSounds = localStorage.getItem('soundsEnabled');
+            if (savedSounds !== null) {
+                soundsEnabled = savedSounds === 'true';
+                if (soundToggle) {
+                    soundToggle.innerHTML = soundsEnabled ? '<i class="fas fa-volume-up"></i>' : '<i class="fas fa-volume-mute"></i>';
+                }
+            }
+           
+            const savedStudyMode = localStorage.getItem('studyMode');
+            if (savedStudyMode !== null) {
+                studyMode = savedStudyMode === 'true';
+                if (studyModeToggle) studyModeToggle.checked = studyMode;
+                if (studyMode && showExplanationBtn && explanationContainer) {
+                    showExplanationBtn.style.display = 'block';
+                    explanationContainer.classList.add('expanded');
+                    showExplanationBtn.innerHTML = '<i class="fas fa-info-circle"></i> Hide Explanation';
+                }
+            }
+        }
+        function saveBookmarks() {
+            localStorage.setItem('bookmarkedQuestions', JSON.stringify(bookmarkedQuestions));
+        }
+        function loadQuizHistory() {
+            const saved = localStorage.getItem('quizHistory');
+            if (saved) {
+                try {
+                    quizHistory = JSON.parse(saved);
+                } catch (e) {
+                    quizHistory = [];
+                }
+            }
+            loadBookmarks();
+        }
+        function saveQuizHistory() {
+            const maxScore = questions.reduce((sum, q) => sum + getScoreForDifficulty(q.difficulty), 0);
+            quizHistory.push({
+                timestamp: new Date().toISOString(),
+                score: score,
+                percentage: ((score / maxScore) * 100).toFixed(1),
+                timeSpent: timeElapsed,
+                streak: streak,
+                answers: answers,
+                performanceMetrics: performanceMetrics
+            });
+            localStorage.setItem('quizHistory', JSON.stringify(quizHistory));
+        }
+        function loadBookmarks() {
+            const saved = localStorage.getItem('bookmarkedQuestions');
+            if (saved) {
+                try {
+                    bookmarkedQuestions = JSON.parse(saved);
+                } catch (e) {
+                    bookmarkedQuestions = [];
+                }
+            }
+        }
+        // Initialize on DOM load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initQuiz);
+        } else {
+            initQuiz();
+        }
+    </script>
+</body>
+</html>

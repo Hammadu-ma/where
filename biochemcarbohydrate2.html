@@ -1,0 +1,1891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>    MED QUIZ Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --primary-dark: #3a0ca3;
+            --secondary: #f72585;
+            --success: #4cc9f0;
+            --warning: #f9c74f;
+            --danger: #f94144;
+            --info: #577590;
+            --gray-50: #f8f9fa;
+            --gray-100: #f1f3f5;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --gray-500: #adb5bd;
+            --gray-600: #868e96;
+            --gray-700: #495057;
+            --gray-800: #343a40;
+            --gray-900: #212529;
+            --bg-primary: var(--gray-900);
+            --bg-secondary: #1a1d21;
+            --bg-tertiary: #2c303a;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-tertiary: rgba(255, 255, 255, 0.5);
+            --card-bg: rgba(35, 39, 47, 0.95);
+            --card-border: #4cc9f0; /* Default: Soft blue for easy */
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15), 0 5px 10px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.2);
+            --transition-base: all 0.2s ease-in-out;
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --radius-2xl: 24px;
+            --header-height: 70px;
+            --max-width: 900px;
+            --side-padding: 1.5rem;
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f5f7fa;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #eef2f6;
+            --text-primary: #1a1d21;
+            --text-secondary: rgba(26, 29, 33, 0.7);
+            --text-tertiary: rgba(26, 29, 33, 0.5);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-border: #4cc9f0; /* Soft blue for light theme */
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.08), 0 5px 10px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        [data-theme="minimal"] {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f1f5f9;
+            --text-primary: #0f172a;
+            --text-secondary: #334155;
+            --text-tertiary: #64748b;
+            --card-bg: #ffffff;
+            --card-border: #4cc9f0; /* Soft blue for minimal theme */
+            --primary: #0ea5e9;
+            --primary-light: #38bdf8;
+            --primary-dark: #0284c7;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Border color progression based on quiz progress */
+        [data-progress="25"] {
+            --card-border: #2a9d8f; /* Deep teal for medium difficulty */
+        }
+
+        [data-progress="50"] {
+            --card-border: #7209b7; /* Rich purple for hard difficulty */
+        }
+
+        [data-progress="75"] {
+            --card-border: #f72585; /* Vibrant magenta for expert difficulty */
+        }
+
+        [data-progress="100"] {
+            --card-border: #f72585; /* Maintain magenta for completion */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition-base);
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        header {
+            height: var(--header-height);
+            background: var(--bg-secondary);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 var(--side-padding);
+            transition: var(--transition-base);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--primary);
+        }
+
+        .logo-icon {
+            font-size: 1.5rem;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .control-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: var(--transition-base);
+            position: relative;
+        }
+
+        .control-btn:hover {
+            background: var(--bg-tertiary);
+            transform: translateY(-2px);
+        }
+
+        .control-btn i {
+            font-size: 1.1rem;
+        }
+
+        .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--secondary);
+            color: white;
+            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        main {
+            flex: 1;
+            padding: 2rem var(--side-padding);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .quiz-container {
+            width: 100%;
+            max-width: var(--max-width);
+            background: var(--card-bg);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition-smooth);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(10px);
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .quiz-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .quiz-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .stats-container {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.5rem 0.75rem;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            min-width: 70px;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            margin: 1.5rem 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-light), var(--primary));
+            border-radius: var(--radius-lg);
+            transition: width 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            100% { left: 100%; }
+        }
+
+        .question-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-tags {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .tag {
+            padding: 0.25rem 0.75rem;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .question-number {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            line-height: 1.4;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            border: 1px solid transparent;
+        }
+
+        .option:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-light);
+        }
+
+        .option.selected {
+            background: rgba(67, 97, 238, 0.1);
+            border-color: var(--primary);
+            animation: pulse 0.3s ease;
+        }
+
+        .option.correct {
+            background: rgba(76, 201, 240, 0.1);
+            border-color: var(--success);
+        }
+
+        .option.incorrect {
+            background: rgba(249, 65, 68, 0.1);
+            border-color: var(--danger);
+        }
+
+        .option-letter {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-md);
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 1rem;
+            flex-shrink: 0;
+            transition: var(--transition-base);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .option.selected .option-letter {
+            background: var(--primary);
+            color: white;
+        }
+
+        .option.correct .option-letter {
+            background: var(--success);
+            color: white;
+        }
+
+        .option.incorrect .option-letter {
+            background: var(--danger);
+            color: white;
+        }
+
+        .option-text {
+            flex: 1;
+        }
+
+        .bookmark-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: var(--transition-base);
+        }
+
+        .bookmark-btn:hover {
+            color: var(--primary);
+        }
+
+        .bookmark-btn.bookmarked {
+            color: var(--warning);
+        }
+
+        .feedback {
+            padding: 1rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .feedback.correct {
+            background: rgba(76, 201, 240, 0.1);
+            color: var(--success);
+        }
+
+        .feedback.incorrect {
+            background: rgba(249, 65, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .feedback-icon {
+            font-size: 1.5rem;
+        }
+
+        .explanation-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+        .explanation-container.expanded {
+            max-height: 500px;
+        }
+
+        .explanation {
+            padding: 1.25rem;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-lg);
+            margin-top: 1rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .explanation-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-lg);
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition-base);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--bg-secondary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .results-container {
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: conic-gradient(var(--primary) 0% var(--p, 0%), var(--bg-tertiary) var(--p, 0%) 100%);
+            position: relative;
+        }
+
+        .score-circle::before {
+            content: '';
+            position: absolute;
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background: var(--card-bg);
+        }
+
+        .score-text {
+            position: relative;
+            z-index: 1;
+        }
+
+        .score-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .score-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .results-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .result-stat {
+            padding: 1rem;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-lg);
+        }
+
+        .result-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .result-stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .review-section {
+            margin-top: 2rem;
+            text-align: left;
+        }
+
+        .review-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .review-item {
+            padding: 1.25rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 1rem;
+            background: var(--bg-tertiary);
+        }
+
+        .review-item.correct {
+            border-left: 4px solid var(--success);
+        }
+
+        .review-item.incorrect {
+            border-left: 4px solid var(--danger);
+        }
+
+        .review-question {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .review-answer {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .review-explanation {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        footer {
+            padding: 1.5rem var(--side-padding);
+            background: var(--bg-secondary);
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        .pulse {
+            animation: pulse 0.5s ease;
+        }
+
+        .bounce-in {
+            animation: bounceIn 0.5s ease;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-1 { margin-top: 0.5rem; }
+        .mt-2 { margin-top: 1rem; }
+        .mt-3 { margin-top: 1.5rem; }
+        .mt-4 { margin-top: 2rem; }
+
+        @media (max-width: 768px) {
+            :root {
+                --side-padding: 1rem;
+                --header-height: 60px;
+            }
+
+            .quiz-container {
+                padding: 1.5rem;
+            }
+
+            .quiz-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .stats-container {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .results-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .score-circle {
+                width: 120px;
+                height: 120px;
+            }
+
+            .score-circle::before {
+                width: 100px;
+                height: 100px;
+            }
+
+            .score-value {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navigation {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .option {
+                padding: 0.75rem;
+            }
+
+            .option-letter {
+                width: 28px;
+                height: 28px;
+                margin-right: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body data-theme="dark" data-progress="0">
+    <header>
+        <div class="logo">
+            <i class="fas fa-brain logo-icon"></i>
+            <span>MedQuiz</span>
+        </div>
+        <div class="header-controls">
+            <button class="control-btn" id="theme-toggle" aria-label="Toggle theme">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button class="control-btn" id="sound-toggle" aria-label="Toggle sound">
+                <i class="fas fa-volume-up"></i>
+            </button>
+            <button class="control-btn" id="stats-btn" aria-label="View statistics">
+                <i class="fas fa-chart-line"></i>
+                <span class="badge" id="bookmarks-count">0</span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <div class="quiz-container">
+            <div class="quiz-header">
+                <div>
+                    <h1 class="quiz-title">    MED QUIZ</h1>
+                    <p class="quiz-subtitle">   Test your knowledge</p>
+                </div>
+                <div class="stats-container">
+                    <div class="stat">
+                        <span class="stat-value" id="score">0</span>
+                        <span class="stat-label">Score</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="timer">00:00</span>
+                        <span class="stat-label">Time</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="streak">0</span>
+                        <span class="stat-label">Streak</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="category">All</span>
+                        <span class="stat-label">Category</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar" style="width: 10%"></div>
+            </div>
+
+            <div class="question-meta">
+                <div class="question-tags">
+                    <span class="tag" id="category-tag">Neuro</span>
+                    <span class="tag" id="difficulty-tag">Medium</span>
+                </div>
+                <button class="bookmark-btn" id="bookmark-btn" aria-label="Bookmark question">
+                    <i class="fas fa-bookmark"></i>
+                </button>
+            </div>
+            <div class="question-number">Question <span id="current-question">1</span> of <span id="total-questions">10</span></div>
+            <div class="question-text" id="question">Which part of the brain is responsible for coordinating skeletal muscle contractions?</div>
+
+            <div class="options-grid" id="options-container">
+                <div class="option">
+                    <div class="option-letter">A</div>
+                    <div class="option-text">Cerebrum</div>
+                </div>
+                <div class="option">
+                    <div class="option-letter">B</div>
+                    <div class="option-text">Cerebellum</div>
+                </div>
+                <div class="option">
+                    <div class="option-letter">C</div>
+                    <div class="option-text">Pons</div>
+                </div>
+                <div class="option">
+                    <div class="option-letter">D</div>
+                    <div class="option-text">Midbrain</div>
+                </div>
+            </div>
+
+            <div class="feedback correct" id="feedback" style="display: none;">
+                <i class="fas fa-check-circle feedback-icon"></i>
+                <div class="feedback-text">Correct! Well done.</div>
+            </div>
+
+            <button class="btn btn-secondary" id="show-explanation-btn" style="display: none;">
+                <i class="fas fa-info-circle"></i> Show Explanation
+            </button>
+
+            <div class="explanation-container" id="explanation-container">
+                <div class="explanation">
+                    <div class="explanation-title">Explanation:</div>
+                    <div id="explanation-text">The cerebellum, located posterior to the brainstem, is the 'little brain.' It compares intended movements with actual movements to ensure smooth, coordinated skeletal muscle activity and maintain posture and balance.</div>
+                </div>
+            </div>
+
+            <div class="navigation">
+                <button class="btn btn-secondary" id="prev-btn" disabled>
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                <button class="btn btn-primary" id="next-btn">
+                    Next Question <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2025 MedQuiz | MED Practice Platform | All Rights Reserved
+    </footer>
+
+    <script>
+        const questions = [
+    {
+        "question": "The sugar moiety in peptidoglycan resembles which polysaccharide?",
+        "options": ["Starch", "Chitin", "Cellulose", "Glycogen"],
+        "answer": 1,
+        "correctAnswer": "Chitin",
+        "explanation": "Peptidoglycan’s sugar backbone consists of alternating N-acetylglucosamine (GlcNAc) and N-acetylmuramic acid (MurNAc), resembling chitin’s β-1,4-linked GlcNAc polymer. Starch and glycogen are α-linked glucose polymers; cellulose is β-1,4-glucose. Errors in understanding peptidoglycan structure may affect antibiotic development targeting bacterial cell walls, like lysozyme or penicillin.",
+        "hardness": "Medium"
+    },
+    {
+        "question": "Heparan sulfate is composed of repeating disaccharides of:",
+        "options": ["Glc + Fructose", "Gal + GalNAc", "GlcNAc + GalNAc", "GlcUA + GlcNAc"],
+        "answer": 3,
+        "correctAnswer": "GlcUA + GlcNAc",
+        "explanation": "Heparan sulfate is a glycosaminoglycan (GAG) with glucuronic acid (GlcUA) and N-acetylglucosamine (GlcNAc). Other options describe unrelated sugars or incorrect GAGs. Errors can lead to misinterpretation of ECM functions, affecting tissue development or signaling disorders.",
+        "hardness": "Medium"
+    },
+    {
+        "question": "Uronic acids in GAGs are formed by oxidation at:",
+        "options": ["C3", "C1", "C2", "C6"],
+        "answer": 3,
+        "correctAnswer": "C6",
+        "explanation": "Uronic acids (e.g., glucuronic acid) form by oxidizing the C6 hydroxyl to a carboxyl group in hexoses. Other carbons are incorrect. Errors can affect understanding GAG synthesis, linked to mucopolysaccharidoses like Hurler syndrome.",
+        "hardness": "Medium"
+    },
+    {
+        "question": "The amino sugar in chitin is:",
+        "options": ["Mannose", "GlcNAc", "GalNAc", "Fructose"],
+        "answer": 1,
+        "correctAnswer": "GlcNAc",
+        "explanation": "Chitin is a β-1,4-linked polymer of N-acetylglucosamine (GlcNAc). GalNAc is in GAGs; fructose and mannose are not amino sugars. Errors can confuse structural roles in microbial or fungal cell walls, impacting antifungal drug design.",
+        "hardness": "Easy"
+    },
+    {
+        "question": "Lactose intolerance results from deficiency of:",
+        "options": ["Maltase", "Sucrase", "Lactase", "Isomaltase"],
+        "answer": 2,
+        "correctAnswer": "Lactase",
+        "explanation": "Lactase hydrolyzes lactose’s β-1,4-glycosidic bond into glucose and galactose. Deficiency causes osmotic diarrhea and bloating. Other enzymes digest different sugars. Misdiagnosis can lead to untreated gastrointestinal distress.",
+        "hardness": "Hard"
+    },
+    {
+        "question": "Glycogen branching occurs through which linkage?",
+        "options": ["α-1,4 only", "β-1,4", "α-1,6", "β-1,6"],
+        "answer": 2,
+        "correctAnswer": "α-1,6",
+        "explanation": "Glycogen’s α-1,6 linkages create branch points every 8–12 residues, unlike linear α-1,4 chains. β-linkages are in cellulose. Errors can affect understanding glycogen storage diseases like Pompe disease.",
+        "hardness": "Medium"
+    },
+    {
+        "question": "The reducing sugar property depends on:",
+        "options": ["Glycosidic linkage", "Branched chain", "Any hydroxyl group", "Anomeric carbon free to react"],
+        "answer": 3,
+        "correctAnswer": "Anomeric carbon free to react",
+        "explanation": "A free anomeric carbon can open to an aldehyde/ketone, enabling redox reactions (e.g., Benedict’s test). Other options are irrelevant. Errors can affect sugar metabolism studies, impacting diabetes management.",
+        "hardness": "Medium"
+    },
+    {
+        "question": "Hyaluronic acid is unique because it:",
+        "options": ["Is branched", "Is sulfated", "Exists as free polymer in ECM", "Is attached to a core protein"],
+        "answer": 2,
+        "correctAnswer": "Exists as free polymer in ECM",
+        "explanation": "Hyaluronic acid (HA) is an unsulfated GAG, existing as a free polymer in the ECM, unlike other GAGs linked to proteins. It’s unbranched. Errors can lead to misdiagnosis of joint or ocular disorders due to HA’s lubricating role.",
+        "hardness": "Hard"
+    },
+    {
+        "question": "N-acetylneuraminic acid (NeuNAc) is derived from:",
+        "options": ["Glucose", "Galactose", "Mannosamine + pyruvate", "Ribose"],
+        "answer": 2,
+        "correctAnswer": "Mannosamine + pyruvate",
+        "explanation": "NeuNAc, a sialic acid, is synthesized from N-acetylmannosamine and pyruvate. Other sugars are unrelated. Errors can affect understanding ganglioside roles in neural development, linked to neurological disorders.",
+        "hardness": "Easy"
+    },
+    {
+        "question": "The difference between α- and β-glucose is:",
+        "options": ["Molecular formula", "Ring size", "Carbon number", "Orientation of OH at C1"],
+        "answer": 3,
+        "correctAnswer": "Orientation of OH at C1",
+        "explanation": "α-glucose has the C1 OH down; β-glucose has it up in the cyclic form. Other options are identical for both. Errors can affect understanding enzyme specificity in metabolism, like glycogen synthesis.",
+        "hardness": "Easy"
+    },
+    {
+        "question": "Inulin is a polymer of:",
+        "options": ["Galactose", "Fructose", "Mannose", "Glucose"],
+        "answer": 1,
+        "correctAnswer": "Fructose",
+        "explanation": "Inulin is a β-2,1-linked fructose polymer (fructan) used in GFR assessment. Other sugars are incorrect. Errors can lead to improper renal function testing, affecting kidney disease diagnosis.",
+        "hardness": "Medium"
+    },
+    {
+        "question": "Cellulose is resistant to digestion because:",
+        "options": ["α-1,4 linkages", "Branching", "Sulfation", "β-1,4 linkages"],
+        "answer": 3,
+        "correctAnswer": "β-1,4 linkages",
+        "explanation": "Humans lack cellulases to hydrolyze cellulose’s β-1,4 linkages, unlike starch’s α-1,4 linkages. Branching and sulfation are irrelevant. Errors can affect dietary management in malabsorption syndromes.",
+        "hardness": "Medium"
+    },
+    {
+        "question": "Proteoglycans differ from glycoproteins in:",
+        "options": ["Protein size", "Solubility", "Type of sugar chains", "Carbohydrate content"],
+        "answer": 2,
+        "correctAnswer": "Type of sugar chains",
+        "explanation": "Proteoglycans have long, linear GAG chains; glycoproteins have short, branched oligosaccharides. Other options are not defining features. Errors can affect understanding ECM roles, leading to connective tissue disorder misdiagnosis.",
+        "hardness": "Hard"
+    },
+    {
+        "question": "The sugar alcohol derived from glucose is:",
+        "options": ["Mannitol", "Sorbitol", "Xylitol", "Ribitol"],
+        "answer": 1,
+        "correctAnswer": "Sorbitol",
+        "explanation": "Glucose reduction yields sorbitol via the polyol pathway. Other sugar alcohols derive from different sugars. Errors can lead to misdiagnosis of diabetic complications like cataracts.",
+        "hardness": "Medium"
+    },
+    {
+        "question": "Dextrans are produced by:",
+        "options": ["Humans", "Plants", "Microbes", "Animals"],
+        "answer": 2,
+        "correctAnswer": "Microbes",
+        "explanation": "Dextrans are α-1,6-linked glucose polymers produced by bacteria, used as plasma expanders. Other sources are incorrect. Errors can affect understanding of medical applications in shock treatment.",
+        "hardness": "Medium"
+    },
+    {
+        "question": "Lysozyme acts on which bond?",
+        "options": ["α-1,4", "α-1,6", "β-1,3", "β-1,4 in peptidoglycan"],
+        "answer": 3,
+        "correctAnswer": "β-1,4 in peptidoglycan",
+        "explanation": "Lysozyme hydrolyzes β-1,4 linkages between GlcNAc and MurNAc in peptidoglycan. Other bonds are irrelevant. Errors can lead to misunderstanding antibiotic mechanisms, affecting infection treatment.",
+        "hardness": "Hard"
+    },
+    {
+        "question": "Ribitol is found in:",
+        "options": ["Glycogen", "DNA", "FAD and FMN", "Hyaluronic acid"],
+        "answer": 2,
+        "correctAnswer": "FAD and FMN",
+        "explanation": "Ribitol, a sugar alcohol, forms the backbone of flavin nucleotides (FAD, FMN). Other options are incorrect. Errors can affect understanding coenzyme functions in metabolism, impacting redox disorder diagnosis.",
+        "hardness": "Medium"
+    },
+    {
+        "question": "Keratan sulfate lacks:",
+        "options": ["Sulfate", "Galactose", "GlcNAc", "Uronic acid"],
+        "answer": 3,
+        "correctAnswer": "Uronic acid",
+        "explanation": "Keratan sulfate, a GAG, contains galactose and GlcNAc but lacks uronic acid, unlike other GAGs. Other options are present. Errors can affect understanding corneal or cartilage disorders, like macular dystrophy.",
+        "hardness": "Medium"
+    },
+    {
+        "question": "Starch consists of:",
+        "options": ["Chitin", "Cellulose", "Amylose + amylopectin", "Glycogen only"],
+        "answer": 2,
+        "correctAnswer": "Amylose + amylopectin",
+        "explanation": "Starch comprises linear amylose (α-1,4) and branched amylopectin (α-1,6). Other options are distinct polysaccharides. Errors can affect dietary carbohydrate metabolism understanding, impacting nutritional planning.",
+        "hardness": "Medium"
+    },
+    {
+        "question": "The primary structure of peptidoglycan includes:",
+        "options": ["Glucose only", "N-acetylglucosamine + N-acetylmuramic acid", "Galactose + mannose", "Cellulose"],
+        "answer": 1,
+        "correctAnswer": "N-acetylglucosamine + N-acetylmuramic acid",
+        "explanation": "Peptidoglycan’s glycan backbone alternates GlcNAc and MurNAc, cross-linked by peptides. Other options are incorrect. Errors can affect antibiotic targeting, leading to ineffective bacterial infection treatment.",
+        "hardness": "Medium"
+    },
+    {
+        "question": "Chondroitin sulfate is important for:",
+        "options": ["Blood clotting", "Energy storage", "Bone and cartilage elasticity", "Digestive enzyme"],
+        "answer": 2,
+        "correctAnswer": "Bone and cartilage elasticity",
+        "explanation": "Chondroitin sulfate, a GAG, provides compressive resistance in cartilage and bone. Other options are unrelated. Errors can lead to misdiagnosis of osteoarthritis or connective tissue disorders.",
+        "hardness": "Hard"
+    },
+    {
+        "question": "Amino sugars are formed by substitution of:",
+        "options": ["COOH with NH₂", "H with OH", "CH₂OH with COOH", "OH with NH₂"],
+        "answer": 3,
+        "correctAnswer": "OH with NH₂",
+        "explanation": "Amino sugars (e.g., GlcNAc) replace a hydroxyl group with an amino group. Other substitutions form different molecules. Errors can affect understanding GAG or glycoprotein synthesis, linked to mucopolysaccharidoses.",
+        "hardness": "Medium"
+    },
+    {
+        "question": "Glycosidic bond in sucrose is:",
+        "options": ["α-1,6", "α-1,4", "β-1,4", "α-1,2 between glucose and fructose"],
+        "answer": 3,
+        "correctAnswer": "α-1,2 between glucose and fructose",
+        "explanation": "Sucrose links α-D-glucose and β-D-fructose via an α-1,2 bond, making it non-reducing. Other bonds are incorrect. Errors can affect understanding sucrase deficiency, leading to malabsorption.",
+        "hardness": "Medium"
+    },
+    {
+        "question": "Mannose is an epimer of:",
+        "options": ["Galactose at C4", "Fructose at C2", "Glucose at C2", "Ribose"],
+        "answer": 2,
+        "correctAnswer": "Glucose at C2",
+        "explanation": "Mannose differs from glucose at C2’s configuration. Other options describe different relationships. Errors can affect diagnosis of mannose metabolism disorders, like congenital glycosylation defects.",
+        "hardness": "Medium"
+    },
+    {
+        "question": "The major component of bacterial ECM is:",
+        "options": ["Chitin", "Glycogen", "Hyaluronic acid", "Peptidoglycan"],
+        "answer": 3,
+        "correctAnswer": "Peptidoglycan",
+        "explanation": "Peptidoglycan forms the rigid bacterial cell wall (ECM equivalent). Other options are incorrect for bacteria. Errors can lead to ineffective antibiotic selection, worsening infections.",
+        "hardness": "Medium"
+    },
+    {
+        "question": "Glucose can form:",
+        "options": ["Only furanose", "Pyranose and furanose rings", "Only pyranose", "Linear form only"],
+        "answer": 1,
+        "correctAnswer": "Pyranose and furanose rings",
+        "explanation": "Glucose cyclizes into six-membered pyranose or five-membered furanose rings. Other options are incomplete or incorrect. Errors can affect understanding glucose metabolism, impacting diabetes studies.",
+        "hardness": "Medium"
+    },
+    {
+        "question": "Hyaluronidase is secreted by:",
+        "options": ["Liver", "Pancreas", "Bacteria and sperm", "Mast cells"],
+        "answer": 2,
+        "correctAnswer": "Bacteria and sperm",
+        "explanation": "Hyaluronidase, secreted by bacteria (infections) and sperm (fertilization, embryology Q16, Q27), degrades hyaluronic acid in ECM. Other sources are incorrect. Errors can affect fertility treatments or infection management, linking to infertility or sepsis.",
+        "hardness": "Very Hard"
+    },
+    {
+        "question": "Reducing sugars react with:",
+        "options": ["Iodine", "Benedict’s or Fehling’s reagent", "Phenol", "Silver nitrate only"],
+        "answer": 1,
+        "correctAnswer": "Benedict’s or Fehling’s reagent",
+        "explanation": "Reducing sugars’ free anomeric carbon reduces Cu²⁺ to Cu⁺ in Benedict’s/Fehling’s tests. Other reagents are irrelevant. Errors can affect diagnostic assays for glycosuria in diabetes.",
+        "hardness": "Medium"
+    },
+    {
+        "question": "Amylopectin differs from amylose in:",
+        "options": ["Monomer type", "Molecular formula", "Branching", "Sugar linkage type"],
+        "answer": 2,
+        "correctAnswer": "Branching",
+        "explanation": "Amylopectin has α-1,6 branch points; amylose is linear with α-1,4 linkages. Other options are identical for both. Errors can affect understanding starch digestion, impacting nutritional management.",
+        "hardness": "Medium"
+    },
+    {
+        "question": "Heparin sulfate is found mainly:",
+        "options": ["Blood plasma", "Cartilage", "Liver", "ECM of basement membranes"],
+        "answer": 3,
+        "correctAnswer": "ECM of basement membranes",
+        "explanation": "Heparan sulfate, a GAG, is in basement membrane ECM, modulating growth factors. Other locations are minor or incorrect. Errors can affect understanding tissue signaling, linked to developmental or cancer disorders.",
+        "hardness": "Hard"
+    },
+    {
+        "question": "Sorbitol accumulation in diabetes affects:",
+        "options": ["Blood clotting", "Lens and nerves", "Liver glycogen", "Bone formation"],
+        "answer": 1,
+        "correctAnswer": "Lens and nerves",
+        "explanation": "Excess glucose reduced to sorbitol via the polyol pathway causes osmotic stress in lens and nerves, leading to cataracts and neuropathy. Other options are unrelated. Errors can delay diabetic complication management.",
+        "hardness": "Hard"
+    },
+    {
+        "question": "Gangliosides contain:",
+        "options": ["Uronic acid only", "Fructose polymers", "Sialic acid residues", "Amino acids"],
+        "answer": 2,
+        "correctAnswer": "Sialic acid residues",
+        "explanation": "Gangliosides are glycolipids with sialic acid (e.g., NeuNAc), critical for neural membranes. Other options are incorrect. Errors can affect understanding neurological disorders like Tay-Sachs disease.",
+        "hardness": "Medium"
+    },
+    {
+        "question": "Hyaluronic acid functions as:",
+        "options": ["Glycogen substitute", "Anticoagulant", "Energy source", "Lubricant in joints"],
+        "answer": 3,
+        "correctAnswer": "Lubricant in joints",
+        "explanation": "Hyaluronic acid’s high molecular weight and water retention make it a joint lubricant (embryology Q76, amniotic fluid). Other roles are incorrect. Errors can lead to misdiagnosis of arthritis or joint disorders.",
+        "hardness": "Hard"
+    },
+    {
+        "question": "The backbone of chondroitin sulfate is:",
+        "options": ["Glc + Fructose", "MurNAc + GlcNAc", "GlcUA + GalNAc", "GlcNAc only"],
+        "answer": 2,
+        "correctAnswer": "GlcUA + GalNAc",
+        "explanation": "Chondroitin sulfate consists of glucuronic acid (GlcUA) and N-acetylgalactosamine (GalNAc). Other options describe different molecules. Errors can affect understanding cartilage disorders like osteoarthritis.",
+        "hardness": "Medium"
+    },
+    {
+        "question": "β-D-fructofuranose is a:",
+        "options": ["Sugar alcohol", "Aldose", "Ketose", "Uronic acid"],
+        "answer": 2,
+        "correctAnswer": "Ketose",
+        "explanation": "Fructose, a ketose, forms a five-membered furanose ring. Other options describe different sugar types. Errors can affect understanding fructose metabolism, linked to fructosuria.",
+        "hardness": "Medium"
+    },
+    {
+        "question": "The most abundant organic polymer on earth is:",
+        "options": ["Glycogen", "Chitin", "Starch", "Cellulose"],
+        "answer": 3,
+        "correctAnswer": "Cellulose",
+        "explanation": "Cellulose, a β-1,4-glucose polymer, is the main plant cell wall component. Other polymers are less abundant. Errors can affect understanding plant-based dietary fiber, impacting nutritional science.",
+        "hardness": "Easy"
+    },
+    {
+        "question": "GlcNAc is a:",
+        "options": ["Sugar alcohol", "Ketose", "Amino sugar", "Sugar acid"],
+        "answer": 2,
+        "correctAnswer": "Amino sugar",
+        "explanation": "N-acetylglucosamine (GlcNAc) is an amino sugar with an acetylated amino group. Other options describe different classes. Errors can affect understanding GAG or chitin roles, linked to connective tissue or microbial disorders.",
+        "hardness": "Easy"
+    },
+    {
+        "question": "In bacterial walls, muramic acid is linked to:",
+        "options": ["GalNAc", "GlcNAc", "Glucose", "Mannose"],
+        "answer": 1,
+        "correctAnswer": "GlcNAc",
+        "explanation": "Muramic acid (MurNAc) alternates with GlcNAc in peptidoglycan’s backbone. Other sugars are incorrect. Errors can affect antibiotic targeting, leading to ineffective bacterial infection treatment.",
+        "hardness": "Medium"
+    },
+    {
+        "question": "Glycogen phosphorylase cleaves:",
+        "options": ["α-1,2 bonds", "β-1,4 bonds", "α-1,6 branches", "α-1,4 bonds from non-reducing ends"],
+        "answer": 3,
+        "correctAnswer": "α-1,4 bonds from non-reducing ends",
+        "explanation": "Glycogen phosphorylase releases glucose-1-phosphate from α-1,4 linkages at non-reducing ends. Other bonds are incorrect or cleaved by different enzymes. Errors can affect understanding glycogenolysis, linked to McArdle disease.",
+        "hardness": "Hard"
+    },
+    {
+        "question": "Heparin differs from heparan sulfate in:",
+        "options": ["Monomer type", "Presence of uronic acids", "Sulfation degree", "Function in energy storage"],
+        "answer": 2,
+        "correctAnswer": "Sulfation degree",
+        "explanation": "Heparin is more highly sulfated than heparan sulfate, enhancing its anticoagulant activity. Both share uronic acids and monomers; energy storage is irrelevant. Errors can affect anticoagulation therapy, risking thrombosis or bleeding.",
+        "hardness": "Hard"
+    },
+    {
+        "question": "N-linked glycoproteins attach to:",
+        "options": ["Serine", "Asparagine", "Threonine", "Cysteine"],
+        "answer": 1,
+        "correctAnswer": "Asparagine",
+        "explanation": "N-linked glycosylation occurs on asparagine’s amide group in a specific sequence. Other amino acids are incorrect or O-linked. Errors can affect understanding protein folding, linked to congenital glycosylation disorders.",
+        "hardness": "Medium"
+    },
+    {
+        "question": "O-linked glycoproteins attach to:",
+        "options": ["Cysteine", "Lysine", "Asparagine", "Serine or threonine"],
+        "answer": 3,
+        "correctAnswer": "Serine or threonine",
+        "explanation": "O-linked glycosylation occurs on serine or threonine hydroxyl groups. Other amino acids are incorrect. Errors can affect understanding mucin functions, linked to mucosal disorders.",
+        "hardness": "Medium"
+    },
+    {
+        "question": "Peptidoglycan provides:",
+        "options": ["Energy storage", "ECM hydration", "Osmotic strength to bacterial cells", "Enzymatic activity"],
+        "answer": 2,
+        "correctAnswer": "Osmotic strength to bacterial cells",
+        "explanation": "Peptidoglycan’s cross-linked structure resists osmotic lysis in bacteria. Other roles are incorrect. Errors can lead to ineffective antibiotic use, worsening infections.",
+        "hardness": "Medium"
+    },
+    {
+        "question": "The aldehyde group in aldoses is at:",
+        "options": ["C4", "C3", "C2", "C1"],
+        "answer": 3,
+        "correctAnswer": "C1",
+        "explanation": "Aldoses have an aldehyde group at C1 in their linear form. Other positions are incorrect. Errors can affect understanding sugar reactivity, impacting metabolic assays.",
+        "hardness": "Easy"
+    },
+    {
+        "question": "Ketoses have the carbonyl group at:",
+        "options": ["C3", "C1", "C2", "C6"],
+        "answer": 2,
+        "correctAnswer": "C2",
+        "explanation": "Ketoses have a ketone group at C2 in their linear form. Other positions are incorrect. Errors can affect understanding fructose metabolism, linked to hereditary fructosuria.",
+        "hardness": "Easy"
+    },
+    {
+        "question": "Mutarotation involves:",
+        "options": ["Oxidation of sugars", "Formation of glycosidic bonds", "Interconversion of α and β anomers", "Reduction of sugars"],
+        "answer": 2,
+        "correctAnswer": "Interconversion of α and β anomers",
+        "explanation": "Mutarotation is the interconversion of α and β anomers via the open-chain form, altering optical rotation. Other processes are distinct. Errors can affect sugar reactivity assays in metabolic studies.",
+        "hardness": "Medium"
+    },
+    {
+        "question": "Glycosaminoglycans are:",
+        "options": ["Branched neutral sugars", "Linear, negatively charged polysaccharides", "Energy storage polysaccharides", "Monosaccharides"],
+        "answer": 1,
+        "correctAnswer": "Linear, negatively charged polysaccharides",
+        "explanation": "GAGs are linear, sulfated or acidic polysaccharides (e.g., hyaluronic acid) in ECM. Other options describe different molecules. Errors can affect understanding ECM disorders, like mucopolysaccharidoses.",
+        "hardness": "Medium"
+    },
+    {
+        "question": "Keratan sulfate is composed of:",
+        "options": ["GlcUA + GalNAc", "Glc + Fructose", "Gal + GlcNAc", "GlcNAc only"],
+        "answer": 2,
+        "correctAnswer": "Gal + GlcNAc",
+        "explanation": "Keratan sulfate consists of galactose and N-acetylglucosamine, lacking uronic acid. Other options describe different molecules. Errors can affect understanding corneal disorders, like macular dystrophy.",
+        "hardness": "Medium"
+    },
+    {
+        "question": "Sorbitol dehydrogenase converts sorbitol into:",
+        "options": ["Glucose", "Galactose", "Mannose", "Fructose"],
+        "answer": 3,
+        "correctAnswer": "Fructose",
+        "explanation": "Sorbitol dehydrogenase oxidizes sorbitol to fructose in the polyol pathway. Other sugars are incorrect. Errors can affect understanding diabetic complications, like neuropathy or cataracts.",
+        "hardness": "Hard"
+    }
+];
+
+        // DOM Elements
+        let body = document.body;
+        let questionElement = document.getElementById('question');
+        let optionsContainer = document.getElementById('options-container');
+        let currentQuestionElement = document.getElementById('current-question');
+        let totalQuestionsElement = document.getElementById('total-questions');
+        let progressBar = document.getElementById('progress-bar');
+        let prevButton = document.getElementById('prev-btn');
+        let nextButton = document.getElementById('next-btn');
+        let feedbackElement = document.getElementById('feedback');
+        let timerElement = document.getElementById('timer');
+        let scoreElement = document.getElementById('score');
+        let streakElement = document.getElementById('streak');
+        let categoryElement = document.getElementById('category');
+        let explanationContainer = document.getElementById('explanation-container');
+        let explanationTextElement = document.getElementById('explanation-text');
+        let themeToggle = document.getElementById('theme-toggle');
+        let soundToggle = document.getElementById('sound-toggle');
+        let bookmarkBtn = document.getElementById('bookmark-btn');
+        let bookmarksCount = document.getElementById('bookmarks-count');
+        let categoryTag = document.getElementById('category-tag');
+        let difficultyTag = document.getElementById('difficulty-tag');
+        let showExplanationBtn = document.getElementById('show-explanation-btn');
+
+        // Quiz state
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let streak = 0;
+        let selectedOption = null;
+        let timeStarted = null;
+        let timerInterval = null;
+        let timeElapsed = 0;
+        let answers = [];
+        let soundsEnabled = true;
+        let bookmarkedQuestions = [];
+        let quizHistory = [];
+        let performanceMetrics = {
+            categories: {},
+            difficulties: { Easy: 0, Medium: 0, Hard: 0 },
+            totalCorrect: 0,
+            totalQuestions: 0
+        };
+
+        function initQuiz() {
+            // Reset DOM elements
+            scoreElement.textContent = score;
+            streakElement.textContent = streak;
+            timerElement.textContent = '00:00';
+            totalQuestionsElement.textContent = questions.length;
+            
+            loadQuestion();
+            startTimer();
+            
+            // Remove existing event listeners to prevent duplicates
+            const prevBtnClone = prevButton.cloneNode(true);
+            prevButton.parentNode.replaceChild(prevBtnClone, prevButton);
+            const nextBtnClone = nextButton.cloneNode(true);
+            nextButton.parentNode.replaceChild(nextBtnClone, nextButton);
+            const themeToggleClone = themeToggle.cloneNode(true);
+            themeToggle.parentNode.replaceChild(themeToggleClone, themeToggle);
+            const soundToggleClone = soundToggle.cloneNode(true);
+            soundToggle.parentNode.replaceChild(soundToggleClone, soundToggle);
+            const bookmarkBtnClone = bookmarkBtn.cloneNode(true);
+            bookmarkBtn.parentNode.replaceChild(bookmarkBtnClone, bookmarkBtn);
+            const showExplanationBtnClone = showExplanationBtn.cloneNode(true);
+            showExplanationBtn.parentNode.replaceChild(showExplanationBtnClone, showExplanationBtn);
+
+            // Reassign DOM elements after cloning
+            prevButton = document.getElementById('prev-btn');
+            nextButton = document.getElementById('next-btn');
+            themeToggle = document.getElementById('theme-toggle');
+            soundToggle = document.getElementById('sound-toggle');
+            bookmarkBtn = document.getElementById('bookmark-btn');
+            showExplanationBtn = document.getElementById('show-explanation-btn');
+
+            // Add event listeners
+            prevButton.addEventListener('click', goToPreviousQuestion);
+            nextButton.addEventListener('click', goToNextQuestion);
+            themeToggle.addEventListener('click', toggleTheme);
+            soundToggle.addEventListener('click', toggleSound);
+            bookmarkBtn.addEventListener('click', toggleBookmark);
+            showExplanationBtn.addEventListener('click', toggleExplanation);
+            
+            // Keyboard navigation
+            document.removeEventListener('keydown', handleKeydown);
+            document.addEventListener('keydown', handleKeydown);
+            
+            loadPreferences();
+            loadQuizHistory();
+            updateBookmarksCount();
+        }
+
+        function handleKeydown(e) {
+            if (e.key === 'ArrowRight') {
+                goToNextQuestion();
+            } else if (e.key === 'ArrowLeft') {
+                goToPreviousQuestion();
+            } else if (e.key.toLowerCase() === 'a' || e.key === '1') {
+                selectOption(0);
+            } else if (e.key.toLowerCase() === 'b' || e.key === '2') {
+                selectOption(1);
+            } else if (e.key.toLowerCase() === 'c' || e.key === '3') {
+                selectOption(2);
+            } else if (e.key.toLowerCase() === 'd' || e.key === '4') {
+                selectOption(3);
+            } else if (e.key === 'Enter') {
+                if (showExplanationBtn.style.display !== 'none') {
+                    toggleExplanation();
+                }
+            }
+        }
+
+        function loadQuestion() {
+            const question = questions[currentQuestionIndex];
+            questionElement.textContent = question.question;
+            currentQuestionElement.textContent = currentQuestionIndex + 1;
+            categoryTag.textContent = question.category || 'Unknown';
+            difficultyTag.textContent = question.difficulty || 'Medium';
+            categoryElement.textContent = question.category || 'All';
+            
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+            
+            // Update progress level for appearance change
+            let progressLevel = 0;
+            if (progress > 75) progressLevel = 75;
+            else if (progress > 50) progressLevel = 50;
+            else if (progress > 25) progressLevel = 25;
+            body.setAttribute('data-progress', progressLevel);
+            
+            optionsContainer.innerHTML = '';
+            
+            const optionLetters = ['A', 'B', 'C', 'D'];
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.classList.add('option', 'bounce-in');
+                optionElement.setAttribute('role', 'button');
+                optionElement.setAttribute('tabindex', '0');
+                optionElement.setAttribute('aria-label', `Option ${optionLetters[index]}: ${option}`);
+                
+                const optionLetter = document.createElement('div');
+                optionLetter.classList.add('option-letter');
+                optionLetter.textContent = optionLetters[index];
+                
+                const optionText = document.createElement('div');
+                optionText.classList.add('option-text');
+                optionText.textContent = option;
+                
+                optionElement.appendChild(optionLetter);
+                optionElement.appendChild(optionText);
+                
+                optionElement.addEventListener('click', () => selectOption(index));
+                optionElement.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        selectOption(index);
+                    }
+                });
+                
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            prevButton.disabled = currentQuestionIndex === 0;
+            nextButton.textContent = currentQuestionIndex === questions.length - 1 ? 'Finish Quiz' : 'Next Question';
+            
+            feedbackElement.style.display = 'none';
+            showExplanationBtn.style.display = 'none';
+            explanationContainer.classList.remove('expanded');
+            
+            selectedOption = null;
+            
+            // If the question was previously answered or skipped, display the feedback
+            if (answers[currentQuestionIndex]) {
+                const ans = answers[currentQuestionIndex];
+                const options = document.querySelectorAll('.option');
+                feedbackElement.style.display = 'flex';
+                showExplanationBtn.style.display = 'block';
+                explanationTextElement.textContent = question.explanation;
+                options.forEach(option => option.style.pointerEvents = 'none');
+                
+                if (ans.selected === 'Skipped') {
+                    selectedOption = null;
+                    feedbackElement.classList.add('incorrect');
+                    feedbackElement.innerHTML = '<i class="fas fa-times-circle feedback-icon"></i><div class="feedback-text">Skipped. The right answer is highlighted.</div>';
+                    options[question.answer].classList.add('correct');
+                } else {
+                    const optIndex = question.options.findIndex(opt => opt === ans.selected);
+                    if (optIndex !== -1) {
+                        selectedOption = optIndex;
+                        options[optIndex].classList.add('selected');
+                        if (ans.isCorrect) {
+                            feedbackElement.classList.add('correct');
+                            feedbackElement.innerHTML = '<i class="fas fa-check-circle feedback-icon"></i><div class="feedback-text">Correct! Well done.</div>';
+                        } else {
+                            feedbackElement.classList.add('incorrect');
+                            feedbackElement.innerHTML = '<i class="fas fa-times-circle feedback-icon"></i><div class="feedback-text">Incorrect. The right answer is highlighted.</div>';
+                            options[question.answer].classList.add('correct');
+                        }
+                    }
+                }
+            }
+            
+            updateBookmarkStatus();
+        }
+
+        function selectOption(index) {
+            if (selectedOption !== null || answers[currentQuestionIndex]) return;
+            
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => option.classList.remove('selected'));
+            options[index].classList.add('selected');
+            selectedOption = index;
+            
+            const question = questions[currentQuestionIndex];
+            const isCorrect = index === question.answer;
+            
+            feedbackElement.style.display = 'flex';
+            if (isCorrect) {
+                feedbackElement.classList.remove('incorrect');
+                feedbackElement.classList.add('correct');
+                feedbackElement.innerHTML = '<i class="fas fa-check-circle feedback-icon"></i><div class="feedback-text">Correct! Well done.</div>';
+                score += getScoreForDifficulty(question.difficulty);
+                streak++;
+                playSound('correct');
+            } else {
+                feedbackElement.classList.remove('correct');
+                feedbackElement.classList.add('incorrect');
+                feedbackElement.innerHTML = '<i class="fas fa-times-circle feedback-icon"></i><div class="feedback-text">Incorrect. The right answer is highlighted.</div>';
+                options[question.answer].classList.add('correct');
+                streak = 0;
+                playSound('incorrect');
+            }
+            
+            scoreElement.textContent = score;
+            streakElement.textContent = streak;
+            
+            explanationTextElement.textContent = question.explanation;
+            showExplanationBtn.style.display = 'block';
+            
+            answers[currentQuestionIndex] = {
+                question: question.question,
+                selected: question.options[index],
+                correct: question.options[question.answer],
+                isCorrect: isCorrect,
+                explanation: question.explanation,
+                category: question.category,
+                difficulty: question.difficulty
+            };
+            
+            updatePerformanceMetrics(isCorrect, question);
+            
+            options.forEach(option => option.style.pointerEvents = 'none');
+        }
+
+        function maybeHandleSkip() {
+            if (!answers[currentQuestionIndex] && selectedOption === null) {
+                const question = questions[currentQuestionIndex];
+                answers[currentQuestionIndex] = {
+                    question: question.question,
+                    selected: 'Skipped',
+                    correct: question.options[question.answer],
+                    isCorrect: false,
+                    explanation: question.explanation,
+                    category: question.category,
+                    difficulty: question.difficulty
+                };
+                updatePerformanceMetrics(false, question);
+                streak = 0;
+                streakElement.textContent = streak;
+            }
+        }
+
+        function toggleExplanation() {
+            explanationContainer.classList.toggle('expanded');
+            showExplanationBtn.innerHTML = explanationContainer.classList.contains('expanded') ?
+                '<i class="fas fa-info-circle"></i> Hide Explanation' :
+                '<i class="fas fa-info-circle"></i> Show Explanation';
+        }
+
+        function getScoreForDifficulty(difficulty) {
+            switch (difficulty) {
+                case 'Easy': return 5;
+                case 'Medium': return 10;
+                case 'Hard': return 15;
+                default: return 10;
+            }
+        }
+
+        function updatePerformanceMetrics(isCorrect, question) {
+            performanceMetrics.totalQuestions++;
+            if (isCorrect) performanceMetrics.totalCorrect++;
+            
+            performanceMetrics.categories[question.category] = performanceMetrics.categories[question.category] || { correct: 0, total: 0 };
+            performanceMetrics.categories[question.category].total++;
+            if (isCorrect) performanceMetrics.categories[question.category].correct++;
+            
+            performanceMetrics.difficulties[question.difficulty] = performanceMetrics.difficulties[question.difficulty] || 0;
+            if (isCorrect) performanceMetrics.difficulties[question.difficulty]++;
+        }
+
+        function toggleBookmark() {
+            const questionId = questions[currentQuestionIndex].id;
+            const index = bookmarkedQuestions.indexOf(questionId);
+            if (index === -1) {
+                bookmarkedQuestions.push(questionId);
+                bookmarkBtn.classList.add('bookmarked');
+            } else {
+                bookmarkedQuestions.splice(index, 1);
+                bookmarkBtn.classList.remove('bookmarked');
+            }
+            updateBookmarksCount();
+            saveBookmarks();
+        }
+
+        function updateBookmarkStatus() {
+            const questionId = questions[currentQuestionIndex].id;
+            bookmarkBtn.classList.toggle('bookmarked', bookmarkedQuestions.includes(questionId));
+        }
+
+        function updateBookmarksCount() {
+            bookmarksCount.textContent = bookmarkedQuestions.length;
+        }
+
+        function goToNextQuestion() {
+            maybeHandleSkip();
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                body.setAttribute('data-progress', '100');
+                showResults();
+                saveQuizHistory();
+            }
+        }
+
+        function goToPreviousQuestion() {
+            maybeHandleSkip();
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        }
+
+        function startTimer() {
+            timeStarted = new Date();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            timeElapsed++;
+            
+            const minutes = Math.floor(timeElapsed / 60).toString().padStart(2, '0');
+            const seconds = (timeElapsed % 60).toString().padStart(2, '0');
+            timerElement.textContent = `${minutes}:${seconds}`;
+            
+            // Optional: Add warning color for long durations (e.g., after 5 minutes)
+            if (timeElapsed >= 300) {
+                timerElement.style.color = 'var(--danger)';
+                timerElement.classList.add('pulse');
+            } else {
+                timerElement.style.color = 'var(--primary)';
+                timerElement.classList.remove('pulse');
+            }
+        }
+
+        function showResults() {
+            clearInterval(timerInterval);
+            
+            const quizContainer = document.querySelector('.quiz-container');
+            const maxScore = questions.reduce((sum, q) => sum + getScoreForDifficulty(q.difficulty), 0);
+            const percentage = ((score / maxScore) * 100).toFixed(1);
+            const categoryStats = Object.entries(performanceMetrics.categories)
+                .map(([category, stats]) => `${category}: ${((stats.correct / stats.total) * 100).toFixed(1)}%`)
+                .join(', ');
+            
+            quizContainer.innerHTML = `
+                <div class="results-container">
+                    <h2 class="quiz-title">Quiz Completed!</h2>
+                    <p class="quiz-subtitle">You've finished the MED QUIZ</p>
+                    
+                    <div class="score-circle" style="--p: ${percentage}%">
+                        <div class="score-text">
+                            <div class="score-value">${score}</div>
+                            <div class="score-label">Points</div>
+                        </div>
+                    </div>
+                    
+                    <div class="results-stats">
+                        <div class="result-stat">
+                            <div class="result-stat-value">${percentage}%</div>
+                            <div class="result-stat-label">Accuracy</div>
+                        </div>
+                        <div class="result-stat">
+                            <div class="result-stat-value">${timeElapsed}s</div>
+                            <div class="result-stat-label">Time Taken</div>
+                        </div>
+                        <div class="result-stat">
+                            <div class="result-stat-value">${streak}</div>
+                            <div class="result-stat-label">Best Streak</div>
+                        </div>
+                        <div class="result-stat">
+                            <div class="result-stat-value">${bookmarkedQuestions.length}</div>
+                            <div class="result-stat-label">Bookmarked</div>
+                        </div>
+                    </div>
+                    
+                    <div class="review-section">
+                        <h3 class="review-title">Performance Analytics</h3>
+                        <div class="review-item">
+                            <div class="review-answer">Category Performance: ${categoryStats}</div>
+                            <div class="review-answer">Difficulty Performance: Easy: ${performanceMetrics.difficulties.Easy || 0}, Medium: ${performanceMetrics.difficulties.Medium || 0}, Hard: ${performanceMetrics.difficulties.Hard || 0}</div>
+                        </div>
+                        
+                        <h3 class="review-title">Review Your Answers</h3>
+                        ${answers.map((answer, index) => `
+                            <div class="review-item ${answer.isCorrect ? 'correct' : 'incorrect'}">
+                                <div class="review-question">Q${index + 1}: ${answer.question} (${answer.category} - ${answer.difficulty})</div>
+                                <div class="review-answer">Your Answer: ${answer.selected}</div>
+                                <div class="review-answer">Correct Answer: ${answer.correct}</div>
+                                <div class="review-explanation">${answer.explanation}</div>
+                            </div>
+                        `).join('')}
+                        
+                        <h3 class="review-title">Bookmarked Questions</h3>
+                        ${bookmarkedQuestions.map(qid => {
+                            const question = questions.find(q => q.id === qid);
+                            return `
+                                <div class="review-item">
+                                    <div class="review-question">${question.question} (${question.category} - ${question.difficulty})</div>
+                                    <div class="review-answer">Correct Answer: ${question.correctAnswer}</div>
+                                    <div class="review-explanation">${question.explanation}</div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    
+                    <button class="btn btn-primary mt-4" id="restart-btn">
+                        <i class="fas fa-redo"></i> Try Again
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('restart-btn').addEventListener('click', restartQuiz);
+        }
+
+        function restartQuiz() {
+            // Reset quiz state
+            currentQuestionIndex = 0;
+            score = 0;
+            streak = 0;
+            timeElapsed = 0;
+            answers = [];
+            selectedOption = null;
+            performanceMetrics = {
+                categories: {},
+                difficulties: { Easy: 0, Medium: 0, Hard: 0 },
+                totalCorrect: 0,
+                totalQuestions: 0
+            };
+            
+            // Clear any existing timer
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            
+            body.setAttribute('data-progress', '0');
+            
+            // Reset DOM
+            const quizContainer = document.querySelector('.quiz-container');
+            quizContainer.innerHTML = `
+                <div class="quiz-header">
+                    <div>
+                        <h1 class="quiz-title">    MED QUIZ</h1>
+                        <p class="quiz-subtitle">   Test your knowledge</p>
+                    </div>
+                    <div class="stats-container">
+                        <div class="stat">
+                            <span class="stat-value" id="score">0</span>
+                            <span class="stat-label">Score</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value" id="timer">00:00</span>
+                            <span class="stat-label">Time</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value" id="streak">0</span>
+                            <span class="stat-label">Streak</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value" id="category">All</span>
+                            <span class="stat-label">Category</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar" style="width: 10%"></div>
+                </div>
+
+                <div class="question-meta">
+                    <div class="question-tags">
+                        <span class="tag" id="category-tag">Neuro</span>
+                        <span class="tag" id="difficulty-tag">Medium</span>
+                    </div>
+                    <button class="bookmark-btn" id="bookmark-btn" aria-label="Bookmark question">
+                        <i class="fas fa-bookmark"></i>
+                    </button>
+                </div>
+                <div class="question-number">Question <span id="current-question">1</span> of <span id="total-questions">10</span></div>
+                <div class="question-text" id="question"></div>
+
+                <div class="options-grid" id="options-container"></div>
+
+                <div class="feedback correct" id="feedback" style="display: none;">
+                    <i class="fas fa-check-circle feedback-icon"></i>
+                    <div class="feedback-text">Correct! Well done.</div>
+                </div>
+
+                <button class="btn btn-secondary" id="show-explanation-btn" style="display: none;">
+                    <i class="fas fa-info-circle"></i> Show Explanation
+                </button>
+
+                <div class="explanation-container" id="explanation-container">
+                    <div class="explanation">
+                        <div class="explanation-title">Explanation:</div>
+                        <div id="explanation-text"></div>
+                    </div>
+                </div>
+
+                <div class="navigation">
+                    <button class="btn btn-secondary" id="prev-btn" disabled>
+                        <i class="fas fa-arrow-left"></i> Previous
+                    </button>
+                    <button class="btn btn-primary" id="next-btn">
+                        Next Question <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            `;
+            
+            // Reinitialize DOM elements
+            questionElement = document.getElementById('question');
+            optionsContainer = document.getElementById('options-container');
+            currentQuestionElement = document.getElementById('current-question');
+            totalQuestionsElement = document.getElementById('total-questions');
+            progressBar = document.getElementById('progress-bar');
+            prevButton = document.getElementById('prev-btn');
+            nextButton = document.getElementById('next-btn');
+            feedbackElement = document.getElementById('feedback');
+            timerElement = document.getElementById('timer');
+            scoreElement = document.getElementById('score');
+            streakElement = document.getElementById('streak');
+            categoryElement = document.getElementById('category');
+            explanationContainer = document.getElementById('explanation-container');
+            explanationTextElement = document.getElementById('explanation-text');
+            bookmarkBtn = document.getElementById('bookmark-btn');
+            bookmarksCount = document.getElementById('bookmarks-count');
+            categoryTag = document.getElementById('category-tag');
+            difficultyTag = document.getElementById('difficulty-tag');
+            showExplanationBtn = document.getElementById('show-explanation-btn');
+            
+            // Reinitialize the quiz
+            initQuiz();
+        }
+
+        function toggleTheme() {
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 
+                            currentTheme === 'light' ? 'minimal' : 'dark';
+            
+            body.setAttribute('data-theme', newTheme);
+            themeToggle.innerHTML = newTheme === 'dark' ? '<i class="fas fa-moon"></i>' : 
+                                  newTheme === 'light' ? '<i class="fas fa-sun"></i>' : 
+                                  '<i class="fas fa-paint-brush"></i>';
+            
+            localStorage.setItem('theme', newTheme);
+        }
+
+        function toggleSound() {
+            soundsEnabled = !soundsEnabled;
+            soundToggle.innerHTML = soundsEnabled ? '<i class="fas fa-volume-up"></i>' : '<i class="fas fa-volume-mute"></i>';
+            
+            localStorage.setItem('soundsEnabled', soundsEnabled);
+        }
+
+        function playSound(type) {
+            if (!soundsEnabled) return;
+            console.log(`Playing ${type} sound`);
+        }
+
+        function loadPreferences() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                body.setAttribute('data-theme', savedTheme);
+                themeToggle.innerHTML = savedTheme === 'dark' ? '<i class="fas fa-moon"></i>' : 
+                                      savedTheme === 'light' ? '<i class="fas fa-sun"></i>' : 
+                                      '<i class="fas fa-paint-brush"></i>';
+            }
+            
+            const savedSounds = localStorage.getItem('soundsEnabled');
+            if (savedSounds !== null) {
+                soundsEnabled = savedSounds === 'true';
+                soundToggle.innerHTML = soundsEnabled ? '<i class="fas fa-volume-up"></i>' : '<i class="fas fa-volume-mute"></i>';
+            }
+        }
+
+        function saveBookmarks() {
+            localStorage.setItem('bookmarkedQuestions', JSON.stringify(bookmarkedQuestions));
+        }
+
+        function loadQuizHistory() {
+            const saved = localStorage.getItem('quizHistory');
+            if (saved) {
+                quizHistory = JSON.parse(saved);
+            }
+            loadBookmarks();
+        }
+
+        function saveQuizHistory() {
+            quizHistory.push({
+                timestamp: new Date().toISOString(),
+                score: score,
+                percentage: ((score / (questions.length * 15)) * 100).toFixed(1),
+                timeSpent: timeElapsed,
+                streak: streak,
+                answers: answers,
+                performanceMetrics: performanceMetrics
+            });
+            localStorage.setItem('quizHistory', JSON.stringify(quizHistory));
+        }
+
+        function loadBookmarks() {
+            const saved = localStorage.getItem('bookmarkedQuestions');
+            if (saved) {
+                bookmarkedQuestions = JSON.parse(saved);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', initQuiz);
+    </script>
+</body>
+</html>
