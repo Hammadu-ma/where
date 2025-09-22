@@ -1332,7 +1332,6 @@
     <footer>
         &copy; 2025 MedQuiz | MED Practice Platform | All Rights Reserved
     </footer>
-    ```html
 <script>
 const questions = [
     {
@@ -3554,6 +3553,8 @@ function handleKeydown(e) {
         selectOption(2);
     } else if (e.key.toLowerCase() === 'd' || e.key === '4') {
         selectOption(3);
+    } else if (e.key.toLowerCase() === 'e' || e.key === '5') {
+        selectOption(4);
     } else if (e.key === 'Enter') {
         if (showExplanationBtn && showExplanationBtn.style.display !== 'none') {
             toggleExplanation();
@@ -3592,7 +3593,7 @@ function loadQuestion() {
     
     optionsContainer.innerHTML = '';
     
-    const optionLetters = ['A', 'B', 'C', 'D'];
+    const optionLetters = ['A', 'B', 'C', 'D', 'E'];
     question.options.forEach((option, index) => {
         const optionElement = document.createElement('div');
         optionElement.classList.add('option', 'fade-in');
