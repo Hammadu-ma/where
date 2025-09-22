@@ -1,0 +1,4531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MED QUIZ Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --primary-dark: #3a0ca3;
+            --secondary: #f72585;
+            --success: #4cc9f0;
+            --warning: #f9c74f;
+            --danger: #f94144;
+            --gray-50: #f8f9fa;
+            --gray-100: #f1f3f5;
+            --gray-800: #343a40;
+            --gray-900: #212529;
+            --bg-primary: var(--gray-900);
+            --bg-secondary: #1a1d21;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --card-bg: rgba(35, 39, 47, 0.95);
+            --card-border: #4cc9f0;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+            --transition: all 0.2s ease-in-out;
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --header-height: 50px;
+            --max-width: 800px;
+            --side-padding: 1rem;
+            --gradient-primary: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f5f7fa;
+            --bg-secondary: #ffffff;
+            --text-primary: #1a1d21;
+            --text-secondary: rgba(26, 29, 33, 0.7);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            line-height: 1.5;
+            font-weight: 400;
+            overflow-x: hidden;
+            padding: 0;
+        }
+
+        /* Compact Header */
+        header {
+            height: var(--header-height);
+            background: var(--gradient-primary);
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 var(--side-padding);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: white;
+        }
+
+        .logo-icon {
+            font-size: 1.25rem;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .control-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .control-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--secondary);
+            color: white;
+            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            padding: 1.5rem var(--side-padding);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .quiz-container {
+            width: 100%;
+            max-width: var(--max-width);
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition);
+            border: 1px solid var(--card-border);
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .quiz-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .quiz-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .stats-container {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.5rem 0.75rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius-md);
+            min-width: 60px;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            margin: 1.5rem 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-md);
+            transition: width 0.4s ease;
+        }
+
+        /* Question Meta */
+        .question-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .question-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            padding: 0.25rem 0.5rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .difficulty-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        .difficulty-easy { background-color: var(--success); }
+        .difficulty-medium { background-color: var(--warning); }
+        .difficulty-hard { background-color: var(--danger); }
+
+        .bookmark-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: var(--transition);
+        }
+
+        .bookmark-btn.bookmarked {
+            color: var(--warning);
+        }
+
+        /* Question */
+        .question-number {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.75rem;
+            text-align: center;
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        /* Options */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .option:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+            border-color: var(--primary-light);
+        }
+
+        .option.selected {
+            background: rgba(67, 97, 238, 0.15);
+            border-color: var(--primary);
+        }
+
+        .option.correct {
+            background: rgba(76, 201, 240, 0.15);
+            border-color: var(--success);
+        }
+
+        .option.incorrect {
+            background: rgba(249, 65, 68, 0.15);
+            border-color: var(--danger);
+        }
+
+        .option-letter {
+            width: 28px;
+            height: 28px;
+            border-radius: var(--radius-sm);
+            background: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 1rem;
+            flex-shrink: 0;
+            font-size: 0.9rem;
+        }
+
+        .option.selected .option-letter {
+            background: var(--primary);
+            color: white;
+        }
+
+        .option.correct .option-letter {
+            background: var(--success);
+            color: white;
+        }
+
+        .option.incorrect .option-letter {
+            background: var(--danger);
+            color: white;
+        }
+
+        .option-text {
+            flex: 1;
+            font-size: 0.95rem;
+        }
+
+        /* Feedback */
+        .feedback {
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .feedback.correct {
+            background: rgba(76, 201, 240, 0.15);
+            color: var(--success);
+        }
+
+        .feedback.incorrect {
+            background: rgba(249, 65, 68, 0.15);
+            color: var(--danger);
+        }
+
+        .feedback.skipped {
+            background: rgba(67, 97, 238, 0.15);
+            color: var(--primary);
+        }
+
+        .feedback-icon {
+            font-size: 1.25rem;
+        }
+
+        /* Explanation */
+        .explanation-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .explanation-container.expanded {
+            max-height: 500px;
+        }
+
+        .explanation {
+            padding: 1rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius-md);
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .explanation-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        /* Navigation */
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+            gap: 0.75rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-md);
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            font-size: 0.9rem;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* Study Mode Toggle */
+        .study-mode-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius-md);
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255,255,255,0.1);
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Results */
+        .results-container {
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: conic-gradient(var(--gradient-primary) 0% var(--p, 0%), var(--bg-secondary) var(--p, 0%) 100%);
+            position: relative;
+        }
+
+        .score-circle::before {
+            content: '';
+            position: absolute;
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: var(--card-bg);
+        }
+
+        .score-text {
+            position: relative;
+            z-index: 1;
+        }
+
+        .score-value {
+            font-size: 1.75rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .score-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .results-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .result-stat {
+            padding: 1rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius-md);
+        }
+
+        .result-stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .result-stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .review-section {
+            margin-top: 2rem;
+            text-align: left;
+        }
+
+        .review-title {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            text-align: center;
+        }
+
+        .review-item {
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+            background: rgba(255,255,255,0.05);
+            font-size: 0.9rem;
+        }
+
+        .review-item.correct {
+            border-left: 3px solid var(--success);
+        }
+
+        .review-item.incorrect {
+            border-left: 3px solid var(--danger);
+        }
+
+        .review-item.skipped {
+            border-left: 3px solid var(--primary);
+        }
+
+        .review-question {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .review-answer {
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius-sm);
+        }
+
+        .review-explanation {
+            color: var(--text-secondary);
+            padding-top: 0.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        footer {
+            padding: 2rem var(--side-padding);
+            background: var(--bg-secondary);
+            text-align: center;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            margin-top: auto;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(5px);
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal {
+            background: var(--card-bg);
+            border-radius: var(--radius-2xl);
+            padding: 2.5rem;
+            width: 90%;
+            max-width: 600px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-xl);
+            transform: translateY(-50px) scale(0.95);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--card-border);
+        }
+        .modal-overlay.active .modal {
+            transform: translateY(0) scale(1);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        .modal-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.75rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition-base);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-close:hover {
+            background: rgba(255,255,255,0.1);
+            color: var(--primary);
+        }
+        .modal-body {
+            margin-bottom: 2rem;
+        }
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+        .difficulty-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 0.75rem;
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+        }
+        .difficulty-easy {
+            background-color: var(--success);
+            box-shadow: 0 0 10px var(--success);
+        }
+        .difficulty-medium {
+            background-color: var(--warning);
+            box-shadow: 0 0 10px var(--warning);
+        }
+        .difficulty-hard {
+            background-color: var(--danger);
+            box-shadow: 0 0 10px var(--danger);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius-xl);
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: var(--transition-base);
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        .stat-card-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        .stat-card-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        .confetti {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: var(--gradient-primary);
+            opacity: 0;
+            border-radius: 2px;
+        }
+        @keyframes confettiFall {
+            0% {
+                opacity: 1;
+                transform: translateY(-100px) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(100vh) rotate(720deg);
+            }
+        }
+        .fab {
+            position: fixed;
+            bottom: 2.5rem;
+            right: 2.5rem;
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            box-shadow: var(--shadow-xl);
+            cursor: pointer;
+            z-index: 100;
+            transition: var(--transition-smooth);
+            border: 3px solid rgba(255,255,255,0.2);
+        }
+        .fab:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 20px 40px rgba(67, 97, 238, 0.3);
+        }
+        .study-mode-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius-lg);
+            justify-content: center;
+        }
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 28px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255,255,255,0.1);
+            transition: .4s;
+            border-radius: 34px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        input:checked + .toggle-slider {
+            background-color: var(--primary);
+            box-shadow: 0 0 10px rgba(67, 97, 238, 0.5);
+        }
+        input:checked + .toggle-slider:before {
+            transform: translateX(32px);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        @keyframes bounceIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        .fade-in {
+            animation: fadeIn 0.6s ease;
+        }
+        .pulse {
+            animation: pulse 1s infinite;
+        }
+        .bounce-in {
+            animation: bounceIn 0.6s ease;
+        }
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .mt-1 { margin-top: 0.5rem; }
+        .mt-2 { margin-top: 1rem; }
+        .mt-3 { margin-top: 1.5rem; }
+        .mt-4 { margin-top: 2rem; }
+        .full-width {
+            width: 100%;
+        }
+        @media (max-width: 768px) {
+            :root {
+                --side-padding: 1rem;
+                --header-height: 50px;
+            }
+            .quiz-container {
+                padding: 2rem;
+                border-radius: var(--radius-xl);
+            }
+            .quiz-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1.5rem;
+            }
+            .stats-container {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .results-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .score-circle {
+                width: 140px;
+                height: 140px;
+            }
+            .score-circle::before {
+                width: 110px;
+                height: 110px;
+            }
+            .score-value {
+                font-size: 2.25rem;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .fab {
+                bottom: 1.5rem;
+                right: 1.5rem;
+                width: 55px;
+                height: 55px;
+                font-size: 1.5rem;
+            }
+            .navigation {
+                flex-direction: column;
+            }
+            .btn {
+                width: 100%;
+            }
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+            .options-grid .option:nth-child(1),
+            .options-grid .option:nth-child(2),
+            .options-grid .option:nth-child(3),
+            .options-grid .option:nth-child(4) {
+                grid-column: auto;
+            }
+        }
+        @media (max-width: 480px) {
+            .option {
+                padding: 1rem;
+            }
+            .option-letter {
+                width: 32px;
+                height: 32px;
+                margin-right: 1rem;
+            }
+            .quiz-title {
+                font-size: 1.5rem;
+            }
+            .question-text {
+                font-size: 1.1rem;
+            }
+        }
+        /* Explanation Section Styling */
+.explanation-container {
+    background: var(--background-secondary, #f8f9fa); /* Light background for contrast */
+    border-radius: 12px; /* Rounded corners */
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    transition: all 0.3s ease; /* Smooth transition for expand/collapse */
+    border: 1px solid var(--border-color, #e0e0e0); /* Subtle border */
+}
+
+.explanation-container.expanded {
+    max-height: 800px; /* Increased max-height for content */
+    opacity: 1;
+    transform: translateY(0); /* Smooth slide-in effect */
+}
+
+.explanation-container:not(.expanded) {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transform: translateY(-10px); /* Slight upward shift when hidden */
+}
+
+.explanation {
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* Spacing between title and text */
+}
+
+.explanation-title {
+    font-size: 1.25rem; /* Slightly larger for emphasis */
+    font-weight: 600;
+    color: var(--primary, #4361ee); /* Match quiz primary color */
+    border-bottom: 2px solid var(--primary-light, #4cc9f0); /* Underline effect */
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.explanation-title::before {
+    content: "\f05a"; /* Font Awesome info-circle icon */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    color: var(--primary, #4361ee);
+    font-size: 1.2rem;
+}
+
+#explanation-text {
+    font-size: 1rem;
+    line-height: 1.6; /* Improved readability */
+    color: var(--text-color, #333);
+}
+
+/* Styling for the "Why Not Other Options" list */
+#explanation-text ul {
+    list-style: none; /* Remove default bullets */
+    padding: 0;
+    margin: 16px 0 0 0;
+}
+
+#explanation-text li {
+    position: relative;
+    padding-left: 28px; /* Space for custom bullet */
+    margin-bottom: 12px; /* Spacing between items */
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--text-secondary, #555);
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+#explanation-text li::before {
+    content: "\f00d"; /* Font Awesome times-circle icon for incorrect options */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    color: var(--danger, #f72585); /* Red/pink for incorrect options */
+    position: absolute;
+    left: 0;
+    top: 4px;
+    font-size: 1rem;
+}
+
+#explanation-text li strong {
+    color: var(--text-color, #333); /* Darker color for option labels */
+    font-weight: 600;
+}
+
+/* Hover effect for list items */
+#explanation-text li:hover {
+    background: var(--background-hover, rgba(67, 97, 238, 0.1)); /* Subtle highlight */
+    border-radius: 6px;
+    transform: translateX(4px); /* Slight shift for interactivity */
+    padding-left: 32px; /* Adjust for hover */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .explanation-container {
+        padding: 15px;
+        margin-top: 15px;
+    }
+
+    .explanation-title {
+        font-size: 1.1rem;
+    }
+
+    #explanation-text {
+        font-size: 0.95rem;
+    }
+
+    #explanation-text li {
+        font-size: 0.9rem;
+        padding-left: 24px;
+        margin-bottom: 10px;
+    }
+}
+
+/* Animation for expanding explanation */
+@keyframes explanationFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.explanation-container.expanded .explanation {
+    animation: explanationFadeIn 0.3s ease;
+}
+
+/* Ensure consistency with theme variables */
+:root {
+    --background-secondary: #f8f9fa;
+    --border-color: #e0e0e0;
+    --text-color: #333;
+    --text-secondary: #555;
+    --background-hover: rgba(67, 97, 238, 0.1);
+}
+
+[data-theme="dark"] {
+    --background-secondary: #2a2a2a;
+    --border-color: #444;
+    --text-color: #e0e0e0;
+    --text-secondary: #b0b0b0;
+    --background-hover: rgba(76, 201, 240, 0.2);
+}
+
+[data-theme="minimal"] {
+    --background-secondary: #f0f4f8;
+    --border-color: #d0d4d8;
+    --text-color: #2a2a2a;
+    --text-secondary: #666;
+    --background-hover: rgba(67, 97, 238, 0.05);
+}
+    </style>
+</head>
+<body data-theme="dark" data-progress="0">
+    <header>
+        <div class="logo">
+            <i class="fas fa-brain logo-icon"></i>
+            <span>MedQuiz</span>
+        </div>
+        <div class="header-controls">
+            <button class="control-btn" id="theme-toggle" aria-label="Toggle theme">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button class="control-btn" id="sound-toggle" aria-label="Toggle sound">
+                <i class="fas fa-volume-up"></i>
+            </button>
+            <button class="control-btn" id="stats-btn" aria-label="View statistics">
+                <i class="fas fa-chart-line"></i>
+                <span class="badge" id="bookmarks-count">0</span>
+            </button>
+        </div>
+    </header>
+    <main>
+        <div class="quiz-container">
+            <div class="quiz-header">
+                <div>
+                    <h1 class="quiz-title">MED QUIZ</h1>
+                    <p class="quiz-subtitle">Test your medical knowledge</p>
+                </div>
+                <div class="stats-container">
+                    <div class="stat">
+                        <span class="stat-value" id="timer">00:00</span>
+                        <span class="stat-label">Time</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="category">All</span>
+                        <span class="stat-label">Category</span>
+                    </div>
+                </div>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar" style="width: 10%"></div>
+            </div>
+            <div class="question-meta">
+                <div class="question-tags">
+                    <span class="tag" id="category-tag">Biochemistry</span>
+                    <span class="tag" id="difficulty-tag">
+                        <span class="difficulty-indicator difficulty-medium"></span>
+                        Medium
+                    </span>
+                </div>
+                <button class="bookmark-btn" id="bookmark-btn" aria-label="Bookmark question">
+                    <i class="fas fa-bookmark"></i>
+                </button>
+            </div>
+            <div class="question-number">Question <span id="current-question">1</span> of <span id="total-questions">15</span></div>
+            <div class="question-text" id="question">Which part of the brain is responsible for coordinating skeletal muscle contractions?</div>
+            <div class="options-grid" id="options-container">
+                <div class="option">
+                    <div class="option-letter">A</div>
+                    <div class="option-text">Cerebrum</div>
+                </div>
+                <div class="option">
+                    <div class="option-letter">B</div>
+                    <div class="option-text">Cerebellum</div>
+                </div>
+                <div class="option">
+                    <div class="option-letter">C</div>
+                    <div class="option-text">Pons</div>
+                </div>
+                <div class="option">
+                    <div class="option-letter">D</div>
+                    <div class="option-text">Midbrain</div>
+                </div>
+            </div>
+            <div class="feedback correct" id="feedback" style="display: none;">
+                <i class="fas fa-check-circle feedback-icon"></i>
+                <div class="feedback-text">Correct! Well done.</div>
+            </div>
+            <button class="btn btn-secondary" id="show-explanation-btn" style="display: none;">
+                <i class="fas fa-info-circle"></i> Show Explanation
+            </button>
+            <div class="explanation-container" id="explanation-container">
+                <div class="explanation">
+                    <div class="explanation-title">Explanation:</div>
+                    <div id="explanation-text">The cerebellum, located posterior to the brainstem, is the 'little brain.' It compares intended movements with actual movements to ensure smooth, coordinated skeletal muscle activity and maintain posture and balance.</div>
+                </div>
+            </div>
+            <div class="navigation">
+                <button class="btn btn-secondary" id="prev-btn" disabled>
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                <button class="btn btn-primary" id="next-btn">
+                    Next Question <i class="fas fa-arrow-right"></i>
+                </button>
+                <button class="btn btn-danger" id="skip-btn">
+                    <i class="fas fa-forward"></i> Skip
+                </button>
+            </div>
+        </div>
+    </main>
+    <div class="fab" id="quick-actions-btn" style="display: none;">
+        <i class="fas fa-bolt"></i>
+    </div>
+    <div class="confetti-container" id="confetti-container"></div>
+    <div class="modal-overlay" id="stats-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Your Statistics</h2>
+                <button class="modal-close" id="close-stats-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card-value" id="modal-total-questions">0</div>
+                        <div class="stat-card-label">Total Questions</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-value" id="modal-correct-answers">0</div>
+                        <div class="stat-card-label">Correct Answers</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-value" id="modal-accuracy">0%</div>
+                        <div class="stat-card-label">Accuracy</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-value" id="modal-avg-time">0s</div>
+                        <div class="stat-card-label">Avg. Time</div>
+                    </div>
+                </div>
+                <h3 class="review-title">Performance by Category</h3>
+                <div id="category-stats"></div>
+                <h3 class="review-title mt-2">Performance by Difficulty</h3>
+                <div id="difficulty-stats"></div>
+                <h3 class="review-title mt-2">Quiz History</h3>
+                <div id="history-stats"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="close-stats-btn">Close</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal-overlay" id="quick-actions-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Quick Actions</h2>
+                <button class="modal-close" id="close-actions-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <button class="btn btn-primary full-width mt-1" id="mark-for-review-btn">
+                    <i class="fas fa-flag"></i> Mark for Review
+                </button>
+                <button class="btn btn-secondary full-width mt-1" id="view-explanation-btn">
+                    <i class="fas fa-info-circle"></i> View Explanation
+                </button>
+                <button class="btn btn-success full-width mt-1" id="hint-btn">
+                    <i class="fas fa-lightbulb"></i> Get a Hint
+                </button>
+                <button class="btn btn-danger full-width mt-1" id="report-question-btn">
+                    <i class="fas fa-exclamation-triangle"></i> Report Question
+                </button>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="close-actions-btn">Close</button>
+            </div>
+        </div>
+    </div>
+    <footer>
+        &copy; 2025 MedQuiz | MED Practice Platform | All Rights Reserved
+    </footer>
+<script>
+const questions = [
+    {
+        "id": 1,
+        "question": "General properties of negative feedback include all of the following EXCEPT:",
+        "options": [
+            "It controls deviation from normal value",
+            "It is the most commonly occurring",
+            "It is a closed loop control system in which the output accelerates the control system",
+            "The term negative is used because the effector response opposes the departure from the set point",
+            "It often works towards homeostasis"
+        ],
+        "answer": 2,
+        "correctAnswer": "It is a closed loop control system in which the output accelerates the control system",
+        "explanation": "Negative feedback opposes deviations from a set point to maintain homeostasis (A, D, E). It is the most common control mechanism in physiology (B). However, C describes positive feedback, where the output amplifies the stimulus (e.g., oxytocin in labor), not negative feedback.",
+        "whyNotOtherOptions": {
+            "a": "Negative feedback corrects deviations, e.g., insulin lowering blood glucose.",
+            "b": "It is the primary mechanism for homeostasis, as in thermoregulation.",
+            "d": "The effector opposes the change, e.g., sweating to reduce body temperature.",
+            "e": "Homeostasis is the goal of negative feedback systems."
+        },
+        "relatedQuestions": ["80 (positive feedback)", "83 (growth hormone)"],
+        "category": "General Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 2,
+        "question": "Which of the following is not a function of the smooth endoplasmic reticulum?",
+        "options": [
+            "Protein synthesis",
+            "Calcium storage in muscle cells",
+            "Glycogen storage in liver cells",
+            "Drug metabolism in hepatocytes",
+            "Lipid synthesis"
+        ],
+        "answer": 0,
+        "correctAnswer": "Protein synthesis",
+        "explanation": "The smooth endoplasmic reticulum (sER) is involved in lipid synthesis (E), drug metabolism (D), calcium storage in muscle cells (B, as sarcoplasmic reticulum), and glycogen storage in liver cells (C). Protein synthesis occurs in the rough ER due to ribosomes.",
+        "whyNotOtherOptions": {
+            "b": "sER in muscle (sarcoplasmic reticulum) stores calcium for contraction.",
+            "c": "sER in hepatocytes supports glycogenolysis and storage.",
+            "d": "sER detoxifies drugs via cytochrome P450 enzymes.",
+            "e": "sER synthesizes lipids, including phospholipids and steroids."
+        },
+        "relatedQuestions": ["5 (cell membrane)", "14 (T-tubules)"],
+        "category": "Cell Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 3,
+        "question": "The cell membrane is composed of:",
+        "options": [
+            "45% proteins and 55% carbohydrates",
+            "55% proteins and 43% lipids",
+            "55% lipids and 13% cholesterol",
+            "45% proteins and 3% carbohydrates",
+            "45% phospholipids and 13% neutral fats"
+        ],
+        "answer": 1,
+        "correctAnswer": "55% proteins and 43% lipids",
+        "explanation": "The cell membrane consists of ~55% proteins, ~42% lipids (including phospholipids, cholesterol, and neutral fats), and ~3% carbohydrates. Option B is closest to this composition, though lipids are slightly understated.",
+        "whyNotOtherOptions": {
+            "a": "Carbohydrates are only ~3%, not 55%.",
+            "c": "Lipids are ~42%, not 55%; cholesterol is a subset of lipids.",
+            "d": "Proteins are ~55%, not 45%; carbohydrates are correct at 3%.",
+            "e": "Phospholipids are ~25% of total lipids, not 45%; neutral fats are ~4%."
+        },
+        "relatedQuestions": ["5 (cell membrane structure)", "9 (lipid-soluble substances)"],
+        "category": "Cell Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 4,
+        "question": "Which one of the following does not belong to the cell membrane proteins?",
+        "options": [
+            "Ion channels",
+            "Na+ K+ ATPase",
+            "Carrier proteins",
+            "Membrane receptor",
+            "None of the above"
+        ],
+        "answer": 4,
+        "correctAnswer": "None of the above",
+        "explanation": "All listed options (A, B, C, D) are types of integral membrane proteins. Ion channels allow ion passage, Na+ K+ ATPase is a pump, carrier proteins facilitate transport, and receptors bind signaling molecules.",
+        "whyNotOtherOptions": {
+            "a": "Ion channels are integral proteins, e.g., voltage-gated Na+ channels.",
+            "b": "Na+ K+ ATPase is an integral pump protein.",
+            "c": "Carrier proteins, like glucose transporters, are membrane proteins.",
+            "d": "Membrane receptors, like G-protein-coupled receptors, are integral."
+        },
+        "relatedQuestions": ["6 (Na+ K+ ATPase)", "13 (antiport carrier)"],
+        "category": "Cell Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 5,
+        "question": "Which of the following statements is correct about the structure of the cell membrane?",
+        "options": [
+            "Portions of the lipid bilayer that face the ECF and ICF are hydrophobic",
+            "Polar molecules can easily pass through the lipid bilayer",
+            "Protein channels within the lipid bilayer allow the passage of ions",
+            "The polar heads of the lipid bilayer face each other in the interior of the cell",
+            "None of the above"
+        ],
+        "answer": 2,
+        "correctAnswer": "Protein channels within the lipid bilayer allow the passage of ions",
+        "explanation": "The lipid bilayer’s hydrophobic tails face inward, while hydrophilic heads face the ECF and ICF. Ion channels (integral proteins) allow ions to cross the impermeable bilayer (C). Polar molecules require transporters (B is false).",
+        "whyNotOtherOptions": {
+            "a": "Hydrophilic heads face ECF/ICF; hydrophobic tails are internal.",
+            "b": "Polar molecules cannot cross the hydrophobic bilayer without help.",
+            "d": "Polar heads face outward, not inward; tails face each other.",
+            "e": "Option C is correct, so 'none' is invalid."
+        },
+        "relatedQuestions": ["3 (cell membrane composition)", "9 (lipid-soluble substances)"],
+        "category": "Cell Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 6,
+        "question": "Which of the following is true about the Na+ K+ ATPase?",
+        "options": [
+            "It is made up of five sub units",
+            "Its alpha sub unit is facing the ECF and has a binding site for Na+ ions",
+            "Its ICF domain contains four binding sites",
+            "The ICF domain has K+ ion binding sites",
+            "ATPase binding site is on its ECF domain"
+        ],
+        "answer": 3,
+        "correctAnswer": "The ICF domain has K+ ion binding sites",
+        "explanation": "The Na+ K+ ATPase pumps 3 Na+ out and 2 K+ in per cycle. Na+ binds on the ICF side, and K+ binds on the ECF side. The ATPase (ATP-binding) site is on the ICF side. The number of subunits is typically two (alpha and beta).",
+        "whyNotOtherOptions": {
+            "a": "It has two main subunits (alpha and beta), not five.",
+            "b": "Na+ binding sites are on the ICF side, not ECF.",
+            "c": "It has three Na+ and two K+ binding sites, not four.",
+            "e": "ATP binds on the ICF side, not ECF."
+        },
+        "relatedQuestions": ["4 (membrane proteins)", "13 (antiport carrier)"],
+        "category": "Cell Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 7,
+        "question": "Which one of the following is false about facilitated diffusion?",
+        "options": [
+            "It requires carrier proteins to transport substances",
+            "It needs ATP to transport substances",
+            "It transports substances down their concentration gradient",
+            "Carrier proteins are involved",
+            "It is a saturable process"
+        ],
+        "answer": 1,
+        "correctAnswer": "It needs ATP to transport substances",
+        "explanation": "Facilitated diffusion uses carrier proteins (A, D) to move substances down their concentration gradient (C) without ATP, as it is passive. It is saturable due to limited carriers (E). B is false, as ATP is for active transport.",
+        "whyNotOtherOptions": {
+            "a": "Carrier proteins are essential for facilitated diffusion.",
+            "c": "It moves substances from high to low concentration.",
+            "d": "Carrier proteins mediate the transport process.",
+            "e": "Limited carriers cause saturation at high substrate levels."
+        },
+        "relatedQuestions": ["10 (secondary active transport)", "13 (antiport carrier)"],
+        "category": "Cell Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 8,
+        "question": "A mechanism by which water molecules are transported through the cell membrane is:",
+        "options": [
+            "Osmosis",
+            "Simple diffusion",
+            "Facilitated diffusion",
+            "Primary active transport",
+            "Secondary active transport"
+        ],
+        "answer": 0,
+        "correctAnswer": "Osmosis",
+        "explanation": "Osmosis is the passive movement of water across a semi-permeable membrane down its concentration gradient, driven by solute differences. Facilitated diffusion via aquaporins can occur, but osmosis is the primary mechanism.",
+        "whyNotOtherOptions": {
+            "b": "Simple diffusion is for non-polar molecules, not water primarily.",
+            "c": "Facilitated diffusion via aquaporins is a subset, but osmosis is the term.",
+            "d": "Primary active transport uses ATP, not for water.",
+            "e": "Secondary active transport involves co-transport, not water alone."
+        },
+        "relatedQuestions": ["9 (lipid-soluble substances)", "60 (ADH)"],
+        "category": "Cell Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 9,
+        "question": "Which of the following substances is lipid-soluble?",
+        "options": [
+            "O2 and CO2",
+            "Water",
+            "Sodium and Potassium",
+            "Glucose",
+            "All"
+        ],
+        "answer": 0,
+        "correctAnswer": "O2 and CO2",
+        "explanation": "The lipid bilayer is permeable to non-polar, lipid-soluble substances like O2 and CO2. Water, ions (Na+, K+), and glucose are polar and require channels or transporters.",
+        "whyNotOtherOptions": {
+            "b": "Water is polar and moves via osmosis or aquaporins.",
+            "c": "Na+ and K+ are ions, requiring channels or pumps.",
+            "d": "Glucose is polar, requiring facilitated diffusion.",
+            "e": "Only O2 and CO2 are lipid-soluble, not all."
+        },
+        "relatedQuestions": ["5 (cell membrane structure)", "7 (facilitated diffusion)"],
+        "category": "Cell Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 10,
+        "question": "Glucose and amino acids are absorbed from the GIT and reabsorbed from the renal tubules by:",
+        "options": [
+            "Simple diffusion",
+            "Osmosis",
+            "Secondary active transport",
+            "Primary active transport",
+            "None of the above"
+        ],
+        "answer": 2,
+        "correctAnswer": "Secondary active transport",
+        "explanation": "Glucose and amino acids are absorbed in the gut and reabsorbed in the renal proximal tubule via Na+-coupled co-transport (symport), a form of secondary active transport using the Na+ gradient created by the Na+ K+ ATPase.",
+        "whyNotOtherOptions": {
+            "a": "Simple diffusion is for lipid-soluble substances, not glucose/amino acids.",
+            "b": "Osmosis is for water movement, not solutes.",
+            "d": "Primary active transport uses ATP directly, not Na+ gradient.",
+            "e": "Option C is correct, so 'none' is invalid."
+        },
+        "relatedQuestions": ["7 (facilitated diffusion)", "58 (proximal tubule)"],
+        "category": "Renal and Gastrointestinal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 11,
+        "question": "Which one of the following is correct about total body water volume?",
+        "options": [
+            "Higher in females than in males",
+            "Higher in adults than in infants",
+            "Higher in obese people than in leans",
+            "Higher in males than in females in adults",
+            "Higher in olds than in adults"
+        ],
+        "answer": 3,
+        "correctAnswer": "Higher in males than in females in adults",
+        "explanation": "Total body water is ~60% in adult males, ~50% in adult females, ~75% in infants, and ~45% in the elderly. Obese individuals have lower water percentage due to higher fat content. Thus, males have higher water than females.",
+        "whyNotOtherOptions": {
+            "a": "Females have lower water (~50%) than males (~60%).",
+            "b": "Infants (~75%) have higher water than adults.",
+            "c": "Obese individuals have less water due to fat mass.",
+            "e": "Elderly (~45%) have less water than adults."
+        },
+        "relatedQuestions": ["60 (ADH and aldosterone)", "82 (fluid balance)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 12,
+        "question": "Which electrolytes of the following are present at a higher concentration in the ECF than in the ICF?",
+        "options": [
+            "Na+, K+, Cl-, and HCO3-",
+            "K+, Cl-, SO42-, and HCO3-",
+            "Na+, Cl-, HCO3-, and Ca2+",
+            "K+, SO42-, Mg2+, and PO43-",
+            "Ca2+, K+, and Na+"
+        ],
+        "answer": 2,
+        "correctAnswer": "Na+, Cl-, HCO3-, and Ca2+",
+        "explanation": "The ECF has high Na+ (~140 mM), Cl- (~100 mM), HCO3- (~24 mM), and Ca2+ (~2.5 mM). The ICF has high K+ (~140 mM), Mg2+, PO43-, and SO42-. Option C correctly lists ECF-dominant electrolytes.",
+        "whyNotOtherOptions": {
+            "a": "K+ is higher in ICF, not ECF.",
+            "b": "K+ and SO42- are higher in ICF.",
+            "d": "K+, SO42-, Mg2+, and PO43- are all higher in ICF.",
+            "e": "K+ is higher in ICF, not ECF."
+        },
+        "relatedQuestions": ["6 (Na+ K+ ATPase)", "82 (fluid balance)"],
+        "category": "Cell Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 13,
+        "question": "Which one of the following represents an antiport carrier?",
+        "options": [
+            "Transport of glucose by facilitated diffusion",
+            "Na+-K+ pump",
+            "Na-glucose co-transporter",
+            "Transport of O2 and CO2",
+            "Osmosis"
+        ],
+        "answer": 1,
+        "correctAnswer": "Na+-K+ pump",
+        "explanation": "An antiport carrier transports two substances in opposite directions. The Na+ K+ ATPase pumps 3 Na+ out and 2 K+ in, making it an antiport. Na-glucose co-transporter is a symport (same direction).",
+        "whyNotOtherOptions": {
+            "a": "Glucose transport is facilitated diffusion, not antiport.",
+            "c": "Na-glucose co-transporter is a symport, not antiport.",
+            "d": "O2 and CO2 move by simple diffusion, not carriers.",
+            "e": "Osmosis is water movement, not carrier-mediated."
+        },
+        "relatedQuestions": ["6 (Na+ K+ ATPase)", "10 (secondary active transport)"],
+        "category": "Cell Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 14,
+        "question": "The function of T-tubules in the skeletal muscle fibers is:",
+        "options": [
+            "Storage of Calcium ion",
+            "Conduction of depolarization waves to the sarcoplasmic reticulum",
+            "Contain post synaptic receptors",
+            "Storage of neurotransmitters",
+            "None of the above"
+        ],
+        "answer": 1,
+        "correctAnswer": "Conduction of depolarization waves to the sarcoplasmic reticulum",
+        "explanation": "T-tubules are invaginations of the sarcolemma that conduct action potentials deep into the muscle fiber, triggering calcium release from the sarcoplasmic reticulum (SR). The SR stores calcium, not T-tubules.",
+        "whyNotOtherOptions": {
+            "a": "Calcium is stored in the SR, not T-tubules.",
+            "c": "Post-synaptic receptors are at the neuromuscular junction.",
+            "d": "Neurotransmitters are stored in synaptic vesicles, not T-tubules.",
+            "e": "Option B is correct, so 'none' is invalid."
+        },
+        "relatedQuestions": ["17 (muscle contraction)", "36 (muscle fibers)"],
+        "category": "Muscle Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 15,
+        "question": "The principal contractile proteins in the skeletal muscle are:",
+        "options": [
+            "Actin and troponin",
+            "Actin and myosin",
+            "Troponin and tropomyosin",
+            "Myosin and tropomyosin",
+            "Actin and tropomyosin"
+        ],
+        "answer": 1,
+        "correctAnswer": "Actin and myosin",
+        "explanation": "Actin and myosin are the contractile proteins responsible for muscle contraction via the sliding filament mechanism. Troponin and tropomyosin are regulatory proteins.",
+        "whyNotOtherOptions": {
+            "a": "Troponin is regulatory, not contractile.",
+            "c": "Both troponin and tropomyosin are regulatory.",
+            "d": "Tropomyosin is regulatory, not contractile.",
+            "e": "Tropomyosin is regulatory, not contractile."
+        },
+        "relatedQuestions": ["16 (sarcomere)", "17 (muscle contraction)"],
+        "category": "Muscle Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 16,
+        "question": "The contractile unit of the skeletal muscle is:",
+        "options": [
+            "The sarcomere",
+            "The A-bands",
+            "The I-bands",
+            "The Z-lines",
+            "The H-bands"
+        ],
+        "answer": 0,
+        "correctAnswer": "The sarcomere",
+        "explanation": "The sarcomere is the repeating unit of a myofibril, from Z-line to Z-line, and is the functional contractile unit. A-bands, I-bands, and H-bands are regions within the sarcomere.",
+        "whyNotOtherOptions": {
+            "b": "A-band contains myosin and actin overlap, not the full unit.",
+            "c": "I-band contains only actin, not the full unit.",
+            "d": "Z-lines anchor sarcomeres but are not contractile units.",
+            "e": "H-band is the myosin-only region, not the full unit."
+        },
+        "relatedQuestions": ["15 (contractile proteins)", "36 (muscle fibers)"],
+        "category": "Muscle Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 17,
+        "question": "Which of the following events is energy independent?",
+        "options": [
+            "Release of Ca2+ from the sarcoplasmic reticulum",
+            "Return of Ca2+ back to the sarcoplasmic reticulum",
+            "The movement of myosin head to the center",
+            "Detachment of myosin head from actin",
+            "Final ionic rearrangement"
+        ],
+        "answer": 0,
+        "correctAnswer": "Release of Ca2+ from the sarcoplasmic reticulum",
+        "explanation": "Calcium release from the SR is passive, triggered by depolarization opening voltage-gated channels (ryanodine receptors). Returning Ca2+ (B), myosin movement (C), and detachment (D) require ATP. Ionic rearrangement (E) is vague but typically ATP-dependent.",
+        "whyNotOtherOptions": {
+            "b": "Ca2+ reuptake requires ATP via the SR Ca2+ ATPase.",
+            "c": "Myosin head movement requires ATP hydrolysis.",
+            "d": "Myosin detachment from actin requires ATP binding.",
+            "e": "Ionic rearrangement typically involves active pumps."
+        },
+        "relatedQuestions": ["14 (T-tubules)", "15 (contractile proteins)"],
+        "category": "Muscle Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 18,
+        "question": "The volumes and capacities that cannot be measured by direct spirometry include:",
+        "options": [
+            "Residual volume, expiratory reserve volume, and inspiratory capacity",
+            "Residual volume, functional residual capacity, and total lung capacity",
+            "Inspiratory reserve volume, residual volume, vital capacity",
+            "Total lung capacity, residual volume, and expiratory reserve volume",
+            "Tidal volume, inspiratory reserve volume, and inspiratory capacity"
+        ],
+        "answer": 1,
+        "correctAnswer": "Residual volume, functional residual capacity, and total lung capacity",
+        "explanation": "Spirometry measures volumes that can be exhaled, like tidal volume, inspiratory reserve volume, expiratory reserve volume, and vital capacity. Residual volume (RV), functional residual capacity (FRC, includes RV), and total lung capacity (TLC, includes RV) require indirect methods like helium dilution.",
+        "whyNotOtherOptions": {
+            "a": "Expiratory reserve volume and inspiratory capacity are measurable.",
+            "c": "Inspiratory reserve volume and vital capacity are measurable.",
+            "d": "Expiratory reserve volume is measurable by spirometry.",
+            "e": "All listed volumes are directly measurable by spirometry."
+        },
+        "relatedQuestions": ["51 (total lung capacity)", "54 (respiratory portion)"],
+        "category": "Respiratory Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 19,
+        "question": "The net pressure in the glomerular capillaries that pushes fluid outward is called:",
+        "options": [
+            "Glomerular capillary pressure",
+            "Glomerular colloid osmotic capillary pressure",
+            "Bowman’s capsular pressure",
+            "Filtration pressure",
+            "Mean systemic capillary filling pressure"
+        ],
+        "answer": 3,
+        "correctAnswer": "Filtration pressure",
+        "explanation": "Net filtration pressure (NFP) is the net force driving fluid out of glomerular capillaries into Bowman’s capsule, calculated as glomerular capillary hydrostatic pressure minus (Bowman’s capsular pressure + glomerular colloid osmotic pressure).",
+        "whyNotOtherOptions": {
+            "a": "Glomerular capillary pressure is one component, not the net.",
+            "b": "Colloid osmotic pressure opposes filtration.",
+            "c": "Bowman’s capsular pressure opposes filtration.",
+            "e": "Systemic filling pressure is unrelated to glomerular filtration."
+        },
+        "relatedQuestions": ["61 (GFR factors)", "64 (Bowman’s pressure)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 20,
+        "question": "Which factor of the following inhibits motility of the GIT?",
+        "options": [
+            "Sympathetic stimulation",
+            "Parasympathetic stimulation",
+            "Myenteric nerve plexus",
+            "A hormone gastrin",
+            "Motilin"
+        ],
+        "answer": 0,
+        "correctAnswer": "Sympathetic stimulation",
+        "explanation": "Sympathetic stimulation inhibits GI motility and secretion, reducing peristalsis. Parasympathetic stimulation (B), myenteric plexus (C), gastrin (D), and motilin (E) promote motility.",
+        "whyNotOtherOptions": {
+            "b": "Parasympathetic stimulation enhances GI motility.",
+            "c": "Myenteric plexus coordinates peristalsis.",
+            "d": "Gastrin stimulates gastric motility and secretion.",
+            "e": "Motilin promotes intestinal motility."
+        },
+        "relatedQuestions": ["66 (GIT regulation)", "70 (CCK)"],
+        "category": "Gastrointestinal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 21,
+        "question": "Which of the following is not a component of the enteric nervous system?",
+        "options": [
+            "Myenteric plexus",
+            "Submucosal plexus",
+            "Vagus nerve",
+            "Interstitial cells of Cajal",
+            "All are components"
+        ],
+        "answer": 2,
+        "correctAnswer": "Vagus nerve",
+        "explanation": "The enteric nervous system includes the myenteric and submucosal plexuses and interstitial cells of Cajal, which regulate GI motility and secretion. The vagus nerve is part of the autonomic nervous system, providing extrinsic control.",
+        "whyNotOtherOptions": {
+            "a": "Myenteric plexus controls motility.",
+            "b": "Submucosal plexus regulates secretions and blood flow.",
+            "d": "Interstitial cells of Cajal are pacemakers for peristalsis.",
+            "e": "Vagus nerve is not part of the intrinsic enteric system."
+        },
+        "relatedQuestions": ["20 (GIT motility)", "66 (GIT regulation)"],
+        "category": "Gastrointestinal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 22,
+        "question": "The primary source of energy for cardiac muscle is:",
+        "options": [
+            "Glucose",
+            "Fatty acids",
+            "Lactate",
+            "Ketone bodies",
+            "Amino acids"
+        ],
+        "answer": 1,
+        "correctAnswer": "Fatty acids",
+        "explanation": "Cardiac muscle primarily uses fatty acids for energy via beta-oxidation, especially under aerobic conditions, due to its high mitochondrial density and constant energy demand.",
+        "whyNotOtherOptions": {
+            "a": "Glucose is used but less than fatty acids.",
+            "c": "Lactate is a minor energy source, mainly during hypoxia.",
+            "d": "Ketone bodies are used during starvation, not primarily.",
+            "e": "Amino acids are rarely used for energy in the heart."
+        },
+        "relatedQuestions": ["36 (muscle fibers)", "37 (muscle types)"],
+        "category": "Muscle Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 23,
+        "question": "Which ion is critical for initiating cardiac muscle contraction?",
+        "options": [
+            "Sodium (Na+)",
+            "Potassium (K+)",
+            "Calcium (Ca2+)",
+            "Chloride (Cl-)",
+            "Magnesium (Mg2+)"
+        ],
+        "answer": 2,
+        "correctAnswer": "Calcium (Ca2+)",
+        "explanation": "Calcium triggers cardiac muscle contraction by binding to troponin, allowing actin-myosin interaction. Na+ initiates the action potential, but Ca2+ is critical for contraction.",
+        "whyNotOtherOptions": {
+            "a": "Na+ drives depolarization, not direct contraction.",
+            "b": "K+ is involved in repolarization, not contraction.",
+            "d": "Cl- has minimal role in contraction.",
+            "e": "Mg2+ modulates enzymes but is not the trigger."
+        },
+        "relatedQuestions": ["17 (muscle contraction)", "14 (T-tubules)"],
+        "category": "Muscle Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 24,
+        "question": "The Frank-Starling mechanism in the heart refers to:",
+        "options": [
+            "Increased heart rate with sympathetic stimulation",
+            "Increased contractility with increased end-diastolic volume",
+            "Vasodilation in response to increased blood pressure",
+            "Decreased stroke volume with increased afterload",
+            "Regulation of heart rate by the vagus nerve"
+        ],
+        "answer": 1,
+        "correctAnswer": "Increased contractility with increased end-diastolic volume",
+        "explanation": "The Frank-Starling mechanism states that increased end-diastolic volume (preload) stretches cardiac muscle, leading to stronger contraction and increased stroke volume, optimizing cardiac output.",
+        "whyNotOtherOptions": {
+            "a": "Heart rate increase is a sympathetic effect, not Frank-Starling.",
+            "c": "Vasodilation is unrelated to this intrinsic mechanism.",
+            "d": "Increased afterload reduces stroke volume, not part of Frank-Starling.",
+            "e": "Vagus nerve regulates heart rate, not contractility."
+        },
+        "relatedQuestions": ["22 (cardiac energy)", "23 (cardiac contraction)"],
+        "category": "Cardiovascular Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 25,
+        "question": "Which of the following is a characteristic of slow-twitch muscle fibers?",
+        "options": [
+            "High glycolytic capacity",
+            "Low myoglobin content",
+            "High mitochondrial density",
+            "Rapid fatigue",
+            "Large fiber diameter"
+        ],
+        "answer": 2,
+        "correctAnswer": "High mitochondrial density",
+        "explanation": "Slow-twitch (Type I) fibers are oxidative, with high mitochondrial density for aerobic metabolism, high myoglobin, and resistance to fatigue. They have smaller diameters and lower glycolytic capacity.",
+        "whyNotOtherOptions": {
+            "a": "High glycolytic capacity is for fast-twitch fibers.",
+            "b": "Slow-twitch fibers have high myoglobin content.",
+            "d": "Slow-twitch fibers resist fatigue, unlike fast-twitch.",
+            "e": "Slow-twitch fibers have smaller diameters."
+        },
+        "relatedQuestions": ["15 (contractile proteins)", "36 (muscle fibers)"],
+        "category": "Muscle Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 26,
+        "question": "Bipolar neurons are located in the:",
+        "options": [
+            "Anterior horn of the gray matter of spinal cord",
+            "Retina and inner ear",
+            "Lateral horn of the gray matter of the spinal cord",
+            "Posterior horn of the gray matter of the spinal cord",
+            "Peripheral effector organs"
+        ],
+        "answer": 1,
+        "correctAnswer": "Retina and inner ear",
+        "explanation": "Bipolar neurons, with one axon and one dendrite, are found in sensory organs like the retina (visual processing) and inner ear (auditory/vestibular). Spinal cord neurons are mostly multipolar.",
+        "whyNotOtherOptions": {
+            "a": "Anterior horn contains multipolar motor neurons.",
+            "c": "Lateral horn contains multipolar autonomic neurons.",
+            "d": "Posterior horn contains multipolar sensory neurons.",
+            "e": "Peripheral effectors are innervated by multipolar neuron axons."
+        },
+        "relatedQuestions": ["31 (myelin sheath)", "43 (ANS neurons)"],
+        "category": "Neurophysiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 27,
+        "question": "Identify the correct statement from the following:",
+        "options": [
+            "Motor neurons transmit impulses from periphery to the CNS",
+            "Microglia provides nutrients to neurons in the CNS",
+            "Neuroglia are excitable cells",
+            "Nerve insulators for both central and peripheral NS are the same",
+            "None of the above"
+        ],
+        "answer": 4,
+        "correctAnswer": "None of the above",
+        "explanation": "A is false: Motor neurons transmit from CNS to periphery. B is false: Astrocytes, not microglia, provide nutrients. C is false: Neuroglia are not excitable; neurons are. D is false: CNS (oligodendrocytes) and PNS (Schwann cells) have different insulators.",
+        "whyNotOtherOptions": {
+            "a": "Motor neurons carry signals to muscles, not to CNS.",
+            "b": "Microglia are immune cells, not nutrient providers.",
+            "c": "Neuroglia support neurons; only neurons are excitable.",
+            "d": "Oligodendrocytes (CNS) and Schwann cells (PNS) differ."
+        },
+        "relatedQuestions": ["26 (bipolar neurons)", "31 (myelin sheath)"],
+        "category": "Neurophysiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 28,
+        "question": "During the depolarization phase of action potential:",
+        "options": [
+            "Voltage-gated Na+ channels are opened",
+            "Voltage-gated K+ channels opened",
+            "Voltage-gated Na+ channels are closed",
+            "Ligand-gated K+ channels are closed",
+            "None of the above"
+        ],
+        "answer": 0,
+        "correctAnswer": "Voltage-gated Na+ channels are opened",
+        "explanation": "Depolarization occurs when voltage-gated Na+ channels open, allowing Na+ influx, raising the membrane potential. K+ channels open during repolarization.",
+        "whyNotOtherOptions": {
+            "b": "K+ channels open later, during repolarization.",
+            "c": "Na+ channels are open, not closed, during depolarization.",
+            "d": "Ligand-gated channels are not primary in action potentials.",
+            "e": "Option A is correct, so 'none' is invalid."
+        },
+        "relatedQuestions": ["29 (action potential)", "33 (neuromuscular junction)"],
+        "category": "Neurophysiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 29,
+        "question": "Which one of the following is wrong about action potential of the nerve fiber?",
+        "options": [
+            "It is caused by a transient membrane depolarization",
+            "It needs a threshold stimulus to be generated",
+            "It has a definite RMP",
+            "It is all or none in its nature",
+            "None of the above"
+        ],
+        "answer": 4,
+        "correctAnswer": "None of the above",
+        "explanation": "All statements are correct: Action potentials involve depolarization (A), require a threshold stimulus (B), start from a resting membrane potential (RMP, C), and are all-or-none (D).",
+        "whyNotOtherOptions": {
+            "a": "Depolarization is the hallmark of an action potential.",
+            "b": "Threshold stimulus triggers Na+ channel opening.",
+            "c": "RMP (~-70 mV) is the baseline for neurons.",
+            "d": "Action potentials are all-or-none, not graded."
+        },
+        "relatedQuestions": ["28 (depolarization)", "30 (nerve conduction)"],
+        "category": "Neurophysiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 30,
+        "question": "Fast rate conduction of nerve impulse is achieved in:",
+        "options": [
+            "Type A nerve fibers",
+            "Type B nerve fibers",
+            "Type C nerve fibers",
+            "Autonomic nerve fibers",
+            "Unmyelinated somatic nerve fibers"
+        ],
+        "answer": 0,
+        "correctAnswer": "Type A nerve fibers",
+        "explanation": "Type A fibers are large, myelinated, and have the fastest conduction velocity (up to 120 m/s) due to saltatory conduction. Type B and C are slower, and unmyelinated fibers (C, E) are slowest.",
+        "whyNotOtherOptions": {
+            "b": "Type B fibers are myelinated but smaller, slower than A.",
+            "c": "Type C fibers are unmyelinated, very slow.",
+            "d": "Autonomic fibers are typically Type B or C, slower.",
+            "e": "Unmyelinated somatic fibers are slow, like Type C."
+        },
+        "relatedQuestions": ["28 (depolarization)", "31 (myelin sheath)"],
+        "category": "Neurophysiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 31,
+        "question": "In the peripheral nerve fibers, myelin sheath is produced by:",
+        "options": [
+            "Schwann cells",
+            "Oligodendrocytes",
+            "Microglial cells",
+            "Ependymal cells",
+            "Astrocytes"
+        ],
+        "answer": 0,
+        "correctAnswer": "Schwann cells",
+        "explanation": "Schwann cells form the myelin sheath in the peripheral nervous system, wrapping around axons to enhance conduction speed. Oligodendrocytes myelinate CNS axons.",
+        "whyNotOtherOptions": {
+            "b": "Oligodendrocytes myelinate in the CNS, not PNS.",
+            "c": "Microglia are immune cells, not myelin producers.",
+            "d": "Ependymal cells line ventricles, not involved in myelination.",
+            "e": "Astrocytes support neurons, not myelination."
+        },
+        "relatedQuestions": ["27 (neuroglia)", "30 (nerve conduction)"],
+        "category": "Neurophysiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 32,
+        "question": "Which one of the following is wrong about the neuromuscular junction of the skeletal muscle?",
+        "options": [
+            "The neurotransmitter is always acetylcholine",
+            "The post-synaptic receptor is always nicotinic receptor",
+            "Excitatory post-synaptic potential is always produced",
+            "EPSP causes contraction",
+            "All are correct"
+        ],
+        "answer": 4,
+        "correctAnswer": "All are correct",
+        "explanation": "At the skeletal muscle neuromuscular junction, acetylcholine (A) binds nicotinic receptors (B), producing an excitatory postsynaptic potential (EPSP, C) that triggers contraction (D). All are correct.",
+        "whyNotOtherOptions": {
+            "a": "Acetylcholine is the neurotransmitter for skeletal NMJ.",
+            "b": "Nicotinic receptors are always present at skeletal NMJ.",
+            "c": "EPSP is generated by Na+ influx via nicotinic receptors.",
+            "d": "EPSP depolarizes the muscle to trigger contraction."
+        },
+        "relatedQuestions": ["33 (neuromuscular junction)", "34 (NMJ drugs)"],
+        "category": "Neurophysiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 33,
+        "question": "An action potential arriving at the neuromuscular junction causes opening of:",
+        "options": [
+            "Cl- channels",
+            "Na+ channels",
+            "Ca2+ channels",
+            "K+ channels",
+            "H+ channels"
+        ],
+        "answer": 2,
+        "correctAnswer": "Ca2+ channels",
+        "explanation": "At the neuromuscular junction, the action potential opens voltage-gated Ca2+ channels in the presynaptic terminal, allowing Ca2+ influx to trigger acetylcholine release.",
+        "whyNotOtherOptions": {
+            "a": "Cl- channels are not primarily involved at the NMJ.",
+            "b": "Na+ channels open on the muscle membrane post-ACh binding.",
+            "d": "K+ channels are involved in repolarization, not transmitter release.",
+            "e": "H+ channels are not relevant to NMJ function."
+        },
+        "relatedQuestions": ["32 (NMJ properties)", "34 (NMJ drugs)"],
+        "category": "Neurophysiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 34,
+        "question": "A drug that blocks the neuromuscular junction of the skeletal muscle is:",
+        "options": [
+            "Neostigmine",
+            "Carbachol",
+            "Physostigmine",
+            "D-tubocurarine",
+            "Acetylcholine"
+        ],
+        "answer": 3,
+        "correctAnswer": "D-tubocurarine",
+        "explanation": "D-tubocurarine is a competitive antagonist of nicotinic receptors, blocking the neuromuscular junction. Neostigmine and physostigmine enhance ACh action, while carbachol and ACh are agonists.",
+        "whyNotOtherOptions": {
+            "a": "Neostigmine inhibits acetylcholinesterase, increasing ACh.",
+            "b": "Carbachol is a nicotinic/muscarinic agonist.",
+            "c": "Physostigmine inhibits acetylcholinesterase, increasing ACh.",
+            "e": "Acetylcholine is the neurotransmitter, not a blocker."
+        },
+        "relatedQuestions": ["32 (NMJ properties)", "33 (Ca2+ channels)"],
+        "category": "Neurophysiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 35,
+        "question": "Which of the following is not involved in the homeostasis of glucose?",
+        "options": [
+            "Liver",
+            "Kidneys",
+            "Brain",
+            "Pancreas",
+            "Lung"
+        ],
+        "answer": 4,
+        "correctAnswer": "Lung",
+        "explanation": "The liver (glycogenesis/glycogenolysis), kidneys (glucose reabsorption), pancreas (insulin/glucagon), and brain (glucose utilization) regulate glucose homeostasis. The lung is involved in gas exchange, not glucose regulation.",
+        "whyNotOtherOptions": {
+            "a": "Liver stores and releases glucose via glycogen.",
+            "b": "Kidneys reabsorb glucose and produce it via gluconeogenesis.",
+            "c": "Brain is a major glucose consumer.",
+            "d": "Pancreas secretes insulin and glucagon."
+        },
+        "relatedQuestions": ["10 (glucose transport)", "59 (renal threshold)"],
+        "category": "Endocrinology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 36,
+        "question": "One of the following is specific to that muscle fiber except:",
+        "options": [
+            "Depends on aerobic metabolism",
+            "Contains large number of sarcomere",
+            "Rich in capillary supply",
+            "Has multiple nuclei",
+            "Contains a lot of myoglobin"
+        ],
+        "answer": 3,
+        "correctAnswer": "Has multiple nuclei",
+        "explanation": "Multiple nuclei are characteristic of all skeletal muscle fibers due to their syncytial nature. Options A, C, and E are specific to slow-twitch (Type I) fibers, which rely on aerobic metabolism, have rich capillary supply, and high myoglobin. Sarcomeres (B) are universal but more numerous in oxidative fibers.",
+        "whyNotOtherOptions": {
+            "a": "Aerobic metabolism is specific to slow-twitch fibers.",
+            "b": "Sarcomeres are in all fibers but denser in slow-twitch.",
+            "c": "Rich capillary supply is specific to slow-twitch fibers.",
+            "e": "High myoglobin is specific to slow-twitch fibers."
+        },
+        "relatedQuestions": ["15 (contractile proteins)", "25 (slow-twitch fibers)"],
+        "category": "Muscle Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 37,
+        "question": "Which of the following statements is wrong about muscle tissue?",
+        "options": [
+            "Cardiac and skeletal muscles have striated appearance",
+            "Cardiac and smooth muscles are involuntary",
+            "Skeletal and cardiac muscles are innervated by the ANS",
+            "Cardiac and smooth muscles are innervated by ANS"
+        ],
+        "answer": 2,
+        "correctAnswer": "Skeletal and cardiac muscles are innervated by the ANS",
+        "explanation": "Skeletal muscle is voluntary and innervated by the somatic nervous system, not the ANS. Cardiac and smooth muscles are involuntary and ANS-innervated. Cardiac and skeletal muscles are striated.",
+        "whyNotOtherOptions": {
+            "a": "Both cardiac and skeletal muscles have striations.",
+            "b": "Cardiac and smooth muscles are involuntary.",
+            "d": "Cardiac and smooth muscles are ANS-innervated."
+        },
+        "relatedQuestions": ["22 (cardiac energy)", "36 (muscle fibers)"],
+        "category": "Muscle Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 38,
+        "question": "Which of the following cranial nerve is stimulatory to the salivary glands?",
+        "options": [
+            "Oculomotor",
+            "Facial",
+            "Vagus",
+            "Trigeminal",
+            "Hypoglossal"
+        ],
+        "answer": 1,
+        "correctAnswer": "Facial",
+        "explanation": "The facial nerve (CN VII) provides parasympathetic innervation to the submandibular and sublingual salivary glands, stimulating secretion. The glossopharyngeal nerve (IX) innervates the parotid gland.",
+        "whyNotOtherOptions": {
+            "a": "Oculomotor (CN III) innervates eye muscles.",
+            "c": "Vagus (CN X) innervates visceral organs, not salivary glands.",
+            "d": "Trigeminal (CN V) is sensory/motor for mastication.",
+            "e": "Hypoglossal (CN XII) controls tongue movement."
+        },
+        "relatedQuestions": ["65 (ptyalin)", "66 (GIT regulation)"],
+        "category": "Gastrointestinal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 39,
+        "question": "Which of the following is not an effect of sympathetic stimulation on the cardiovascular system?",
+        "options": [
+            "Increased heart rate",
+            "Increased force of contraction of the cardiac muscle",
+            "Vasoconstriction of the systemic blood vessels",
+            "Increases cardiac output",
+            "Vasodilation of coronary arteries"
+        ],
+        "answer": 4,
+        "correctAnswer": "Vasodilation of coronary arteries",
+        "explanation": "Sympathetic stimulation increases heart rate (A), contractility (B), and causes vasoconstriction in most systemic vessels (C), increasing cardiac output (D). However, coronary arteries dilate via beta-2 receptors, which is a sympathetic effect, making E technically correct but nuanced as a primary effect compared to others.",
+        "whyNotOtherOptions": {
+            "a": "Sympathetic stimulation increases heart rate via beta-1 receptors.",
+            "b": "Increases contractility via beta-1 receptors.",
+            "c": "Causes vasoconstriction via alpha-1 receptors.",
+            "d": "Cardiac output rises due to increased rate and contractility."
+        },
+        "relatedQuestions": ["40 (coronary receptors)", "41 (dual innervation)"],
+        "category": "Cardiovascular Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 40,
+        "question": "The receptor that is found on the coronary arteries is:",
+        "options": [
+            "Alpha 1",
+            "Beta 1",
+            "Alpha 2",
+            "Beta 2"
+        ],
+        "answer": 3,
+        "correctAnswer": "Beta 2",
+        "explanation": "Coronary arteries primarily have beta-2 adrenergic receptors, which cause vasodilation to increase blood flow to the heart during sympathetic activation.",
+        "whyNotOtherOptions": {
+            "a": "Alpha-1 receptors cause vasoconstriction, less dominant in coronaries.",
+            "b": "Beta-1 receptors are primarily on cardiac muscle for contractility.",
+            "c": "Alpha-2 receptors are presynaptic, regulating neurotransmitter release."
+        },
+        "relatedQuestions": ["39 (sympathetic effects)", "41 (dual innervation)"],
+        "category": "Cardiovascular Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 41,
+        "question": "Of the following one does not receive dual autonomic innervation. Identify:",
+        "options": [
+            "The heart",
+            "The blood vessels",
+            "The liver",
+            "The stomach",
+            "Pancreas"
+        ],
+        "answer": 1,
+        "correctAnswer": "The blood vessels",
+        "explanation": "Most blood vessels (especially systemic) receive only sympathetic innervation for vasoconstriction, with little to no parasympathetic innervation. The heart, liver, stomach, and pancreas receive both sympathetic and parasympathetic innervation.",
+        "whyNotOtherOptions": {
+            "a": "Heart receives sympathetic (beta-1) and parasympathetic (vagus).",
+            "c": "Liver has dual innervation for metabolic regulation.",
+            "d": "Stomach has vagal (parasympathetic) and sympathetic innervation.",
+            "e": "Pancreas has dual innervation for secretion control."
+        },
+        "relatedQuestions": ["39 (sympathetic effects)", "66 (GIT regulation)"],
+        "category": "Autonomic Nervous System",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 42,
+        "question": "A neurotransmitter produced by a postganglionic sympathetic fiber to the sweat glands is:",
+        "options": [
+            "Acetylcholine",
+            "Adrenaline",
+            "Noradrenaline",
+            "Dopamine"
+        ],
+        "answer": 0,
+        "correctAnswer": "Acetylcholine",
+        "explanation": "Postganglionic sympathetic fibers to sweat glands are an exception, releasing acetylcholine (cholinergic) instead of norepinephrine, which is typical for sympathetic fibers.",
+        "whyNotOtherOptions": {
+            "b": "Adrenaline is released by adrenal medulla, not nerve fibers.",
+            "c": "Noradrenaline is typical for most sympathetic fibers, not sweat glands.",
+            "d": "Dopamine is not a primary sympathetic neurotransmitter."
+        },
+        "relatedQuestions": ["43 (ANS neurotransmitters)", "44 (ACh drugs)"],
+        "category": "Autonomic Nervous System",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 43,
+        "question": "Which one of the following is wrong about neuronal activities of the ANS?",
+        "options": [
+            "All preganglionic fibers are cholinergic",
+            "Postganglionic parasympathetic fibers are cholinergic",
+            "Preganglionic parasympathetic fibers are cholinergic",
+            "Most postganglionic sympathetic fibers are adrenergic",
+            "None of the above"
+        ],
+        "answer": 4,
+        "correctAnswer": "None of the above",
+        "explanation": "All statements are correct: Preganglionic fibers (sympathetic and parasympathetic) are cholinergic (A, C). Postganglionic parasympathetic fibers are cholinergic (B). Most postganglionic sympathetic fibers are adrenergic, except for sweat glands (D).",
+        "whyNotOtherOptions": {
+            "a": "Preganglionic fibers always release acetylcholine.",
+            "b": "Postganglionic parasympathetic fibers are always cholinergic.",
+            "c": "Same as A, specific to parasympathetic.",
+            "d": "Most sympathetic postganglionic fibers release norepinephrine."
+        },
+        "relatedQuestions": ["41 (dual innervation)", "42 (sweat glands)"],
+        "category": "Autonomic Nervous System",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 44,
+        "question": "Which one of the following is an acetylcholine drug?",
+        "options": [
+            "Propranolol",
+            "Metoprolol",
+            "Atropine",
+            "Neostigmine",
+            "Pilocarpine"
+        ],
+        "answer": 4,
+        "correctAnswer": "Pilocarpine",
+        "explanation": "Pilocarpine is a muscarinic receptor agonist, mimicking acetylcholine. Neostigmine inhibits acetylcholinesterase, indirectly increasing ACh. Propranolol and metoprolol are beta-blockers, and atropine is a muscarinic antagonist.",
+        "whyNotOtherOptions": {
+            "a": "Propranolol is a beta-adrenergic antagonist.",
+            "b": "Metoprolol is a beta-1 antagonist.",
+            "c": "Atropine blocks muscarinic receptors.",
+            "d": "Neostigmine enhances ACh but is not an ACh mimic."
+        },
+        "relatedQuestions": ["42 (sweat glands)", "45 (sympathomimetics)"],
+        "category": "Pharmacology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 45,
+        "question": "Which of the following is not a sympathomimetic drug?",
+        "options": [
+            "Epinephrine",
+            "Norepinephrine",
+            "Methoxamine",
+            "Pilocarpine"
+        ],
+        "answer": 3,
+        "correctAnswer": "Pilocarpine",
+        "explanation": "Sympathomimetic drugs mimic sympathetic effects (epinephrine, norepinephrine, methoxamine). Pilocarpine is a parasympathomimetic (cholinergic) drug, acting on muscarinic receptors.",
+        "whyNotOtherOptions": {
+            "a": "Epinephrine activates alpha and beta receptors.",
+            "b": "Norepinephrine is a sympathetic neurotransmitter.",
+            "c": "Methoxamine is an alpha-1 agonist."
+        },
+        "relatedQuestions": ["44 (ACh drugs)", "42 (sweat glands)"],
+        "category": "Pharmacology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 46,
+        "question": "Which of the following cranial nerves is responsible for corneal sensitivity?",
+        "options": [
+            "Glossopharyngeal nerve",
+            "Trochlear nerve",
+            "Trigeminal nerve",
+            "Abducens nerve",
+            "Oculomotor nerve"
+        ],
+        "answer": 2,
+        "correctAnswer": "Trigeminal nerve",
+        "explanation": "The trigeminal nerve (CN V), specifically its ophthalmic branch (V1), provides sensory innervation to the cornea. Other nerves listed are primarily motor or serve other functions.",
+        "whyNotOtherOptions": {
+            "a": "Glossopharyngeal (CN IX) innervates throat and tongue sensation.",
+            "b": "Trochlear (CN IV) controls superior oblique muscle.",
+            "d": "Abducens (CN VI) controls lateral rectus muscle.",
+            "e": "Oculomotor (CN III) controls most eye muscles."
+        },
+        "relatedQuestions": ["38 (salivary glands)", "48 (hypoglossal)"],
+        "category": "Neurophysiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 47,
+        "question": "Mechanism of action of acetylcholine when binding with M1 is via:",
+        "options": [
+            "Formation of IP3 and DAG",
+            "Activation of adenyl cyclase",
+            "Hyperpolarization",
+            "Opening Na+ channels",
+            "Inhibition of Ca2+ channels"
+        ],
+        "answer": 0,
+        "correctAnswer": "Formation of IP3 and DAG",
+        "explanation": "M1 muscarinic receptors are Gq-coupled, activating phospholipase C to produce IP3 and DAG, which mobilize calcium and activate protein kinase C, respectively.",
+        "whyNotOtherOptions": {
+            "b": "Adenyl cyclase produces cAMP, linked to Gs-coupled receptors.",
+            "c": "Hyperpolarization occurs with K+ channel opening, not M1.",
+            "d": "Na+ channels are opened by nicotinic, not muscarinic, receptors.",
+            "e": "Ca2+ channel inhibition is not the primary M1 mechanism."
+        },
+        "relatedQuestions": ["44 (ACh drugs)", "45 (sympathomimetics)"],
+        "category": "Neurophysiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 48,
+        "question": "If your tongue is atrophied, there is a lesion in which cranial nerve?",
+        "options": [
+            "Facial",
+            "Glossopharyngeal",
+            "Vagus",
+            "Hypoglossal",
+            "Trigeminal"
+        ],
+        "answer": 3,
+        "correctAnswer": "Hypoglossal",
+        "explanation": "The hypoglossal nerve (CN XII) innervates the tongue muscles. A lesion causes weakness and atrophy, often with deviation to the affected side on protrusion.",
+        "whyNotOtherOptions": {
+            "a": "Facial (CN VII) controls facial muscles, not tongue.",
+            "b": "Glossopharyngeal (CN IX) handles taste and throat sensation.",
+            "c": "Vagus (CN X) innervates pharynx and larynx, not tongue.",
+            "e": "Trigeminal (CN V) controls mastication muscles and sensation."
+        },
+        "relatedQuestions": ["38 (salivary glands)", "46 (trigeminal)"],
+        "category": "Neurophysiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 49,
+        "question": "The work of breathing decreases when:",
+        "options": [
+            "Lung compliance increases",
+            "The subject exercises",
+            "The rate of breathing increases with constant minute volume",
+            "The person lies down",
+            "Functional residual capacity increases"
+        ],
+        "answer": 0,
+        "correctAnswer": "Lung compliance increases",
+        "explanation": "Increased lung compliance means the lungs expand more easily, reducing the work of breathing. Exercise (B) and increased breathing rate (C) increase work. Lying down (D) may restrict breathing. FRC increase (E) does not directly reduce work.",
+        "whyNotOtherOptions": {
+            "b": "Exercise increases metabolic demand, increasing work.",
+            "c": "Higher rate increases resistance-related work.",
+            "d": "Lying down may compress lungs, increasing work.",
+            "e": "FRC increase may not directly affect work of breathing."
+        },
+        "relatedQuestions": ["50 (surfactant)", "51 (lung capacity)"],
+        "category": "Respiratory Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 50,
+        "question": "Lack of surfactant substances as occur in infants with respiratory distress syndrome (RDS) results in:",
+        "options": [
+            "An increased lung compliance",
+            "Stabilization of alveolar volume",
+            "Lung collapse",
+            "A reduced alveolar-arterial O2 tension difference"
+        ],
+        "answer": 2,
+        "correctAnswer": "Lung collapse",
+        "explanation": "Surfactant reduces alveolar surface tension, preventing collapse (atelectasis). In RDS, lack of surfactant causes alveolar collapse, reducing compliance and impairing gas exchange.",
+        "whyNotOtherOptions": {
+            "a": "Lack of surfactant decreases compliance.",
+            "b": "Without surfactant, alveoli are unstable and collapse.",
+            "d": "Alveolar-arterial O2 difference increases due to poor gas exchange."
+        },
+        "relatedQuestions": ["49 (work of breathing)", "54 (respiratory portion)"],
+        "category": "Respiratory Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 51,
+        "question": "The total lung capacity consists of:",
+        "options": [
+            "Vital capacity & tidal volume",
+            "Residual volume & vital capacity",
+            "Functional residual capacity & vital capacity",
+            "Tidal volume & functional residual capacity",
+            "Tidal volume & residual volume"
+        ],
+        "answer": 1,
+        "correctAnswer": "Residual volume & vital capacity",
+        "explanation": "Total lung capacity (TLC) is the sum of vital capacity (VC, maximum air exhaled after max inhalation) and residual volume (RV, air remaining after max exhalation).",
+        "whyNotOtherOptions": {
+            "a": "Tidal volume is part of VC, not additive to TLC.",
+            "c": "FRC includes RV, so this double-counts RV.",
+            "d": "Tidal volume and FRC do not sum to TLC.",
+            "e": "Tidal volume and RV are not sufficient for TLC."
+        },
+        "relatedQuestions": ["18 (spirometry)", "49 (work of breathing)"],
+        "category": "Respiratory Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 52,
+        "question": "All of the following events occur during expiration except:",
+        "options": [
+            "Inspiratory muscles relax and the rib cage descends due to gravity",
+            "Thoracic cavity volume decreases",
+            "Intrapulmonary volume decreases",
+            "Intrapulmonary pressure rises above atmospheric pressure (+1 mm Hg)",
+            "Gases flow out of the lungs against the pressure gradient"
+        ],
+        "answer": 4,
+        "correctAnswer": "Gases flow out of the lungs against the pressure gradient",
+        "explanation": "During expiration, gases flow down the pressure gradient from higher intrapulmonary pressure to lower atmospheric pressure. All other options (A-D) are true for passive expiration.",
+        "whyNotOtherOptions": {
+            "a": "Relaxation of inspiratory muscles causes rib cage descent.",
+            "b": "Thoracic volume decreases, compressing lungs.",
+            "c": "Lung volume decreases, increasing pressure.",
+            "d": "Pressure rises slightly above atmospheric, driving airflow."
+        },
+        "relatedQuestions": ["49 (work of breathing)", "51 (lung capacity)"],
+        "category": "Respiratory Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 53,
+        "question": "Defense function of the respiratory system is:",
+        "options": [
+            "Gas moistening",
+            "Ciliary beating",
+            "Warming of the air",
+            "Smell",
+            "Secretion of ACE"
+        ],
+        "answer": 1,
+        "correctAnswer": "Ciliary beating",
+        "explanation": "Ciliary beating in the respiratory tract moves mucus to trap and remove pathogens and debris, a key defense mechanism. Moistening (A) and warming (C) are air conditioning, smell (D) is olfaction, and ACE secretion (E) is metabolic.",
+        "whyNotOtherOptions": {
+            "a": "Moistening is an air-conditioning function.",
+            "c": "Warming is an air-conditioning function.",
+            "d": "Smell is a sensory function, not defense.",
+            "e": "ACE secretion is metabolic, not defense."
+        },
+        "relatedQuestions": ["54 (respiratory portion)", "56 (respiratory function)"],
+        "category": "Respiratory Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 54,
+        "question": "Which structure of the following does not belong to the respiratory portion of the breathing organ?",
+        "options": [
+            "Terminal bronchioles",
+            "Respiratory bronchioles",
+            "Alveolar ducts",
+            "Alveolar sacs",
+            "None of the above"
+        ],
+        "answer": 0,
+        "correctAnswer": "Terminal bronchioles",
+        "explanation": "The respiratory portion (where gas exchange occurs) includes respiratory bronchioles, alveolar ducts, and alveolar sacs. Terminal bronchioles are part of the conducting zone.",
+        "whyNotOtherOptions": {
+            "b": "Respiratory bronchioles are part of the respiratory zone.",
+            "c": "Alveolar ducts are in the respiratory zone.",
+            "d": "Alveolar sacs are the site of gas exchange.",
+            "e": "Terminal bronchioles are not in the respiratory zone."
+        },
+        "relatedQuestions": ["50 (surfactant)", "51 (lung capacity)"],
+        "category": "Respiratory Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 55,
+        "question": "Bronchial obstruction is likely to be relieved by:",
+        "options": [
+            "Stimulation of cholinergic receptors",
+            "Stimulation of beta adrenoceptors",
+            "Histamine",
+            "Stimulation of mast cell membranes",
+            "Slow reactive substance of anaphylaxis"
+        ],
+        "answer": 1,
+        "correctAnswer": "Stimulation of beta adrenoceptors",
+        "explanation": "Beta-2 adrenoceptor stimulation (e.g., by epinephrine) causes bronchodilation, relieving obstruction. Cholinergic stimulation (A), histamine (C), and anaphylactic mediators (D, E) cause bronchoconstriction.",
+        "whyNotOtherOptions": {
+            "a": "Cholinergic stimulation causes bronchoconstriction.",
+            "c": "Histamine triggers bronchoconstriction in asthma.",
+            "d": "Mast cell activation releases bronchoconstrictors.",
+            "e": "Slow reactive substance (leukotrienes) causes bronchoconstriction."
+        },
+        "relatedQuestions": ["50 (surfactant)", "53 (defense function)"],
+        "category": "Respiratory Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 56,
+        "question": "Respiratory function of the respiratory system is:",
+        "options": [
+            "Acid-base balance",
+            "Air conditioning",
+            "Phonation",
+            "Gas conduction",
+            "Olfaction"
+        ],
+        "answer": 3,
+        "correctAnswer": "Gas conduction",
+        "explanation": "The primary respiratory function is gas conduction and exchange (O2 and CO2). Acid-base balance (A), air conditioning (B), phonation (C), and olfaction (E) are non-respiratory functions.",
+        "whyNotOtherOptions": {
+            "a": "Acid-base balance is a secondary metabolic function.",
+            "b": "Air conditioning (humidifying/warming) is non-respiratory.",
+            "c": "Phonation is a vocal function, not gas exchange.",
+            "e": "Olfaction is a sensory function, not respiratory."
+        },
+        "relatedQuestions": ["53 (defense function)", "54 (respiratory portion)"],
+        "category": "Respiratory Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 57,
+        "question": "The amount of fluid filtered per minute in all nephrons of both kidneys is called:",
+        "options": [
+            "Glomerular filtration rate",
+            "Filtration fraction",
+            "Filtration pressure",
+            "Renal blood flow",
+            "Tubular transport maximum"
+        ],
+        "answer": 0,
+        "correctAnswer": "Glomerular filtration rate",
+        "explanation": "Glomerular filtration rate (GFR) is the volume of fluid filtered into Bowman’s capsule per minute (~125 ml/min). Filtration fraction is the proportion of renal plasma flow filtered.",
+        "whyNotOtherOptions": {
+            "b": "Filtration fraction is GFR/renal plasma flow, not volume.",
+            "c": "Filtration pressure is the force driving filtration, not volume.",
+            "d": "Renal blood flow is total blood to kidneys, not filtrate.",
+            "e": "Tubular transport maximum is the max reabsorption rate."
+        },
+        "relatedQuestions": ["19 (filtration pressure)", "61 (GFR factors)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 58,
+        "question": "Part of the renal tubules where nutritionally important substances are reabsorbed is called:",
+        "options": [
+            "Collecting duct",
+            "Proximal tubules",
+            "Distal tubules",
+            "Loop of Henle",
+            "Urinary bladder"
+        ],
+        "answer": 1,
+        "correctAnswer": "Proximal tubules",
+        "explanation": "The proximal convoluted tubule reabsorbs ~100% of glucose and amino acids, ~65% of NaCl and water, and other nutrients, due to its high surface area and transport mechanisms.",
+        "whyNotOtherOptions": {
+            "a": "Collecting duct regulates water and electrolytes, not nutrients.",
+            "c": "Distal tubule fine-tunes electrolyte reabsorption.",
+            "d": "Loop of Henle concentrates urine, not nutrient reabsorption.",
+            "e": "Urinary bladder stores urine, not involved in reabsorption."
+        },
+        "relatedQuestions": ["10 (glucose transport)", "59 (renal threshold)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 59,
+        "question": "The renal threshold for glucose is equal to:",
+        "options": [
+            "340 mg/ml",
+            "200 mg/dl",
+            "125 ml/min",
+            "80-120 mg/dl",
+            "40 mg/dl"
+        ],
+        "answer": 1,
+        "correctAnswer": "200 mg/dl",
+        "explanation": "The renal threshold for glucose is ~200 mg/dl, above which glucose appears in urine (glucosuria) because proximal tubule reabsorption is saturated.",
+        "whyNotOtherOptions": {
+            "a": "340 mg/ml is far too high (3400 mg/dl equivalent).",
+            "c": "125 ml/min is GFR, not a concentration.",
+            "d": "80-120 mg/dl is normal blood glucose, below threshold.",
+            "e": "40 mg/dl is too low for glucosuria."
+        },
+        "relatedQuestions": ["10 (glucose transport)", "58 (proximal tubule)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 60,
+        "question": "Renal tubules upon which ADH and aldosterone act to promote water-electrolyte reabsorption are/is:",
+        "options": [
+            "Distal tubules and collecting duct",
+            "Proximal tubules",
+            "Loop of Henle",
+            "Glomerulus",
+            "Afferent and efferent arterioles"
+        ],
+        "answer": 0,
+        "correctAnswer": "Distal tubules and collecting duct",
+        "explanation": "ADH increases water permeability in the distal tubule and collecting duct via aquaporins. Aldosterone enhances Na+ reabsorption and K+ secretion in the same regions.",
+        "whyNotOtherOptions": {
+            "b": "Proximal tubule reabsorbs most water/solutes, not hormone-regulated.",
+            "c": "Loop of Henle is not the primary site for ADH/aldosterone.",
+            "d": "Glomerulus is for filtration, not reabsorption.",
+            "e": "Arterioles regulate blood flow, not reabsorption."
+        },
+        "relatedQuestions": ["58 (proximal tubule)", "82 (fluid balance)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+        {
+        "id": 61,
+        "question": "Secretion of HCl by parietal cells in the stomach is increased by",
+        "options": [
+            "Parasympathetic stimulation",
+            "Drinking coffee and alcohol",
+            "Release of histamine by mast cells",
+            "Infection with helicobacter pylori",
+            "All are correct"
+        ],
+        "answer": 4,
+        "correctAnswer": "All are correct",
+        "explanation": "All listed options can stimulate HCl secretion. Parasympathetic (vagal) stimulation releases ACh. Coffee and alcohol can stimulate gastrin release. Histamine is a potent direct stimulant. H. pylori infection can disrupt the normal inhibitory mechanisms, leading to increased acid secretion.",
+        "whyNotOtherOptions": {
+            "a": "Parasympathetic stimulation via vagus nerve increases HCl via ACh.",
+            "b": "Coffee and alcohol stimulate gastrin, which increases HCl.",
+            "c": "Histamine directly stimulates parietal cells via H2 receptors.",
+            "d": "H. pylori disrupts acid regulation, often increasing HCl."
+        },
+        "relatedQuestions": ["59 (GIT motility)", "68 (gastrin)"],
+        "category": "Gastrointestinal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 62,
+        "question": "The major stimulus for the release of secretin hormone is",
+        "options": [
+            "Protein digestion products",
+            "Histamine",
+            "Somatostatin",
+            "Acidic chyme in the duodenum",
+            "Fat digestion products"
+        ],
+        "answer": 3,
+        "correctAnswer": "Acidic chyme in the duodenum",
+        "explanation": "Secretin is released by S-cells in the duodenum in response to low pH (acidic chyme). Its main action is to stimulate the pancreas to secrete bicarbonate-rich fluid to neutralize the acid.",
+        "whyNotOtherOptions": {
+            "a": "Protein digestion products primarily stimulate CCK, not secretin.",
+            "b": "Histamine affects gastric acid, not secretin release.",
+            "c": "Somatostatin inhibits GI hormones, not a stimulus for secretin.",
+            "e": "Fat digestion products primarily stimulate CCK, not secretin."
+        },
+        "relatedQuestions": ["70 (CCK)", "71 (CCK stimulus)"],
+        "category": "Gastrointestinal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 63,
+        "question": "GIT layers that contains much of glands is",
+        "options": [
+            "Serosa",
+            "Muscularis",
+            "Submucosa",
+            "Mucosa",
+            "All"
+        ],
+        "answer": 3,
+        "correctAnswer": "Mucosa",
+        "explanation": "The mucosa is the innermost layer and contains the epithelial lining and the glands responsible for secretion (e.g., gastric glands, intestinal crypts). The submucosa may contain some larger glands (like Brunner's glands in the duodenum), but the majority are in the mucosa.",
+        "whyNotOtherOptions": {
+            "a": "Serosa is the outermost layer, not involved in gland secretion.",
+            "b": "Muscularis is responsible for motility, not gland function.",
+            "c": "Submucosa contains some glands but fewer than the mucosa.",
+            "e": "Only mucosa primarily contains glands, not all layers."
+        },
+        "relatedQuestions": ["61 (HCl secretion)"],
+        "category": "Gastrointestinal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 64,
+        "question": "Center for chewing is located in the",
+        "options": [
+            "Medulla",
+            "Pons",
+            "Midbrain",
+            "Spinal cord",
+            "Cerebrum"
+        ],
+        "answer": 1,
+        "correctAnswer": "Pons",
+        "explanation": "The central pattern generator for the rhythmic activity of chewing (mastication) is located in the brainstem, specifically in the midbrain and pons.",
+        "whyNotOtherOptions": {
+            "a": "Medulla controls swallowing, not chewing.",
+            "c": "Midbrain contributes but is not the primary chewing center.",
+            "d": "Spinal cord is not involved in chewing coordination.",
+            "e": "Cerebrum initiates voluntary chewing but not the rhythmic pattern."
+        },
+        "relatedQuestions": ["75 (swallowing center)"],
+        "category": "Gastrointestinal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 65,
+        "question": "Which of the following food item is chemically digested in the mouth?",
+        "options": [
+            "Protein",
+            "Fat",
+            "CHO (Carbohydrates)",
+            "Vitamin",
+            "Mineral"
+        ],
+        "answer": 2,
+        "correctAnswer": "CHO (Carbohydrates)",
+        "explanation": "Chemical digestion of carbohydrates begins in the mouth with the action of salivary amylase (ptyalin) on starch. Digestion of proteins and fats begins in the stomach and small intestine, respectively.",
+        "whyNotOtherOptions": {
+            "a": "Protein digestion begins in the stomach with pepsin.",
+            "b": "Fat digestion primarily occurs in the small intestine with lipase.",
+            "d": "Vitamins are absorbed, not digested, in the GI tract.",
+            "e": "Minerals are absorbed, not chemically digested."
+        },
+        "relatedQuestions": ["60 (ptyalin)"],
+        "category": "Gastrointestinal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 66,
+        "question": "Which of the following is correct regarding GIT regulation?",
+        "options": [
+            "Parasympathetic nervous system has excitatory effect on GI function.",
+            "Salivary secretion is mainly regulated by gastric hormone.",
+            "Sympathetic nerves have excitatory effect on the GI functions.",
+            "Secretin hormone inhibits pancreatic secretions.",
+            "None of the above."
+        ],
+        "answer": 0,
+        "correctAnswer": "Parasympathetic nervous system has excitatory effect on GI function.",
+        "explanation": "A is correct: The parasympathetic nervous system is generally excitatory to the GI tract. B is wrong: Salivary secretion is primarily regulated by neural reflexes, not gastric hormones. C is wrong: Sympathetic nerves are inhibitory. D is wrong: Secretin stimulates pancreatic bicarbonate secretion.",
+        "whyNotOtherOptions": {
+            "b": "Salivary secretion is controlled by autonomic nerves, not gastric hormones.",
+            "c": "Sympathetic nerves inhibit GI motility and secretion.",
+            "d": "Secretin stimulates, not inhibits, pancreatic bicarbonate secretion.",
+            "e": "Option A is correct, so 'none' is invalid."
+        },
+        "relatedQuestions": ["59 (GIT motility)", "62 (secretin)"],
+        "category": "Gastrointestinal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 67,
+        "question": "Identify an enzyme secreted by the chief cells of the stomach:",
+        "options": [
+            "HCl",
+            "Pepsin",
+            "Mucus",
+            "Intrinsic factor",
+            "None of the above"
+        ],
+        "answer": 1,
+        "correctAnswer": "Pepsin",
+        "explanation": "Chief cells secrete pepsinogen, the inactive precursor of the enzyme pepsin. Parietal cells secrete HCl and intrinsic factor.",
+        "whyNotOtherOptions": {
+            "a": "HCl is a secretion, not an enzyme, produced by parietal cells.",
+            "c": "Mucus is secreted by mucus cells, not an enzyme.",
+            "d": "Intrinsic factor is secreted by parietal cells, not an enzyme.",
+            "e": "Option B is correct, so 'none' is invalid."
+        },
+        "relatedQuestions": ["61 (HCl secretion)"],
+        "category": "Gastrointestinal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 68,
+        "question": "An endocrine function of the stomach is the fact that it secretes:",
+        "options": [
+            "HCl",
+            "Pepsin",
+            "Intrinsic factor",
+            "Mucus",
+            "Gastrin"
+        ],
+        "answer": 4,
+        "correctAnswer": "Gastrin",
+        "explanation": "Endocrine means a hormone is secreted into the bloodstream. Gastrin is a hormone secreted by G-cells in the stomach antrum and duodenum. The other substances are exocrine secretions (released into the stomach lumen).",
+        "whyNotOtherOptions": {
+            "a": "HCl is an exocrine secretion into the stomach lumen.",
+            "b": "Pepsin is an exocrine enzyme, not a hormone.",
+            "c": "Intrinsic factor is exocrine, aiding B12 absorption in the gut.",
+            "d": "Mucus is an exocrine secretion for protection."
+        },
+        "relatedQuestions": ["61 (HCl secretion)"],
+        "category": "Gastrointestinal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 69,
+        "question": "The hardest part of the teeth is",
+        "options": [
+            "Crown",
+            "Dentin",
+            "Enamel",
+            "Root",
+            "None"
+        ],
+        "answer": 2,
+        "correctAnswer": "Enamel",
+        "explanation": "Enamel, which covers the crown of the tooth, is the hardest substance in the human body. It is heavily mineralized.",
+        "whyNotOtherOptions": {
+            "a": "Crown is the visible tooth part, covered by enamel.",
+            "b": "Dentin is hard but less so than enamel.",
+            "d": "Root is anchored in bone, covered by cementum, not as hard.",
+            "e": "Option C is correct, so 'none' is invalid."
+        },
+        "relatedQuestions": ["60 (salivary glands)"],
+        "category": "Gastrointestinal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 70,
+        "question": "A hormone that causes release of bile from the gall bladder is:",
+        "options": [
+            "Secretin",
+            "Cholecystokinin (CCK)",
+            "Gastric inhibitory peptide",
+            "Gastrin",
+            "Sympathetic nervous system"
+        ],
+        "answer": 1,
+        "correctAnswer": "Cholecystokinin (CCK)",
+        "explanation": "Cholecystokinin (CCK), released in response to fats in the duodenum, is the primary hormone that stimulates contraction of the gallbladder and relaxation of the Sphincter of Oddi, thereby ejecting bile. Secretin primarily stimulates bile secretion from the liver (water and bicarbonate).",
+        "whyNotOtherOptions": {
+            "a": "Secretin stimulates liver bile secretion, not gallbladder contraction.",
+            "c": "Gastric inhibitory peptide regulates insulin, not bile release.",
+            "d": "Gastrin stimulates gastric acid, not bile release.",
+            "e": "Sympathetic system inhibits gallbladder contraction."
+        },
+        "relatedQuestions": ["62 (secretin)", "71 (CCK stimulus)"],
+        "category": "Gastrointestinal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 71,
+        "question": "Stimulus for the secretion of cholecystokinin is",
+        "options": [
+            "Protein digestion products (amino acids)",
+            "Histamine",
+            "Somatostatin",
+            "Acidic chyme in the duodenum",
+            "Fat digestion products (fatty acids)"
+        ],
+        "answer": 0,
+        "correctAnswer": "Protein digestion products (amino acids)",
+        "explanation": "While fatty acids are a very strong stimulus, CCK is also significantly stimulated by amino acids and peptides from partially digested proteins. Both A and E are correct, but if only one answer is allowed, A (Protein digestion products) is a primary stimulus alongside fats.",
+        "whyNotOtherOptions": {
+            "b": "Histamine stimulates gastric acid, not CCK.",
+            "c": "Somatostatin inhibits GI hormones, not a stimulus for CCK.",
+            "d": "Acidic chyme stimulates secretin, not CCK.",
+            "e": "Fat digestion products are also correct, but A is chosen per question intent."
+        },
+        "relatedQuestions": ["62 (secretin)", "70 (CCK)"],
+        "category": "Gastrointestinal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 72,
+        "question": "The total number of premolar teeth in adults is",
+        "options": [
+            "8",
+            "4",
+            "12",
+            "16",
+            "20"
+        ],
+        "answer": 0,
+        "correctAnswer": "8",
+        "explanation": "Adults have 8 premolars: 2 in each quadrant (first and second premolar).",
+        "whyNotOtherOptions": {
+            "b": "4 premolars would be one per quadrant, which is incorrect.",
+            "c": "12 includes other teeth types, like molars.",
+            "d": "16 is too high, possibly confusing with total teeth count.",
+            "e": "20 is far too high for premolars alone."
+        },
+        "relatedQuestions": ["69 (enamel)"],
+        "category": "Gastrointestinal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 73,
+        "question": "Which one of the following is secreted into the colon?",
+        "options": [
+            "Glucose",
+            "Glycine",
+            "Bile Salts",
+            "Calcium",
+            "Bicarbonate"
+        ],
+        "answer": 4,
+        "correctAnswer": "Bicarbonate",
+        "explanation": "The colon secretes bicarbonate (HCO3-) ions in exchange for chloride ions, which helps to neutralize acids produced by colonic bacteria. The other substances are absorbed or are not primarily secreted there.",
+        "whyNotOtherOptions": {
+            "a": "Glucose is absorbed, not secreted, in the colon.",
+            "b": "Glycine is absorbed as an amino acid, not secreted.",
+            "c": "Bile salts are reabsorbed in the ileum, not secreted in the colon.",
+            "d": "Calcium is absorbed, not secreted, in the colon."
+        },
+        "relatedQuestions": ["70 (bile release)"],
+        "category": "Gastrointestinal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 74,
+        "question": "Bile salts are secreted into what region of the small intestine?",
+        "options": [
+            "Jejunum",
+            "Duodenum",
+            "Ileum",
+            "Splanchnic Circulation",
+            "Enterohepatic Circulation"
+        ],
+        "answer": 1,
+        "correctAnswer": "Duodenum",
+        "explanation": "Bile is ejected from the gallbladder and enters the duodenum via the common bile duct.",
+        "whyNotOtherOptions": {
+            "a": "Jejunum receives bile indirectly, but secretion occurs in the duodenum.",
+            "c": "Ileum is primarily for bile salt reabsorption, not secretion.",
+            "d": "Splanchnic circulation refers to blood flow, not bile secretion.",
+            "e": "Enterohepatic circulation is the bile recycling process, not a region."
+        },
+        "relatedQuestions": ["70 (CCK)", "73 (colon secretion)"],
+        "category": "Gastrointestinal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 75,
+        "question": "Center for swallowing is located in the",
+        "options": [
+            "Hypothalamus",
+            "Medulla oblongata",
+            "Pons",
+            "Mid-brain",
+            "Cortex"
+        ],
+        "answer": 1,
+        "correctAnswer": "Medulla oblongata",
+        "explanation": "The swallowing center, a central pattern generator that coordinates the complex reflex, is located in the medulla oblongata.",
+        "whyNotOtherOptions": {
+            "a": "Hypothalamus regulates autonomic functions, not swallowing.",
+            "c": "Pons is involved in chewing, not swallowing.",
+            "d": "Midbrain is not the primary swallowing center.",
+            "e": "Cortex initiates voluntary swallowing but not the reflex."
+        },
+        "relatedQuestions": ["64 (chewing center)"],
+        "category": "Gastrointestinal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 76,
+        "question": "Identify a hormone whose action is exhibited via gene expression:",
+        "options": [
+            "Insulin",
+            "Aldosterone",
+            "Catecholamine",
+            "Calcitonin",
+            "Oxytocin"
+        ],
+        "answer": 1,
+        "correctAnswer": "Aldosterone",
+        "explanation": "Hormones that act via gene expression are typically lipid-soluble (steroids, thyroid hormones). They bind to intracellular receptors, and the hormone-receptor complex acts as a transcription factor. Aldosterone is a steroid hormone. Insulin, catecholamines, calcitonin, and oxytocin act through cell surface receptors and second messengers.",
+        "whyNotOtherOptions": {
+            "a": "Insulin acts via surface receptors and second messengers.",
+            "c": "Catecholamines (e.g., epinephrine) use cAMP signaling, not gene expression.",
+            "d": "Calcitonin acts via surface receptors, not nuclear.",
+            "e": "Oxytocin uses second messengers, not gene expression."
+        },
+        "relatedQuestions": ["79 (intracellular receptors)", "81 (thyroid hormone)"],
+        "category": "Endocrinology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 77,
+        "question": "The hormone that is stored in the form of preprohormone is:",
+        "options": [
+            "Insulin",
+            "Aldosterone",
+            "Thyroxine",
+            "Testosterone",
+            "Cortisol"
+        ],
+        "answer": 0,
+        "correctAnswer": "Insulin",
+        "explanation": "Peptide/protein hormones like insulin are synthesized as larger inactive precursors. Insulin is synthesized as preproinsulin, which is cleaved to proinsulin and then to active insulin. Steroid hormones (B, D, E) are synthesized on demand and not stored in vesicles.",
+        "whyNotOtherOptions": {
+            "b": "Aldosterone, a steroid hormone, is not stored as a preprohormone.",
+            "c": "Thyroxine is an amine hormone, not stored as a preprohormone.",
+            "d": "Testosterone, a steroid, is synthesized on demand.",
+            "e": "Cortisol, a steroid, is not stored as a precursor."
+        },
+        "relatedQuestions": ["76 (aldosterone)"],
+        "category": "Endocrinology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 78,
+        "question": "From the given options below, which one is an amine hormone?",
+        "options": [
+            "Growth hormone",
+            "T3 (Triiodothyronine)",
+            "ADH",
+            "Cortisol"
+        ],
+        "answer": 1,
+        "correctAnswer": "T3 (Triiodothyronine)",
+        "explanation": "Amine hormones are derived from the amino acids tyrosine or tryptophan. T3 and T4 (thyroid hormones) are derived from tyrosine. Growth hormone and ADH are peptide hormones. Cortisol is a steroid hormone.",
+        "whyNotOtherOptions": {
+            "a": "Growth hormone is a peptide hormone, not amine-derived.",
+            "c": "ADH is a peptide hormone, not amine-based.",
+            "d": "Cortisol is a steroid hormone derived from cholesterol."
+        },
+        "relatedQuestions": ["81 (thyroid hormone)"],
+        "category": "Endocrinology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 79,
+        "question": "Which hormone of the following has receptors inside the cell?",
+        "options": [
+            "ADH",
+            "Insulin",
+            "Growth hormone",
+            "Glucagon",
+            "Aldosterone"
+        ],
+        "answer": 4,
+        "correctAnswer": "Aldosterone",
+        "explanation": "As a steroid hormone, aldosterone is lipid-soluble and crosses the cell membrane to bind to receptors in the cytoplasm or nucleus. ADH, insulin, GH, and glucagon are water-soluble and bind to receptors on the cell surface.",
+        "whyNotOtherOptions": {
+            "a": "ADH binds to surface G-protein-coupled receptors.",
+            "b": "Insulin uses tyrosine kinase receptors on the cell surface.",
+            "c": "Growth hormone binds to surface cytokine receptors.",
+            "d": "Glucagon uses G-protein-coupled receptors on the surface."
+        },
+        "relatedQuestions": ["76 (aldosterone)", "82 (fluid balance)"],
+        "category": "Endocrinology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 80,
+        "question": "A phenomenon regulated by a positive feedback mechanism is:",
+        "options": [
+            "Secretion of insulin",
+            "Milk ejection reflex",
+            "Gonadal function",
+            "Growth",
+            "Secretion of T3 and T4"
+        ],
+        "answer": 1,
+        "correctAnswer": "Milk ejection reflex",
+        "explanation": "Positive feedback amplifies a change. The milk ejection reflex is a classic example: suckling stimulates oxytocin release, which causes milk ejection, which encourages more suckling. Another major example is the LH surge during ovulation. Most body systems are regulated by negative feedback.",
+        "whyNotOtherOptions": {
+            "a": "Insulin secretion is regulated by negative feedback to glucose levels.",
+            "c": "Gonadal function is mostly under negative feedback, except ovulation.",
+            "d": "Growth is regulated by negative feedback via growth hormone.",
+            "e": "T3/T4 secretion is controlled by negative feedback via TSH."
+        },
+        "relatedQuestions": ["1 (negative feedback)"],
+        "category": "Endocrinology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 81,
+        "question": "Being non-steroidal but having an intracellular receptor is:",
+        "options": [
+            "Epinephrine",
+            "Dopamine",
+            "T3 (Thyroid Hormone)",
+            "Somatostatin",
+            "Serotonin"
+        ],
+        "answer": 2,
+        "correctAnswer": "T3 (Thyroid Hormone)",
+        "explanation": "Thyroid hormones (T3/T4) are amine hormones (derived from tyrosine), not steroids. However, like steroids, they are lipid-soluble and have intracellular receptors in the nucleus that regulate gene transcription.",
+        "whyNotOtherOptions": {
+            "a": "Epinephrine acts via surface G-protein-coupled receptors.",
+            "b": "Dopamine uses surface receptors, not intracellular.",
+            "d": "Somatostatin is a peptide hormone with surface receptors.",
+            "e": "Serotonin acts via surface receptors, not intracellular."
+        },
+        "relatedQuestions": ["78 (amine hormone)", "79 (intracellular receptors)"],
+        "category": "Endocrinology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 82,
+        "question": "Hormones designed for the regulation of fluid and electrolyte balance are:",
+        "options": [
+            "Growth hormone and insulin",
+            "Aldosterone and insulin",
+            "Aldosterone and ADH",
+            "Oxytocin and ADH",
+            "T3 and T4"
+        ],
+        "answer": 2,
+        "correctAnswer": "Aldosterone and ADH",
+        "explanation": "Aldosterone regulates sodium (and thus water) reabsorption and potassium secretion in the kidneys. Antidiuretic Hormone (ADH) regulates water reabsorption by increasing the permeability of the collecting ducts. Together, they are the primary hormones for fluid and electrolyte balance.",
+        "whyNotOtherOptions": {
+            "a": "Growth hormone and insulin regulate metabolism, not fluid balance.",
+            "b": "Insulin regulates glucose, not electrolytes directly.",
+            "d": "Oxytocin is involved in labor and lactation, not fluid balance.",
+            "e": "T3 and T4 regulate metabolism, not fluid or electrolytes."
+        },
+        "relatedQuestions": ["54 (ADH and aldosterone)", "79 (aldosterone)"],
+        "category": "Endocrinology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 83,
+        "question": "A hormone whose secretion is in excess during the time of deep sleep is:",
+        "options": [
+            "Growth hormone",
+            "Insulin",
+            "Cortisol",
+            "Adrenalin",
+            "ADH"
+        ],
+        "answer": 0,
+        "correctAnswer": "Growth hormone",
+        "explanation": "The highest pulses of Growth Hormone (GH) secretion occur during slow-wave (deep) sleep. Cortisol levels are highest in the early morning just before waking.",
+        "whyNotOtherOptions": {
+            "b": "Insulin secretion is tied to meals, not sleep.",
+            "c": "Cortisol peaks in the morning, not during deep sleep.",
+            "d": "Adrenalin (epinephrine) is stress-related, not sleep-related.",
+            "e": "ADH secretion is regulated by plasma osmolality, not sleep."
+        },
+        "relatedQuestions": ["76 (aldosterone)"],
+        "category": "Endocrinology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 84,
+        "question": "Mullerian duct develops into the:",
+        "options": [
+            "Ovaries",
+            "Female genital tract",
+            "Male accessory glands",
+            "Female external genitalia",
+            "Ovaries"
+        ],
+        "answer": 1,
+        "correctAnswer": "Female genital tract",
+        "explanation": "In the absence of anti-Müllerian hormone (AMH) from the fetal testes, the Müllerian ducts develop into the female internal genitalia: the fallopian tubes, uterus, and upper part of the vagina. The ovaries develop from the genital ridge.",
+        "whyNotOtherOptions": {
+            "a": "Ovaries develop from the genital ridge, not Müllerian ducts.",
+            "c": "Male accessory glands arise from Wolffian ducts.",
+            "d": "Female external genitalia develop from the genital tubercle.",
+            "e": "Ovaries are repeated and incorrect as per A."
+        },
+        "relatedQuestions": ["89 (fertilization site)"],
+        "category": "Reproductive Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 85,
+        "question": "Which one of the following is known to be the hormone of ovulation?",
+        "options": [
+            "FSH",
+            "Estradiol",
+            "Progesterone",
+            "hCG",
+            "LH"
+        ],
+        "answer": 4,
+        "correctAnswer": "LH",
+        "explanation": "The Luteinizing Hormone (LH) surge from the anterior pituitary is the direct trigger for ovulation—the release of the oocyte from the mature ovarian follicle.",
+        "whyNotOtherOptions": {
+            "a": "FSH promotes follicle growth, not ovulation directly.",
+            "b": "Estradiol triggers the LH surge but is not the ovulatory hormone.",
+            "c": "Progesterone maintains pregnancy post-ovulation.",
+            "d": "hCG supports pregnancy, not ovulation."
+        },
+        "relatedQuestions": ["80 (positive feedback)"],
+        "category": "Reproductive Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 86,
+        "question": "Which of the following is not a haploid cell?",
+        "options": [
+            "Spermatogonium",
+            "Secondary oocytes",
+            "Spermatids",
+            "Oocyte",
+            "Ovum"
+        ],
+        "answer": 0,
+        "correctAnswer": "Spermatogonium",
+        "explanation": "Spermatogonia (and oogonia) are the stem cells in the testes and ovaries. They are diploid (2n). They undergo mitosis and then meiosis to produce haploid (1n) gametes (spermatids, secondary oocytes, ovum).",
+        "whyNotOtherOptions": {
+            "b": "Secondary oocytes are haploid, post-meiosis I.",
+            "c": "Spermatids are haploid, post-meiosis.",
+            "d": "Oocytes, particularly secondary, are haploid.",
+            "e": "Ovum is the mature haploid female gamete."
+        },
+        "relatedQuestions": ["85 (ovulation)"],
+        "category": "Reproductive Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 87,
+        "question": "In the male sexual act, the erection phase is under the regulation of the",
+        "options": [
+            "Parasympathetic nervous system",
+            "Sympathetic nervous system",
+            "Somatic pudendal nerve",
+            "The vagus nerve from medulla",
+            "Phrenic nerve of the cervical segment"
+        ],
+        "answer": 0,
+        "correctAnswer": "Parasympathetic nervous system",
+        "explanation": "Erection is primarily a parasympathetic process mediated by the pelvic splanchnic nerves. This leads to vasodilation of penile arteries and increased blood flow. Sympathetic stimulation is involved in ejaculation.",
+        "whyNotOtherOptions": {
+            "b": "Sympathetic system mediates ejaculation, not erection.",
+            "c": "Pudendal nerve controls somatic muscles, not vascular erection.",
+            "d": "Vagus nerve is not involved in penile innervation.",
+            "e": "Phrenic nerve innervates the diaphragm, not genitalia."
+        },
+        "relatedQuestions": ["33 (ANS innervation)"],
+        "category": "Reproductive Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 88,
+        "question": "The function of the uterus is:",
+        "options": [
+            "Hormone secretion",
+            "Essential reproductive organ",
+            "Site for normal pregnancy",
+            "Gametogenesis",
+            "None of the above"
+        ],
+        "answer": 2,
+        "correctAnswer": "Site for normal pregnancy",
+        "explanation": "The primary function of the uterus is to provide the site for implantation, gestation, and development of the fetus. The ovaries are the essential reproductive organs responsible for gametogenesis and hormone secretion.",
+        "whyNotOtherOptions": {
+            "a": "Hormone secretion is primarily an ovarian function.",
+            "b": "Ovaries, not uterus, are the essential reproductive organs.",
+            "d": "Gametogenesis occurs in the ovaries, not uterus.",
+            "e": "Option C is correct, so 'none' is invalid."
+        },
+        "relatedQuestions": ["84 (Müllerian duct)", "89 (fertilization)"],
+        "category": "Reproductive Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 89,
+        "question": "Usual site of fertilization in the female reproductive system is:",
+        "options": [
+            "Ovary",
+            "Fallopian tubes",
+            "Uterus",
+            "Vagina",
+            "Cervix"
+        ],
+        "answer": 1,
+        "correctAnswer": "Fallopian tubes",
+        "explanation": "Fertilization, the union of sperm and egg, typically occurs in the ampulla of the fallopian tube.",
+        "whyNotOtherOptions": {
+            "a": "Ovary releases the egg but is not the fertilization site.",
+            "c": "Uterus is the site of implantation, not fertilization.",
+            "d": "Vagina is a passage for sperm, not fertilization.",
+            "e": "Cervix allows sperm passage but is not the fertilization site."
+        },
+        "relatedQuestions": ["84 (Müllerian duct)", "88 (uterus)"],
+        "category": "Reproductive Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 90,
+        "question": "Proliferative phase of the endometrial cycle is controlled by which hormone?",
+        "options": [
+            "Progesterone",
+            "FSH",
+            "LH",
+            "Estrogen",
+            "Oxytocin"
+        ],
+        "answer": 3,
+        "correctAnswer": "Estrogen",
+        "explanation": "The menstrual cycle has two main phases in the endometrium. The proliferative phase (rebuilding the lining after menstruation) is driven by estrogen from the developing ovarian follicles. The secretory phase is driven by progesterone from the corpus luteum.",
+        "whyNotOtherOptions": {
+            "a": "Progesterone drives the secretory phase, not proliferative.",
+            "b": "FSH stimulates follicle growth, indirectly affecting estrogen.",
+            "c": "LH triggers ovulation, not proliferative phase.",
+            "e": "Oxytocin is involved in labor, not endometrial cycle."
+        },
+        "relatedQuestions": ["85 (LH)", "88 (uterus)"],
+        "category": "Reproductive Physiology",
+        "difficulty": "Hard"
+    }
+]
+    
+
+;
+// Store original questions for restart functionality (moved to global scope for cross-browser compatibility)
+const originalQuestions = [...questions];
+// DOM Elements (global for cross-browser)
+let body = document.body;
+let questionElement, optionsContainer, currentQuestionElement, totalQuestionsElement, progressBar, prevButton, nextButton, skipButton, feedbackElement, timerElement, scoreElement, streakElement, categoryElement, explanationContainer, explanationTextElement, themeToggle, soundToggle, bookmarkBtn, bookmarksCount, categoryTag, difficultyTag, showExplanationBtn, statsBtn, statsModal, closeStatsModal, closeStatsBtn, quickActionsBtn, quickActionsModal, closeActionsModal, closeActionsBtn, studyModeToggle, confettiContainer;
+// Quiz state
+let currentQuestionIndex = 0;
+let score = 0;
+let streak = 0;
+let selectedOption = null;
+let timeStarted = null;
+let timerInterval = null;
+let timeElapsed = 0;
+let answers = [];
+let soundsEnabled = true;
+let bookmarkedQuestions = [];
+let quizHistory = [];
+let studyMode = false;
+let performanceMetrics = {
+    categories: {},
+    difficulties: { Easy: 0, Medium: 0, Hard: 0, "Very Hard": 0 },
+    totalCorrect: 0,
+    totalQuestions: 0,
+    totalTime: 0
+};
+function initQuiz() {
+    try {
+        // Assign DOM elements safely
+        questionElement = document.getElementById('question') || questionElement;
+        optionsContainer = document.getElementById('options-container') || optionsContainer;
+        currentQuestionElement = document.getElementById('current-question') || currentQuestionElement;
+        totalQuestionsElement = document.getElementById('total-questions') || totalQuestionsElement;
+        progressBar = document.getElementById('progress-bar') || progressBar;
+        prevButton = document.getElementById('prev-btn') || prevButton;
+        nextButton = document.getElementById('next-btn') || nextButton;
+        skipButton = document.getElementById('skip-btn') || skipButton;
+        feedbackElement = document.getElementById('feedback') || feedbackElement;
+        timerElement = document.getElementById('timer') || timerElement;
+        scoreElement = document.getElementById('score') || scoreElement;
+        streakElement = document.getElementById('streak') || streakElement;
+        categoryElement = document.getElementById('category') || categoryElement;
+        explanationContainer = document.getElementById('explanation-container') || explanationContainer;
+        explanationTextElement = document.getElementById('explanation-text') || explanationTextElement;
+        themeToggle = document.getElementById('theme-toggle') || themeToggle;
+        soundToggle = document.getElementById('sound-toggle') || soundToggle;
+        bookmarkBtn = document.getElementById('bookmark-btn') || bookmarkBtn;
+        bookmarksCount = document.getElementById('bookmarks-count') || bookmarksCount;
+        categoryTag = document.getElementById('category-tag') || categoryTag;
+        difficultyTag = document.getElementById('difficulty-tag') || difficultyTag;
+        showExplanationBtn = document.getElementById('show-explanation-btn') || showExplanationBtn;
+        statsBtn = document.getElementById('stats-btn') || statsBtn;
+        statsModal = document.getElementById('stats-modal') || statsModal;
+        closeStatsModal = document.getElementById('close-stats-modal') || closeStatsModal;
+        closeStatsBtn = document.getElementById('close-stats-btn') || closeStatsBtn;
+        quickActionsBtn = document.getElementById('quick-actions-btn') || quickActionsBtn;
+        quickActionsModal = document.getElementById('quick-actions-modal') || quickActionsModal;
+        closeActionsModal = document.getElementById('close-actions-modal') || closeActionsModal;
+        closeActionsBtn = document.getElementById('close-actions-btn') || closeActionsBtn;
+        studyModeToggle = document.getElementById('study-mode-toggle') || studyModeToggle;
+        confettiContainer = document.getElementById('confetti-container') || confettiContainer;
+        // Reset DOM elements
+        if (scoreElement) scoreElement.textContent = score;
+        if (streakElement) streakElement.textContent = streak;
+        if (timerElement) timerElement.textContent = '00:00';
+        if (totalQuestionsElement) totalQuestionsElement.textContent = questions.length;
+        
+        loadQuestion();
+        startTimer();
+        
+        // Clone elements to remove old listeners (cross-browser safe)
+        if (prevButton) {
+            const prevBtnClone = prevButton.cloneNode(true);
+            prevButton.parentNode.replaceChild(prevBtnClone, prevButton);
+            prevButton = prevBtnClone;
+        }
+        if (nextButton) {
+            const nextBtnClone = nextButton.cloneNode(true);
+            nextButton.parentNode.replaceChild(nextBtnClone, nextButton);
+            nextButton = nextBtnClone;
+        }
+        if (skipButton) {
+            const skipBtnClone = skipButton.cloneNode(true);
+            skipButton.parentNode.replaceChild(skipBtnClone, skipButton);
+            skipButton = skipBtnClone;
+        }
+        if (themeToggle) {
+            const themeToggleClone = themeToggle.cloneNode(true);
+            themeToggle.parentNode.replaceChild(themeToggleClone, themeToggle);
+            themeToggle = themeToggleClone;
+        }
+        if (soundToggle) {
+            const soundToggleClone = soundToggle.cloneNode(true);
+            soundToggle.parentNode.replaceChild(soundToggleClone, soundToggle);
+            soundToggle = soundToggleClone;
+        }
+        if (bookmarkBtn) {
+            const bookmarkBtnClone = bookmarkBtn.cloneNode(true);
+            bookmarkBtn.parentNode.replaceChild(bookmarkBtnClone, bookmarkBtn);
+            bookmarkBtn = bookmarkBtnClone;
+        }
+        if (showExplanationBtn) {
+            const showExplanationBtnClone = showExplanationBtn.cloneNode(true);
+            showExplanationBtn.parentNode.replaceChild(showExplanationBtnClone, showExplanationBtn);
+            showExplanationBtn = showExplanationBtnClone;
+        }
+        if (statsBtn) {
+            const statsBtnClone = statsBtn.cloneNode(true);
+            statsBtn.parentNode.replaceChild(statsBtnClone, statsBtn);
+            statsBtn = statsBtnClone;
+        }
+        // Add event listeners safely
+        if (prevButton) prevButton.addEventListener('click', goToPreviousQuestion);
+        if (nextButton) nextButton.addEventListener('click', goToNextQuestion);
+        if (skipButton) skipButton.addEventListener('click', skipQuestion);
+        if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
+        if (soundToggle) soundToggle.addEventListener('click', toggleSound);
+        if (bookmarkBtn) bookmarkBtn.addEventListener('click', toggleBookmark);
+        if (showExplanationBtn) showExplanationBtn.addEventListener('click', toggleExplanation);
+        if (statsBtn) statsBtn.addEventListener('click', showStatsModal);
+        if (closeStatsModal) closeStatsModal.addEventListener('click', hideStatsModal);
+        if (closeStatsBtn) closeStatsBtn.addEventListener('click', hideStatsModal);
+        if (quickActionsBtn) quickActionsBtn.addEventListener('click', showQuickActionsModal);
+        if (closeActionsModal) closeActionsModal.addEventListener('click', hideQuickActionsModal);
+        if (closeActionsBtn) closeActionsBtn.addEventListener('click', hideQuickActionsModal);
+        if (studyModeToggle) studyModeToggle.addEventListener('change', toggleStudyMode);
+        
+        const markForReviewBtn = document.getElementById('mark-for-review-btn');
+        if (markForReviewBtn) markForReviewBtn.addEventListener('click', markForReview);
+        const viewExplanationBtn = document.getElementById('view-explanation-btn');
+        if (viewExplanationBtn) viewExplanationBtn.addEventListener('click', viewExplanation);
+        const hintBtn = document.getElementById('hint-btn');
+        if (hintBtn) hintBtn.addEventListener('click', getHint);
+        const reportBtn = document.getElementById('report-question-btn');
+        if (reportBtn) reportBtn.addEventListener('click', reportQuestion);
+        
+        // Keyboard navigation
+        document.removeEventListener('keydown', handleKeydown);
+        document.addEventListener('keydown', handleKeydown);
+        
+        loadPreferences();
+        loadQuizHistory();
+        updateBookmarksCount();
+    } catch (e) {
+        console.error('Error initializing quiz:', e);
+    }
+}
+function handleKeydown(e) {
+    if (e.key === 'ArrowRight') {
+        goToNextQuestion();
+    } else if (e.key === 'ArrowLeft') {
+        goToPreviousQuestion();
+    } else if (e.key.toLowerCase() === 'a' || e.key === '1') {
+        selectOption(0);
+    } else if (e.key.toLowerCase() === 'b' || e.key === '2') {
+        selectOption(1);
+    } else if (e.key.toLowerCase() === 'c' || e.key === '3') {
+        selectOption(2);
+    } else if (e.key.toLowerCase() === 'd' || e.key === '4') {
+        selectOption(3);
+    } else if (e.key.toLowerCase() === 'e' || e.key === '5') {
+        selectOption(4);
+    } else if (e.key === 'Enter') {
+        if (showExplanationBtn && showExplanationBtn.style.display !== 'none') {
+            toggleExplanation();
+        }
+    } else if (e.key === 's' || e.key === '5') {
+        skipQuestion();
+    }
+}
+function loadQuestion() {
+    if (!questionElement || !optionsContainer) return; // Safety check
+    const question = questions[currentQuestionIndex];
+    if (!question) return;
+    questionElement.textContent = question.question;
+    currentQuestionElement.textContent = currentQuestionIndex + 1;
+    if (categoryTag) categoryTag.textContent = question.category || 'Unknown';
+    
+    // Update difficulty tag with indicator
+    if (difficultyTag) {
+        difficultyTag.innerHTML = `
+            <span class="difficulty-indicator difficulty-${question.difficulty.toLowerCase().replace(' ', '-')}"></span>
+            ${question.difficulty}
+        `;
+    }
+    
+    if (categoryElement) categoryElement.textContent = question.category || 'All';
+    
+    const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+    if (progressBar) progressBar.style.width = `${progress}%`;
+    
+    // Update progress level for appearance change
+    let progressLevel = 0;
+    if (progress > 75) progressLevel = 75;
+    else if (progress > 50) progressLevel = 50;
+    else if (progress > 25) progressLevel = 25;
+    body.setAttribute('data-progress', progressLevel);
+    
+    optionsContainer.innerHTML = '';
+    
+    const optionLetters = ['A', 'B', 'C', 'D', 'E'];
+    question.options.forEach((option, index) => {
+        const optionElement = document.createElement('div');
+        optionElement.classList.add('option', 'fade-in');
+        optionElement.setAttribute('role', 'button');
+        optionElement.setAttribute('tabindex', '0');
+        optionElement.setAttribute('aria-label', `Option ${optionLetters[index]}: ${option}`);
+        
+        const optionLetter = document.createElement('div');
+        optionLetter.classList.add('option-letter');
+        optionLetter.textContent = optionLetters[index];
+        
+        const optionText = document.createElement('div');
+        optionText.classList.add('option-text');
+        optionText.textContent = option;
+        
+        optionElement.appendChild(optionLetter);
+        optionElement.appendChild(optionText);
+        
+        optionElement.addEventListener('click', () => selectOption(index));
+        optionElement.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                selectOption(index);
+            }
+        });
+        
+        optionsContainer.appendChild(optionElement);
+    });
+    
+    if (prevButton) prevButton.disabled = currentQuestionIndex === 0;
+    if (nextButton) nextButton.textContent = currentQuestionIndex === questions.length - 1 ? 'Finish Quiz' : 'Next Question';
+    if (nextButton) nextButton.innerHTML = currentQuestionIndex === questions.length - 1 ? 'Finish Quiz <i class="fas fa-flag-checkered"></i>' : 'Next Question <i class="fas fa-arrow-right"></i>';
+    
+    if (feedbackElement) feedbackElement.style.display = 'none';
+    if (showExplanationBtn) showExplanationBtn.style.display = 'none';
+    if (explanationContainer) explanationContainer.classList.remove('expanded');
+    
+    selectedOption = null;
+    
+    // Show quick actions button
+    if (quickActionsBtn) quickActionsBtn.style.display = 'flex';
+    
+    // If the question was previously answered or skipped, display the feedback and explanations
+    if (answers[currentQuestionIndex]) {
+        const ans = answers[currentQuestionIndex];
+        const options = document.querySelectorAll('.option');
+        if (feedbackElement) feedbackElement.style.display = 'flex';
+        if (showExplanationBtn) showExplanationBtn.style.display = 'block';
+        
+        // Update explanation with general explanation and whyNotOtherOptions
+        if (explanationTextElement) {
+            let explanationContent = question.explanation;
+            if (question.whyNotOtherOptions) {
+                explanationContent += '<br><br><strong>Why Not Other Options:</strong><ul>';
+                const optionLetters = ['a', 'b', 'c', 'd'];
+                optionLetters.forEach((letter, index) => {
+                    if (index !== question.answer && question.whyNotOtherOptions[letter]) {
+                        explanationContent += `<li><strong>Option ${letter.toUpperCase()}:</strong> ${question.whyNotOtherOptions[letter]}</li>`;
+                    }
+                });
+                explanationContent += '</ul>';
+            }
+            explanationTextElement.innerHTML = explanationContent;
+        }
+        
+        options.forEach(option => option.style.pointerEvents = 'none');
+        
+        if (ans.selected === 'Skipped') {
+            selectedOption = null;
+            if (feedbackElement) {
+                feedbackElement.classList.add('skipped');
+                feedbackElement.innerHTML = '<i class="fas fa-forward feedback-icon"></i><div class="feedback-text">Skipped. The right answer is highlighted.</div>';
+            }
+            options[question.answer].classList.add('correct');
+        } else {
+            const optIndex = question.options.findIndex(opt => opt === ans.selected);
+            if (optIndex !== -1) {
+                selectedOption = optIndex;
+                options[optIndex].classList.add('selected');
+                if (ans.isCorrect) {
+                    if (feedbackElement) {
+                        feedbackElement.classList.add('correct');
+                        feedbackElement.innerHTML = '<i class="fas fa-check-circle feedback-icon"></i><div class="feedback-text">Correct! Well done.</div>';
+                    }
+                } else {
+                    if (feedbackElement) {
+                        feedbackElement.classList.add('incorrect');
+                        feedbackElement.innerHTML = '<i class="fas fa-times-circle feedback-icon"></i><div class="feedback-text">Incorrect. The right answer is highlighted.</div>';
+                    }
+                    options[question.answer].classList.add('correct');
+                    options[optIndex].classList.add('incorrect');
+                }
+            }
+        }
+    }
+    
+    updateBookmarkStatus();
+}
+function selectOption(index) {
+    if (selectedOption !== null || answers[currentQuestionIndex]) return;
+    
+    const options = document.querySelectorAll('.option');
+    options.forEach(option => option.classList.remove('selected', 'incorrect'));
+    options[index].classList.add('selected');
+    selectedOption = index;
+    
+    const question = questions[currentQuestionIndex];
+    const isCorrect = index === question.answer;
+    
+    if (feedbackElement) feedbackElement.style.display = 'flex';
+    if (isCorrect) {
+        if (feedbackElement) {
+            feedbackElement.classList.remove('incorrect');
+            feedbackElement.classList.add('correct');
+            feedbackElement.innerHTML = '<i class="fas fa-check-circle feedback-icon"></i><div class="feedback-text">Correct! Well done.</div>';
+        }
+        score += getScoreForDifficulty(question.difficulty);
+        streak++;
+        playSound('correct');
+        
+        if (question.difficulty === 'Hard' || question.difficulty === 'Very Hard') {
+            createConfetti();
+        }
+    } else {
+        if (feedbackElement) {
+            feedbackElement.classList.remove('correct');
+            feedbackElement.classList.add('incorrect');
+            feedbackElement.innerHTML = '<i class="fas fa-times-circle feedback-icon"></i><div class="feedback-text">Incorrect. The right answer is highlighted.</div>';
+        }
+        options[question.answer].classList.add('correct');
+        options[index].classList.add('incorrect');
+        streak = 0;
+        playSound('incorrect');
+    }
+    
+    if (scoreElement) scoreElement.textContent = score;
+    if (streakElement) streakElement.textContent = streak;
+    
+    if (explanationTextElement) {
+        let explanationContent = question.explanation;
+        if (question.whyNotOtherOptions) {
+            explanationContent += '<br><br><strong>Why Not Other Options:</strong><ul>';
+            const optionLetters = ['a', 'b', 'c', 'd'];
+            optionLetters.forEach((letter, idx) => {
+                if (idx !== question.answer && question.whyNotOtherOptions[letter]) {
+                    explanationContent += `<li><strong>Option ${letter.toUpperCase()}:</strong> ${question.whyNotOtherOptions[letter]}</li>`;
+                }
+            });
+            explanationContent += '</ul>';
+        }
+        explanationTextElement.innerHTML = explanationContent;
+    }
+    if (showExplanationBtn) showExplanationBtn.style.display = 'block';
+    
+    answers[currentQuestionIndex] = {
+        question: question.question,
+        selected: question.options[index],
+        correct: question.options[question.answer],
+        isCorrect: isCorrect,
+        explanation: question.explanation,
+        category: question.category,
+        difficulty: question.difficulty
+    };
+    
+    updatePerformanceMetrics(isCorrect, question);
+    
+    options.forEach(option => option.style.pointerEvents = 'none');
+}
+function skipQuestion() {
+    if (answers[currentQuestionIndex]) return;
+    
+    const question = questions[currentQuestionIndex];
+    const options = document.querySelectorAll('.option');
+    
+    if (feedbackElement) {
+        feedbackElement.style.display = 'flex';
+        feedbackElement.classList.add('skipped');
+        feedbackElement.innerHTML = '<i class="fas fa-forward feedback-icon"></i><div class="feedback-text">Skipped. The right answer is highlighted.</div>';
+    }
+    
+    options[question.answer].classList.add('correct');
+    if (showExplanationBtn) showExplanationBtn.style.display = 'block';
+    
+    if (explanationTextElement) {
+        let explanationContent = question.explanation;
+        if (question.whyNotOtherOptions) {
+            explanationContent += '<br><br><strong>Why Not Other Options:</strong><ul>';
+            const optionLetters = ['a', 'b', 'c', 'd'];
+            optionLetters.forEach((letter, idx) => {
+                if (idx !== question.answer && question.whyNotOtherOptions[letter]) {
+                    explanationContent += `<li><strong>Option ${letter.toUpperCase()}:</strong> ${question.whyNotOtherOptions[letter]}</li>`;
+                }
+            });
+            explanationContent += '</ul>';
+        }
+        explanationTextElement.innerHTML = explanationContent;
+    }
+    
+    answers[currentQuestionIndex] = {
+        question: question.question,
+        selected: 'Skipped',
+        correct: question.options[question.answer],
+        isCorrect: false,
+        explanation: question.explanation,
+        category: question.category,
+        difficulty: question.difficulty
+    };
+    
+    updatePerformanceMetrics(false, question);
+    streak = 0;
+    if (streakElement) streakElement.textContent = streak;
+    
+    options.forEach(option => option.style.pointerEvents = 'none');
+}
+function maybeHandleSkip() {
+    if (!answers[currentQuestionIndex] && selectedOption === null) {
+        skipQuestion();
+    }
+}
+function toggleExplanation() {
+    if (!explanationContainer) return;
+    explanationContainer.classList.toggle('expanded');
+    if (!showExplanationBtn) return;
+    showExplanationBtn.innerHTML = explanationContainer.classList.contains('expanded') ?
+        '<i class="fas fa-info-circle"></i> Hide Explanation' :
+        '<i class="fas fa-info-circle"></i> Show Explanation';
+}
+function getScoreForDifficulty(difficulty) {
+    switch (difficulty) {
+        case 'Easy': return 5;
+        case 'Medium': return 10;
+        case 'Hard': return 15;
+        case 'Very Hard': return 20;
+        default: return 10;
+    }
+}
+function updatePerformanceMetrics(isCorrect, question) {
+    performanceMetrics.totalQuestions++;
+    performanceMetrics.totalTime += timeElapsed;
+    if (isCorrect) performanceMetrics.totalCorrect++;
+    
+    performanceMetrics.categories[question.category] = performanceMetrics.categories[question.category] || { correct: 0, total: 0 };
+    performanceMetrics.categories[question.category].total++;
+    if (isCorrect) performanceMetrics.categories[question.category].correct++;
+    
+    if (!performanceMetrics.difficulties[question.difficulty]) performanceMetrics.difficulties[question.difficulty] = 0;
+    if (isCorrect) performanceMetrics.difficulties[question.difficulty]++;
+}
+function toggleBookmark() {
+    if (!bookmarkBtn) return;
+    const questionId = questions[currentQuestionIndex].id;
+    const index = bookmarkedQuestions.indexOf(questionId);
+    if (index === -1) {
+        bookmarkedQuestions.push(questionId);
+        bookmarkBtn.classList.add('bookmarked');
+        playSound('bookmark');
+    } else {
+        bookmarkedQuestions.splice(index, 1);
+        bookmarkBtn.classList.remove('bookmarked');
+    }
+    updateBookmarksCount();
+    saveBookmarks();
+}
+function updateBookmarkStatus() {
+    if (!bookmarkBtn) return;
+    const questionId = questions[currentQuestionIndex].id;
+    bookmarkBtn.classList.toggle('bookmarked', bookmarkedQuestions.includes(questionId));
+}
+function updateBookmarksCount() {
+    if (!bookmarksCount) return;
+    bookmarksCount.textContent = bookmarkedQuestions.length;
+}
+function goToNextQuestion() {
+    maybeHandleSkip();
+    if (currentQuestionIndex < questions.length - 1) {
+        currentQuestionIndex++;
+        loadQuestion();
+    } else {
+        body.setAttribute('data-progress', '100');
+        showResults();
+        saveQuizHistory();
+    }
+}
+function goToPreviousQuestion() {
+    maybeHandleSkip();
+    if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        loadQuestion();
+    }
+}
+function startTimer() {
+    timeStarted = new Date();
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(updateTimer, 1000);
+}
+function updateTimer() {
+    timeElapsed++;
+    
+    const minutes = Math.floor(timeElapsed / 60).toString().padStart(2, '0');
+    const seconds = (timeElapsed % 60).toString().padStart(2, '0');
+    if (timerElement) timerElement.textContent = `${minutes}:${seconds}`;
+    
+    if (timeElapsed >= 300) {
+        if (timerElement) {
+            timerElement.style.color = 'var(--danger)';
+            timerElement.classList.add('pulse');
+        }
+    } else {
+        if (timerElement) {
+            timerElement.style.color = 'var(--primary)';
+            timerElement.classList.remove('pulse');
+        }
+    }
+}
+function showResults() {
+    if (timerInterval) clearInterval(timerInterval);
+    if (quickActionsBtn) quickActionsBtn.style.display = 'none';
+    
+    const quizContainer = document.querySelector('.quiz-container');
+    if (!quizContainer) return;
+    const maxScore = questions.reduce((sum, q) => sum + getScoreForDifficulty(q.difficulty), 0);
+    const percentage = ((score / maxScore) * 100).toFixed(1);
+    const accuracy = ((performanceMetrics.totalCorrect / performanceMetrics.totalQuestions) * 100).toFixed(1);
+    const avgTime = Math.round(performanceMetrics.totalTime / performanceMetrics.totalQuestions);
+    
+    quizContainer.innerHTML = `
+        <div class="results-container">
+            <h2 class="quiz-title">Quiz Completed!</h2>
+            <p class="quiz-subtitle">You've finished the MED QUIZ</p>
+            
+            <div class="score-circle" style="--p: ${percentage}%">
+                <div class="score-text">
+                    <div class="score-value">${score}</div>
+                    <div class="score-label">Points</div>
+                </div>
+            </div>
+            
+            <div class="results-stats">
+                <div class="result-stat">
+                    <div class="result-stat-value">${accuracy}%</div>
+                    <div class="result-stat-label">Accuracy</div>
+                </div>
+                <div class="result-stat">
+                    <div class="result-stat-value">${timeElapsed}s</div>
+                    <div class="result-stat-label">Time Taken</div>
+                </div>
+                <div class="result-stat">
+                    <div class="result-stat-value">${streak}</div>
+                    <div class="result-stat-label">Best Streak</div>
+                </div>
+                <div class="result-stat">
+                    <div class="result-stat-value">${bookmarkedQuestions.length}</div>
+                    <div class="result-stat-label">Bookmarked</div>
+                </div>
+            </div>
+            
+            <div class="review-section">
+                <h3 class="review-title">Performance Analytics</h3>
+                <div class="review-item">
+                    <div class="review-answer">Average Time Per Question: ${avgTime}s</div>
+                    <div class="review-answer">Difficulty Performance:
+                        Easy: ${performanceMetrics.difficulties.Easy || 0},
+                        Medium: ${performanceMetrics.difficulties.Medium || 0},
+                        Hard: ${performanceMetrics.difficulties.Hard || 0},
+                        Very Hard: ${performanceMetrics.difficulties['Very Hard'] || 0}
+                    </div>
+                </div>
+                
+                <h3 class="review-title">Review Your Answers</h3>
+                ${answers.map((answer, index) => `
+                    <div class="review-item ${answer.isCorrect ? 'correct' : answer.selected === 'Skipped' ? 'skipped' : 'incorrect'}">
+                        <div class="review-question">Q${index + 1}: ${answer.question} (${answer.category} - ${answer.difficulty})</div>
+                        <div class="review-answer">Your Answer: ${answer.selected}</div>
+                        <div class="review-answer">Correct Answer: ${answer.correct}</div>
+                        <div class="review-explanation">${answer.explanation}
+                            ${questions[index].whyNotOtherOptions ? `
+                                <br><br><strong>Why Not Other Options:</strong>
+                                <ul>
+                                    ${Object.entries(questions[index].whyNotOtherOptions).map(([key, value]) => `
+                                        <li><strong>Option ${key.toUpperCase()}:</strong> ${value}</li>
+                                    `).join('')}
+                                </ul>
+                            ` : ''}
+                        </div>
+                    </div>
+                `).join('')}
+                
+                ${bookmarkedQuestions.length > 0 ? `
+                    <h3 class="review-title">Bookmarked Questions</h3>
+                    ${bookmarkedQuestions.map(qid => {
+                        const question = questions.find(q => q.id === qid);
+                        if (!question) return '';
+                        return `
+                            <div class="review-item">
+                                <div class="review-question">${question.question} (${question.category} - ${question.difficulty})</div>
+                                <div class="review-answer">Correct Answer: ${question.correctAnswer}</div>
+                                <div class="review-explanation">${question.explanation}
+                                    ${question.whyNotOtherOptions ? `
+                                        <br><br><strong>Why Not Other Options:</strong>
+                                        <ul>
+                                            ${Object.entries(question.whyNotOtherOptions).map(([key, value]) => `
+                                                <li><strong>Option ${key.toUpperCase()}:</strong> ${value}</li>
+                                            `).join('')}
+                                        </ul>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                ` : ''}
+            </div>
+            
+            <button class="btn btn-primary mt-4" id="restart-btn">
+                <i class="fas fa-redo"></i> Try Again
+            </button>
+            <button class="btn btn-secondary mt-2" id="review-wrong-btn">
+                <i class="fas fa-search"></i> Review Incorrect Answers
+            </button>
+        </div>
+    `;
+    
+    // Add event listeners after DOM update
+    const restartBtn = document.getElementById('restart-btn');
+    const reviewWrongBtn = document.getElementById('review-wrong-btn');
+    if (restartBtn) restartBtn.addEventListener('click', restartQuiz);
+    if (reviewWrongBtn) reviewWrongBtn.addEventListener('click', reviewWrongAnswers);
+}
+function reviewWrongAnswers() {
+    const wrongAnswers = answers.filter(answer => !answer.isCorrect && answer.selected !== 'Skipped');
+    
+    if (wrongAnswers.length === 0) {
+        alert("You don't have any incorrect answers to review!");
+        return;
+    }
+    
+    const wrongQuestions = questions.filter((q, index) =>
+        answers[index] && !answers[index].isCorrect && answers[index].selected !== 'Skipped'
+    );
+    
+    questions.length = 0;
+    questions.push(...wrongQuestions);
+    currentQuestionIndex = 0;
+    score = 0;
+    streak = 0;
+    timeElapsed = 0;
+    answers = [];
+    selectedOption = null;
+    performanceMetrics = {
+        categories: {},
+        difficulties: { Easy: 0, Medium: 0, Hard: 0, "Very Hard": 0 },
+        totalCorrect: 0,
+        totalQuestions: 0,
+        totalTime: 0
+    };
+    
+    if (timerInterval) {
+        clearInterval(timerInterval);
+    }
+    
+    body.setAttribute('data-progress', '0');
+    
+    const quizContainer = document.querySelector('.quiz-container');
+    if (quizContainer) {
+        quizContainer.innerHTML = `
+            <div class="quiz-header">
+                <div>
+                    <h1 class="quiz-title">MED QUIZ</h1>
+                    <p class="quiz-subtitle">Reviewing Incorrect Answers</p>
+                </div>
+                <div class="stats-container">
+                    <div class="stat">
+                        <span class="stat-value" id="score">0</span>
+                        <span class="stat-label">Score</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="timer">00:00</span>
+                        <span class="stat-label">Time</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="streak">0</span>
+                        <span class="stat-label">Streak</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="category">Review</span>
+                        <span class="stat-label">Mode</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar" style="width: 10%"></div>
+            </div>
+            <div class="question-meta">
+                <div class="question-tags">
+                    <span class="tag" id="category-tag">Biochemistry</span>
+                    <span class="tag" id="difficulty-tag">
+                        <span class="difficulty-indicator difficulty-medium"></span>
+                        Medium
+                    </span>
+                </div>
+                <button class="bookmark-btn" id="bookmark-btn" aria-label="Bookmark question">
+                    <i class="fas fa-bookmark"></i>
+                </button>
+            </div>
+            <div class="question-number">Question <span id="current-question">1</span> of <span id="total-questions">${wrongQuestions.length}</span></div>
+            <div class="question-text" id="question"></div>
+            <div class="options-grid" id="options-container"></div>
+            <div class="feedback correct" id="feedback" style="display: none;">
+                <i class="fas fa-check-circle feedback-icon"></i>
+                <div class="feedback-text">Correct! Well done.</div>
+            </div>
+            <button class="btn btn-secondary" id="show-explanation-btn" style="display: none;">
+                <i class="fas fa-info-circle"></i> Show Explanation
+            </button>
+            <div class="explanation-container" id="explanation-container">
+                <div class="explanation">
+                    <div class="explanation-title">Explanation:</div>
+                    <div id="explanation-text"></div>
+                </div>
+            </div>
+            <div class="navigation">
+                <button class="btn btn-secondary" id="prev-btn" disabled>
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                <button class="btn btn-primary" id="next-btn">
+                    Next Question <i class="fas fa-arrow-right"></i>
+                </button>
+                <button class="btn btn-danger" id="skip-btn">
+                    <i class="fas fa-forward"></i> Skip
+                </button>
+            </div>
+        `;
+    }
+    
+    initQuiz();
+}
+function restartQuiz() {
+    currentQuestionIndex = 0;
+    score = 0;
+    streak = 0;
+    timeElapsed = 0;
+    answers = [];
+    selectedOption = null;
+    performanceMetrics = {
+        categories: {},
+        difficulties: { Easy: 0, Medium: 0, Hard: 0, "Very Hard": 0 },
+        totalCorrect: 0,
+        totalQuestions: 0,
+        totalTime: 0
+    };
+    
+    questions.length = 0;
+    questions.push(...originalQuestions);
+    
+    if (timerInterval) {
+        clearInterval(timerInterval);
+    }
+    
+    body.setAttribute('data-progress', '0');
+    
+    const quizContainer = document.querySelector('.quiz-container');
+    if (quizContainer) {
+        quizContainer.innerHTML = `
+            <div class="quiz-header">
+                <div>
+                    <h1 class="quiz-title">MED QUIZ</h1>
+                    <p class="quiz-subtitle">Test your medical knowledge</p>
+                </div>
+                <div class="stats-container">
+                    <div class="stat">
+                        <span class="stat-value" id="score">0</span>
+                        <span class="stat-label">Score</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="timer">00:00</span>
+                        <span class="stat-label">Time</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="streak">0</span>
+                        <span class="stat-label">Streak</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="category">All</span>
+                        <span class="stat-label">Category</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar" style="width: 10%"></div>
+            </div>
+            <div class="question-meta">
+                <div class="question-tags">
+                    <span class="tag" id="category-tag">Biochemistry</span>
+                    <span class="tag" id="difficulty-tag">
+                        <span class="difficulty-indicator difficulty-medium"></span>
+                        Medium
+                    </span>
+                </div>
+                <button class="bookmark-btn" id="bookmark-btn" aria-label="Bookmark question">
+                    <i class="fas fa-bookmark"></i>
+                </button>
+            </div>
+            <div class="question-number">Question <span id="current-question">1</span> of <span id="total-questions">15</span></div>
+            <div class="question-text" id="question"></div>
+            <div class="options-grid" id="options-container"></div>
+            <div class="feedback correct" id="feedback" style="display: none;">
+                <i class="fas fa-check-circle feedback-icon"></i>
+                <div class="feedback-text">Correct! Well done.</div>
+            </div>
+            <button class="btn btn-secondary" id="show-explanation-btn" style="display: none;">
+                <i class="fas fa-info-circle"></i> Show Explanation
+            </button>
+            <div class="explanation-container" id="explanation-container">
+                <div class="explanation">
+                    <div class="explanation-title">Explanation:</div>
+                    <div id="explanation-text"></div>
+                </div>
+            </div>
+            <div class="navigation">
+                <button class="btn btn-secondary" id="prev-btn" disabled>
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                <button class="btn btn-primary" id="next-btn">
+                    Next Question <i class="fas fa-arrow-right"></i>
+                </button>
+                <button class="btn btn-danger" id="skip-btn">
+                    <i class="fas fa-forward"></i> Skip
+                </button>
+            </div>
+        `;
+    }
+    
+    initQuiz();
+}
+function markForReview() {
+    toggleBookmark();
+    hideQuickActionsModal();
+}
+function viewExplanation() {
+    if (!answers[currentQuestionIndex]) return;
+    toggleExplanation();
+    hideQuickActionsModal();
+}
+function getHint() {
+    if (answers[currentQuestionIndex]) return;
+    const wrongOptions = Array.from(document.querySelectorAll('.option')).filter((opt, idx) => idx !== questions[currentQuestionIndex].answer);
+    const randomWrong = wrongOptions[Math.floor(Math.random() * wrongOptions.length)];
+    randomWrong.style.opacity = '0.5';
+    randomWrong.style.pointerEvents = 'none';
+    const hintText = document.createElement('div');
+    hintText.textContent = 'Hint: One wrong option eliminated!';
+    hintText.classList.add('feedback', 'skipped');
+    optionsContainer.before(hintText);
+    setTimeout(() => hintText.remove(), 3000);
+    hideQuickActionsModal();
+}
+function reportQuestion() {
+    alert('Question reported. Thank you for your feedback!');
+    hideQuickActionsModal();
+}
+function toggleTheme() {
+    if (!body || !themeToggle) return;
+    const currentTheme = body.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' :
+                    currentTheme === 'light' ? 'minimal' : 'dark';
+    
+    body.setAttribute('data-theme', newTheme);
+    themeToggle.innerHTML = newTheme === 'dark' ? '<i class="fas fa-moon"></i>' :
+                          newTheme === 'light' ? '<i class="fas fa-sun"></i>' :
+                          '<i class="fas fa-paint-brush"></i>';
+    
+    localStorage.setItem('theme', newTheme);
+}
+function toggleSound() {
+    if (!soundToggle) return;
+    soundsEnabled = !soundsEnabled;
+    soundToggle.innerHTML = soundsEnabled ? '<i class="fas fa-volume-up"></i>' : '<i class="fas fa-volume-mute"></i>';
+    
+    localStorage.setItem('soundsEnabled', soundsEnabled);
+}
+function toggleStudyMode() {
+    if (!studyModeToggle) return;
+    studyMode = studyModeToggle.checked;
+    if (showExplanationBtn && explanationContainer) {
+        if (studyMode) {
+            showExplanationBtn.style.display = 'block';
+            explanationContainer.classList.add('expanded');
+            showExplanationBtn.innerHTML = '<i class="fas fa-info-circle"></i> Hide Explanation';
+        } else {
+            showExplanationBtn.style.display = 'none';
+            explanationContainer.classList.remove('expanded');
+        }
+    }
+    localStorage.setItem('studyMode', studyMode);
+}
+function playSound(type) {
+    if (!soundsEnabled) return;
+    
+    try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        if (type === 'correct') {
+            const notes = [523.25, 659.25, 783.99];
+            notes.forEach((freq, i) => {
+                setTimeout(() => {
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
+                    oscillator.type = 'sine';
+                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                    oscillator.start(audioContext.currentTime + i * 0.1);
+                    oscillator.stop(audioContext.currentTime + i * 0.1 + 0.3);
+                }, i * 100);
+            });
+        } else if (type === 'incorrect') {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+            oscillator.type = 'sawtooth';
+            gainNode.gain.setValueAtTime(0.05, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 0.4);
+        } else if (type === 'bookmark') {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+            oscillator.type = 'triangle';
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 0.2);
+        }
+    } catch (e) {
+        console.log('Web Audio API not supported');
+    }
+}
+function createConfetti() {
+    if (!confettiContainer) return;
+    const colors = ['#4361ee', '#4cc9f0', '#f72585', '#f9c74f', '#7209b7'];
+    
+    for (let i = 0; i < 60; i++) {
+        const confetti = document.createElement('div');
+        confetti.classList.add('confetti');
+        confetti.style.left = Math.random() * 100 + 'vw';
+        confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.width = (6 + Math.random() * 12) + 'px';
+        confetti.style.height = (6 + Math.random() * 12) + 'px';
+        confetti.style.animation = `confettiFall ${1.5 + Math.random() * 2.5}s linear forwards`;
+        confettiContainer.appendChild(confetti);
+        
+        setTimeout(() => {
+            if (confetti.parentNode) confetti.remove();
+        }, 4000);
+    }
+}
+function showStatsModal() {
+    if (!statsModal) return;
+    const totalQuestions = performanceMetrics.totalQuestions;
+    const correctAnswers = performanceMetrics.totalCorrect;
+    const accuracy = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
+    const avgTime = totalQuestions > 0 ? Math.round(performanceMetrics.totalTime / totalQuestions) : 0;
+    
+    const modalTotal = document.getElementById('modal-total-questions');
+    const modalCorrect = document.getElementById('modal-correct-answers');
+    const modalAccuracy = document.getElementById('modal-accuracy');
+    const modalAvgTime = document.getElementById('modal-avg-time');
+    if (modalTotal) modalTotal.textContent = totalQuestions;
+    if (modalCorrect) modalCorrect.textContent = correctAnswers;
+    if (modalAccuracy) modalAccuracy.textContent = `${accuracy}%`;
+    if (modalAvgTime) modalAvgTime.textContent = `${avgTime}s`;
+    
+    const categoryStatsContainer = document.getElementById('category-stats');
+    if (categoryStatsContainer) {
+        categoryStatsContainer.innerHTML = `
+            <table style="width:100%; border-collapse: collapse;">
+                <thead>
+                    <tr><th>Category</th><th>Accuracy</th><th>Correct/Total</th></tr>
+                </thead>
+                <tbody>
+                    ${Object.entries(performanceMetrics.categories).map(([category, stats]) => {
+                        const categoryAccuracy = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
+                        return `<tr><td>${category}</td><td>${categoryAccuracy}%</td><td>${stats.correct}/${stats.total}</td></tr>`;
+                    }).join('')}
+                </tbody>
+            </table>
+        `;
+    }
+    
+    const difficultyStatsContainer = document.getElementById('difficulty-stats');
+    if (difficultyStatsContainer) {
+        difficultyStatsContainer.innerHTML = `
+            <table style="width:100%; border-collapse: collapse;">
+                <thead>
+                    <tr><th>Difficulty</th><th>Accuracy</th><th>Correct/Total</th></tr>
+                </thead>
+                <tbody>
+                    ${Object.entries(performanceMetrics.difficulties).map(([difficulty, correctCount]) => {
+                        const diffTotals = {};
+                        answers.forEach(ans => {
+                            if (ans.difficulty && ans.isCorrect !== undefined) {
+                                if (!diffTotals[ans.difficulty]) diffTotals[ans.difficulty] = { correct: 0, total: 0 };
+                                diffTotals[ans.difficulty].total++;
+                                if (ans.isCorrect) diffTotals[ans.difficulty].correct++;
+                            }
+                        });
+                        const totalForDifficulty = diffTotals[difficulty] ? diffTotals[difficulty].total : 0;
+                        if (totalForDifficulty > 0) {
+                            const difficultyAccuracy = Math.round((correctCount / totalForDifficulty) * 100);
+                            return `<tr><td>${difficulty}</td><td>${difficultyAccuracy}%</td><td>${correctCount}/${totalForDifficulty}</td></tr>`;
+                        }
+                        return '';
+                    }).join('')}
+                </tbody>
+            </table>
+        `;
+    }
+    
+    const historyContainer = document.getElementById('history-stats');
+    if (historyContainer) {
+        if (quizHistory.length === 0) {
+            historyContainer.innerHTML = '<p>No history yet.</p>';
+        } else {
+            historyContainer.innerHTML = `
+                <table style="width:100%; border-collapse: collapse;">
+                    <thead>
+                        <tr><th>Date</th><th>Score</th><th>Percentage</th><th>Time</th><th>Streak</th></tr>
+                    </thead>
+                    <tbody>
+                        ${quizHistory.map(h => {
+                            const date = new Date(h.timestamp).toLocaleString();
+                            return `<tr><td>${date}</td><td>${h.score}</td><td>${h.percentage}%</td><td>${h.timeSpent}s</td><td>${h.streak}</td></tr>`;
+                        }).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+    }
+    
+    statsModal.classList.add('active');
+}
+function hideStatsModal() {
+    if (statsModal) statsModal.classList.remove('active');
+}
+function showQuickActionsModal() {
+    if (quickActionsModal) quickActionsModal.classList.add('active');
+}
+function hideQuickActionsModal() {
+    if (quickActionsModal) quickActionsModal.classList.remove('active');
+}
+function loadPreferences() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme && body) {
+        body.setAttribute('data-theme', savedTheme);
+        if (themeToggle) {
+            themeToggle.innerHTML = savedTheme === 'dark' ? '<i class="fas fa-moon"></i>' :
+                                  savedTheme === 'light' ? '<i class="fas fa-sun"></i>' :
+                                  '<i class="fas fa-paint-brush"></i>';
+        }
+    }
+    
+    const savedSounds = localStorage.getItem('soundsEnabled');
+    if (savedSounds !== null) {
+        soundsEnabled = savedSounds === 'true';
+        if (soundToggle) {
+            soundToggle.innerHTML = soundsEnabled ? '<i class="fas fa-volume-up"></i>' : '<i class="fas fa-volume-mute"></i>';
+        }
+    }
+    
+    const savedStudyMode = localStorage.getItem('studyMode');
+    if (savedStudyMode !== null) {
+        studyMode = savedStudyMode === 'true';
+        if (studyModeToggle) studyModeToggle.checked = studyMode;
+        if (studyMode && showExplanationBtn && explanationContainer) {
+            showExplanationBtn.style.display = 'block';
+            explanationContainer.classList.add('expanded');
+            showExplanationBtn.innerHTML = '<i class="fas fa-info-circle"></i> Hide Explanation';
+        }
+    }
+}
+function saveBookmarks() {
+    localStorage.setItem('bookmarkedQuestions', JSON.stringify(bookmarkedQuestions));
+}
+function loadQuizHistory() {
+    const saved = localStorage.getItem('quizHistory');
+    if (saved) {
+        try {
+            quizHistory = JSON.parse(saved);
+        } catch (e) {
+            quizHistory = [];
+        }
+    }
+    loadBookmarks();
+}
+function saveQuizHistory() {
+    const maxScore = questions.reduce((sum, q) => sum + getScoreForDifficulty(q.difficulty), 0);
+    quizHistory.push({
+        timestamp: new Date().toISOString(),
+        score: score,
+        percentage: ((score / maxScore) * 100).toFixed(1),
+        timeSpent: timeElapsed,
+        streak: streak,
+        answers: answers,
+        performanceMetrics: performanceMetrics
+    });
+    localStorage.setItem('quizHistory', JSON.stringify(quizHistory));
+}
+function loadBookmarks() {
+    const saved = localStorage.getItem('bookmarkedQuestions');
+    if (saved) {
+        try {
+            bookmarkedQuestions = JSON.parse(saved);
+        } catch (e) {
+            bookmarkedQuestions = [];
+        }
+    }
+}
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initQuiz);
+} else {
+    initQuiz();
+}
+</script>
+</body>
+</html>
