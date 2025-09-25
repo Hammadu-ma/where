@@ -1,0 +1,2376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedQUIZ | Advanced Medical Quiz Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <style>
+        :root {
+            --primary: #5A54E8;
+            --primary-light: #7A74FF;
+            --primary-dark: #3E38B8;
+            --secondary: #FF6584;
+            --success: #4ADE80;
+            --warning: #FBBF24;
+            --danger: #EF4444;
+            --light: #F9FAFB;
+            --dark: #111827;
+            --gray: #6B7280;
+            --gray-light: #E5E7EB;
+            --border-radius: 12px;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --gradient-primary: linear-gradient(135deg, var(--primary-light), var(--primary));
+        }
+
+        .dark-theme {
+            --primary: #7A74FF;
+            --primary-light: #9D98FF;
+            --primary-dark: #5A54E8;
+            --light: #1F2937;
+            --dark: #F3F4F6;
+            --gray: #9CA3AF;
+            --gray-light: #374151;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+            --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 24px;
+            transition: var(--transition);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 24px 32px;
+    background: var(--light);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+}
+
+header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-primary);
+}
+
+h1 {
+    color: var(--primary);
+    font-size: 2rem;
+    margin-bottom: 12px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.subtitle {
+    color: var(--gray);
+    font-size: 0.95rem;
+    max-width: 600px;
+    margin: 0 auto;
+    font-weight: 400;
+}
+
+.mode-selector {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 16px;
+    background: var(--gray-light);
+    border-radius: 50px;
+    padding: 4px;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    transition: var(--transition);
+}
+
+.dark-theme .mode-selector {
+    background: var(--gray-light);
+}
+
+.mode-btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 50px;
+    background: transparent;
+    color: var(--gray);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 0.9rem;
+}
+
+.mode-btn.active {
+    background: var(--gradient-primary);
+    color: white;
+    box-shadow: var(--shadow);
+}
+
+.mode-btn:hover {
+    background: rgba(90, 84, 232, 0.1);
+}
+
+.quiz-info {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+}
+
+.info-card {
+    background: var(--gray-light);
+    padding: 6px 12px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: var(--transition);
+}
+
+.dark-theme .info-card {
+    background: var(--gray-light);
+}
+
+.info-card i {
+    color: var(--primary);
+    font-size: 0.9rem;
+}
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 32px;
+        }
+
+        @media (min-width: 1024px) {
+            .content-wrapper {
+                grid-template-columns: 1fr 300px;
+            }
+        }
+
+        .questions-container {
+            background: var(--light);
+            border-radius: var(--border-radius);
+            padding: 32px;
+            transition: var(--transition);
+        }
+
+        .question-section {
+            margin-bottom: 40px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .question-section.current {
+            padding-left: 16px;
+        }
+
+        .question-header {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            gap: 16px;
+        }
+
+        .question-number {
+            background: var(--gradient-primary);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .question-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark);
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .options-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .option {
+            padding: 16px;
+            border: 1px solid var(--gray-light);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        .option:hover {
+            border-color: var(--primary);
+            background: rgba(90, 84, 232, 0.05);
+        }
+
+        .option.selected {
+            border-color: var(--primary);
+            background: rgba(90, 84, 232, 0.1);
+        }
+
+        .option.correct {
+            border-color: var(--success);
+            background: rgba(74, 222, 128, 0.1);
+        }
+
+        .option.incorrect {
+            border-color: var(--danger);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .option-letter {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--gray-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.95rem;
+            flex-shrink: 0;
+        }
+
+        .option.selected .option-letter {
+            background: var(--primary);
+            color: white;
+        }
+
+        .option.correct .option-letter {
+            background: var(--success);
+            color: white;
+        }
+
+        .option.incorrect .option-letter {
+            background: var(--danger);
+            color: white;
+        }
+
+        .explanation-toggle {
+            color: var(--primary);
+            background: none;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 0;
+            font-size: 0.95rem;
+            align-self: flex-start;
+        }
+
+        .explanation-toggle:hover {
+            color: var(--primary-dark);
+        }
+
+        .explanation {
+            margin-top: 20px;
+            padding: 20px;
+            background: var(--gray-light);
+            border-radius: var(--border-radius);
+            display: none;
+            animation: slideDown 0.4s ease;
+        }
+
+        .explanation.show {
+            display: block;
+        }
+
+        .explanation.loading::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, var(--gray-light) 25%, rgba(255,255,255,0.5) 50%, var(--gray-light) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: var(--border-radius);
+        }
+
+        .explanation-section {
+            margin-bottom: 16px;
+        }
+
+        .explanation-section h4 {
+            margin-bottom: 8px;
+            color: var(--primary);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .why-not-item {
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .why-not-letter {
+            font-weight: 700;
+            margin-right: 8px;
+            color: var(--primary);
+        }
+
+        .sidebar {
+            background: var(--light);
+            border-radius: var(--border-radius);
+            padding: 24px;
+            height: fit-content;
+            transition: var(--transition);
+            order: -1;
+        }
+
+        @media (min-width: 1024px) {
+            .sidebar {
+                order: 0;
+                position: sticky;
+                top: 32px;
+            }
+        }
+
+        .progress-container {
+            margin-bottom: 24px;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: var(--gray-light);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex: 1;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
+            box-shadow: var(--shadow);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: rgba(90, 84, 232, 0.1);
+        }
+
+        .question-jump {
+            margin-bottom: 24px;
+        }
+
+        .question-jump h3 {
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
+            gap: 8px;
+        }
+
+        .question-indicator {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--gray-light);
+            font-size: 0.9rem;
+        }
+
+        .question-indicator:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .question-indicator.answered {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .question-indicator.current {
+            box-shadow: 0 0 0 2px var(--primary);
+        }
+
+        .timer {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            font-size: 0.95rem;
+            background: var(--gray-light);
+        }
+
+        .timer i {
+            color: var(--warning);
+        }
+
+        .results-container {
+            text-align: center;
+            padding: 40px 32px;
+            background: var(--light);
+            border-radius: var(--border-radius);
+            margin-top: 40px;
+            display: none;
+            transition: var(--transition);
+        }
+
+        .results-container.show {
+            display: block;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .score-circle {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            margin: 0 auto 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: conic-gradient(var(--gradient-primary) 0% var(--p, 0%), var(--gray-light) var(--p, 0%) 100%);
+            position: relative;
+            box-shadow: var(--shadow);
+        }
+
+        .score-circle::before {
+            content: '';
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--light);
+        }
+
+        .score-text {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .score-value {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        .score-label {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .results-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .results-details {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .result-card {
+            padding: 16px;
+            border-radius: var(--border-radius);
+            background: var(--gray-light);
+            transition: var(--transition);
+        }
+
+        .result-card i {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+
+        .result-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; max-height: 0; }
+            to { opacity: 1; max-height: 1000px; }
+        }
+
+        @keyframes skeleton-loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .floating-controls {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .floating-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .floating-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .mode-indicator {
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            background: rgba(90, 84, 232, 0.1);
+            color: var(--primary);
+        }
+
+        .quiz-mode {
+            background: rgba(90, 84, 232, 0.1);
+            color: var(--primary);
+        }
+
+        .exam-mode {
+            background: rgba(255, 101, 132, 0.1);
+            color: var(--secondary);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 16px;
+            }
+
+            header {
+                padding: 24px 16px;
+                margin-bottom: 24px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .questions-container {
+                padding: 24px;
+            }
+
+            .question-text {
+                font-size: 1.1rem;
+            }
+
+            .option {
+                padding: 12px;
+            }
+
+            .sidebar {
+                padding: 16px;
+            }
+        }
+ .question-jump {
+    margin-bottom: 24px;
+}
+
+.question-jump-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 8px 0;
+}
+
+.question-jump-header h3 {
+    margin-bottom: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.question-jump-header i {
+    transition: var(--transition);
+    color: var(--gray);
+}
+
+.question-jump-header:hover i {
+    color: var(--primary);
+}
+
+.question-jump-content {
+    margin-top: 12px;
+    transition: var(--transition);
+    overflow: hidden;
+}
+
+.question-jump-content.collapsed {
+    display: none;
+}
+
+.question-jump-content.expanded {
+    display: block;
+    animation: slideDown 0.3s ease;
+}
+
+.question-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
+    gap: 8px;
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>MedQUIZ <span class="mode-indicator quiz-mode" id="modeIndicator">Quiz Mode</span></h1>
+            <p class="subtitle">Test your medical knowledge.</p>
+            
+            <div class="mode-selector">
+                <div class="mode-btn active" data-mode="quiz">Quiz Mode</div>
+                <div class="mode-btn" data-mode="exam">Exam Mode</div>
+            </div>
+        </header>
+        
+        <div class="content-wrapper">
+            <div class="questions-container" id="questionsContainer">
+                <!-- Questions will be dynamically inserted here -->
+            </div>
+            
+<div class="sidebar">
+    <div class="progress-container">
+        <div class="progress-text">
+            <span>Progress</span>
+            <span id="progressPercent">0%</span>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+    </div>
+    
+    <div class="navigation-buttons">
+        <button class="btn btn-outline" id="prevBtn">
+            <i class="fas fa-arrow-left"></i> Prev
+        </button>
+        <button class="btn btn-primary" id="nextBtn">
+            Next <i class="fas fa-arrow-right"></i>
+        </button>
+    </div>
+    
+    <div class="question-jump">
+        <div class="question-jump-header" id="jumpToggle">
+            <h3>Jump to Question</h3>
+            <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="question-jump-content expanded" id="jumpContent">
+            <div class="question-grid" id="questionIndicators">
+                <!-- Question indicators will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+    
+    <div class="timer">
+        <i class="fas fa-clock"></i>
+        <span id="timeDisplay">10:00</span>
+    </div>
+    
+    <button class="btn btn-primary" id="submitBtn" style="width: 100%;">
+        <i class="fas fa-check"></i> Submit
+    </button>
+</div>
+                
+                <div class="timer">
+                    <i class="fas fa-clock"></i>
+                    <span id="timeDisplay">10:00</span>
+                </div>
+                
+                <button class="btn btn-primary" id="submitBtn" style="width: 100%;">
+                    <i class="fas fa-check"></i> Submit
+                </button>
+            </div>
+        </div>
+        
+        <div class="results-container" id="resultsContainer">
+            <h2>Results</h2>
+            <p>Your performance summary</p>
+            
+            <div class="score-circle" id="scoreCircle">
+                <div class="score-text">
+                    <div class="score-value" id="scoreValue">0%</div>
+                    <div class="score-label">Correct</div>
+                </div>
+            </div>
+            
+            <div class="results-details">
+                <div class="result-card">
+                    <i class="fas fa-check-circle"></i>
+                    <div class="result-value" id="correctCount">0</div>
+                    <div>Correct</div>
+                </div>
+                <div class="result-card">
+                    <i class="fas fa-times-circle"></i>
+                    <div class="result-value" id="incorrectCount">0</div>
+                    <div>Incorrect</div>
+                </div>
+                <div class="result-card">
+                    <i class="fas fa-clock"></i>
+                    <div class="result-value" id="timeTaken">0:00</div>
+                    <div>Time Taken</div>
+                </div>
+            </div>
+            
+            <button class="btn btn-outline" id="restartBtn" style="margin-top: 24px;">
+                <i class="fas fa-redo"></i> Retake
+            </button>
+        </div>
+    </div>
+    
+    <div class="floating-controls">
+        <button class="floating-btn" id="scrollTopBtn" title="Scroll to top">
+            <i class="fas fa-arrow-up"></i>
+        </button>
+        <button class="floating-btn" id="themeToggleBtn" title="Toggle theme">
+            <i class="fas fa-moon"></i>
+        </button>
+    </div>
+
+    <script>
+        // Quiz data
+        const quizData = [
+    {
+        "id": 1,
+        "question": "A patient with uncontrolled diabetes mellitus has a blood glucose level of 350 mg/dL. The presence of glucose in their urine (glucosuria) is best explained by:",
+        "options": [
+            "Decreased renal blood flow",
+            "Saturation of the carrier proteins for glucose reabsorption (exceeding Tm)",
+            "Increased secretion of glucose in the distal tubule",
+            "Damage to the glomerular filtration barrier",
+            "None of the above"
+        ],
+        "answer": 1,
+        "correctAnswer": "Saturation of the carrier proteins for glucose reabsorption (exceeding Tm)",
+        "explanation": "Glucosuria occurs when blood glucose exceeds the tubular maximum (Tm) for reabsorption (~200 mg/dL), saturating PCT glucose transporters. In Guyton and Hall, 13th edition, Chapter 28, page 345, Tm for glucose is noted as the limit for reabsorption.",
+        "whyNotOtherOptions": {
+            "a": "Decreased renal blood flow affects GFR, not glucose reabsorption directly.",
+            "c": "Glucose is not secreted in the distal tubule.",
+            "d": "Glomerular damage may cause proteinuria, not glucosuria.",
+            "e": "Option B is correct, so E is invalid."
+        },
+        "relatedQuestions": ["8 (clearance)", "25 (creatinine clearance)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 2,
+        "question": "The primary reason the kidneys receive about 20-25% of the cardiac output, far exceeding their metabolic needs, is to:",
+        "options": [
+            "Ensure sufficient oxygen delivery to the renal medulla",
+            "Provide a large volume of plasma for glomerular filtration",
+            "Facilitate rapid secretion of toxins in the distal tubule",
+            "Maintain high pressure in the peritubular capillaries",
+            "None of the above"
+        ],
+        "answer": 1,
+        "correctAnswer": "Provide a large volume of plasma for glomerular filtration",
+        "explanation": "High renal blood flow (20–25% of cardiac output) ensures sufficient plasma for glomerular filtration to regulate blood composition. In Guyton and Hall, 13th edition, Chapter 26, page 309, renal blood flow supports filtration.",
+        "whyNotOtherOptions": {
+            "a": "Medulla has low oxygen needs; flow is for filtration.",
+            "c": "Toxin secretion is secondary to filtration.",
+            "d": "Peritubular capillaries have low pressure for reabsorption.",
+            "e": "Option B is correct, so E is invalid."
+        },
+        "relatedQuestions": ["4 (GFR)", "Physiology 11 (renal blood flow)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 3,
+        "question": "In the juxtaglomerular apparatus (JGA), the macula densa cells function as chemoreceptors that primarily sense changes in the:",
+        "options": [
+            "pH of the filtrate in the distal convoluted tubule",
+            "Potassium concentration in the blood",
+            "Flow rate and sodium chloride concentration in the distal convoluted tubule",
+            "Oxygen levels in the afferent arteriole",
+            "None of the above"
+        ],
+        "answer": 2,
+        "correctAnswer": "Flow rate and sodium chloride concentration in the distal convoluted tubule",
+        "explanation": "Macula densa cells sense NaCl concentration and flow rate in the DCT, modulating GFR via tubuloglomerular feedback. In Guyton and Hall, 13th edition, Chapter 27, page 331, macula densa regulates GFR.",
+        "whyNotOtherOptions": {
+            "a": "pH sensing is secondary, not primary.",
+            "b": "Potassium is sensed by adrenal cortex, not macula densa.",
+            "d": "Oxygen levels are not sensed by macula densa.",
+            "e": "Option C is correct, so E is invalid."
+        },
+        "relatedQuestions": ["14 (tubuloglomerular feedback)", "42 (renin release)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 4,
+        "question": "Which of the following changes would lead to an immediate DECREASE in the glomerular filtration rate (GFR)?",
+        "options": [
+            "Dilation of the afferent arteriole",
+            "Constriction of the efferent arteriole",
+            "A decrease in systemic blood pressure from 120 to 80 mmHg",
+            "An increase in plasma albumin concentration (severe dehydration)",
+            "None of the above"
+        ],
+        "answer": 3,
+        "correctAnswer": "An increase in plasma albumin concentration (severe dehydration)",
+        "explanation": "Increased plasma albumin raises glomerular capillary colloid osmotic pressure, opposing filtration and reducing GFR. In Guyton and Hall, 13th edition, Chapter 26, page 312, colloid osmotic pressure affects net filtration pressure.",
+        "whyNotOtherOptions": {
+            "a": "Afferent dilation increases GFR.",
+            "b": "Efferent constriction increases GFR.",
+            "c": "Systemic BP drop is compensated by autoregulation.",
+            "e": "Option D is correct, so E is invalid."
+        },
+        "relatedQuestions": ["12 (NFP)", "27 (hypoalbuminemia)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 5,
+        "question": "The counter-current multiplier system in the nephron, which is crucial for producing concentrated urine, is primarily established by the:",
+        "options": [
+            "Active transport of water out of the ascending limb of the loop of Henle",
+            "Passive diffusion of NaCl out of the thin descending limb",
+            "Active transport of NaCl out of the thick ascending limb, which is impermeable to water",
+            "Secretion of urea into the proximal convoluted tubule",
+            "None of the above"
+        ],
+        "answer": 2,
+        "correctAnswer": "Active transport of NaCl out of the thick ascending limb, which is impermeable to water",
+        "explanation": "The counter-current multiplier is driven by active NaCl transport in the water-impermeable thick ascending limb, creating a medullary osmotic gradient. In Guyton and Hall, 13th edition, Chapter 28, page 341, this is the key mechanism.",
+        "whyNotOtherOptions": {
+            "a": "Water transport is passive, not active.",
+            "b": "Descending limb has passive water movement, not NaCl.",
+            "d": "Urea recycling occurs in the collecting duct, not PCT.",
+            "e": "Option C is correct, so E is invalid."
+        },
+        "relatedQuestions": ["18 (medullary hypertonicity)", "32 (thick ascending limb)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 6,
+        "question": "A patient with a tumor causing excessive secretion of Aldosterone would be expected to have:",
+        "options": [
+            "Hypernatremia (high Na+), hypokalemia (low K+), and hypertension",
+            "Hyponatremia (low Na+), hyperkalemia (high K+), and hypotension",
+            "Increased urine volume and low blood osmolarity",
+            "Glucose and protein in the urine",
+            "None of the above"
+        ],
+        "answer": 0,
+        "correctAnswer": "Hypernatremia (high Na+), hypokalemia (low K+), and hypertension",
+        "explanation": "Aldosterone increases Na+ reabsorption (causing hypernatremia and hypertension via water retention) and K+ secretion (causing hypokalemia). In Guyton and Hall, 13th edition, Chapter 27, page 335, aldosterone’s effects are detailed.",
+        "whyNotOtherOptions": {
+            "b": "Opposite effects occur in aldosterone deficiency.",
+            "c": "Aldosterone reduces urine volume.",
+            "d": "Glucose/protein in urine is unrelated to aldosterone.",
+            "e": "Option A is correct, so E is invalid."
+        },
+        "relatedQuestions": ["15 (ACE inhibitor)", "40 (Addison’s disease)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 7,
+        "question": "The vasa recta's role in the kidney is best described as:",
+        "options": [
+            "Delivering high-pressure blood to the glomerulus for filtration",
+            "Reabsorbing the majority of glucose and amino acids in the cortex",
+            "Acting as a counter-current exchanger to maintain the medullary osmotic gradient without washing it away",
+            "Secreting renin in response to low blood pressure",
+            "None of the above"
+        ],
+        "answer": 2,
+        "correctAnswer": "Acting as a counter-current exchanger to maintain the medullary osmotic gradient without washing it away",
+        "explanation": "The vasa recta’s hairpin structure allows it to exchange water and solutes, preserving the medullary gradient. In Guyton and Hall, 13th edition, Chapter 28, page 342, the vasa recta’s counter-current role is described.",
+        "whyNotOtherOptions": {
+            "a": "Glomerulus is supplied by afferent arterioles.",
+            "b": "Glucose/amino acids are reabsorbed in PCT, not vasa recta.",
+            "d": "Renin is secreted by JG cells, not vasa recta.",
+            "e": "Option C is correct, so E is invalid."
+        },
+        "relatedQuestions": ["5 (counter-current multiplier)", "18 (medullary hypertonicity)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 8,
+        "question": "If a substance is freely filtered at the glomerulus and is neither reabsorbed nor secreted anywhere along the nephron, its renal clearance will be equal to the:",
+        "options": [
+            "Tubular transport maximum (Tm)",
+            "Renal plasma flow (RPF)",
+            "Glomerular filtration rate (GFR)",
+            "Filtration fraction",
+            "None of the above"
+        ],
+        "answer": 2,
+        "correctAnswer": "Glomerular filtration rate (GFR)",
+        "explanation": "A substance like inulin, freely filtered but neither reabsorbed nor secreted, has a clearance equal to GFR. In Guyton and Hall, 13th edition, Chapter 26, page 314, inulin clearance measures GFR.",
+        "whyNotOtherOptions": {
+            "a": "Tm is the limit for reabsorption, not clearance.",
+            "b": "RPF is total plasma flow, not clearance.",
+            "d": "Filtration fraction is GFR/RPF, not clearance.",
+            "e": "Option C is correct, so E is invalid."
+        },
+        "relatedQuestions": ["1 (glucosuria)", "25 (creatinine clearance)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 9,
+        "question": "The hormone ANP (Atrial Natriuretic Peptide) is released in response to high blood volume and acts on the kidney to:",
+        "options": [
+            "Increase water reabsorption by inserting aquaporins in the collecting duct",
+            "Stimulate the renin-angiotensin-aldosterone system (RAAS)",
+            "Increase GFR and promote excretion of sodium and water",
+            "Constrict the afferent arteriole to reduce filtration",
+            "None of the above"
+        ],
+        "answer": 2,
+        "correctAnswer": "Increase GFR and promote excretion of sodium and water",
+        "explanation": "ANP, released during high blood volume, dilates afferent arterioles (increasing GFR) and inhibits Na+ reabsorption, promoting natriuresis and diuresis. In Guyton and Hall, 13th edition, Chapter 27, page 337, ANP’s natriuretic effects are noted.",
+        "whyNotOtherOptions": {
+            "a": "Aquaporin insertion is by ADH, not ANP.",
+            "b": "ANP inhibits RAAS.",
+            "d": "ANP dilates, not constricts, afferent arterioles.",
+            "e": "Option C is correct, so E is invalid."
+        },
+        "relatedQuestions": ["15 (ACE inhibitor)", "29 (hemorrhagic shock)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 10,
+        "question": "In which part of the nephron is the tubular fluid isotonic to plasma under normal conditions?",
+        "options": [
+            "At the end of the proximal convoluted tubule (PCT)",
+            "At the tip of the loop of Henle (in the medulla)",
+            "Throughout the thick ascending limb",
+            "In the distal convoluted tubule (DCT)",
+            "None of the above"
+        ],
+        "answer": 0,
+        "correctAnswer": "At the end of the proximal convoluted tubule (PCT)",
+        "explanation": "The PCT reabsorbs ~65% of filtrate isosmotically, keeping tubular fluid isotonic to plasma (~300 mOsm/L). In Guyton and Hall, 13th edition, Chapter 27, page 325, PCT reabsorption is isosmotic.",
+        "whyNotOtherOptions": {
+            "b": "Tip of loop is hypertonic (~1200 mOsm/L).",
+            "c": "Thick ascending limb creates hypotonic fluid.",
+            "d": "DCT fluid is hypotonic or variable.",
+            "e": "Option A is correct, so E is invalid."
+        },
+        "relatedQuestions": ["16 (PCT water reabsorption)", "24 (lowest osmolarity)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 11,
+        "question": "What is the primary direct trigger for the release of Anti-Diuretic Hormone (ADH/Vasopressin)?",
+        "options": [
+            "Low blood pressure detected by baroreceptors",
+            "High plasma osmolarity detected by osmoreceptors in the hypothalamus",
+            "Low sodium concentration detected by the macula densa",
+            "High potassium levels in the extracellular fluid",
+            "None of the above"
+        ],
+        "answer": 1,
+        "correctAnswer": "High plasma osmolarity detected by osmoreceptors in the hypothalamus",
+        "explanation": "High plasma osmolarity is the primary trigger for ADH release via hypothalamic osmoreceptors. Low blood pressure is a secondary trigger. In Guyton and Hall, 13th edition, Chapter 28, page 343, ADH regulation is detailed.",
+        "whyNotOtherOptions": {
+            "a": "Low BP is a secondary trigger, not primary.",
+            "c": "Macula densa senses NaCl, not sodium for ADH.",
+            "d": "Potassium does not directly trigger ADH.",
+            "e": "Option B is correct, so E is invalid."
+        },
+        "relatedQuestions": ["20 (diabetes insipidus)", "36 (osmoreceptors)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 12,
+        "question": "In the calculation of Net Filtration Pressure (NFP), which pressure is the dominant favoring force?",
+        "options": [
+            "Bowman's capsule hydrostatic pressure",
+            "Glomerular capillary colloid osmotic pressure",
+            "Glomerular capillary hydrostatic pressure",
+            "Afferent arteriolar resistance",
+            "None of the above"
+        ],
+        "answer": 2,
+        "correctAnswer": "Glomerular capillary hydrostatic pressure",
+        "explanation": "Glomerular capillary hydrostatic pressure (~60 mmHg) is the primary force driving filtration in the glomerulus. In Guyton and Hall, 13th edition, Chapter 26, page 312, NFP is driven by hydrostatic pressure.",
+        "whyNotOtherOptions": {
+            "a": "Bowman’s capsule pressure opposes filtration.",
+            "b": "Colloid osmotic pressure opposes filtration.",
+            "d": "Arteriolar resistance is not a direct pressure.",
+            "e": "Option C is correct, so E is invalid."
+        },
+        "relatedQuestions": ["4 (GFR decrease)", "27 (hypoalbuminemia)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 13,
+        "question": "The unique feature of the glomerular capillary bed, compared to other systemic capillaries, is that it:",
+        "options": [
+            "Is drained by a venule",
+            "Is fed and drained by arterioles (afferent and efferent)",
+            "Has very low hydrostatic pressure",
+            "Is the primary site of nutrient exchange",
+            "None of the above"
+        ],
+        "answer": 1,
+        "correctAnswer": "Is fed and drained by arterioles (afferent and efferent)",
+        "explanation": "The glomerular capillary bed is unique, with an afferent arteriole supplying and an efferent arteriole draining it, maintaining high hydrostatic pressure for filtration. In Guyton and Hall, 13th edition, Chapter 26, page 310, this structure is described.",
+        "whyNotOtherOptions": {
+            "a": "Venules drain systemic capillaries, not glomerular.",
+            "c": "Glomerular capillaries have high pressure.",
+            "d": "Nutrient exchange occurs in peritubular capillaries.",
+            "e": "Option B is correct, so E is invalid."
+        },
+        "relatedQuestions": ["12 (NFP)", "19 (afferent constriction)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 14,
+        "question": "Tubuloglomerular feedback is a mechanism that directly links the function of the:",
+        "options": [
+            "Adrenal cortex to the distal convoluted tubule",
+            "Hypothalamus to the collecting duct",
+            "Distal convoluted tubule (macula densa) to the glomerular arterioles",
+            "Proximal tubule to the vasa recta",
+            "None of the above"
+        ],
+        "answer": 2,
+        "correctAnswer": "Distal convoluted tubule (macula densa) to the glomerular arterioles",
+        "explanation": "Tubuloglomerular feedback involves the macula densa sensing NaCl and flow in the DCT, signaling glomerular arterioles to adjust GFR. In Guyton and Hall, 13th edition, Chapter 27, page 331, this feedback is detailed.",
+        "whyNotOtherOptions": {
+            "a": "Adrenal cortex affects DCT via aldosterone, not feedback.",
+            "b": "Hypothalamus affects collecting duct via ADH, not feedback.",
+            "d": "Proximal tubule and vasa recta are not linked in feedback.",
+            "e": "Option C is correct, so E is invalid."
+        },
+        "relatedQuestions": ["3 (macula densa)", "42 (renin release)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 15,
+        "question": "A drug that acts as an ACE (Angiotensin-Converting Enzyme) inhibitor would cause:",
+        "options": [
+            "Increased vasoconstriction and increased aldosterone release",
+            "Decreased angiotensin II levels, leading to vasodilation and decreased aldosterone release",
+            "Increased sodium reabsorption in the proximal tubule",
+            "Stimulation of ADH secretion",
+            "None of the above"
+        ],
+        "answer": 1,
+        "correctAnswer": "Decreased angiotensin II levels, leading to vasodilation and decreased aldosterone release",
+        "explanation": "ACE inhibitors block angiotensin II formation, reducing vasoconstriction and aldosterone release, promoting vasodilation and natriuresis. In Guyton and Hall, 13th edition, Chapter 27, page 336, ACE inhibitors’ effects are described.",
+        "whyNotOtherOptions": {
+            "a": "Opposite effects occur with ACE activation.",
+            "c": "Sodium reabsorption is reduced, not increased.",
+            "d": "ADH is not directly affected by ACE inhibitors.",
+            "e": "Option B is correct, so E is invalid."
+        },
+        "relatedQuestions": ["6 (aldosterone)", "34 (angiotensin II)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 16,
+        "question": "The reabsorption of water in the proximal convoluted tubule (PCT) is best described as:",
+        "options": [
+            "Facultative, under the control of ADH",
+            "Obligatory, driven by active solute reabsorption",
+            "Dependent on the medullary osmotic gradient",
+            "Driven by active water transport pumps",
+            "None of the above"
+        ],
+        "answer": 1,
+        "correctAnswer": "Obligatory, driven by active solute reabsorption",
+        "explanation": "Water reabsorption in the PCT is obligatory, following active solute (e.g., Na+) reabsorption osmotically. In Guyton and Hall, 13th edition, Chapter 27, page 325, PCT water reabsorption is isosmotic and obligatory.",
+        "whyNotOtherOptions": {
+            "a": "Facultative reabsorption is in the collecting duct (ADH).",
+            "c": "Medullary gradient affects loop of Henle, not PCT.",
+            "d": "Water transport is passive, not active.",
+            "e": "Option B is correct, so E is invalid."
+        },
+        "relatedQuestions": ["10 (PCT isotonic)", "45 (obligatory reabsorption)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 17,
+        "question": "Potassium (K+) handling by the kidney is unique because it is:",
+        "options": [
+            "Completely reabsorbed in the PCT under all conditions",
+            "Both reabsorbed in the early parts of the nephron and secreted in the late distal tubule and collecting duct",
+            "Only filtered and not processed by the tubules",
+            "Secreted in the PCT under the control of parathyroid hormone (PTH)",
+            "None of the above"
+        ],
+        "answer": 1,
+        "correctAnswer": "Both reabsorbed in the early parts of the nephron and secreted in the late distal tubule and collecting duct",
+        "explanation": "Most K+ is reabsorbed in the PCT and loop of Henle; secretion in the late DCT and collecting duct, regulated by aldosterone, fine-tunes excretion. In Guyton and Hall, 13th edition, Chapter 29, page 361, K+ handling is detailed.",
+        "whyNotOtherOptions": {
+            "a": "K+ reabsorption is not complete; secretion occurs.",
+            "c": "K+ is filtered, reabsorbed, and secreted.",
+            "d": "PTH regulates Ca2+, not K+ secretion.",
+            "e": "Option B is correct, so E is invalid."
+        },
+        "relatedQuestions": ["6 (aldosterone)", "40 (Addison’s disease)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 18,
+        "question": "The hypertonicity of the renal medulla is primarily due to the accumulation of which two solutes?",
+        "options": [
+            "Glucose and Urea",
+            "Sodium Chloride (NaCl) and Urea",
+            "Potassium and Bicarbonate",
+            "Albumin and Creatinine",
+            "None of the above"
+        ],
+        "answer": 1,
+        "correctAnswer": "Sodium Chloride (NaCl) and Urea",
+        "explanation": "NaCl from the thick ascending limb and urea recycled from the collecting duct create the medullary hypertonicity. In Guyton and Hall, 13th edition, Chapter 28, page 342, NaCl and urea drive the gradient.",
+        "whyNotOtherOptions": {
+            "a": "Glucose is reabsorbed in PCT, not medullary.",
+            "c": "Potassium and bicarbonate are not primary solutes.",
+            "d": "Albumin/creatinine are not significant in medulla.",
+            "e": "Option B is correct, so E is invalid."
+        },
+        "relatedQuestions": ["5 (counter-current multiplier)", "7 (vasa recta)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 19,
+        "question": "If the afferent arteriole constricts while the efferent arteriole remains unchanged, what is the immediate effect?",
+        "options": [
+            "Increased glomerular hydrostatic pressure and increased GFR",
+            "Decreased glomerular hydrostatic pressure and decreased GFR",
+            "Increased pressure in the peritubular capillaries",
+            "No change in GFR due to autoregulation",
+            "None of the above"
+        ],
+        "answer": 1,
+        "correctAnswer": "Decreased glomerular hydrostatic pressure and decreased GFR",
+        "explanation": "Afferent arteriole constriction reduces blood flow and pressure in the glomerulus, decreasing GFR. In Guyton and Hall, 13th edition, Chapter 26, page 312, afferent constriction lowers GFR.",
+        "whyNotOtherOptions": {
+            "a": "Constriction decreases, not increases, pressure.",
+            "c": "Peritubular pressure is unaffected directly.",
+            "d": "Autoregulation may mitigate but not eliminate immediate effect.",
+            "e": "Option B is correct, so E is invalid."
+        },
+        "relatedQuestions": ["4 (GFR decrease)", "13 (glomerular capillaries)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 20,
+        "question": "Diabetes insipidus, characterized by the production of large volumes of dilute urine, results from a deficiency in:",
+        "options": [
+            "Insulin",
+            "Aldosterone",
+            "Antidiuretic Hormone (ADH)",
+            "Renin",
+            "None of the above"
+        ],
+        "answer": 2,
+        "correctAnswer": "Antidiuretic Hormone (ADH)",
+        "explanation": "Diabetes insipidus results from ADH deficiency, reducing water reabsorption in the collecting duct, leading to dilute urine. In Guyton and Hall, 13th edition, Chapter 28, page 344, ADH deficiency causes diabetes insipidus.",
+        "whyNotOtherOptions": {
+            "a": "Insulin affects glucose, not water reabsorption.",
+            "b": "Aldosterone affects Na+/K+, not dilute urine.",
+            "d": "Renin affects RAAS, not water directly.",
+            "e": "Option C is correct, so E is invalid."
+        },
+        "relatedQuestions": ["11 (ADH trigger)", "35 (facultative reabsorption)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 21,
+        "question": "The primary function of the podocytes in the glomerulus is to:",
+        "options": [
+            "Secrete renin",
+            "Form the filtration slits that prevent large proteins from passing",
+            "Act as baroreceptors for blood pressure",
+            "Reabsorb sodium in the proximal tubule",
+            "None of the above"
+        ],
+        "answer": 1,
+        "correctAnswer": "Form the filtration slits that prevent large proteins from passing",
+        "explanation": "Podocytes’ foot processes form filtration slits, creating a size-selective barrier to prevent protein filtration. In Guyton and Hall, 13th edition, Chapter 26, page 311, podocytes’ role in filtration is described.",
+        "whyNotOtherOptions": {
+            "a": "Renin is secreted by JG cells.",
+            "c": "Baroreceptors are in afferent arterioles, not podocytes.",
+            "d": "Sodium reabsorption occurs in PCT, not podocytes.",
+            "e": "Option B is correct, so E is invalid."
+        },
+        "relatedQuestions": ["13 (glomerular capillaries)", "33 (renal corpuscle)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 22,
+        "question": "Where does the majority of bicarbonate (HCO3-) reabsorption occur, which is critical for acid-base balance?",
+        "options": [
+            "Descending limb of the loop of Henle",
+            "Distal convoluted tubule",
+            "Proximal convoluted tubule",
+            "Collecting duct",
+            "None of the above"
+        ],
+        "answer": 2,
+        "correctAnswer": "Proximal convoluted tubule",
+        "explanation": "Approximately 80–90% of bicarbonate is reabsorbed in the PCT, crucial for acid-base balance. In Guyton and Hall, 13th edition, Chapter 30, page 375, PCT bicarbonate reabsorption is detailed.",
+        "whyNotOtherOptions": {
+            "a": "Descending limb is for water, not bicarbonate.",
+            "b": "DCT has minor bicarbonate reabsorption.",
+            "d": "Collecting duct adjusts pH, not major reabsorption.",
+            "e": "Option C is correct, so E is invalid."
+        },
+        "relatedQuestions": ["16 (PCT reabsorption)", "Physiology 19 (acid-base)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 23,
+        "question": "The myogenic mechanism of renal autoregulation involves the constriction of the afferent arteriole in response to:",
+        "options": [
+            "A decrease in sodium chloride at the macula densa",
+            "An increase in systemic angiotensin II levels",
+            "An increase in transmural pressure (stretch) in the arteriole wall",
+            "Sympathetic nervous system stimulation",
+            "None of the above"
+        ],
+        "answer": 2,
+        "correctAnswer": "An increase in transmural pressure (stretch) in the arteriole wall",
+        "explanation": "The myogenic mechanism causes afferent arteriole constriction in response to stretch from increased pressure, maintaining GFR. In Guyton and Hall, 13th edition, Chapter 26, page 315, myogenic autoregulation is described.",
+        "whyNotOtherOptions": {
+            "a": "NaCl decrease is tubuloglomerular feedback, not myogenic.",
+            "b": "Angiotensin II is hormonal, not myogenic.",
+            "d": "Sympathetic stimulation is extrinsic, not myogenic.",
+            "e": "Option C is correct, so E is invalid."
+        },
+        "relatedQuestions": ["14 (tubuloglomerular feedback)", "49 (autoregulation)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 24,
+        "question": "In which part of the nephron is the tubular fluid osmolarity the LOWEST?",
+        "options": [
+            "Proximal Convoluted Tubule",
+            "End of the Thick Ascending Limb / Early Distal Tubule",
+            "Tip of the Loop of Henle",
+            "Collecting Duct (in the presence of ADH)",
+            "None of the above"
+        ],
+        "answer": 1,
+        "correctAnswer": "End of the Thick Ascending Limb / Early Distal Tubule",
+        "explanation": "The thick ascending limb reabsorbs NaCl but is impermeable to water, producing hypotonic fluid (~100 mOsm/L). In Guyton and Hall, 13th edition, Chapter 28, page 341, this creates the lowest osmolarity.",
+        "whyNotOtherOptions": {
+            "a": "PCT fluid is isotonic (~300 mOsm/L).",
+            "c": "Tip of loop is hypertonic (~1200 mOsm/L).",
+            "d": "Collecting duct with ADH is hypertonic or isotonic.",
+            "e": "Option B is correct, so E is invalid."
+        },
+        "relatedQuestions": ["10 (PCT isotonic)", "32 (thick ascending limb)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 25,
+        "question": "The clearance of which substance is used clinically as a good estimate of Glomerular Filtration Rate (GFR)?",
+        "options": [
+            "Glucose (because it is fully reabsorbed)",
+            "Para-aminohippuric acid (PAH) (because it is fully secreted)",
+            "Creatinine (because it is freely filtered and not reabsorbed)",
+            "Sodium (because its clearance equals the filtration fraction)",
+            "None of the above"
+        ],
+        "answer": 2,
+        "correctAnswer": "Creatinine (because it is freely filtered and not reabsorbed)",
+        "explanation": "Creatinine is freely filtered and minimally secreted, making its clearance a practical GFR estimate. In Guyton and Hall, 13th edition, Chapter 26, page 314, creatinine clearance approximates GFR.",
+        "whyNotOtherOptions": {
+            "a": "Glucose is fully reabsorbed, so clearance is zero.",
+            "b": "PAH clearance measures RPF, not GFR.",
+            "d": "Sodium clearance varies, not equal to filtration fraction.",
+            "e": "Option C is correct, so E is invalid."
+        },
+        "relatedQuestions": ["8 (clearance)", "1 (glucosuria)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 26,
+        "question": "What is the primary driving force for water reabsorption from the proximal tubule?",
+        "options": [
+            "The high hydrostatic pressure in the peritubular capillaries",
+            "The osmotic gradient created by active reabsorption of solutes, especially sodium",
+            "The hormone aldosterone",
+            "The low colloid osmotic pressure in the peritubular capillaries",
+            "None of the above"
+        ],
+        "answer": 1,
+        "correctAnswer": "The osmotic gradient created by active reabsorption of solutes, especially sodium",
+        "explanation": "Active Na+ reabsorption in the PCT creates an osmotic gradient, driving passive water reabsorption. In Guyton and Hall, 13th edition, Chapter 27, page 325, this is the primary mechanism.",
+        "whyNotOtherOptions": {
+            "a": "High peritubular pressure would oppose reabsorption.",
+            "c": "Aldosterone acts on DCT/collecting duct, not PCT.",
+            "d": "Colloid osmotic pressure aids but is not primary.",
+            "e": "Option B is correct, so E is invalid."
+        },
+        "relatedQuestions": ["16 (PCT reabsorption)", "31 (water fate)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 27,
+        "question": "A patient with liver failure has a significantly low level of plasma proteins (hypoalbuminemia). What is the likely effect on GFR?",
+        "options": [
+            "GFR will increase due to a decrease in glomerular capillary colloid osmotic pressure",
+            "GFR will decrease due to a decrease in glomerular hydrostatic pressure",
+            "GFR will remain unchanged due to autoregulation",
+            "GFR will decrease due to increased capsular hydrostatic pressure",
+            "None of the above"
+        ],
+        "answer": 0,
+        "correctAnswer": "GFR will increase due to a decrease in glomerular capillary colloid osmotic pressure",
+        "explanation": "Hypoalbuminemia reduces colloid osmotic pressure, increasing net filtration pressure and GFR. In Guyton and Hall, 13th edition, Chapter 26, page 312, colloid pressure opposes filtration.",
+        "whyNotOtherOptions": {
+            "b": "Hydrostatic pressure is unaffected by hypoalbuminemia.",
+            "c": "Autoregulation may limit but not prevent GFR increase.",
+            "d": "Capsular pressure is not directly affected.",
+            "e": "Option A is correct, so E is invalid."
+        },
+        "relatedQuestions": ["4 (GFR decrease)", "12 (NFP)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 28,
+        "question": "The juxtamedullary nephrons are most critical for kidney function because they:",
+        "options": [
+            "Make up 85% of all nephrons",
+            "Have their renal corpuscles in the outer cortex",
+            "Have long loops of Henle that create the medullary concentration gradient",
+            "Are the primary site for renin secretion",
+            "None of the above"
+        ],
+        "answer": 2,
+        "correctAnswer": "Have long loops of Henle that create the medullary concentration gradient",
+        "explanation": "Juxtamedullary nephrons (~15% of nephrons) have long loops of Henle that establish the medullary gradient for urine concentration. In Guyton and Hall, 13th edition, Chapter 28, page 341, their role is emphasized.",
+        "whyNotOtherOptions": {
+            "a": "Cortical nephrons are ~85%, not juxtamedullary.",
+            "b": "Corpuscles are in the cortex, not unique to juxtamedullary.",
+            "d": "Renin is secreted by JG cells, not nephron-specific.",
+            "e": "Option C is correct, so E is invalid."
+        },
+        "relatedQuestions": ["5 (counter-current multiplier)", "18 (medullary hypertonicity)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 29,
+        "question": "During severe hemorrhagic shock, strong sympathetic nervous system activation will cause:",
+        "options": [
+            "Dilation of the afferent and efferent arterioles to increase GFR",
+            "Constriction of the afferent arteriole, reducing RBF and GFR to shunt blood to vital organs",
+            "Inhibition of renin release",
+            "Increased secretion of ANP",
+            "None of the above"
+        ],
+        "answer": 1,
+        "correctAnswer": "Constriction of the afferent arteriole, reducing RBF and GFR to shunt blood to vital organs",
+        "explanation": "Sympathetic activation in shock constricts afferent arterioles, reducing renal blood flow (RBF) and GFR to prioritize vital organs. In Guyton and Hall, 13th edition, Chapter 26, page 316, sympathetic effects on RBF are noted.",
+        "whyNotOtherOptions": {
+            "a": "Dilation would increase GFR, not seen in shock.",
+            "c": "Renin release is stimulated in shock.",
+            "d": "ANP is reduced due to low blood volume.",
+            "e": "Option B is correct, so E is invalid."
+        },
+        "relatedQuestions": ["19 (afferent constriction)", "ANS 15 (sympathetic innervation)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 30,
+        "question": "The process of tubular secretion is important for all of the following EXCEPT:",
+        "options": [
+            "Eliminating metabolic waste products like creatinine",
+            "Excreting foreign compounds and drugs",
+            "Regulating potassium and hydrogen ion balance",
+            "Reclaiming essential nutrients like glucose and amino acids",
+            "None of the above"
+        ],
+        "answer": 3,
+        "correctAnswer": "Reclaiming essential nutrients like glucose and amino acids",
+        "explanation": "Tubular secretion eliminates wastes, drugs, and ions (e.g., K+, H+); nutrient reclamation is via reabsorption. In Guyton and Hall, 13th edition, Chapter 27, page 326, secretion’s role is described.",
+        "whyNotOtherOptions": {
+            "a": "Creatinine is secreted in DCT.",
+            "b": "Drugs are secreted (e.g., penicillin).",
+            "c": "K+ and H+ are secreted for balance.",
+            "e": "Option D is correct, so E is invalid."
+        },
+        "relatedQuestions": ["17 (K+ handling)", "47 (tubular secretion)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 31,
+        "question": "What is the fate of most of the water filtered at the glomerulus?",
+        "options": [
+            "It is excreted in the urine",
+            "It is reabsorbed in the collecting duct under the control of ADH",
+            "It is reabsorbed isosmotically in the proximal convoluted tubule",
+            "It remains in the tubule to carry excreted solutes",
+            "None of the above"
+        ],
+        "answer": 2,
+        "correctAnswer": "It is reabsorbed isosmotically in the proximal convoluted tubule",
+        "explanation": "Approximately 65% of filtered water is reabsorbed isosmotically in the PCT, following solute reabsorption. In Guyton and Hall, 13th edition, Chapter 27, page 325, PCT reabsorbs most filtered water.",
+        "whyNotOtherOptions": {
+            "a": "Only ~1% of filtered water is excreted.",
+            "b": "Collecting duct reabsorption is facultative, not primary.",
+            "d": "Most water is reabsorbed, not retained.",
+            "e": "Option C is correct, so E is invalid."
+        },
+        "relatedQuestions": ["16 (PCT reabsorption)", "26 (water reabsorption)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 32,
+        "question": "In the thick ascending limb of the loop of Henle, the impermeability to water is essential for:",
+        "options": [
+            "Creating a dilute filtrate",
+            "Creating a concentrated filtrate",
+            "The obligatory reabsorption of water",
+            "The secretion of urea",
+            "None of the above"
+        ],
+        "answer": 0,
+        "correctAnswer": "Creating a dilute filtrate",
+        "explanation": "The thick ascending limb’s water impermeability and active NaCl reabsorption produce a hypotonic filtrate (~100 mOsm/L). In Guyton and Hall, 13th edition, Chapter 28, page 341, this creates dilute fluid.",
+        "whyNotOtherOptions": {
+            "b": "Concentrated filtrate is in the descending limb.",
+            "c": "Water reabsorption is in PCT/descending limb.",
+            "d": "Urea is recycled in the collecting duct.",
+            "e": "Option A is correct, so E is invalid."
+        },
+        "relatedQuestions": ["5 (counter-current multiplier)", "24 (lowest osmolarity)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 33,
+        "question": "The renal corpuscle is composed of which two structures?",
+        "options": [
+            "The proximal and distal tubules",
+            "The loop of Henle and the vasa recta",
+            "The glomerulus and Bowman's capsule",
+            "The afferent and efferent arterioles",
+            "None of the above"
+        ],
+        "answer": 2,
+        "correctAnswer": "The glomerulus and Bowman's capsule",
+        "explanation": "The renal corpuscle consists of the glomerulus (capillary bed) and Bowman’s capsule (filtrate collector). In Guyton and Hall, 13th edition, Chapter 26, page 310, the renal corpuscle is defined.",
+        "whyNotOtherOptions": {
+            "a": "Tubules are parts of the nephron, not corpuscle.",
+            "b": "Loop and vasa recta are not part of the corpuscle.",
+            "d": "Arterioles supply/drain the glomerulus, not part of it.",
+            "e": "Option C is correct, so E is invalid."
+        },
+        "relatedQuestions": ["13 (glomerular capillaries)", "21 (podocytes)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 34,
+        "question": "What is the effect of angiotensin II on the efferent arteriole, and what is the physiological purpose of this effect?",
+        "options": [
+            "Vasodilation; to decrease glomerular pressure and protect against hypertension",
+            "Vasoconstriction; to increase glomerular pressure and maintain GFR during reduced renal perfusion",
+            "Vasoconstriction; to decrease blood flow to the medulla",
+            "It has no direct effect on the efferent arteriole",
+            "None of the above"
+        ],
+        "answer": 1,
+        "correctAnswer": "Vasoconstriction; to increase glomerular pressure and maintain GFR during reduced renal perfusion",
+        "explanation": "Angiotensin II constricts the efferent arteriole, increasing glomerular pressure to maintain GFR in low perfusion states. In Guyton and Hall, 13th edition, Chapter 27, page 336, angiotensin II’s role is described.",
+        "whyNotOtherOptions": {
+            "a": "Vasodilation would decrease GFR, not maintain it.",
+            "c": "Medullary flow is regulated by vasa recta, not efferent.",
+            "d": "Angiotensin II directly affects efferent arterioles.",
+            "e": "Option B is correct, so E is invalid."
+        },
+        "relatedQuestions": ["15 (ACE inhibitor)", "42 (renin release)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 35,
+        "question": "The reabsorption of water in the collecting duct is considered 'facultative' because it is:",
+        "options": [
+            "Obligatory and unregulated",
+            "Controlled by the hormone ADH",
+            "Driven solely by the medullary gradient without hormonal input",
+            "The primary site for sodium reabsorption",
+            "None of the above"
+        ],
+        "answer": 1,
+        "correctAnswer": "Controlled by the hormone ADH",
+        "explanation": "Facultative water reabsorption in the collecting duct is regulated by ADH, which inserts aquaporins to allow water reabsorption based on need. In Guyton and Hall, 13th edition, Chapter 28, page 343, ADH controls facultative reabsorption.",
+        "whyNotOtherOptions": {
+            "a": "Obligatory reabsorption is in PCT, not collecting duct.",
+            "c": "Medullary gradient requires ADH for reabsorption.",
+            "d": "Sodium reabsorption is primarily in PCT/DCT.",
+            "e": "Option B is correct, so E is invalid."
+        },
+        "relatedQuestions": ["11 (ADH trigger)", "20 (diabetes insipidus)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 36,
+        "question": "Where are the osmoreceptors located that detect changes in plasma osmolarity and trigger ADH release?",
+        "options": [
+            "Juxtaglomerular cells",
+            "Macula densa cells",
+            "Hypothalamus",
+            "Posterior pituitary",
+            "None of the above"
+        ],
+        "answer": 2,
+        "correctAnswer": "Hypothalamus",
+        "explanation": "Osmoreceptors in the hypothalamus detect plasma osmolarity changes, triggering ADH release from the posterior pituitary. In Guyton and Hall, 13th edition, Chapter 28, page 343, hypothalamic osmoreceptors are noted.",
+        "whyNotOtherOptions": {
+            "a": "JG cells sense pressure, not osmolarity.",
+            "b": "Macula densa senses NaCl, not osmolarity.",
+            "d": "Posterior pituitary stores/releases ADH, no receptors.",
+            "e": "Option C is correct, so E is invalid."
+        },
+        "relatedQuestions": ["11 (ADH trigger)", "20 (diabetes insipidus)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 37,
+        "question": "If a substance has a clearance rate greater than the GFR, this indicates that the substance is:",
+        "options": [
+            "Only filtered",
+            "Filtered and partially reabsorbed",
+            "Filtered and net secreted",
+            "Not filtered at all",
+            "None of the above"
+        ],
+        "answer": 2,
+        "correctAnswer": "Filtered and net secreted",
+        "explanation": "Clearance > GFR indicates the substance is filtered and actively secreted into the tubule (e.g., PAH). In Guyton and Hall, 13th edition, Chapter 26, page 314, clearance reflects secretion.",
+        "whyNotOtherOptions": {
+            "a": "Only filtered equals GFR clearance.",
+            "b": "Partial reabsorption reduces clearance below GFR.",
+            "d": "Non-filtered substances have zero clearance.",
+            "e": "Option C is correct, so E is invalid."
+        },
+        "relatedQuestions": ["8 (clearance)", "25 (creatinine clearance)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 38,
+        "question": "The peritubular capillaries have low hydrostatic pressure because:",
+        "options": [
+            "They are fed directly by the high-pressure glomerulus",
+            "They are fed by the efferent arteriole, which has already lost plasma due to filtration",
+            "They are constricted by angiotensin II",
+            "They are highly permeable to proteins",
+            "None of the above"
+        ],
+        "answer": 1,
+        "correctAnswer": "They are fed by the efferent arteriole, which has already lost plasma due to filtration",
+        "explanation": "Peritubular capillaries, fed by the efferent arteriole post-filtration, have low hydrostatic pressure due to plasma loss in the glomerulus. In Guyton and Hall, 13th edition, Chapter 26, page 310, this facilitates reabsorption.",
+        "whyNotOtherOptions": {
+            "a": "Glomerulus feeds efferent arteriole, not directly peritubular.",
+            "c": "Angiotensin II constricts efferent, not peritubular directly.",
+            "d": "Peritubular capillaries are not protein-permeable.",
+            "e": "Option B is correct, so E is invalid."
+        },
+        "relatedQuestions": ["13 (glomerular capillaries)", "19 (afferent constriction)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 39,
+        "question": "What is the primary site for the paracellular reabsorption of solutes and water?",
+        "options": [
+            "Distal Convoluted Tubule",
+            "Collecting Duct",
+            "Thin Descending Limb of the Loop of Henle",
+            "Proximal Convoluted Tubule",
+            "None of the above"
+        ],
+        "answer": 3,
+        "correctAnswer": "Proximal Convoluted Tubule",
+        "explanation": "The PCT’s leaky tight junctions allow paracellular reabsorption of water and solutes (e.g., Na+, Cl–) driven by concentration gradients. In Guyton and Hall, 13th edition, Chapter 27, page 325, PCT paracellular reabsorption is noted.",
+        "whyNotOtherOptions": {
+            "a": "DCT has tight junctions, minimal paracellular transport.",
+            "b": "Collecting duct reabsorption is transcellular (ADH).",
+            "c": "Descending limb reabsorbs water, not solutes paracellularly.",
+            "e": "Option D is correct, so E is invalid."
+        },
+        "relatedQuestions": ["16 (PCT reabsorption)", "31 (water fate)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 40,
+        "question": "A patient with Addison's disease (adrenal insufficiency) has a deficiency of aldosterone. What would be an expected electrolyte abnormality?",
+        "options": [
+            "Hypernatremia (high sodium) and hypokalemia (low potassium)",
+            "Hyponatremia (low sodium) and hyperkalemia (high potassium)",
+            "Hypercalcemia and hypophosphatemia",
+            "No significant electrolyte changes",
+            "None of the above"
+        ],
+        "answer": 1,
+        "correctAnswer": "Hyponatremia (low sodium) and hyperkalemia (high potassium)",
+        "explanation": "Aldosterone deficiency reduces Na+ reabsorption (hyponatremia) and K+ secretion (hyperkalemia). In Guyton and Hall, 13th edition, Chapter 27, page 335, aldosterone’s role in electrolyte balance is described.",
+        "whyNotOtherOptions": {
+            "a": "Opposite effects occur with excess aldosterone.",
+            "c": "Ca2+/PO43– are regulated by PTH, not aldosterone.",
+            "d": "Electrolyte changes are significant in Addison’s.",
+            "e": "Option B is correct, so E is invalid."
+        },
+        "relatedQuestions": ["6 (aldosterone)", "17 (K+ handling)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 41,
+        "question": "The fenestrated endothelium of the glomerular capillaries allows for the passage of:",
+        "options": [
+            "Blood cells",
+            "Large proteins like albumin",
+            "Water and small solutes",
+            "Only ions",
+            "None of the above"
+        ],
+        "answer": 2,
+        "correctAnswer": "Water and small solutes",
+        "explanation": "Fenestrations in glomerular capillaries allow water and small solutes (e.g., glucose, ions) to pass but block cells and large proteins. In Guyton and Hall, 13th edition, Chapter 26, page 311, the filtration barrier is described.",
+        "whyNotOtherOptions": {
+            "a": "Blood cells are too large for fenestrations.",
+            "b": "Large proteins are blocked by filtration slits.",
+            "d": "Not only ions; other small solutes pass.",
+            "e": "Option C is correct, so E is invalid."
+        },
+        "relatedQuestions": ["21 (podocytes)", "33 (renal corpuscle)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 42,
+        "question": "The primary stimulus for the release of renin from the juxtaglomerular cells is:",
+        "options": [
+            "High sodium concentration at the macula densa",
+            "High blood pressure in the afferent arteriole",
+            "Low blood pressure (renal perfusion pressure) in the afferent arteriole",
+            "Stimulation by angiotensin II",
+            "None of the above"
+        ],
+        "answer": 2,
+        "correctAnswer": "Low blood pressure (renal perfusion pressure) in the afferent arteriole",
+        "explanation": "Low renal perfusion pressure in the afferent arteriole is the primary stimulus for renin release from JG cells. In Guyton and Hall, 13th edition, Chapter 27, page 333, renin release triggers are noted.",
+        "whyNotOtherOptions": {
+            "a": "High NaCl at macula densa inhibits renin.",
+            "b": "High BP inhibits renin release.",
+            "d": "Angiotensin II amplifies, not initiates, renin release.",
+            "e": "Option C is correct, so E is invalid."
+        },
+        "relatedQuestions": ["14 (tubuloglomerular feedback)", "46 (renal artery stenosis)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 43,
+        "question": "In the descending limb of the loop of Henle, what is the primary movement of water and solutes?",
+        "options": [
+            "Water moves out, solutes (NaCl) move in",
+            "Water moves in, solutes move out",
+            "Water moves out, solutes move out",
+            "No movement occurs; it is impermeable",
+            "None of the above"
+        ],
+        "answer": 0,
+        "correctAnswer": "Water moves out, solutes (NaCl) move in",
+        "explanation": "The descending limb is permeable to water, which moves out into the hypertonic medulla, while NaCl diffuses in, concentrating the filtrate. In Guyton and Hall, 13th edition, Chapter 28, page 341, descending limb permeability is noted.",
+        "whyNotOtherOptions": {
+            "b": "Water moves out, not in; solutes move in.",
+            "c": "Solutes move in, not out.",
+            "d": "Descending limb is permeable to water.",
+            "e": "Option A is correct, so E is invalid."
+        },
+        "relatedQuestions": ["5 (counter-current multiplier)", "28 (juxtamedullary nephrons)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 44,
+        "question": "What is the primary role of the hormone 1,25-dihydroxyvitamin D (calcitriol) produced by the kidneys?",
+        "options": [
+            "To increase blood phosphate levels",
+            "To increase calcium absorption from the gut",
+            "To decrease bone resorption",
+            "To promote calcium excretion in the urine",
+            "None of the above"
+        ],
+        "answer": 1,
+        "correctAnswer": "To increase calcium absorption from the gut",
+        "explanation": "Calcitriol, produced by the kidneys, enhances intestinal calcium absorption to maintain blood calcium levels. In Guyton and Hall, 13th edition, Chapter 29, page 363, calcitriol’s role is described.",
+        "whyNotOtherOptions": {
+            "a": "Calcitriol increases phosphate absorption, not primary role.",
+            "c": "Calcitriol promotes bone resorption if needed.",
+            "d": "Calcitriol reduces urinary calcium excretion.",
+            "e": "Option B is correct, so E is invalid."
+        },
+        "relatedQuestions": ["40 (Addison’s disease)", "Physiology 15 (calcium regulation)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 45,
+        "question": "The concept of 'obligatory water reabsorption' refers to water reabsorption that:",
+        "options": [
+            "Is regulated by ADH in the collecting duct",
+            "Occurs in the proximal tubule and thin descending limb as a direct result of solute reabsorption and the osmotic gradient",
+            "Occurs only in states of dehydration",
+            "Involves active transport mechanisms",
+            "None of the above"
+        ],
+        "answer": 1,
+        "correctAnswer": "Occurs in the proximal tubule and thin descending limb as a direct result of solute reabsorption and the osmotic gradient",
+        "explanation": "Obligatory water reabsorption in the PCT and descending limb follows solute reabsorption osmotically, not regulated by hormones. In Guyton and Hall, 13th edition, Chapter 27, page 325, this is described as obligatory.",
+        "whyNotOtherOptions": {
+            "a": "ADH regulates facultative reabsorption in collecting duct.",
+            "c": "Obligatory reabsorption occurs in all states.",
+            "d": "Water reabsorption is passive, not active.",
+            "e": "Option B is correct, so E is invalid."
+        },
+        "relatedQuestions": ["16 (PCT reabsorption)", "31 (water fate)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 46,
+        "question": "A patient with renal artery stenosis (narrowing) would be expected to have elevated levels of which hormone due to decreased perfusion of the kidney?",
+        "options": [
+            "Atrial Natriuretic Peptide (ANP)",
+            "Insulin",
+            "Renin",
+            "Antidiuretic Hormone (ADH)",
+            "None of the above"
+        ],
+        "answer": 2,
+        "correctAnswer": "Renin",
+        "explanation": "Renal artery stenosis reduces perfusion pressure, triggering renin release from JG cells to activate RAAS. In Guyton and Hall, 13th edition, Chapter 27, page 333, low perfusion stimulates renin.",
+        "whyNotOtherOptions": {
+            "a": "ANP is released with high blood volume, not stenosis.",
+            "b": "Insulin is unrelated to renal perfusion.",
+            "d": "ADH is triggered by osmolarity, not perfusion directly.",
+            "e": "Option C is correct, so E is invalid."
+        },
+        "relatedQuestions": ["34 (angiotensin II)", "42 (renin release)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 47,
+        "question": "The movement of substances from the peritubular capillary blood into the tubular lumen is called:",
+        "options": [
+            "Glomerular filtration",
+            "Tubular reabsorption",
+            "Tubular secretion",
+            "Excretion",
+            "None of the above"
+        ],
+        "answer": 2,
+        "correctAnswer": "Tubular secretion",
+        "explanation": "Tubular secretion moves substances from peritubular capillaries into the tubular lumen for excretion. In Guyton and Hall, 13th edition, Chapter 27, page 326, secretion is defined.",
+        "whyNotOtherOptions": {
+            "a": "Filtration occurs at the glomerulus.",
+            "b": "Reabsorption is from tubule to blood.",
+            "d": "Excretion is the final output, not the process.",
+            "e": "Option C is correct, so E is invalid."
+        },
+        "relatedQuestions": ["30 (secretion)", "37 (clearance)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 48,
+        "question": "What is the primary site of action of the drug class known as 'loop diuretics' (e.g., furosemide)?",
+        "options": [
+            "They inhibit sodium reabsorption in the proximal convoluted tubule",
+            "They inhibit the Na+/K+/2Cl- symporter in the thick ascending limb of the loop of Henle",
+            "They antagonize aldosterone receptors in the distal tubule",
+            "They inhibit carbonic anhydrase",
+            "None of the above"
+        ],
+        "answer": 1,
+        "correctAnswer": "They inhibit the Na+/K+/2Cl- symporter in the thick ascending limb of the loop of Henle",
+        "explanation": "Loop diuretics (e.g., furosemide) block the Na+/K+/2Cl- symporter in the thick ascending limb, reducing the medullary gradient and causing diuresis. In Guyton and Hall, 13th edition, Chapter 28, page 346, loop diuretics’ action is described.",
+        "whyNotOtherOptions": {
+            "a": "PCT is not the primary site for loop diuretics.",
+            "c": "Aldosterone antagonists act on DCT/collecting duct.",
+            "d": "Carbonic anhydrase inhibitors act in PCT.",
+            "e": "Option B is correct, so E is invalid."
+        },
+        "relatedQuestions": ["32 (thick ascending limb)", "5 (counter-current multiplier)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 49,
+        "question": "The ability of the kidney to automatically maintain a relatively constant GFR and RBF over a wide range of arterial pressures is known as:",
+        "options": [
+            "Tubuloglomerular feedback",
+            "Autoregulation",
+            "The myogenic response",
+            "The renin-angiotensin-aldosterone system",
+            "None of the above"
+        ],
+        "answer": 1,
+        "correctAnswer": "Autoregulation",
+        "explanation": "Autoregulation maintains constant GFR and RBF via myogenic and tubuloglomerular feedback mechanisms. In Guyton and Hall, 13th edition, Chapter 26, page 315, autoregulation is detailed.",
+        "whyNotOtherOptions": {
+            "a": "Tubuloglomerular feedback is a component of autoregulation.",
+            "c": "Myogenic response is a component, not the whole process.",
+            "d": "RAAS is hormonal, not intrinsic autoregulation.",
+            "e": "Option B is correct, so E is invalid."
+        },
+        "relatedQuestions": ["14 (tubuloglomerular feedback)", "23 (myogenic mechanism)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 50,
+        "question": "The final composition of urine is determined by the relative contributions of which three processes?",
+        "options": [
+            "Filtration, Digestion, Absorption",
+            "Filtration, Reabsorption, Secretion",
+            "Perfusion, Filtration, Excretion",
+            "Osmosis, Diffusion, Active Transport",
+            "None of the above"
+        ],
+        "answer": 1,
+        "correctAnswer": "Filtration, Reabsorption, Secretion",
+        "explanation": "Urine composition is determined by glomerular filtration, tubular reabsorption, and tubular secretion (Excretion = Filtration – Reabsorption + Secretion). In Guyton and Hall, 13th edition, Chapter 26, page 309, these processes are outlined.",
+        "whyNotOtherOptions": {
+            "a": "Digestion/absorption are not renal processes.",
+            "c": "Perfusion supports, but excretion is an outcome.",
+            "d": "Osmosis/diffusion/transport are mechanisms, not processes.",
+            "e": "Option B is correct, so E is invalid."
+        },
+        "relatedQuestions": ["8 (clearance)", "47 (tubular secretion)"],
+        "category": "Renal Physiology",
+        "difficulty": "Hard"
+    }
+];
+
+        // DOM Elements
+        const questionsContainer = document.getElementById('questionsContainer');
+        const questionIndicators = document.getElementById('questionIndicators');
+        const progressFill = document.getElementById('progressFill');
+        const progressPercent = document.getElementById('progressPercent');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const scoreValue = document.getElementById('scoreValue');
+        const correctCount = document.getElementById('correctCount');
+        const incorrectCount = document.getElementById('incorrectCount');
+        const timeTaken = document.getElementById('timeTaken');
+        const scoreCircle = document.getElementById('scoreCircle');
+        const restartBtn = document.getElementById('restartBtn');
+        const scrollTopBtn = document.getElementById('scrollTopBtn');
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        const timeDisplay = document.getElementById('timeDisplay');
+        const modeIndicator = document.getElementById('modeIndicator');
+        const modeButtons = document.querySelectorAll('.mode-btn');
+
+        // Quiz state
+        let currentQuestion = 0;
+        let userAnswers = new Array(quizData.length).fill(null);
+        let quizSubmitted = false;
+        let startTime = new Date();
+        let timerInterval;
+        let currentMode = 'quiz';
+
+        // Initialize the quiz
+        function initQuiz() {
+            renderQuestions();
+            renderQuestionIndicators();
+            updateProgress();
+            startTimer();
+            
+            prevBtn.addEventListener('click', goToPreviousQuestion);
+            nextBtn.addEventListener('click', goToNextQuestion);
+            submitBtn.addEventListener('click', submitQuiz);
+            restartBtn.addEventListener('click', restartQuiz);
+            scrollTopBtn.addEventListener('click', scrollToTop);
+            themeToggleBtn.addEventListener('click', toggleTheme);
+            
+            modeButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    modeButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentMode = btn.dataset.mode;
+                    updateModeIndicator();
+                    restartQuiz();
+                });
+            });
+            
+            document.addEventListener('keydown', handleKeyNavigation);
+        }
+
+        function updateModeIndicator() {
+            modeIndicator.textContent = currentMode === 'quiz' ? 'Quiz Mode' : 'Exam Mode';
+            modeIndicator.className = 'mode-indicator ' + (currentMode === 'quiz' ? 'quiz-mode' : 'exam-mode');
+        }
+
+        function renderQuestions() {
+            questionsContainer.innerHTML = '';
+            
+            quizData.forEach((questionData, index) => {
+                const questionElement = document.createElement('div');
+                questionElement.className = 'question-section';
+                questionElement.id = `question-${index}`;
+                
+                questionElement.innerHTML = `
+                    <div class="question-header">
+                        <div class="question-number">${index + 1}</div>
+                        <div class="question-text">
+                            ${questionData.question}
+                        </div>
+                    </div>
+                    <div class="options-container">
+                        ${questionData.options.map((option, optionIndex) => `
+                            <div class="option" data-question="${index}" data-option="${optionIndex}">
+                                <div class="option-letter">${String.fromCharCode(65 + optionIndex)}</div>
+                                <div class="option-text">${option}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <button class="explanation-toggle" disabled>
+                        <i class="fas fa-lightbulb"></i> Show Explanation
+                    </button>
+                    <div class="explanation">
+                        <div class="explanation-section">
+                            <h4>Correct Answer</h4>
+                            <p>${questionData.correctAnswer}</p>
+                        </div>
+                        <div class="explanation-section">
+                            <h4>Detailed Explanation</h4>
+                            <p>${questionData.explanation}</p>
+                        </div>
+                        <div class="explanation-section">
+                            <h4>Why Others Are Incorrect</h4>
+                            ${Object.entries(questionData.whyNotOtherOptions).map(([letter, reason]) => `
+                                <div class="why-not-item">
+                                    <span class="why-not-letter">${letter.toUpperCase()}:</span>
+                                    <span>${reason}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                
+                questionsContainer.appendChild(questionElement);
+                
+                const options = questionElement.querySelectorAll('.option');
+                options.forEach(option => {
+                    option.addEventListener('click', () => selectOption(option));
+                });
+                
+                const explanationToggle = questionElement.querySelector('.explanation-toggle');
+                const explanation = questionElement.querySelector('.explanation');
+                
+                explanationToggle.addEventListener('click', () => {
+                    if (explanation.classList.contains('show')) {
+                        explanation.classList.remove('show');
+                        explanationToggle.innerHTML = '<i class="fas fa-lightbulb"></i> Show Explanation';
+                    } else {
+                        explanation.classList.add('loading');
+                        explanation.classList.add('show');
+                        explanationToggle.innerHTML = '<i class="fas fa-lightbulb"></i> Hide Explanation';
+                        setTimeout(() => {
+                            explanation.classList.remove('loading');
+                        }, 800);
+                    }
+                });
+            });
+            
+            highlightCurrentQuestion();
+        }
+
+        function renderQuestionIndicators() {
+            questionIndicators.innerHTML = '';
+            
+            quizData.forEach((_, index) => {
+                const indicator = document.createElement('div');
+                indicator.className = 'question-indicator';
+                if (index === 0) indicator.classList.add('current');
+                indicator.innerHTML = `<span>${index + 1}</span>`;
+                indicator.addEventListener('click', () => jumpToQuestion(index));
+                
+                questionIndicators.appendChild(indicator);
+            });
+        }
+
+        function selectOption(optionElement) {
+            if (quizSubmitted) return;
+            
+            const questionIndex = parseInt(optionElement.dataset.question);
+            const optionIndex = parseInt(optionElement.dataset.option);
+            const questionData = quizData[questionIndex];
+            const options = document.querySelectorAll(`.option[data-question="${questionIndex}"]`);
+            const explanationToggle = document.querySelector(`#question-${questionIndex} .explanation-toggle`);
+
+            if (currentMode === 'quiz' && userAnswers[questionIndex] !== null) {
+                return;
+            }
+
+            options.forEach(opt => opt.classList.remove('selected'));
+            optionElement.classList.add('selected');
+            userAnswers[questionIndex] = optionIndex;
+            updateQuestionIndicator(questionIndex, true);
+            updateProgress();
+            
+            if (currentMode === 'quiz') {
+                options.forEach((opt, idx) => {
+                    if (idx === questionData.answer) {
+                        opt.classList.add('correct');
+                    } else if (idx === optionIndex && optionIndex !== questionData.answer) {
+                        opt.classList.add('incorrect');
+                    }
+                    opt.style.pointerEvents = 'none';
+                });
+                explanationToggle.disabled = false;
+            }
+        }
+
+        function updateQuestionIndicator(index, answered) {
+            const indicators = document.querySelectorAll('.question-indicator');
+            if (indicators[index]) {
+                if (answered) {
+                    indicators[index].classList.add('answered');
+                } else {
+                    indicators[index].classList.remove('answered');
+                }
+                indicators.forEach(ind => ind.classList.remove('current'));
+                indicators[currentQuestion].classList.add('current');
+            }
+        }
+
+        function updateProgress() {
+            const answeredCount = userAnswers.filter(answer => answer !== null).length;
+            const progress = (answeredCount / quizData.length) * 100;
+            
+            progressFill.style.width = `${progress}%`;
+            progressPercent.textContent = `${Math.round(progress)}%`;
+        }
+
+        function goToPreviousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                highlightCurrentQuestion();
+            }
+        }
+
+        function goToNextQuestion() {
+            if (currentQuestion < quizData.length - 1) {
+                currentQuestion++;
+                highlightCurrentQuestion();
+            }
+        }
+
+        function jumpToQuestion(index) {
+            currentQuestion = index;
+            highlightCurrentQuestion();
+        }
+
+        function highlightCurrentQuestion() {
+            document.querySelectorAll('.question-section').forEach(card => {
+                card.classList.remove('current');
+            });
+            
+            const currentQuestionElement = document.getElementById(`question-${currentQuestion}`);
+            if (currentQuestionElement) {
+                currentQuestionElement.classList.add('current');
+                currentQuestionElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            
+            document.querySelectorAll('.question-indicator').forEach((indicator, index) => {
+                indicator.classList.remove('current');
+                if (index === currentQuestion) {
+                    indicator.classList.add('current');
+                }
+            });
+            
+            prevBtn.disabled = currentQuestion === 0;
+            nextBtn.disabled = currentQuestion === quizData.length - 1;
+        }
+
+        function submitQuiz() {
+            if (confirm("Submit your answers?")) {
+                quizSubmitted = true;
+                clearInterval(timerInterval);
+                
+                const correctAnswers = userAnswers.filter((answer, index) => 
+                    answer === quizData[index].answer
+                ).length;
+                
+                const score = (correctAnswers / quizData.length) * 100;
+                
+                showResults(score, correctAnswers);
+            }
+        }
+
+        function showResults(score, correctAnswers) {
+            scoreValue.textContent = `${Math.round(score)}%`;
+            correctCount.textContent = correctAnswers;
+            incorrectCount.textContent = quizData.length - correctAnswers;
+            
+            const endTime = new Date();
+            const timeDiff = (endTime - startTime) / 1000;
+            const minutes = Math.floor(timeDiff / 60);
+            const seconds = Math.floor(timeDiff % 60);
+            timeTaken.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            scoreCircle.style.setProperty('--p', `${score}%`);
+            
+            resultsContainer.classList.add('show');
+            resultsContainer.scrollIntoView({ behavior: 'smooth' });
+            
+            if (currentMode === 'exam') {
+                quizData.forEach((questionData, index) => {
+                    const options = document.querySelectorAll(`.option[data-question="${index}"]`);
+                    const explanationToggle = document.querySelector(`#question-${index} .explanation-toggle`);
+                    
+                    options.forEach((option, optionIndex) => {
+                        if (optionIndex === questionData.answer) {
+                            option.classList.add('correct');
+                        } else if (optionIndex === userAnswers[index] && userAnswers[index] !== questionData.answer) {
+                            option.classList.add('incorrect');
+                        }
+                        option.style.pointerEvents = 'none';
+                    });
+                    explanationToggle.disabled = false;
+                });
+            }
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            userAnswers = new Array(quizData.length).fill(null);
+            quizSubmitted = false;
+            
+            resultsContainer.classList.remove('show');
+            renderQuestions();
+            renderQuestionIndicators();
+            updateProgress();
+            
+            startTime = new Date();
+            startTimer();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            const timeLimit = 10 * 60;
+            
+            timerInterval = setInterval(() => {
+                const currentTime = new Date();
+                const timeElapsed = Math.floor((currentTime - startTime) / 1000);
+                const timeRemaining = timeLimit - timeElapsed;
+                
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    submitQuiz();
+                    return;
+                }
+                
+                const minutes = Math.floor(timeRemaining / 60);
+                const seconds = timeRemaining % 60;
+                timeDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-theme');
+            themeToggleBtn.innerHTML = document.body.classList.contains('dark-theme') ? 
+                '<i class="fas fa-sun"></i>' : 
+                '<i class="fas fa-moon"></i>';
+        }
+
+        function handleKeyNavigation(e) {
+            if (e.key === 'ArrowLeft') {
+                goToPreviousQuestion();
+            } else if (e.key === 'ArrowRight') {
+                goToNextQuestion();
+            } else if (e.key >= '1' && e.key <= '9' && parseInt(e.key) <= quizData.length) {
+                jumpToQuestion(parseInt(e.key) - 1);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', initQuiz);
+  
+        // Add this to the initQuiz function
+const jumpToggle = document.getElementById('jumpToggle');
+const jumpContent = document.getElementById('jumpContent');
+
+jumpToggle.addEventListener('click', () => {
+    const isExpanded = jumpContent.classList.contains('expanded');
+    
+    if (isExpanded) {
+        jumpContent.classList.remove('expanded');
+        jumpContent.classList.add('collapsed');
+        jumpToggle.querySelector('i').classList.remove('fa-chevron-up');
+        jumpToggle.querySelector('i').classList.add('fa-chevron-down');
+    } else {
+        jumpContent.classList.remove('collapsed');
+        jumpContent.classList.add('expanded');
+        jumpToggle.querySelector('i').classList.remove('fa-chevron-down');
+        jumpToggle.querySelector('i').classList.add('fa-chevron-up');
+    }
+});      
+    </script>
+</body>
+</html>
