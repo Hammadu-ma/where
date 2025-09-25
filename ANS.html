@@ -1,0 +1,3523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MED QUIZ Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --primary-dark: #3a0ca3;
+            --secondary: #f72585;
+            --success: #4cc9f0;
+            --warning: #f9c74f;
+            --danger: #f94144;
+            --gray-50: #f8f9fa;
+            --gray-100: #f1f3f5;
+            --gray-800: #343a40;
+            --gray-900: #212529;
+            --bg-primary: var(--gray-900);
+            --bg-secondary: #1a1d21;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --card-bg: rgba(35, 39, 47, 0.95);
+            --card-border: #4cc9f0;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+            --transition: all 0.2s ease-in-out;
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --header-height: 50px;
+            --max-width: 800px;
+            --side-padding: 1rem;
+            --gradient-primary: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f5f7fa;
+            --bg-secondary: #ffffff;
+            --text-primary: #1a1d21;
+            --text-secondary: rgba(26, 29, 33, 0.7);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            line-height: 1.5;
+            font-weight: 400;
+            overflow-x: hidden;
+            padding: 0;
+        }
+
+        /* Compact Header */
+        header {
+            height: var(--header-height);
+            background: var(--gradient-primary);
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 var(--side-padding);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: white;
+        }
+
+        .logo-icon {
+            font-size: 1.25rem;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .control-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .control-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--secondary);
+            color: white;
+            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            padding: 1.5rem var(--side-padding);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .quiz-container {
+            width: 100%;
+            max-width: var(--max-width);
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition);
+            border: 1px solid var(--card-border);
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .quiz-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .quiz-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .stats-container {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.5rem 0.75rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius-md);
+            min-width: 60px;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            margin: 1.5rem 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-md);
+            transition: width 0.4s ease;
+        }
+
+        /* Question Meta */
+        .question-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .question-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            padding: 0.25rem 0.5rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .difficulty-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        .difficulty-easy { background-color: var(--success); }
+        .difficulty-medium { background-color: var(--warning); }
+        .difficulty-hard { background-color: var(--danger); }
+
+        .bookmark-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: var(--transition);
+        }
+
+        .bookmark-btn.bookmarked {
+            color: var(--warning);
+        }
+
+        /* Question */
+        .question-number {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.75rem;
+            text-align: center;
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        /* Options */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .option:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+            border-color: var(--primary-light);
+        }
+
+        .option.selected {
+            background: rgba(67, 97, 238, 0.15);
+            border-color: var(--primary);
+        }
+
+        .option.correct {
+            background: rgba(76, 201, 240, 0.15);
+            border-color: var(--success);
+        }
+
+        .option.incorrect {
+            background: rgba(249, 65, 68, 0.15);
+            border-color: var(--danger);
+        }
+
+        .option-letter {
+            width: 28px;
+            height: 28px;
+            border-radius: var(--radius-sm);
+            background: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 1rem;
+            flex-shrink: 0;
+            font-size: 0.9rem;
+        }
+
+        .option.selected .option-letter {
+            background: var(--primary);
+            color: white;
+        }
+
+        .option.correct .option-letter {
+            background: var(--success);
+            color: white;
+        }
+
+        .option.incorrect .option-letter {
+            background: var(--danger);
+            color: white;
+        }
+
+        .option-text {
+            flex: 1;
+            font-size: 0.95rem;
+        }
+
+        /* Feedback */
+        .feedback {
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .feedback.correct {
+            background: rgba(76, 201, 240, 0.15);
+            color: var(--success);
+        }
+
+        .feedback.incorrect {
+            background: rgba(249, 65, 68, 0.15);
+            color: var(--danger);
+        }
+
+        .feedback.skipped {
+            background: rgba(67, 97, 238, 0.15);
+            color: var(--primary);
+        }
+
+        .feedback-icon {
+            font-size: 1.25rem;
+        }
+
+        /* Explanation */
+        .explanation-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .explanation-container.expanded {
+            max-height: 500px;
+        }
+
+        .explanation {
+            padding: 1rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius-md);
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .explanation-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        /* Navigation */
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+            gap: 0.75rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-md);
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            font-size: 0.9rem;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* Study Mode Toggle */
+        .study-mode-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius-md);
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255,255,255,0.1);
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Results */
+        .results-container {
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: conic-gradient(var(--gradient-primary) 0% var(--p, 0%), var(--bg-secondary) var(--p, 0%) 100%);
+            position: relative;
+        }
+
+        .score-circle::before {
+            content: '';
+            position: absolute;
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: var(--card-bg);
+        }
+
+        .score-text {
+            position: relative;
+            z-index: 1;
+        }
+
+        .score-value {
+            font-size: 1.75rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .score-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .results-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .result-stat {
+            padding: 1rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius-md);
+        }
+
+        .result-stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .result-stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .review-section {
+            margin-top: 2rem;
+            text-align: left;
+        }
+
+        .review-title {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            text-align: center;
+        }
+
+        .review-item {
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+            background: rgba(255,255,255,0.05);
+            font-size: 0.9rem;
+        }
+
+        .review-item.correct {
+            border-left: 3px solid var(--success);
+        }
+
+        .review-item.incorrect {
+            border-left: 3px solid var(--danger);
+        }
+
+        .review-item.skipped {
+            border-left: 3px solid var(--primary);
+        }
+
+        .review-question {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .review-answer {
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius-sm);
+        }
+
+        .review-explanation {
+            color: var(--text-secondary);
+            padding-top: 0.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        footer {
+            padding: 2rem var(--side-padding);
+            background: var(--bg-secondary);
+            text-align: center;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            margin-top: auto;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(5px);
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal {
+            background: var(--card-bg);
+            border-radius: var(--radius-2xl);
+            padding: 2.5rem;
+            width: 90%;
+            max-width: 600px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-xl);
+            transform: translateY(-50px) scale(0.95);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--card-border);
+        }
+        .modal-overlay.active .modal {
+            transform: translateY(0) scale(1);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        .modal-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.75rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition-base);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-close:hover {
+            background: rgba(255,255,255,0.1);
+            color: var(--primary);
+        }
+        .modal-body {
+            margin-bottom: 2rem;
+        }
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+        .difficulty-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 0.75rem;
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+        }
+        .difficulty-easy {
+            background-color: var(--success);
+            box-shadow: 0 0 10px var(--success);
+        }
+        .difficulty-medium {
+            background-color: var(--warning);
+            box-shadow: 0 0 10px var(--warning);
+        }
+        .difficulty-hard {
+            background-color: var(--danger);
+            box-shadow: 0 0 10px var(--danger);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius-xl);
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: var(--transition-base);
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        .stat-card-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        .stat-card-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        .confetti {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: var(--gradient-primary);
+            opacity: 0;
+            border-radius: 2px;
+        }
+        @keyframes confettiFall {
+            0% {
+                opacity: 1;
+                transform: translateY(-100px) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(100vh) rotate(720deg);
+            }
+        }
+        .fab {
+            position: fixed;
+            bottom: 2.5rem;
+            right: 2.5rem;
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            box-shadow: var(--shadow-xl);
+            cursor: pointer;
+            z-index: 100;
+            transition: var(--transition-smooth);
+            border: 3px solid rgba(255,255,255,0.2);
+        }
+        .fab:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 20px 40px rgba(67, 97, 238, 0.3);
+        }
+        .study-mode-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius-lg);
+            justify-content: center;
+        }
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 28px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255,255,255,0.1);
+            transition: .4s;
+            border-radius: 34px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        input:checked + .toggle-slider {
+            background-color: var(--primary);
+            box-shadow: 0 0 10px rgba(67, 97, 238, 0.5);
+        }
+        input:checked + .toggle-slider:before {
+            transform: translateX(32px);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        @keyframes bounceIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        .fade-in {
+            animation: fadeIn 0.6s ease;
+        }
+        .pulse {
+            animation: pulse 1s infinite;
+        }
+        .bounce-in {
+            animation: bounceIn 0.6s ease;
+        }
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .mt-1 { margin-top: 0.5rem; }
+        .mt-2 { margin-top: 1rem; }
+        .mt-3 { margin-top: 1.5rem; }
+        .mt-4 { margin-top: 2rem; }
+        .full-width {
+            width: 100%;
+        }
+        @media (max-width: 768px) {
+            :root {
+                --side-padding: 1rem;
+                --header-height: 50px;
+            }
+            .quiz-container {
+                padding: 2rem;
+                border-radius: var(--radius-xl);
+            }
+            .quiz-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1.5rem;
+            }
+            .stats-container {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .results-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .score-circle {
+                width: 140px;
+                height: 140px;
+            }
+            .score-circle::before {
+                width: 110px;
+                height: 110px;
+            }
+            .score-value {
+                font-size: 2.25rem;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .fab {
+                bottom: 1.5rem;
+                right: 1.5rem;
+                width: 55px;
+                height: 55px;
+                font-size: 1.5rem;
+            }
+            .navigation {
+                flex-direction: column;
+            }
+            .btn {
+                width: 100%;
+            }
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+            .options-grid .option:nth-child(1),
+            .options-grid .option:nth-child(2),
+            .options-grid .option:nth-child(3),
+            .options-grid .option:nth-child(4) {
+                grid-column: auto;
+            }
+        }
+        @media (max-width: 480px) {
+            .option {
+                padding: 1rem;
+            }
+            .option-letter {
+                width: 32px;
+                height: 32px;
+                margin-right: 1rem;
+            }
+            .quiz-title {
+                font-size: 1.5rem;
+            }
+            .question-text {
+                font-size: 1.1rem;
+            }
+        }
+        /* Explanation Section Styling */
+.explanation-container {
+    background: var(--background-secondary, #f8f9fa); /* Light background for contrast */
+    border-radius: 12px; /* Rounded corners */
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    transition: all 0.3s ease; /* Smooth transition for expand/collapse */
+    border: 1px solid var(--border-color, #e0e0e0); /* Subtle border */
+}
+
+.explanation-container.expanded {
+    max-height: 800px; /* Increased max-height for content */
+    opacity: 1;
+    transform: translateY(0); /* Smooth slide-in effect */
+}
+
+.explanation-container:not(.expanded) {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transform: translateY(-10px); /* Slight upward shift when hidden */
+}
+
+.explanation {
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* Spacing between title and text */
+}
+
+.explanation-title {
+    font-size: 1.25rem; /* Slightly larger for emphasis */
+    font-weight: 600;
+    color: var(--primary, #4361ee); /* Match quiz primary color */
+    border-bottom: 2px solid var(--primary-light, #4cc9f0); /* Underline effect */
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.explanation-title::before {
+    content: "\f05a"; /* Font Awesome info-circle icon */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    color: var(--primary, #4361ee);
+    font-size: 1.2rem;
+}
+
+#explanation-text {
+    font-size: 1rem;
+    line-height: 1.6; /* Improved readability */
+    color: var(--text-color, #333);
+}
+
+/* Styling for the "Why Not Other Options" list */
+#explanation-text ul {
+    list-style: none; /* Remove default bullets */
+    padding: 0;
+    margin: 16px 0 0 0;
+}
+
+#explanation-text li {
+    position: relative;
+    padding-left: 28px; /* Space for custom bullet */
+    margin-bottom: 12px; /* Spacing between items */
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--text-secondary, #555);
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+#explanation-text li::before {
+    content: "\f00d"; /* Font Awesome times-circle icon for incorrect options */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    color: var(--danger, #f72585); /* Red/pink for incorrect options */
+    position: absolute;
+    left: 0;
+    top: 4px;
+    font-size: 1rem;
+}
+
+#explanation-text li strong {
+    color: var(--text-color, #333); /* Darker color for option labels */
+    font-weight: 600;
+}
+
+/* Hover effect for list items */
+#explanation-text li:hover {
+    background: var(--background-hover, rgba(67, 97, 238, 0.1)); /* Subtle highlight */
+    border-radius: 6px;
+    transform: translateX(4px); /* Slight shift for interactivity */
+    padding-left: 32px; /* Adjust for hover */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .explanation-container {
+        padding: 15px;
+        margin-top: 15px;
+    }
+
+    .explanation-title {
+        font-size: 1.1rem;
+    }
+
+    #explanation-text {
+        font-size: 0.95rem;
+    }
+
+    #explanation-text li {
+        font-size: 0.9rem;
+        padding-left: 24px;
+        margin-bottom: 10px;
+    }
+}
+
+/* Animation for expanding explanation */
+@keyframes explanationFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.explanation-container.expanded .explanation {
+    animation: explanationFadeIn 0.3s ease;
+}
+
+/* Ensure consistency with theme variables */
+:root {
+    --background-secondary: #f8f9fa;
+    --border-color: #e0e0e0;
+    --text-color: #333;
+    --text-secondary: #555;
+    --background-hover: rgba(67, 97, 238, 0.1);
+}
+
+[data-theme="dark"] {
+    --background-secondary: #2a2a2a;
+    --border-color: #444;
+    --text-color: #e0e0e0;
+    --text-secondary: #b0b0b0;
+    --background-hover: rgba(76, 201, 240, 0.2);
+}
+
+[data-theme="minimal"] {
+    --background-secondary: #f0f4f8;
+    --border-color: #d0d4d8;
+    --text-color: #2a2a2a;
+    --text-secondary: #666;
+    --background-hover: rgba(67, 97, 238, 0.05);
+}
+    </style>
+</head>
+<body data-theme="dark" data-progress="0">
+    <header>
+        <div class="logo">
+            <i class="fas fa-brain logo-icon"></i>
+            <span>MedQuiz</span>
+        </div>
+        <div class="header-controls">
+            <button class="control-btn" id="theme-toggle" aria-label="Toggle theme">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button class="control-btn" id="sound-toggle" aria-label="Toggle sound">
+                <i class="fas fa-volume-up"></i>
+            </button>
+            <button class="control-btn" id="stats-btn" aria-label="View statistics">
+                <i class="fas fa-chart-line"></i>
+                <span class="badge" id="bookmarks-count">0</span>
+            </button>
+        </div>
+    </header>
+    <main>
+        <div class="quiz-container">
+            <div class="quiz-header">
+                <div>
+                    <h1 class="quiz-title">MED QUIZ</h1>
+                    <p class="quiz-subtitle">Test your medical knowledge</p>
+                </div>
+                <div class="stats-container">
+                    <div class="stat">
+                        <span class="stat-value" id="timer">00:00</span>
+                        <span class="stat-label">Time</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="category">All</span>
+                        <span class="stat-label">Category</span>
+                    </div>
+                </div>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar" style="width: 10%"></div>
+            </div>
+            <div class="question-meta">
+                <div class="question-tags">
+                    <span class="tag" id="category-tag">Biochemistry</span>
+                    <span class="tag" id="difficulty-tag">
+                        <span class="difficulty-indicator difficulty-medium"></span>
+                        Medium
+                    </span>
+                </div>
+                <button class="bookmark-btn" id="bookmark-btn" aria-label="Bookmark question">
+                    <i class="fas fa-bookmark"></i>
+                </button>
+            </div>
+            <div class="question-number">Question <span id="current-question">1</span> of <span id="total-questions">15</span></div>
+            <div class="question-text" id="question">Which part of the brain is responsible for coordinating skeletal muscle contractions?</div>
+            <div class="options-grid" id="options-container">
+                <div class="option">
+                    <div class="option-letter">A</div>
+                    <div class="option-text">Cerebrum</div>
+                </div>
+                <div class="option">
+                    <div class="option-letter">B</div>
+                    <div class="option-text">Cerebellum</div>
+                </div>
+                <div class="option">
+                    <div class="option-letter">C</div>
+                    <div class="option-text">Pons</div>
+                </div>
+                <div class="option">
+                    <div class="option-letter">D</div>
+                    <div class="option-text">Midbrain</div>
+                </div>
+            </div>
+            <div class="feedback correct" id="feedback" style="display: none;">
+                <i class="fas fa-check-circle feedback-icon"></i>
+                <div class="feedback-text">Correct! Well done.</div>
+            </div>
+            <button class="btn btn-secondary" id="show-explanation-btn" style="display: none;">
+                <i class="fas fa-info-circle"></i> Show Explanation
+            </button>
+            <div class="explanation-container" id="explanation-container">
+                <div class="explanation">
+                    <div class="explanation-title">Explanation:</div>
+                    <div id="explanation-text">The cerebellum, located posterior to the brainstem, is the 'little brain.' It compares intended movements with actual movements to ensure smooth, coordinated skeletal muscle activity and maintain posture and balance.</div>
+                </div>
+            </div>
+            <div class="navigation">
+                <button class="btn btn-secondary" id="prev-btn" disabled>
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                <button class="btn btn-primary" id="next-btn">
+                    Next Question <i class="fas fa-arrow-right"></i>
+                </button>
+                <button class="btn btn-danger" id="skip-btn">
+                    <i class="fas fa-forward"></i> Skip
+                </button>
+            </div>
+        </div>
+    </main>
+    <div class="fab" id="quick-actions-btn" style="display: none;">
+        <i class="fas fa-bolt"></i>
+    </div>
+    <div class="confetti-container" id="confetti-container"></div>
+    <div class="modal-overlay" id="stats-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Your Statistics</h2>
+                <button class="modal-close" id="close-stats-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card-value" id="modal-total-questions">0</div>
+                        <div class="stat-card-label">Total Questions</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-value" id="modal-correct-answers">0</div>
+                        <div class="stat-card-label">Correct Answers</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-value" id="modal-accuracy">0%</div>
+                        <div class="stat-card-label">Accuracy</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-value" id="modal-avg-time">0s</div>
+                        <div class="stat-card-label">Avg. Time</div>
+                    </div>
+                </div>
+                <h3 class="review-title">Performance by Category</h3>
+                <div id="category-stats"></div>
+                <h3 class="review-title mt-2">Performance by Difficulty</h3>
+                <div id="difficulty-stats"></div>
+                <h3 class="review-title mt-2">Quiz History</h3>
+                <div id="history-stats"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="close-stats-btn">Close</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal-overlay" id="quick-actions-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Quick Actions</h2>
+                <button class="modal-close" id="close-actions-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <button class="btn btn-primary full-width mt-1" id="mark-for-review-btn">
+                    <i class="fas fa-flag"></i> Mark for Review
+                </button>
+                <button class="btn btn-secondary full-width mt-1" id="view-explanation-btn">
+                    <i class="fas fa-info-circle"></i> View Explanation
+                </button>
+                <button class="btn btn-success full-width mt-1" id="hint-btn">
+                    <i class="fas fa-lightbulb"></i> Get a Hint
+                </button>
+                <button class="btn btn-danger full-width mt-1" id="report-question-btn">
+                    <i class="fas fa-exclamation-triangle"></i> Report Question
+                </button>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="close-actions-btn">Close</button>
+            </div>
+        </div>
+    </div>
+    <footer>
+        &copy; 2025 MedQuiz | MED Practice Platform | All Rights Reserved
+    </footer>
+<script>
+const questions = [
+    {
+        "id": 1,
+        "question": "The autonomic nervous system controls:",
+        "options": [
+            "Voluntary movement",
+            "Skeletal muscle contraction",
+            "Involuntary activities",
+            "Reflex hammer response"
+        ],
+        "answer": 2,
+        "correctAnswer": "Involuntary activities",
+        "explanation": "The autonomic nervous system (ANS) regulates involuntary functions such as heart rate, digestion, and pupil dilation. Voluntary movement and skeletal muscle contraction are controlled by the somatic nervous system, while reflex hammer responses involve both somatic and spinal pathways. In Guyton and Hall, 13th edition, Chapter 61, page 757, the ANS is described as controlling involuntary visceral functions.",
+        "whyNotOtherOptions": {
+            "a": "Voluntary movement is somatic, not autonomic.",
+            "b": "Skeletal muscle is controlled by the somatic nervous system.",
+            "d": "Reflex hammer response involves somatic motor neurons."
+        },
+        "relatedQuestions": ["4 (somatic vs ANS)", "10 (ANS innervation)"],
+        "category": "Autonomic Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 2,
+        "question": "The enteric nervous system is located in:",
+        "options": [
+            "Brainstem",
+            "Intestinal wall",
+            "Spinal cord",
+            "Hypothalamus"
+        ],
+        "answer": 1,
+        "correctAnswer": "Intestinal wall",
+        "explanation": "The enteric nervous system (ENS) is a network of neurons in the intestinal wall, controlling GI motility and secretion. It operates semi-independently but is modulated by the ANS. In Guyton and Hall, 13th edition, Chapter 63, page 797, the ENS is described as intrinsic to the GI tract.",
+        "whyNotOtherOptions": {
+            "a": "Brainstem contains ANS nuclei, not ENS.",
+            "c": "Spinal cord contains ANS preganglionic neurons, not ENS.",
+            "d": "Hypothalamus regulates ANS, not ENS location."
+        },
+        "relatedQuestions": ["1 (ANS control)", "Physiology 47 (GIT mucosa)"],
+        "category": "Gastrointestinal Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 3,
+        "question": "Preganglionic fibers of the ANS release:",
+        "options": [
+            "NE",
+            "ACh",
+            "Dopamine",
+            "Serotonin"
+        ],
+        "answer": 1,
+        "correctAnswer": "ACh",
+        "explanation": "All ANS preganglionic fibers (sympathetic and parasympathetic) release acetylcholine (ACh) at ganglia. In Guyton and Hall, 13th edition, Chapter 61, page 760, preganglionic neurons are cholinergic.",
+        "whyNotOtherOptions": {
+            "a": "NE is released by postganglionic sympathetic neurons.",
+            "c": "Dopamine is not a primary ANS neurotransmitter.",
+            "d": "Serotonin is not used by ANS preganglionic fibers."
+        },
+        "relatedQuestions": ["5 (postganglionic sympathetic)", "21 (preganglionic NT)"],
+        "category": "Autonomic Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 4,
+        "question": "The somatic nervous system differs from the ANS because:",
+        "options": [
+            "It has two-neuron chains",
+            "It controls involuntary actions",
+            "It has one long motor neuron",
+            "It uses NE"
+        ],
+        "answer": 2,
+        "correctAnswer": "It has one long motor neuron",
+        "explanation": "The somatic nervous system uses a single long motor neuron from the CNS to skeletal muscle, controlling voluntary movement. The ANS uses a two-neuron chain and controls involuntary actions, with NE primarily in sympathetic postganglionic fibers. In Guyton and Hall, 13th edition, Chapter 61, page 757, somatic vs. ANS innervation is contrasted.",
+        "whyNotOtherOptions": {
+            "a": "Two-neuron chains are characteristic of ANS.",
+            "b": "Involuntary actions are ANS, not somatic.",
+            "d": "Somatic uses ACh, not NE."
+        },
+        "relatedQuestions": ["1 (ANS control)", "Physiology 25 (ANS neurotransmitters)"],
+        "category": "Autonomic Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 5,
+        "question": "Postganglionic sympathetic neurons mainly secrete:",
+        "options": [
+            "ACh",
+            "NE",
+            "GABA",
+            "Serotonin"
+        ],
+        "answer": 1,
+        "correctAnswer": "NE",
+        "explanation": "Most postganglionic sympathetic neurons release norepinephrine (NE), except for sweat glands (ACh). In Guyton and Hall, 13th edition, Chapter 61, page 761, NE is the primary sympathetic postganglionic neurotransmitter.",
+        "whyNotOtherOptions": {
+            "a": "ACh is released by preganglionic and parasympathetic neurons.",
+            "c": "GABA is not used in ANS.",
+            "d": "Serotonin is not a sympathetic neurotransmitter."
+        },
+        "relatedQuestions": ["3 (preganglionic NT)", "23 (sweat glands)"],
+        "category": "Autonomic Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 6,
+        "question": "Smell sensation is carried by:",
+        "options": [
+            "II",
+            "I",
+            "V",
+            "VII"
+        ],
+        "answer": 1,
+        "correctAnswer": "I",
+        "explanation": "The olfactory nerve (CN I) carries smell sensation from the nasal mucosa to the brain. In Guyton and Hall, 13th edition, Chapter 53, page 651, CN I is responsible for olfaction.",
+        "whyNotOtherOptions": {
+            "a": "CN II is for vision.",
+            "c": "CN V is for facial sensation/mastication.",
+            "d": "CN VII is for taste/facial expression."
+        },
+        "relatedQuestions": ["7 (vision)", "46 (anosmia)"],
+        "category": "Neurophysiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 7,
+        "question": "Vision is carried by:",
+        "options": [
+            "I",
+            "II",
+            "III",
+            "VIII"
+        ],
+        "answer": 1,
+        "correctAnswer": "II",
+        "explanation": "The optic nerve (CN II) carries visual information from the retina to the brain. In Guyton and Hall, 13th edition, Chapter 51, page 615, CN II is responsible for vision.",
+        "whyNotOtherOptions": {
+            "a": "CN I is for smell.",
+            "c": "CN III controls eye movement/pupil.",
+            "d": "CN VIII is for hearing/balance."
+        },
+        "relatedQuestions": ["6 (smell)", "47 (blindness)"],
+        "category": "Neurophysiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 8,
+        "question": "The cranial nerve of hearing & balance:",
+        "options": [
+            "VII",
+            "VIII",
+            "IX",
+            "X"
+        ],
+        "answer": 1,
+        "correctAnswer": "VIII",
+        "explanation": "The vestibulocochlear nerve (CN VIII) carries hearing and balance signals from the inner ear. In Guyton and Hall, 13th edition, Chapter 56, page 683, CN VIII is responsible for auditory and vestibular functions.",
+        "whyNotOtherOptions": {
+            "a": "CN VII is for taste/facial expression.",
+            "c": "CN IX is for throat sensation/swallowing.",
+            "d": "CN X is for visceral control/swallowing."
+        },
+        "relatedQuestions": ["6 (smell)", "7 (vision)"],
+        "category": "Neurophysiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 9,
+        "question": "Parasympathetic supply to most visceral organs is by:",
+        "options": [
+            "VII",
+            "IX",
+            "X",
+            "XI"
+        ],
+        "answer": 2,
+        "correctAnswer": "X",
+        "explanation": "The vagus nerve (CN X) provides parasympathetic innervation to most visceral organs (e.g., heart, lungs, GI tract). In Guyton and Hall, 13th edition, Chapter 61, page 763, CN X is the primary parasympathetic nerve for viscera.",
+        "whyNotOtherOptions": {
+            "a": "CN VII innervates salivary/lacrimal glands.",
+            "b": "CN IX innervates parotid gland.",
+            "d": "CN XI controls neck/shoulder muscles."
+        },
+        "relatedQuestions": ["18 (parasympathetic heart)", "50 (vagus function)"],
+        "category": "Autonomic Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 10,
+        "question": "Bell’s palsy results from damage to:",
+        "options": [
+            "V",
+            "VII",
+            "IX",
+            "XII"
+        ],
+        "answer": 1,
+        "correctAnswer": "VII",
+        "explanation": "Bell’s palsy results from facial nerve (CN VII) damage, causing facial muscle paralysis. In Guyton and Hall, 13th edition, Chapter 55, page 674, CN VII damage leads to facial weakness.",
+        "whyNotOtherOptions": {
+            "a": "CN V affects facial sensation/mastication.",
+            "c": "CN IX affects throat/swallowing.",
+            "d": "CN XII affects tongue movement."
+        },
+        "relatedQuestions": ["Physiology 34 (facial nerve)", "45 (trigeminal neuralgia)"],
+        "category": "Neurophysiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 11,
+        "question": "Sympathetic outflow arises from:",
+        "options": [
+            "Craniosacral",
+            "Thoracolumbar",
+            "Sacral only",
+            "Midbrain"
+        ],
+        "answer": 1,
+        "correctAnswer": "Thoracolumbar",
+        "explanation": "Sympathetic outflow originates from the thoracolumbar spinal cord (T1–L2). Parasympathetic is craniosacral. In Guyton and Hall, 13th edition, Chapter 61, page 759, sympathetic outflow is thoracolumbar.",
+        "whyNotOtherOptions": {
+            "a": "Craniosacral is parasympathetic outflow.",
+            "c": "Sacral is part of parasympathetic, not sympathetic.",
+            "d": "Midbrain is not a source of sympathetic outflow."
+        },
+        "relatedQuestions": ["12 (sympathetic neurons)", "16 (parasympathetic outflow)"],
+        "category": "Autonomic Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 12,
+        "question": "Sympathetic preganglionic neurons are in:",
+        "options": [
+            "Dorsal horn",
+            "Lateral horn",
+            "Ventral horn",
+            "Brainstem nuclei"
+        ],
+        "answer": 1,
+        "correctAnswer": "Lateral horn",
+        "explanation": "Sympathetic preganglionic neurons are located in the lateral horn of the thoracolumbar spinal cord (T1–L2). In Guyton and Hall, 13th edition, Chapter 61, page 759, the lateral horn is the site of sympathetic preganglionic neurons.",
+        "whyNotOtherOptions": {
+            "a": "Dorsal horn is sensory, not motor.",
+            "c": "Ventral horn contains somatic motor neurons.",
+            "d": "Brainstem nuclei house cranial nerve ANS neurons."
+        },
+        "relatedQuestions": ["11 (sympathetic outflow)", "Physiology 1 (bipolar neurons)"],
+        "category": "Autonomic Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 13,
+        "question": "Which gland receives direct sympathetic innervation?",
+        "options": [
+            "Thyroid",
+            "Adrenal medulla",
+            "Pituitary",
+            "Pineal"
+        ],
+        "answer": 1,
+        "correctAnswer": "Adrenal medulla",
+        "explanation": "The adrenal medulla is directly innervated by sympathetic preganglionic fibers, releasing epinephrine. Other glands are hormonally regulated or indirectly innervated. In Guyton and Hall, 13th edition, Chapter 61, page 764, adrenal medulla innervation is described.",
+        "whyNotOtherOptions": {
+            "a": "Thyroid is hormonally regulated (TSH).",
+            "c": "Pituitary is regulated by hypothalamus, not ANS.",
+            "d": "Pineal is indirectly influenced, not directly innervated."
+        },
+        "relatedQuestions": ["11 (sympathetic outflow)", "23 (sweat glands)"],
+        "category": "Autonomic Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 14,
+        "question": "Sympathetic stimulation of pupils causes:",
+        "options": [
+            "Miosis",
+            "Mydriasis",
+            "Constriction",
+            "No effect"
+        ],
+        "answer": 1,
+        "correctAnswer": "Mydriasis",
+        "explanation": "Sympathetic stimulation causes mydriasis (pupil dilation) via radial muscle contraction. Miosis is parasympathetic. In Guyton and Hall, 13th edition, Chapter 61, page 764, sympathetic control of pupil dilation is noted.",
+        "whyNotOtherOptions": {
+            "a": "Miosis is caused by parasympathetic stimulation.",
+            "c": "Constriction is parasympathetic, not sympathetic.",
+            "d": "Sympathetic stimulation affects pupils (dilation)."
+        },
+        "relatedQuestions": ["18 (parasympathetic heart)", "19 (parasympathetic bronchioles)"],
+        "category": "Autonomic Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 15,
+        "question": "Organs with only sympathetic innervation include all EXCEPT:",
+        "options": [
+            "Sweat glands",
+            "Blood vessels",
+            "Adrenal medulla",
+            "Heart"
+        ],
+        "answer": 3,
+        "correctAnswer": "Heart",
+        "explanation": "The heart receives dual innervation (sympathetic and parasympathetic via vagus). Sweat glands, blood vessels, and adrenal medulla are primarily sympathetic. In Guyton and Hall, 13th edition, Chapter 61, page 763, the heart’s dual innervation is detailed.",
+        "whyNotOtherOptions": {
+            "a": "Sweat glands are sympathetic-only (cholinergic).",
+            "b": "Blood vessels are primarily sympathetic.",
+            "c": "Adrenal medulla is sympathetic-only."
+        },
+        "relatedQuestions": ["10 (ANS innervation)", "13 (adrenal medulla)"],
+        "category": "Autonomic Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 16,
+        "question": "Parasympathetic outflow is:",
+        "options": [
+            "Craniosacral",
+            "Thoracolumbar",
+            "Medullary",
+            "Spinal"
+        ],
+        "answer": 0,
+        "correctAnswer": "Craniosacral",
+        "explanation": "Parasympathetic outflow arises from cranial nerves (III, VII, IX, X) and sacral spinal cord (S2–S4). Sympathetic is thoracolumbar. In Guyton and Hall, 13th edition, Chapter 61, page 759, parasympathetic outflow is craniosacral.",
+        "whyNotOtherOptions": {
+            "b": "Thoracolumbar is sympathetic outflow.",
+            "c": "Medullary is partial (e.g., CN X), not complete.",
+            "d": "Spinal includes only sacral parasympathetic."
+        },
+        "relatedQuestions": ["11 (sympathetic outflow)", "9 (vagus nerve)"],
+        "category": "Autonomic Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 17,
+        "question": "Parasympathetic ganglia are:",
+        "options": [
+            "Far from target organ",
+            "Close/within target organ",
+            "In sympathetic chain",
+            "In adrenal gland"
+        ],
+        "answer": 1,
+        "correctAnswer": "Close/within target organ",
+        "explanation": "Parasympathetic ganglia are located near or within target organs, allowing short postganglionic fibers. Sympathetic ganglia are farther (e.g., sympathetic chain). In Guyton and Hall, 13th edition, Chapter 61, page 760, parasympathetic ganglia are described as target-adjacent.",
+        "whyNotOtherOptions": {
+            "a": "Far ganglia are typical of sympathetic.",
+            "c": "Sympathetic chain is for sympathetic ganglia.",
+            "d": "Adrenal gland is not a parasympathetic ganglion."
+        },
+        "relatedQuestions": ["16 (parasympathetic outflow)", "9 (vagus nerve)"],
+        "category": "Autonomic Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 18,
+        "question": "Parasympathetic effect on heart is:",
+        "options": [
+            "↑ HR",
+            "↓ HR",
+            "↑ BP",
+            "No effect"
+        ],
+        "answer": 1,
+        "correctAnswer": "↓ HR",
+        "explanation": "Parasympathetic stimulation (via vagus nerve) decreases heart rate by releasing ACh, acting on muscarinic receptors. In Guyton and Hall, 13th edition, Chapter 9, page 112, parasympathetic slows heart rate.",
+        "whyNotOtherOptions": {
+            "a": "Increased HR is sympathetic, not parasympathetic.",
+            "c": "Parasympathetic does not directly increase BP.",
+            "d": "Parasympathetic affects heart rate (decreases)."
+        },
+        "relatedQuestions": ["9 (vagus nerve)", "15 (heart innervation)"],
+        "category": "Autonomic Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 19,
+        "question": "Parasympathetic effect on bronchioles:",
+        "options": [
+            "Dilatation",
+            "Constriction",
+            "No change",
+            "Secretion inhibition"
+        ],
+        "answer": 1,
+        "correctAnswer": "Constriction",
+        "explanation": "Parasympathetic stimulation causes bronchoconstriction via ACh on muscarinic receptors. Sympathetic causes dilation. In Guyton and Hall, 13th edition, Chapter 61, page 764, parasympathetic bronchoconstriction is noted.",
+        "whyNotOtherOptions": {
+            "a": "Dilatation is sympathetic (beta-2).",
+            "c": "Parasympathetic causes constriction, not no change.",
+            "d": "Parasympathetic may increase secretion, not inhibit."
+        },
+        "relatedQuestions": ["16 (parasympathetic outflow)", "Physiology 16 (beta adrenoceptors)"],
+        "category": "Autonomic Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 20,
+        "question": "Parasympathetic stimulation of bladder wall causes:",
+        "options": [
+            "Relaxation",
+            "Contraction",
+            "No effect",
+            "Spasm"
+        ],
+        "answer": 1,
+        "correctAnswer": "Contraction",
+        "explanation": "Parasympathetic stimulation (via pelvic nerves) causes bladder detrusor muscle contraction, promoting micturition. Sympathetic causes relaxation. In Guyton and Hall, 13th edition, Chapter 26, page 315, parasympathetic control of bladder contraction is described.",
+        "whyNotOtherOptions": {
+            "a": "Relaxation is sympathetic, not parasympathetic.",
+            "c": "Parasympathetic affects bladder (contraction).",
+            "d": "Spasm is not a typical parasympathetic effect."
+        },
+        "relatedQuestions": ["34 (micturition reflex)", "16 (parasympathetic outflow)"],
+        "category": "Autonomic Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 21,
+        "question": "All preganglionic neurons release:",
+        "options": [
+            "NE",
+            "ACh",
+            "Dopamine",
+            "GABA"
+        ],
+        "answer": 1,
+        "correctAnswer": "ACh",
+        "explanation": "All ANS preganglionic neurons (sympathetic and parasympathetic) release acetylcholine (ACh) at nicotinic receptors in ganglia. In Guyton and Hall, 13th edition, Chapter 61, page 760, preganglionic neurons are cholinergic.",
+        "whyNotOtherOptions": {
+            "a": "NE is postganglionic sympathetic, not preganglionic.",
+            "c": "Dopamine is not a primary ANS neurotransmitter.",
+            "d": "GABA is not used in ANS preganglionic neurons."
+        },
+        "relatedQuestions": ["3 (preganglionic NT)", "22 (postganglionic parasympathetic)"],
+        "category": "Autonomic Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 22,
+        "question": "Postganglionic parasympathetic fibers release:",
+        "options": [
+            "NE",
+            "ACh",
+            "Dopamine",
+            "Glutamate"
+        ],
+        "answer": 1,
+        "correctAnswer": "ACh",
+        "explanation": "Postganglionic parasympathetic fibers release ACh, acting on muscarinic receptors at effector organs. In Guyton and Hall, 13th edition, Chapter 61, page 760, parasympathetic postganglionic neurons are cholinergic.",
+        "whyNotOtherOptions": {
+            "a": "NE is sympathetic postganglionic, not parasympathetic.",
+            "c": "Dopamine is not a parasympathetic neurotransmitter.",
+            "d": "Glutamate is not used in ANS."
+        },
+        "relatedQuestions": ["21 (preganglionic NT)", "29 (muscarinic receptors)"],
+        "category": "Autonomic Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 23,
+        "question": "Sweat glands receive sympathetic fibers but release:",
+        "options": [
+            "NE",
+            "ACh",
+            "Dopamine",
+            "GABA"
+        ],
+        "answer": 1,
+        "correctAnswer": "ACh",
+        "explanation": "Sweat glands are innervated by sympathetic fibers but release ACh (cholinergic), an exception to typical sympathetic NE release. In Guyton and Hall, 13th edition, Chapter 61, page 761, sweat gland innervation is noted as cholinergic.",
+        "whyNotOtherOptions": {
+            "a": "NE is typical for sympathetic, not sweat glands.",
+            "c": "Dopamine is not used for sweat glands.",
+            "d": "GABA is not an ANS neurotransmitter."
+        },
+        "relatedQuestions": ["5 (postganglionic sympathetic)", "15 (sympathetic innervation)"],
+        "category": "Autonomic Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 24,
+        "question": "α1 receptors cause:",
+        "options": [
+            "Smooth muscle contraction",
+            "Smooth muscle relaxation",
+            "↓ HR",
+            "Lipolysis"
+        ],
+        "answer": 0,
+        "correctAnswer": "Smooth muscle contraction",
+        "explanation": "Alpha-1 (α1) receptors, activated by NE, cause smooth muscle contraction (e.g., vasoconstriction). In Guyton and Hall, 13th edition, Chapter 61, page 762, α1 receptors are linked to smooth muscle contraction via Gq signaling.",
+        "whyNotOtherOptions": {
+            "b": "Relaxation is mediated by β2 receptors.",
+            "c": "Decreased HR is parasympathetic or β-blocker effect.",
+            "d": "Lipolysis is mediated by β3 receptors."
+        },
+        "relatedQuestions": ["Physiology 9 (beta receptors)", "30 (α2 receptors)"],
+        "category": "Autonomic Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 25,
+        "question": "β1 receptors mainly affect the:",
+        "options": [
+            "Lungs",
+            "Heart",
+            "Skeletal muscle",
+            "GIT"
+        ],
+        "answer": 1,
+        "correctAnswer": "Heart",
+        "explanation": "Beta-1 (β1) receptors, primarily in the heart, increase heart rate and contractility. In Guyton and Hall, 13th edition, Chapter 9, page 111, β1 receptors are noted for cardiac effects.",
+        "whyNotOtherOptions": {
+            "a": "Lungs are primarily affected by β2 (bronchodilation).",
+            "c": "Skeletal muscle is not a primary β1 target.",
+            "d": "GIT is modulated by α and β2, not β1."
+        },
+        "relatedQuestions": ["Physiology 9 (beta receptors)", "26 (β2 receptors)"],
+        "category": "Autonomic Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 26,
+        "question": "β2 receptor activation results in:",
+        "options": [
+            "Bronchoconstriction",
+            "Bronchodilation",
+            "Pupillary constriction",
+            "Vasoconstriction"
+        ],
+        "answer": 1,
+        "correctAnswer": "Bronchodilation",
+        "explanation": "Beta-2 (β2) receptor activation causes bronchodilation by relaxing bronchial smooth muscle. In Guyton and Hall, 13th edition, Chapter 61, page 764, β2 receptors mediate bronchodilation.",
+        "whyNotOtherOptions": {
+            "a": "Bronchoconstriction is parasympathetic (muscarinic).",
+            "c": "Pupillary constriction is parasympathetic.",
+            "d": "Vasoconstriction is mediated by α1 receptors."
+        },
+        "relatedQuestions": ["Physiology 16 (beta adrenoceptors)", "25 (β1 receptors)"],
+        "category": "Autonomic Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 27,
+        "question": "β3 receptors are involved in:",
+        "options": [
+            "Salivation",
+            "Lipolysis",
+            "Pupillary reflex",
+            "Cardiac inhibition"
+        ],
+        "answer": 1,
+        "correctAnswer": "Lipolysis",
+        "explanation": "Beta-3 (β3) receptors, found in adipose tissue, promote lipolysis. In Guyton and Hall, 13th edition, Chapter 61, page 764, β3 receptors are linked to fat metabolism.",
+        "whyNotOtherOptions": {
+            "a": "Salivation is parasympathetic (muscarinic).",
+            "c": "Pupillary reflex involves α1 (dilation) or muscarinic (constriction).",
+            "d": "Cardiac inhibition is parasympathetic, not β3."
+        },
+        "relatedQuestions": ["24 (α1 receptors)", "25 (β1 receptors)"],
+        "category": "Autonomic Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 28,
+        "question": "Nicotinic receptors are found at:",
+        "options": [
+            "Effector cells",
+            "Ganglia",
+            "Smooth muscle only",
+            "Brainstem"
+        ],
+        "answer": 1,
+        "correctAnswer": "Ganglia",
+        "explanation": "Nicotinic receptors are located at ANS ganglia (pre- to postganglionic synapse) and neuromuscular junctions. In Guyton and Hall, 13th edition, Chapter 61, page 760, nicotinic receptors mediate ganglionic transmission.",
+        "whyNotOtherOptions": {
+            "a": "Effector cells have muscarinic or adrenergic receptors.",
+            "c": "Smooth muscle has muscarinic/adrenergic, not nicotinic.",
+            "d": "Brainstem contains nuclei, not nicotinic receptors."
+        },
+        "relatedQuestions": ["21 (preganglionic NT)", "29 (muscarinic receptors)"],
+        "category": "Autonomic Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 29,
+        "question": "Muscarinic receptors are found on:",
+        "options": [
+            "Preganglionic fibers",
+            "Postganglionic cell bodies",
+            "Effector organs",
+            "NMJ"
+        ],
+        "answer": 2,
+        "correctAnswer": "Effector organs",
+        "explanation": "Muscarinic receptors are on effector organs (e.g., heart, glands) targeted by parasympathetic postganglionic fibers. NMJ has nicotinic receptors. In Guyton and Hall, 13th edition, Chapter 61, page 762, muscarinic receptors are at effector sites.",
+        "whyNotOtherOptions": {
+            "a": "Preganglionic fibers release ACh, don’t have receptors.",
+            "b": "Postganglionic cell bodies have nicotinic receptors.",
+            "d": "NMJ has nicotinic, not muscarinic, receptors."
+        },
+        "relatedQuestions": ["22 (postganglionic parasympathetic)", "28 (nicotinic receptors)"],
+        "category": "Autonomic Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 30,
+        "question": "Which adrenergic receptor provides negative feedback (inhibits NE release)?",
+        "options": [
+            "α1",
+            "α2",
+            "β1",
+            "β2"
+        ],
+        "answer": 1,
+        "correctAnswer": "α2",
+        "explanation": "Alpha-2 (α2) receptors, located presynaptically, inhibit NE release, providing negative feedback. In Guyton and Hall, 13th edition, Chapter 61, page 762, α2 receptors are noted for autoregulation of NE release.",
+        "whyNotOtherOptions": {
+            "a": "α1 causes smooth muscle contraction.",
+            "c": "β1 increases heart rate/contractility.",
+            "d": "β2 causes relaxation (e.g., bronchodilation)."
+        },
+        "relatedQuestions": ["24 (α1 receptors)", "25 (β1 receptors)"],
+        "category": "Autonomic Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 31,
+        "question": "Baroreceptor reflex maintains:",
+        "options": [
+            "Temperature",
+            "Blood pressure",
+            "Digestion",
+            "Vision"
+        ],
+        "answer": 1,
+        "correctAnswer": "Blood pressure",
+        "explanation": "Baroreceptors in carotid sinuses and aortic arch detect blood pressure changes, triggering ANS adjustments to maintain BP. In Guyton and Hall, 13th edition, Chapter 18, page 213, baroreceptor reflex regulates BP.",
+        "whyNotOtherOptions": {
+            "a": "Temperature is regulated by hypothalamus.",
+            "c": "Digestion is ANS-modulated, not baroreceptor.",
+            "d": "Vision is not regulated by baroreceptors."
+        },
+        "relatedQuestions": ["32 (chemoreceptor reflex)", "Physiology 8 (sympathetic CV)"],
+        "category": "Autonomic Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 32,
+        "question": "Chemoreceptor reflex regulates:",
+        "options": [
+            "Respiration",
+            "BP",
+            "HR",
+            "Digestion"
+        ],
+        "answer": 0,
+        "correctAnswer": "Respiration",
+        "explanation": "Chemoreceptors (in carotid and aortic bodies) detect changes in blood O2, CO2, and pH, primarily regulating respiration to restore gas levels. They secondarily affect BP/HR. In Guyton and Hall, 13th edition, Chapter 41, page 505, chemoreceptors drive respiratory adjustments.",
+        "whyNotOtherOptions": {
+            "b": "BP is primarily baroreceptor-regulated.",
+            "c": "HR is secondary to respiratory control.",
+            "d": "Digestion is not chemoreceptor-regulated."
+        },
+        "relatedQuestions": ["31 (baroreceptor reflex)", "Physiology 14 (respiratory function)"],
+        "category": "Respiratory Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 33,
+        "question": "Defecation reflex is mediated by:",
+        "options": [
+            "Somatic NS",
+            "Autonomic NS",
+            "Sympathetic only",
+            "Brainstem"
+        ],
+        "answer": 1,
+        "correctAnswer": "Autonomic NS",
+        "explanation": "The defecation reflex involves autonomic (parasympathetic via pelvic nerves for contraction; sympathetic for inhibition) and somatic (external sphincter) control, but ANS is primary. In Guyton and Hall, 13th edition, Chapter 63, page 801, defecation reflex is ANS-mediated.",
+        "whyNotOtherOptions": {
+            "a": "Somatic NS controls voluntary sphincter, not reflex.",
+            "c": "Sympathetic inhibits, not mediates, reflex.",
+            "d": "Brainstem is not primary for defecation reflex."
+        },
+        "relatedQuestions": ["20 (bladder)", "34 (micturition reflex)"],
+        "category": "Autonomic Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 34,
+        "question": "Micturition reflex involves:",
+        "options": [
+            "Spinal cord",
+            "Cerebellum",
+            "Medulla",
+            "Pons only"
+        ],
+        "answer": 0,
+        "correctAnswer": "Spinal cord",
+        "explanation": "The micturition reflex is mediated by a spinal reflex arc (S2–S4), with parasympathetic control of detrusor contraction and somatic control of the external sphincter. The pons modulates but is not primary. In Guyton and Hall, 13th edition, Chapter 26, page 315, the spinal cord is central to micturition.",
+        "whyNotOtherOptions": {
+            "b": "Cerebellum coordinates movement, not micturition.",
+            "c": "Medulla regulates cardiovascular/respiratory, not micturition.",
+            "d": "Pons modulates but is not the primary site."
+        },
+        "relatedQuestions": ["20 (bladder)", "33 (defecation reflex)"],
+        "category": "Autonomic Physiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 35,
+        "question": "How many components are in a reflex arc?",
+        "options": [
+            "3",
+            "4",
+            "5",
+            "6"
+        ],
+        "answer": 2,
+        "correctAnswer": "5",
+        "explanation": "A reflex arc has five components: receptor, sensory neuron, integration center (spinal cord/brain), motor neuron, and effector. In Guyton and Hall, 13th edition, Chapter 55, page 675, reflex arcs are described with five parts.",
+        "whyNotOtherOptions": {
+            "a": "Three omits integration center and motor neuron.",
+            "b": "Four omits one component (e.g., effector).",
+            "d": "Six exceeds the standard reflex arc components."
+        },
+        "relatedQuestions": ["33 (defecation reflex)", "34 (micturition reflex)"],
+        "category": "Neurophysiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 36,
+        "question": "Epinephrine acts as:",
+        "options": [
+            "Parasympathomimetic",
+            "Sympathomimetic",
+            "Cholinergic blocker",
+            "Ganglionic blocker"
+        ],
+        "answer": 1,
+        "correctAnswer": "Sympathomimetic",
+        "explanation": "Epinephrine mimics sympathetic effects, activating adrenergic receptors (α and β). In Guyton and Hall, 13th edition, Chapter 61, page 764, epinephrine is a sympathomimetic.",
+        "whyNotOtherOptions": {
+            "a": "Parasympathomimetic mimics ACh, not epinephrine.",
+            "c": "Cholinergic blockers inhibit ACh, not epinephrine’s action.",
+            "d": "Ganglionic blockers inhibit nicotinic receptors."
+        },
+        "relatedQuestions": ["37 (phenylephrine)", "25 (β1 receptors)"],
+        "category": "Pharmacology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 37,
+        "question": "Phenylephrine is an:",
+        "options": [
+            "α-agonist",
+            "β-agonist",
+            "α-blocker",
+            "β-blocker"
+        ],
+        "answer": 0,
+        "correctAnswer": "α-agonist",
+        "explanation": "Phenylephrine is a selective α1-agonist, causing vasoconstriction and mydriasis. In Guyton and Hall, 13th edition, Chapter 61, page 762, α-agonists like phenylephrine are noted for smooth muscle contraction.",
+        "whyNotOtherOptions": {
+            "b": "β-agonists (e.g., albuterol) cause relaxation.",
+            "c": "α-blockers (e.g., phentolamine) inhibit α receptors.",
+            "d": "β-blockers (e.g., propranolol) inhibit β receptors."
+        },
+        "relatedQuestions": ["24 (α1 receptors)", "40 (phentolamine)"],
+        "category": "Pharmacology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 38,
+        "question": "Albuterol is:",
+        "options": [
+            "β2-agonist",
+            "α1-agonist",
+            "β-blocker",
+            "Muscarinic blocker"
+        ],
+        "answer": 0,
+        "correctAnswer": "β2-agonist",
+        "explanation": "Albuterol is a selective β2-agonist, causing bronchodilation. In Guyton and Hall, 13th edition, Chapter 61, page 764, β2-agonists are used for respiratory conditions.",
+        "whyNotOtherOptions": {
+            "b": "α1-agonists cause contraction, not bronchodilation.",
+            "c": "β-blockers inhibit β receptors, not albuterol’s action.",
+            "d": "Muscarinic blockers (e.g., atropine) inhibit ACh."
+        },
+        "relatedQuestions": ["26 (β2 receptors)", "39 (propranolol)"],
+        "category": "Pharmacology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 39,
+        "question": "Propranolol is a:",
+        "options": [
+            "β-blocker",
+            "β-agonist",
+            "α-agonist",
+            "Muscarinic agonist"
+        ],
+        "answer": 0,
+        "correctAnswer": "β-blocker",
+        "explanation": "Propranolol is a non-selective β-blocker, inhibiting β1 and β2 receptors, reducing heart rate and bronchodilation. In Guyton and Hall, 13th edition, Chapter 61, page 764, β-blockers like propranolol are described.",
+        "whyNotOtherOptions": {
+            "b": "β-agonists activate, not block, β receptors.",
+            "c": "α-agonists activate α receptors, not propranolol’s action.",
+            "d": "Muscarinic agonists mimic ACh, not propranolol."
+        },
+        "relatedQuestions": ["25 (β1 receptors)", "38 (albuterol)"],
+        "category": "Pharmacology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 40,
+        "question": "Phentolamine is a:",
+        "options": [
+            "α-blocker",
+            "β-blocker",
+            "Muscarinic blocker",
+            "Nicotinic blocker"
+        ],
+        "answer": 0,
+        "correctAnswer": "α-blocker",
+        "explanation": "Phentolamine is a non-selective α-blocker, inhibiting α1 and α2 receptors, causing vasodilation. In Guyton and Hall, 13th edition, Chapter 61, page 762, α-blockers are noted for blocking vasoconstriction.",
+        "whyNotOtherOptions": {
+            "b": "β-blockers (e.g., propranolol) inhibit β receptors.",
+            "c": "Muscarinic blockers (e.g., atropine) inhibit ACh.",
+            "d": "Nicotinic blockers affect ganglia/NMJ, not phentolamine."
+        },
+        "relatedQuestions": ["24 (α1 receptors)", "37 (phenylephrine)"],
+        "category": "Pharmacology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 41,
+        "question": "Atropine blocks:",
+        "options": [
+            "Nicotinic receptors",
+            "Muscarinic receptors",
+            "β receptors",
+            "α receptors"
+        ],
+        "answer": 1,
+        "correctAnswer": "Muscarinic receptors",
+        "explanation": "Atropine is a muscarinic receptor antagonist, blocking parasympathetic effects (e.g., reduced salivation, increased heart rate). In Guyton and Hall, 13th edition, Chapter 61, page 762, atropine’s muscarinic blockade is described.",
+        "whyNotOtherOptions": {
+            "a": "Nicotinic receptors are blocked by curare, not atropine.",
+            "c": "β receptors are blocked by propranolol.",
+            "d": "α receptors are blocked by phentolamine."
+        },
+        "relatedQuestions": ["29 (muscarinic receptors)", "42 (neostigmine)"],
+        "category": "Pharmacology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 42,
+        "question": "Neostigmine acts by:",
+        "options": [
+            "Blocking NE",
+            "Inhibiting AChE",
+            "Blocking muscarinic receptors",
+            "Stimulating β2 receptors"
+        ],
+        "answer": 1,
+        "correctAnswer": "Inhibiting AChE",
+        "explanation": "Neostigmine inhibits acetylcholinesterase (AChE), increasing ACh levels at synapses, enhancing cholinergic effects. In Guyton and Hall, 13th edition, Chapter 61, page 761, AChE inhibitors like neostigmine are noted for increasing ACh.",
+        "whyNotOtherOptions": {
+            "a": "Neostigmine does not block NE.",
+            "c": "Muscarinic blockers (e.g., atropine) inhibit, not enhance, ACh.",
+            "d": "β2 stimulation is unrelated to neostigmine."
+        },
+        "relatedQuestions": ["41 (atropine)", "22 (postganglionic parasympathetic)"],
+        "category": "Pharmacology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 43,
+        "question": "Curare blocks:",
+        "options": [
+            "Nicotinic receptors (NMJ)",
+            "Muscarinic receptors",
+            "β1 receptors",
+            "α1 receptors"
+        ],
+        "answer": 0,
+        "correctAnswer": "Nicotinic receptors (NMJ)",
+        "explanation": "Curare blocks nicotinic receptors at the neuromuscular junction (NMJ), causing muscle paralysis. In Guyton and Hall, 13th edition, Chapter 7, page 86, curare is noted as a nicotinic antagonist at NMJ.",
+        "whyNotOtherOptions": {
+            "b": "Muscarinic receptors are blocked by atropine.",
+            "c": "β1 receptors are blocked by propranolol.",
+            "d": "α1 receptors are blocked by phentolamine."
+        },
+        "relatedQuestions": ["28 (nicotinic receptors)", "41 (atropine)"],
+        "category": "Pharmacology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 44,
+        "question": "Botulinum toxin causes paralysis by:",
+        "options": [
+            "Excessive ACh release",
+            "Blocking ACh release",
+            "Blocking NE release",
+            "Activating muscarinic receptors"
+        ],
+        "answer": 1,
+        "correctAnswer": "Blocking ACh release",
+        "explanation": "Botulinum toxin inhibits ACh release at synapses, causing muscle paralysis by preventing neuromuscular transmission. In Guyton and Hall, 13th edition, Chapter 7, page 86, botulinum toxin’s mechanism is described.",
+        "whyNotOtherOptions": {
+            "a": "Excessive ACh is caused by black widow venom.",
+            "c": "NE is not primary at NMJ.",
+            "d": "Muscarinic receptors are not involved in NMJ paralysis."
+        },
+        "relatedQuestions": ["43 (curare)", "45 (black widow venom)"],
+        "category": "Pharmacology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 45,
+        "question": "Black widow spider venom causes:",
+        "options": [
+            "Excessive ACh release",
+            "Blocking ACh release",
+            "NE reuptake inhibition",
+            "Muscarinic block"
+        ],
+        "answer": 0,
+        "correctAnswer": "Excessive ACh release",
+        "explanation": "Black widow spider venom causes excessive ACh release at synapses, leading to muscle spasms and paralysis. In Guyton and Hall, 13th edition, Chapter 7, page 86, this mechanism is contrasted with botulinum toxin.",
+        "whyNotOtherOptions": {
+            "b": "Blocking ACh is botulinum toxin’s effect.",
+            "c": "NE reuptake inhibition is unrelated to venom.",
+            "d": "Muscarinic block is caused by atropine."
+        },
+        "relatedQuestions": ["44 (botulinum toxin)", "42 (neostigmine)"],
+        "category": "Pharmacology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 46,
+        "question": "Trigeminal neuralgia is due to inflammation of CN:",
+        "options": [
+            "V",
+            "VII",
+            "IX",
+            "X"
+        ],
+        "answer": 0,
+        "correctAnswer": "V",
+        "explanation": "Trigeminal neuralgia results from inflammation or irritation of the trigeminal nerve (CN V), causing facial pain. In Guyton and Hall, 13th edition, Chapter 52, page 642, CN V is associated with facial sensation.",
+        "whyNotOtherOptions": {
+            "b": "CN VII causes Bell’s palsy (facial paralysis).",
+            "c": "CN IX affects throat sensation/swallowing.",
+            "d": "CN X affects visceral control/swallowing."
+        },
+        "relatedQuestions": ["10 (Bell’s palsy)", "Physiology 32 (trigeminal)"],
+        "category": "Neurophysiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 47,
+        "question": "Loss of smell is:",
+        "options": [
+            "Anosmia",
+            "Anopia",
+            "Aphasia",
+            "Ataxia"
+        ],
+        "answer": 0,
+        "correctAnswer": "Anosmia",
+        "explanation": "Anosmia is the loss of smell, often due to CN I damage or nasal issues. In Guyton and Hall, 13th edition, Chapter 53, page 651, anosmia is linked to olfactory nerve dysfunction.",
+        "whyNotOtherOptions": {
+            "b": "Anopia is vision loss.",
+            "c": "Aphasia is language impairment.",
+            "d": "Ataxia is motor coordination loss."
+        },
+        "relatedQuestions": ["6 (smell)", "7 (vision)"],
+        "category": "Neurophysiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 48,
+        "question": "Blindness results from damage to CN:",
+        "options": [
+            "I",
+            "II",
+            "V",
+            "VII"
+        ],
+        "answer": 1,
+        "correctAnswer": "II",
+        "explanation": "Blindness results from optic nerve (CN II) damage, impairing visual signal transmission. In Guyton and Hall, 13th edition, Chapter 51, page 615, CN II damage causes vision loss.",
+        "whyNotOtherOptions": {
+            "a": "CN I affects smell, not vision.",
+            "c": "CN V affects facial sensation, not vision.",
+            "d": "CN VII affects facial movement/taste."
+        },
+        "relatedQuestions": ["7 (vision)", "47 (anosmia)"],
+        "category": "Neurophysiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 49,
+        "question": "Hypoglossal nerve damage affects:",
+        "options": [
+            "Swallowing",
+            "Tongue movement",
+            "Vision",
+            "Facial sensation"
+        ],
+        "answer": 1,
+        "correctAnswer": "Tongue movement",
+        "explanation": "Hypoglossal nerve (CN XII) damage impairs tongue movement, causing weakness or atrophy. In Guyton and Hall, 13th edition, Chapter 55, page 674, CN XII controls tongue muscles.",
+        "whyNotOtherOptions": {
+            "a": "Swallowing involves CN IX/X, not XII.",
+            "c": "Vision is CN II, not XII.",
+            "d": "Facial sensation is CN V, not XII."
+        },
+        "relatedQuestions": ["Physiology 33 (hypoglossal)", "50 (vagus)"],
+        "category": "Neurophysiology",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 50,
+        "question": "Vagus nerve controls:",
+        "options": [
+            "Facial expression",
+            "Speech & swallowing",
+            "Hearing",
+            "Smell"
+        ],
+        "answer": 1,
+        "correctAnswer": "Speech & swallowing",
+        "explanation": "The vagus nerve (CN X) controls pharyngeal/laryngeal muscles for speech and swallowing and provides parasympathetic innervation to viscera. In Guyton and Hall, 13th edition, Chapter 55, page 674, CN X is noted for swallowing and speech.",
+        "whyNotOtherOptions": {
+            "a": "Facial expression is CN VII.",
+            "c": "Hearing is CN VIII.",
+            "d": "Smell is CN I."
+        },
+        "relatedQuestions": ["9 (vagus nerve)", "Physiology 48 (swallowing)"],
+        "category": "Neurophysiology",
+        "difficulty": "Hard"
+    }
+]
+    
+
+;
+// Store original questions for restart functionality (moved to global scope for cross-browser compatibility)
+const originalQuestions = [...questions];
+// DOM Elements (global for cross-browser)
+let body = document.body;
+let questionElement, optionsContainer, currentQuestionElement, totalQuestionsElement, progressBar, prevButton, nextButton, skipButton, feedbackElement, timerElement, scoreElement, streakElement, categoryElement, explanationContainer, explanationTextElement, themeToggle, soundToggle, bookmarkBtn, bookmarksCount, categoryTag, difficultyTag, showExplanationBtn, statsBtn, statsModal, closeStatsModal, closeStatsBtn, quickActionsBtn, quickActionsModal, closeActionsModal, closeActionsBtn, studyModeToggle, confettiContainer;
+// Quiz state
+let currentQuestionIndex = 0;
+let score = 0;
+let streak = 0;
+let selectedOption = null;
+let timeStarted = null;
+let timerInterval = null;
+let timeElapsed = 0;
+let answers = [];
+let soundsEnabled = true;
+let bookmarkedQuestions = [];
+let quizHistory = [];
+let studyMode = false;
+let performanceMetrics = {
+    categories: {},
+    difficulties: { Easy: 0, Medium: 0, Hard: 0, "Very Hard": 0 },
+    totalCorrect: 0,
+    totalQuestions: 0,
+    totalTime: 0
+};
+function initQuiz() {
+    try {
+        // Assign DOM elements safely
+        questionElement = document.getElementById('question') || questionElement;
+        optionsContainer = document.getElementById('options-container') || optionsContainer;
+        currentQuestionElement = document.getElementById('current-question') || currentQuestionElement;
+        totalQuestionsElement = document.getElementById('total-questions') || totalQuestionsElement;
+        progressBar = document.getElementById('progress-bar') || progressBar;
+        prevButton = document.getElementById('prev-btn') || prevButton;
+        nextButton = document.getElementById('next-btn') || nextButton;
+        skipButton = document.getElementById('skip-btn') || skipButton;
+        feedbackElement = document.getElementById('feedback') || feedbackElement;
+        timerElement = document.getElementById('timer') || timerElement;
+        scoreElement = document.getElementById('score') || scoreElement;
+        streakElement = document.getElementById('streak') || streakElement;
+        categoryElement = document.getElementById('category') || categoryElement;
+        explanationContainer = document.getElementById('explanation-container') || explanationContainer;
+        explanationTextElement = document.getElementById('explanation-text') || explanationTextElement;
+        themeToggle = document.getElementById('theme-toggle') || themeToggle;
+        soundToggle = document.getElementById('sound-toggle') || soundToggle;
+        bookmarkBtn = document.getElementById('bookmark-btn') || bookmarkBtn;
+        bookmarksCount = document.getElementById('bookmarks-count') || bookmarksCount;
+        categoryTag = document.getElementById('category-tag') || categoryTag;
+        difficultyTag = document.getElementById('difficulty-tag') || difficultyTag;
+        showExplanationBtn = document.getElementById('show-explanation-btn') || showExplanationBtn;
+        statsBtn = document.getElementById('stats-btn') || statsBtn;
+        statsModal = document.getElementById('stats-modal') || statsModal;
+        closeStatsModal = document.getElementById('close-stats-modal') || closeStatsModal;
+        closeStatsBtn = document.getElementById('close-stats-btn') || closeStatsBtn;
+        quickActionsBtn = document.getElementById('quick-actions-btn') || quickActionsBtn;
+        quickActionsModal = document.getElementById('quick-actions-modal') || quickActionsModal;
+        closeActionsModal = document.getElementById('close-actions-modal') || closeActionsModal;
+        closeActionsBtn = document.getElementById('close-actions-btn') || closeActionsBtn;
+        studyModeToggle = document.getElementById('study-mode-toggle') || studyModeToggle;
+        confettiContainer = document.getElementById('confetti-container') || confettiContainer;
+        // Reset DOM elements
+        if (scoreElement) scoreElement.textContent = score;
+        if (streakElement) streakElement.textContent = streak;
+        if (timerElement) timerElement.textContent = '00:00';
+        if (totalQuestionsElement) totalQuestionsElement.textContent = questions.length;
+        
+        loadQuestion();
+        startTimer();
+        
+        // Clone elements to remove old listeners (cross-browser safe)
+        if (prevButton) {
+            const prevBtnClone = prevButton.cloneNode(true);
+            prevButton.parentNode.replaceChild(prevBtnClone, prevButton);
+            prevButton = prevBtnClone;
+        }
+        if (nextButton) {
+            const nextBtnClone = nextButton.cloneNode(true);
+            nextButton.parentNode.replaceChild(nextBtnClone, nextButton);
+            nextButton = nextBtnClone;
+        }
+        if (skipButton) {
+            const skipBtnClone = skipButton.cloneNode(true);
+            skipButton.parentNode.replaceChild(skipBtnClone, skipButton);
+            skipButton = skipBtnClone;
+        }
+        if (themeToggle) {
+            const themeToggleClone = themeToggle.cloneNode(true);
+            themeToggle.parentNode.replaceChild(themeToggleClone, themeToggle);
+            themeToggle = themeToggleClone;
+        }
+        if (soundToggle) {
+            const soundToggleClone = soundToggle.cloneNode(true);
+            soundToggle.parentNode.replaceChild(soundToggleClone, soundToggle);
+            soundToggle = soundToggleClone;
+        }
+        if (bookmarkBtn) {
+            const bookmarkBtnClone = bookmarkBtn.cloneNode(true);
+            bookmarkBtn.parentNode.replaceChild(bookmarkBtnClone, bookmarkBtn);
+            bookmarkBtn = bookmarkBtnClone;
+        }
+        if (showExplanationBtn) {
+            const showExplanationBtnClone = showExplanationBtn.cloneNode(true);
+            showExplanationBtn.parentNode.replaceChild(showExplanationBtnClone, showExplanationBtn);
+            showExplanationBtn = showExplanationBtnClone;
+        }
+        if (statsBtn) {
+            const statsBtnClone = statsBtn.cloneNode(true);
+            statsBtn.parentNode.replaceChild(statsBtnClone, statsBtn);
+            statsBtn = statsBtnClone;
+        }
+        // Add event listeners safely
+        if (prevButton) prevButton.addEventListener('click', goToPreviousQuestion);
+        if (nextButton) nextButton.addEventListener('click', goToNextQuestion);
+        if (skipButton) skipButton.addEventListener('click', skipQuestion);
+        if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
+        if (soundToggle) soundToggle.addEventListener('click', toggleSound);
+        if (bookmarkBtn) bookmarkBtn.addEventListener('click', toggleBookmark);
+        if (showExplanationBtn) showExplanationBtn.addEventListener('click', toggleExplanation);
+        if (statsBtn) statsBtn.addEventListener('click', showStatsModal);
+        if (closeStatsModal) closeStatsModal.addEventListener('click', hideStatsModal);
+        if (closeStatsBtn) closeStatsBtn.addEventListener('click', hideStatsModal);
+        if (quickActionsBtn) quickActionsBtn.addEventListener('click', showQuickActionsModal);
+        if (closeActionsModal) closeActionsModal.addEventListener('click', hideQuickActionsModal);
+        if (closeActionsBtn) closeActionsBtn.addEventListener('click', hideQuickActionsModal);
+        if (studyModeToggle) studyModeToggle.addEventListener('change', toggleStudyMode);
+        
+        const markForReviewBtn = document.getElementById('mark-for-review-btn');
+        if (markForReviewBtn) markForReviewBtn.addEventListener('click', markForReview);
+        const viewExplanationBtn = document.getElementById('view-explanation-btn');
+        if (viewExplanationBtn) viewExplanationBtn.addEventListener('click', viewExplanation);
+        const hintBtn = document.getElementById('hint-btn');
+        if (hintBtn) hintBtn.addEventListener('click', getHint);
+        const reportBtn = document.getElementById('report-question-btn');
+        if (reportBtn) reportBtn.addEventListener('click', reportQuestion);
+        
+        // Keyboard navigation
+        document.removeEventListener('keydown', handleKeydown);
+        document.addEventListener('keydown', handleKeydown);
+        
+        loadPreferences();
+        loadQuizHistory();
+        updateBookmarksCount();
+    } catch (e) {
+        console.error('Error initializing quiz:', e);
+    }
+}
+function handleKeydown(e) {
+    if (e.key === 'ArrowRight') {
+        goToNextQuestion();
+    } else if (e.key === 'ArrowLeft') {
+        goToPreviousQuestion();
+    } else if (e.key.toLowerCase() === 'a' || e.key === '1') {
+        selectOption(0);
+    } else if (e.key.toLowerCase() === 'b' || e.key === '2') {
+        selectOption(1);
+    } else if (e.key.toLowerCase() === 'c' || e.key === '3') {
+        selectOption(2);
+    } else if (e.key.toLowerCase() === 'd' || e.key === '4') {
+        selectOption(3);
+    } else if (e.key.toLowerCase() === 'e' || e.key === '5') {
+        selectOption(4);
+    } else if (e.key === 'Enter') {
+        if (showExplanationBtn && showExplanationBtn.style.display !== 'none') {
+            toggleExplanation();
+        }
+    } else if (e.key === 's' || e.key === '5') {
+        skipQuestion();
+    }
+}
+function loadQuestion() {
+    if (!questionElement || !optionsContainer) return; // Safety check
+    const question = questions[currentQuestionIndex];
+    if (!question) return;
+    questionElement.textContent = question.question;
+    currentQuestionElement.textContent = currentQuestionIndex + 1;
+    if (categoryTag) categoryTag.textContent = question.category || 'Unknown';
+    
+    // Update difficulty tag with indicator
+    if (difficultyTag) {
+        difficultyTag.innerHTML = `
+            <span class="difficulty-indicator difficulty-${question.difficulty.toLowerCase().replace(' ', '-')}"></span>
+            ${question.difficulty}
+        `;
+    }
+    
+    if (categoryElement) categoryElement.textContent = question.category || 'All';
+    
+    const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+    if (progressBar) progressBar.style.width = `${progress}%`;
+    
+    // Update progress level for appearance change
+    let progressLevel = 0;
+    if (progress > 75) progressLevel = 75;
+    else if (progress > 50) progressLevel = 50;
+    else if (progress > 25) progressLevel = 25;
+    body.setAttribute('data-progress', progressLevel);
+    
+    optionsContainer.innerHTML = '';
+    
+    const optionLetters = ['A', 'B', 'C', 'D', 'E'];
+    question.options.forEach((option, index) => {
+        const optionElement = document.createElement('div');
+        optionElement.classList.add('option', 'fade-in');
+        optionElement.setAttribute('role', 'button');
+        optionElement.setAttribute('tabindex', '0');
+        optionElement.setAttribute('aria-label', `Option ${optionLetters[index]}: ${option}`);
+        
+        const optionLetter = document.createElement('div');
+        optionLetter.classList.add('option-letter');
+        optionLetter.textContent = optionLetters[index];
+        
+        const optionText = document.createElement('div');
+        optionText.classList.add('option-text');
+        optionText.textContent = option;
+        
+        optionElement.appendChild(optionLetter);
+        optionElement.appendChild(optionText);
+        
+        optionElement.addEventListener('click', () => selectOption(index));
+        optionElement.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                selectOption(index);
+            }
+        });
+        
+        optionsContainer.appendChild(optionElement);
+    });
+    
+    if (prevButton) prevButton.disabled = currentQuestionIndex === 0;
+    if (nextButton) nextButton.textContent = currentQuestionIndex === questions.length - 1 ? 'Finish Quiz' : 'Next Question';
+    if (nextButton) nextButton.innerHTML = currentQuestionIndex === questions.length - 1 ? 'Finish Quiz <i class="fas fa-flag-checkered"></i>' : 'Next Question <i class="fas fa-arrow-right"></i>';
+    
+    if (feedbackElement) feedbackElement.style.display = 'none';
+    if (showExplanationBtn) showExplanationBtn.style.display = 'none';
+    if (explanationContainer) explanationContainer.classList.remove('expanded');
+    
+    selectedOption = null;
+    
+    // Show quick actions button
+    if (quickActionsBtn) quickActionsBtn.style.display = 'flex';
+    
+    // If the question was previously answered or skipped, display the feedback and explanations
+    if (answers[currentQuestionIndex]) {
+        const ans = answers[currentQuestionIndex];
+        const options = document.querySelectorAll('.option');
+        if (feedbackElement) feedbackElement.style.display = 'flex';
+        if (showExplanationBtn) showExplanationBtn.style.display = 'block';
+        
+        // Update explanation with general explanation and whyNotOtherOptions
+        if (explanationTextElement) {
+            let explanationContent = question.explanation;
+            if (question.whyNotOtherOptions) {
+                explanationContent += '<br><br><strong>Why Not Other Options:</strong><ul>';
+                const optionLetters = ['a', 'b', 'c', 'd'];
+                optionLetters.forEach((letter, index) => {
+                    if (index !== question.answer && question.whyNotOtherOptions[letter]) {
+                        explanationContent += `<li><strong>Option ${letter.toUpperCase()}:</strong> ${question.whyNotOtherOptions[letter]}</li>`;
+                    }
+                });
+                explanationContent += '</ul>';
+            }
+            explanationTextElement.innerHTML = explanationContent;
+        }
+        
+        options.forEach(option => option.style.pointerEvents = 'none');
+        
+        if (ans.selected === 'Skipped') {
+            selectedOption = null;
+            if (feedbackElement) {
+                feedbackElement.classList.add('skipped');
+                feedbackElement.innerHTML = '<i class="fas fa-forward feedback-icon"></i><div class="feedback-text">Skipped. The right answer is highlighted.</div>';
+            }
+            options[question.answer].classList.add('correct');
+        } else {
+            const optIndex = question.options.findIndex(opt => opt === ans.selected);
+            if (optIndex !== -1) {
+                selectedOption = optIndex;
+                options[optIndex].classList.add('selected');
+                if (ans.isCorrect) {
+                    if (feedbackElement) {
+                        feedbackElement.classList.add('correct');
+                        feedbackElement.innerHTML = '<i class="fas fa-check-circle feedback-icon"></i><div class="feedback-text">Correct! Well done.</div>';
+                    }
+                } else {
+                    if (feedbackElement) {
+                        feedbackElement.classList.add('incorrect');
+                        feedbackElement.innerHTML = '<i class="fas fa-times-circle feedback-icon"></i><div class="feedback-text">Incorrect. The right answer is highlighted.</div>';
+                    }
+                    options[question.answer].classList.add('correct');
+                    options[optIndex].classList.add('incorrect');
+                }
+            }
+        }
+    }
+    
+    updateBookmarkStatus();
+}
+function selectOption(index) {
+    if (selectedOption !== null || answers[currentQuestionIndex]) return;
+    
+    const options = document.querySelectorAll('.option');
+    options.forEach(option => option.classList.remove('selected', 'incorrect'));
+    options[index].classList.add('selected');
+    selectedOption = index;
+    
+    const question = questions[currentQuestionIndex];
+    const isCorrect = index === question.answer;
+    
+    if (feedbackElement) feedbackElement.style.display = 'flex';
+    if (isCorrect) {
+        if (feedbackElement) {
+            feedbackElement.classList.remove('incorrect');
+            feedbackElement.classList.add('correct');
+            feedbackElement.innerHTML = '<i class="fas fa-check-circle feedback-icon"></i><div class="feedback-text">Correct! Well done.</div>';
+        }
+        score += getScoreForDifficulty(question.difficulty);
+        streak++;
+        playSound('correct');
+        
+        if (question.difficulty === 'Hard' || question.difficulty === 'Very Hard') {
+            createConfetti();
+        }
+    } else {
+        if (feedbackElement) {
+            feedbackElement.classList.remove('correct');
+            feedbackElement.classList.add('incorrect');
+            feedbackElement.innerHTML = '<i class="fas fa-times-circle feedback-icon"></i><div class="feedback-text">Incorrect. The right answer is highlighted.</div>';
+        }
+        options[question.answer].classList.add('correct');
+        options[index].classList.add('incorrect');
+        streak = 0;
+        playSound('incorrect');
+    }
+    
+    if (scoreElement) scoreElement.textContent = score;
+    if (streakElement) streakElement.textContent = streak;
+    
+    if (explanationTextElement) {
+        let explanationContent = question.explanation;
+        if (question.whyNotOtherOptions) {
+            explanationContent += '<br><br><strong>Why Not Other Options:</strong><ul>';
+            const optionLetters = ['a', 'b', 'c', 'd'];
+            optionLetters.forEach((letter, idx) => {
+                if (idx !== question.answer && question.whyNotOtherOptions[letter]) {
+                    explanationContent += `<li><strong>Option ${letter.toUpperCase()}:</strong> ${question.whyNotOtherOptions[letter]}</li>`;
+                }
+            });
+            explanationContent += '</ul>';
+        }
+        explanationTextElement.innerHTML = explanationContent;
+    }
+    if (showExplanationBtn) showExplanationBtn.style.display = 'block';
+    
+    answers[currentQuestionIndex] = {
+        question: question.question,
+        selected: question.options[index],
+        correct: question.options[question.answer],
+        isCorrect: isCorrect,
+        explanation: question.explanation,
+        category: question.category,
+        difficulty: question.difficulty
+    };
+    
+    updatePerformanceMetrics(isCorrect, question);
+    
+    options.forEach(option => option.style.pointerEvents = 'none');
+}
+function skipQuestion() {
+    if (answers[currentQuestionIndex]) return;
+    
+    const question = questions[currentQuestionIndex];
+    const options = document.querySelectorAll('.option');
+    
+    if (feedbackElement) {
+        feedbackElement.style.display = 'flex';
+        feedbackElement.classList.add('skipped');
+        feedbackElement.innerHTML = '<i class="fas fa-forward feedback-icon"></i><div class="feedback-text">Skipped. The right answer is highlighted.</div>';
+    }
+    
+    options[question.answer].classList.add('correct');
+    if (showExplanationBtn) showExplanationBtn.style.display = 'block';
+    
+    if (explanationTextElement) {
+        let explanationContent = question.explanation;
+        if (question.whyNotOtherOptions) {
+            explanationContent += '<br><br><strong>Why Not Other Options:</strong><ul>';
+            const optionLetters = ['a', 'b', 'c', 'd'];
+            optionLetters.forEach((letter, idx) => {
+                if (idx !== question.answer && question.whyNotOtherOptions[letter]) {
+                    explanationContent += `<li><strong>Option ${letter.toUpperCase()}:</strong> ${question.whyNotOtherOptions[letter]}</li>`;
+                }
+            });
+            explanationContent += '</ul>';
+        }
+        explanationTextElement.innerHTML = explanationContent;
+    }
+    
+    answers[currentQuestionIndex] = {
+        question: question.question,
+        selected: 'Skipped',
+        correct: question.options[question.answer],
+        isCorrect: false,
+        explanation: question.explanation,
+        category: question.category,
+        difficulty: question.difficulty
+    };
+    
+    updatePerformanceMetrics(false, question);
+    streak = 0;
+    if (streakElement) streakElement.textContent = streak;
+    
+    options.forEach(option => option.style.pointerEvents = 'none');
+}
+function maybeHandleSkip() {
+    if (!answers[currentQuestionIndex] && selectedOption === null) {
+        skipQuestion();
+    }
+}
+function toggleExplanation() {
+    if (!explanationContainer) return;
+    explanationContainer.classList.toggle('expanded');
+    if (!showExplanationBtn) return;
+    showExplanationBtn.innerHTML = explanationContainer.classList.contains('expanded') ?
+        '<i class="fas fa-info-circle"></i> Hide Explanation' :
+        '<i class="fas fa-info-circle"></i> Show Explanation';
+}
+function getScoreForDifficulty(difficulty) {
+    switch (difficulty) {
+        case 'Easy': return 5;
+        case 'Medium': return 10;
+        case 'Hard': return 15;
+        case 'Very Hard': return 20;
+        default: return 10;
+    }
+}
+function updatePerformanceMetrics(isCorrect, question) {
+    performanceMetrics.totalQuestions++;
+    performanceMetrics.totalTime += timeElapsed;
+    if (isCorrect) performanceMetrics.totalCorrect++;
+    
+    performanceMetrics.categories[question.category] = performanceMetrics.categories[question.category] || { correct: 0, total: 0 };
+    performanceMetrics.categories[question.category].total++;
+    if (isCorrect) performanceMetrics.categories[question.category].correct++;
+    
+    if (!performanceMetrics.difficulties[question.difficulty]) performanceMetrics.difficulties[question.difficulty] = 0;
+    if (isCorrect) performanceMetrics.difficulties[question.difficulty]++;
+}
+function toggleBookmark() {
+    if (!bookmarkBtn) return;
+    const questionId = questions[currentQuestionIndex].id;
+    const index = bookmarkedQuestions.indexOf(questionId);
+    if (index === -1) {
+        bookmarkedQuestions.push(questionId);
+        bookmarkBtn.classList.add('bookmarked');
+        playSound('bookmark');
+    } else {
+        bookmarkedQuestions.splice(index, 1);
+        bookmarkBtn.classList.remove('bookmarked');
+    }
+    updateBookmarksCount();
+    saveBookmarks();
+}
+function updateBookmarkStatus() {
+    if (!bookmarkBtn) return;
+    const questionId = questions[currentQuestionIndex].id;
+    bookmarkBtn.classList.toggle('bookmarked', bookmarkedQuestions.includes(questionId));
+}
+function updateBookmarksCount() {
+    if (!bookmarksCount) return;
+    bookmarksCount.textContent = bookmarkedQuestions.length;
+}
+function goToNextQuestion() {
+    maybeHandleSkip();
+    if (currentQuestionIndex < questions.length - 1) {
+        currentQuestionIndex++;
+        loadQuestion();
+    } else {
+        body.setAttribute('data-progress', '100');
+        showResults();
+        saveQuizHistory();
+    }
+}
+function goToPreviousQuestion() {
+    maybeHandleSkip();
+    if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        loadQuestion();
+    }
+}
+function startTimer() {
+    timeStarted = new Date();
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(updateTimer, 1000);
+}
+function updateTimer() {
+    timeElapsed++;
+    
+    const minutes = Math.floor(timeElapsed / 60).toString().padStart(2, '0');
+    const seconds = (timeElapsed % 60).toString().padStart(2, '0');
+    if (timerElement) timerElement.textContent = `${minutes}:${seconds}`;
+    
+    if (timeElapsed >= 300) {
+        if (timerElement) {
+            timerElement.style.color = 'var(--danger)';
+            timerElement.classList.add('pulse');
+        }
+    } else {
+        if (timerElement) {
+            timerElement.style.color = 'var(--primary)';
+            timerElement.classList.remove('pulse');
+        }
+    }
+}
+function showResults() {
+    if (timerInterval) clearInterval(timerInterval);
+    if (quickActionsBtn) quickActionsBtn.style.display = 'none';
+    
+    const quizContainer = document.querySelector('.quiz-container');
+    if (!quizContainer) return;
+    const maxScore = questions.reduce((sum, q) => sum + getScoreForDifficulty(q.difficulty), 0);
+    const percentage = ((score / maxScore) * 100).toFixed(1);
+    const accuracy = ((performanceMetrics.totalCorrect / performanceMetrics.totalQuestions) * 100).toFixed(1);
+    const avgTime = Math.round(performanceMetrics.totalTime / performanceMetrics.totalQuestions);
+    
+    quizContainer.innerHTML = `
+        <div class="results-container">
+            <h2 class="quiz-title">Quiz Completed!</h2>
+            <p class="quiz-subtitle">You've finished the MED QUIZ</p>
+            
+            <div class="score-circle" style="--p: ${percentage}%">
+                <div class="score-text">
+                    <div class="score-value">${score}</div>
+                    <div class="score-label">Points</div>
+                </div>
+            </div>
+            
+            <div class="results-stats">
+                <div class="result-stat">
+                    <div class="result-stat-value">${accuracy}%</div>
+                    <div class="result-stat-label">Accuracy</div>
+                </div>
+                <div class="result-stat">
+                    <div class="result-stat-value">${timeElapsed}s</div>
+                    <div class="result-stat-label">Time Taken</div>
+                </div>
+                <div class="result-stat">
+                    <div class="result-stat-value">${streak}</div>
+                    <div class="result-stat-label">Best Streak</div>
+                </div>
+                <div class="result-stat">
+                    <div class="result-stat-value">${bookmarkedQuestions.length}</div>
+                    <div class="result-stat-label">Bookmarked</div>
+                </div>
+            </div>
+            
+            <div class="review-section">
+                <h3 class="review-title">Performance Analytics</h3>
+                <div class="review-item">
+                    <div class="review-answer">Average Time Per Question: ${avgTime}s</div>
+                    <div class="review-answer">Difficulty Performance:
+                        Easy: ${performanceMetrics.difficulties.Easy || 0},
+                        Medium: ${performanceMetrics.difficulties.Medium || 0},
+                        Hard: ${performanceMetrics.difficulties.Hard || 0},
+                        Very Hard: ${performanceMetrics.difficulties['Very Hard'] || 0}
+                    </div>
+                </div>
+                
+                <h3 class="review-title">Review Your Answers</h3>
+                ${answers.map((answer, index) => `
+                    <div class="review-item ${answer.isCorrect ? 'correct' : answer.selected === 'Skipped' ? 'skipped' : 'incorrect'}">
+                        <div class="review-question">Q${index + 1}: ${answer.question} (${answer.category} - ${answer.difficulty})</div>
+                        <div class="review-answer">Your Answer: ${answer.selected}</div>
+                        <div class="review-answer">Correct Answer: ${answer.correct}</div>
+                        <div class="review-explanation">${answer.explanation}
+                            ${questions[index].whyNotOtherOptions ? `
+                                <br><br><strong>Why Not Other Options:</strong>
+                                <ul>
+                                    ${Object.entries(questions[index].whyNotOtherOptions).map(([key, value]) => `
+                                        <li><strong>Option ${key.toUpperCase()}:</strong> ${value}</li>
+                                    `).join('')}
+                                </ul>
+                            ` : ''}
+                        </div>
+                    </div>
+                `).join('')}
+                
+                ${bookmarkedQuestions.length > 0 ? `
+                    <h3 class="review-title">Bookmarked Questions</h3>
+                    ${bookmarkedQuestions.map(qid => {
+                        const question = questions.find(q => q.id === qid);
+                        if (!question) return '';
+                        return `
+                            <div class="review-item">
+                                <div class="review-question">${question.question} (${question.category} - ${question.difficulty})</div>
+                                <div class="review-answer">Correct Answer: ${question.correctAnswer}</div>
+                                <div class="review-explanation">${question.explanation}
+                                    ${question.whyNotOtherOptions ? `
+                                        <br><br><strong>Why Not Other Options:</strong>
+                                        <ul>
+                                            ${Object.entries(question.whyNotOtherOptions).map(([key, value]) => `
+                                                <li><strong>Option ${key.toUpperCase()}:</strong> ${value}</li>
+                                            `).join('')}
+                                        </ul>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                ` : ''}
+            </div>
+            
+            <button class="btn btn-primary mt-4" id="restart-btn">
+                <i class="fas fa-redo"></i> Try Again
+            </button>
+            <button class="btn btn-secondary mt-2" id="review-wrong-btn">
+                <i class="fas fa-search"></i> Review Incorrect Answers
+            </button>
+        </div>
+    `;
+    
+    // Add event listeners after DOM update
+    const restartBtn = document.getElementById('restart-btn');
+    const reviewWrongBtn = document.getElementById('review-wrong-btn');
+    if (restartBtn) restartBtn.addEventListener('click', restartQuiz);
+    if (reviewWrongBtn) reviewWrongBtn.addEventListener('click', reviewWrongAnswers);
+}
+function reviewWrongAnswers() {
+    const wrongAnswers = answers.filter(answer => !answer.isCorrect && answer.selected !== 'Skipped');
+    
+    if (wrongAnswers.length === 0) {
+        alert("You don't have any incorrect answers to review!");
+        return;
+    }
+    
+    const wrongQuestions = questions.filter((q, index) =>
+        answers[index] && !answers[index].isCorrect && answers[index].selected !== 'Skipped'
+    );
+    
+    questions.length = 0;
+    questions.push(...wrongQuestions);
+    currentQuestionIndex = 0;
+    score = 0;
+    streak = 0;
+    timeElapsed = 0;
+    answers = [];
+    selectedOption = null;
+    performanceMetrics = {
+        categories: {},
+        difficulties: { Easy: 0, Medium: 0, Hard: 0, "Very Hard": 0 },
+        totalCorrect: 0,
+        totalQuestions: 0,
+        totalTime: 0
+    };
+    
+    if (timerInterval) {
+        clearInterval(timerInterval);
+    }
+    
+    body.setAttribute('data-progress', '0');
+    
+    const quizContainer = document.querySelector('.quiz-container');
+    if (quizContainer) {
+        quizContainer.innerHTML = `
+            <div class="quiz-header">
+                <div>
+                    <h1 class="quiz-title">MED QUIZ</h1>
+                    <p class="quiz-subtitle">Reviewing Incorrect Answers</p>
+                </div>
+                <div class="stats-container">
+                    <div class="stat">
+                        <span class="stat-value" id="score">0</span>
+                        <span class="stat-label">Score</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="timer">00:00</span>
+                        <span class="stat-label">Time</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="streak">0</span>
+                        <span class="stat-label">Streak</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="category">Review</span>
+                        <span class="stat-label">Mode</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar" style="width: 10%"></div>
+            </div>
+            <div class="question-meta">
+                <div class="question-tags">
+                    <span class="tag" id="category-tag">Biochemistry</span>
+                    <span class="tag" id="difficulty-tag">
+                        <span class="difficulty-indicator difficulty-medium"></span>
+                        Medium
+                    </span>
+                </div>
+                <button class="bookmark-btn" id="bookmark-btn" aria-label="Bookmark question">
+                    <i class="fas fa-bookmark"></i>
+                </button>
+            </div>
+            <div class="question-number">Question <span id="current-question">1</span> of <span id="total-questions">${wrongQuestions.length}</span></div>
+            <div class="question-text" id="question"></div>
+            <div class="options-grid" id="options-container"></div>
+            <div class="feedback correct" id="feedback" style="display: none;">
+                <i class="fas fa-check-circle feedback-icon"></i>
+                <div class="feedback-text">Correct! Well done.</div>
+            </div>
+            <button class="btn btn-secondary" id="show-explanation-btn" style="display: none;">
+                <i class="fas fa-info-circle"></i> Show Explanation
+            </button>
+            <div class="explanation-container" id="explanation-container">
+                <div class="explanation">
+                    <div class="explanation-title">Explanation:</div>
+                    <div id="explanation-text"></div>
+                </div>
+            </div>
+            <div class="navigation">
+                <button class="btn btn-secondary" id="prev-btn" disabled>
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                <button class="btn btn-primary" id="next-btn">
+                    Next Question <i class="fas fa-arrow-right"></i>
+                </button>
+                <button class="btn btn-danger" id="skip-btn">
+                    <i class="fas fa-forward"></i> Skip
+                </button>
+            </div>
+        `;
+    }
+    
+    initQuiz();
+}
+function restartQuiz() {
+    currentQuestionIndex = 0;
+    score = 0;
+    streak = 0;
+    timeElapsed = 0;
+    answers = [];
+    selectedOption = null;
+    performanceMetrics = {
+        categories: {},
+        difficulties: { Easy: 0, Medium: 0, Hard: 0, "Very Hard": 0 },
+        totalCorrect: 0,
+        totalQuestions: 0,
+        totalTime: 0
+    };
+    
+    questions.length = 0;
+    questions.push(...originalQuestions);
+    
+    if (timerInterval) {
+        clearInterval(timerInterval);
+    }
+    
+    body.setAttribute('data-progress', '0');
+    
+    const quizContainer = document.querySelector('.quiz-container');
+    if (quizContainer) {
+        quizContainer.innerHTML = `
+            <div class="quiz-header">
+                <div>
+                    <h1 class="quiz-title">MED QUIZ</h1>
+                    <p class="quiz-subtitle">Test your medical knowledge</p>
+                </div>
+                <div class="stats-container">
+                    <div class="stat">
+                        <span class="stat-value" id="score">0</span>
+                        <span class="stat-label">Score</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="timer">00:00</span>
+                        <span class="stat-label">Time</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="streak">0</span>
+                        <span class="stat-label">Streak</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="category">All</span>
+                        <span class="stat-label">Category</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar" style="width: 10%"></div>
+            </div>
+            <div class="question-meta">
+                <div class="question-tags">
+                    <span class="tag" id="category-tag">Biochemistry</span>
+                    <span class="tag" id="difficulty-tag">
+                        <span class="difficulty-indicator difficulty-medium"></span>
+                        Medium
+                    </span>
+                </div>
+                <button class="bookmark-btn" id="bookmark-btn" aria-label="Bookmark question">
+                    <i class="fas fa-bookmark"></i>
+                </button>
+            </div>
+            <div class="question-number">Question <span id="current-question">1</span> of <span id="total-questions">15</span></div>
+            <div class="question-text" id="question"></div>
+            <div class="options-grid" id="options-container"></div>
+            <div class="feedback correct" id="feedback" style="display: none;">
+                <i class="fas fa-check-circle feedback-icon"></i>
+                <div class="feedback-text">Correct! Well done.</div>
+            </div>
+            <button class="btn btn-secondary" id="show-explanation-btn" style="display: none;">
+                <i class="fas fa-info-circle"></i> Show Explanation
+            </button>
+            <div class="explanation-container" id="explanation-container">
+                <div class="explanation">
+                    <div class="explanation-title">Explanation:</div>
+                    <div id="explanation-text"></div>
+                </div>
+            </div>
+            <div class="navigation">
+                <button class="btn btn-secondary" id="prev-btn" disabled>
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                <button class="btn btn-primary" id="next-btn">
+                    Next Question <i class="fas fa-arrow-right"></i>
+                </button>
+                <button class="btn btn-danger" id="skip-btn">
+                    <i class="fas fa-forward"></i> Skip
+                </button>
+            </div>
+        `;
+    }
+    
+    initQuiz();
+}
+function markForReview() {
+    toggleBookmark();
+    hideQuickActionsModal();
+}
+function viewExplanation() {
+    if (!answers[currentQuestionIndex]) return;
+    toggleExplanation();
+    hideQuickActionsModal();
+}
+function getHint() {
+    if (answers[currentQuestionIndex]) return;
+    const wrongOptions = Array.from(document.querySelectorAll('.option')).filter((opt, idx) => idx !== questions[currentQuestionIndex].answer);
+    const randomWrong = wrongOptions[Math.floor(Math.random() * wrongOptions.length)];
+    randomWrong.style.opacity = '0.5';
+    randomWrong.style.pointerEvents = 'none';
+    const hintText = document.createElement('div');
+    hintText.textContent = 'Hint: One wrong option eliminated!';
+    hintText.classList.add('feedback', 'skipped');
+    optionsContainer.before(hintText);
+    setTimeout(() => hintText.remove(), 3000);
+    hideQuickActionsModal();
+}
+function reportQuestion() {
+    alert('Question reported. Thank you for your feedback!');
+    hideQuickActionsModal();
+}
+function toggleTheme() {
+    if (!body || !themeToggle) return;
+    const currentTheme = body.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' :
+                    currentTheme === 'light' ? 'minimal' : 'dark';
+    
+    body.setAttribute('data-theme', newTheme);
+    themeToggle.innerHTML = newTheme === 'dark' ? '<i class="fas fa-moon"></i>' :
+                          newTheme === 'light' ? '<i class="fas fa-sun"></i>' :
+                          '<i class="fas fa-paint-brush"></i>';
+    
+    localStorage.setItem('theme', newTheme);
+}
+function toggleSound() {
+    if (!soundToggle) return;
+    soundsEnabled = !soundsEnabled;
+    soundToggle.innerHTML = soundsEnabled ? '<i class="fas fa-volume-up"></i>' : '<i class="fas fa-volume-mute"></i>';
+    
+    localStorage.setItem('soundsEnabled', soundsEnabled);
+}
+function toggleStudyMode() {
+    if (!studyModeToggle) return;
+    studyMode = studyModeToggle.checked;
+    if (showExplanationBtn && explanationContainer) {
+        if (studyMode) {
+            showExplanationBtn.style.display = 'block';
+            explanationContainer.classList.add('expanded');
+            showExplanationBtn.innerHTML = '<i class="fas fa-info-circle"></i> Hide Explanation';
+        } else {
+            showExplanationBtn.style.display = 'none';
+            explanationContainer.classList.remove('expanded');
+        }
+    }
+    localStorage.setItem('studyMode', studyMode);
+}
+function playSound(type) {
+    if (!soundsEnabled) return;
+    
+    try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        if (type === 'correct') {
+            const notes = [523.25, 659.25, 783.99];
+            notes.forEach((freq, i) => {
+                setTimeout(() => {
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
+                    oscillator.type = 'sine';
+                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                    oscillator.start(audioContext.currentTime + i * 0.1);
+                    oscillator.stop(audioContext.currentTime + i * 0.1 + 0.3);
+                }, i * 100);
+            });
+        } else if (type === 'incorrect') {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+            oscillator.type = 'sawtooth';
+            gainNode.gain.setValueAtTime(0.05, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 0.4);
+        } else if (type === 'bookmark') {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+            oscillator.type = 'triangle';
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 0.2);
+        }
+    } catch (e) {
+        console.log('Web Audio API not supported');
+    }
+}
+function createConfetti() {
+    if (!confettiContainer) return;
+    const colors = ['#4361ee', '#4cc9f0', '#f72585', '#f9c74f', '#7209b7'];
+    
+    for (let i = 0; i < 60; i++) {
+        const confetti = document.createElement('div');
+        confetti.classList.add('confetti');
+        confetti.style.left = Math.random() * 100 + 'vw';
+        confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.width = (6 + Math.random() * 12) + 'px';
+        confetti.style.height = (6 + Math.random() * 12) + 'px';
+        confetti.style.animation = `confettiFall ${1.5 + Math.random() * 2.5}s linear forwards`;
+        confettiContainer.appendChild(confetti);
+        
+        setTimeout(() => {
+            if (confetti.parentNode) confetti.remove();
+        }, 4000);
+    }
+}
+function showStatsModal() {
+    if (!statsModal) return;
+    const totalQuestions = performanceMetrics.totalQuestions;
+    const correctAnswers = performanceMetrics.totalCorrect;
+    const accuracy = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
+    const avgTime = totalQuestions > 0 ? Math.round(performanceMetrics.totalTime / totalQuestions) : 0;
+    
+    const modalTotal = document.getElementById('modal-total-questions');
+    const modalCorrect = document.getElementById('modal-correct-answers');
+    const modalAccuracy = document.getElementById('modal-accuracy');
+    const modalAvgTime = document.getElementById('modal-avg-time');
+    if (modalTotal) modalTotal.textContent = totalQuestions;
+    if (modalCorrect) modalCorrect.textContent = correctAnswers;
+    if (modalAccuracy) modalAccuracy.textContent = `${accuracy}%`;
+    if (modalAvgTime) modalAvgTime.textContent = `${avgTime}s`;
+    
+    const categoryStatsContainer = document.getElementById('category-stats');
+    if (categoryStatsContainer) {
+        categoryStatsContainer.innerHTML = `
+            <table style="width:100%; border-collapse: collapse;">
+                <thead>
+                    <tr><th>Category</th><th>Accuracy</th><th>Correct/Total</th></tr>
+                </thead>
+                <tbody>
+                    ${Object.entries(performanceMetrics.categories).map(([category, stats]) => {
+                        const categoryAccuracy = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
+                        return `<tr><td>${category}</td><td>${categoryAccuracy}%</td><td>${stats.correct}/${stats.total}</td></tr>`;
+                    }).join('')}
+                </tbody>
+            </table>
+        `;
+    }
+    
+    const difficultyStatsContainer = document.getElementById('difficulty-stats');
+    if (difficultyStatsContainer) {
+        difficultyStatsContainer.innerHTML = `
+            <table style="width:100%; border-collapse: collapse;">
+                <thead>
+                    <tr><th>Difficulty</th><th>Accuracy</th><th>Correct/Total</th></tr>
+                </thead>
+                <tbody>
+                    ${Object.entries(performanceMetrics.difficulties).map(([difficulty, correctCount]) => {
+                        const diffTotals = {};
+                        answers.forEach(ans => {
+                            if (ans.difficulty && ans.isCorrect !== undefined) {
+                                if (!diffTotals[ans.difficulty]) diffTotals[ans.difficulty] = { correct: 0, total: 0 };
+                                diffTotals[ans.difficulty].total++;
+                                if (ans.isCorrect) diffTotals[ans.difficulty].correct++;
+                            }
+                        });
+                        const totalForDifficulty = diffTotals[difficulty] ? diffTotals[difficulty].total : 0;
+                        if (totalForDifficulty > 0) {
+                            const difficultyAccuracy = Math.round((correctCount / totalForDifficulty) * 100);
+                            return `<tr><td>${difficulty}</td><td>${difficultyAccuracy}%</td><td>${correctCount}/${totalForDifficulty}</td></tr>`;
+                        }
+                        return '';
+                    }).join('')}
+                </tbody>
+            </table>
+        `;
+    }
+    
+    const historyContainer = document.getElementById('history-stats');
+    if (historyContainer) {
+        if (quizHistory.length === 0) {
+            historyContainer.innerHTML = '<p>No history yet.</p>';
+        } else {
+            historyContainer.innerHTML = `
+                <table style="width:100%; border-collapse: collapse;">
+                    <thead>
+                        <tr><th>Date</th><th>Score</th><th>Percentage</th><th>Time</th><th>Streak</th></tr>
+                    </thead>
+                    <tbody>
+                        ${quizHistory.map(h => {
+                            const date = new Date(h.timestamp).toLocaleString();
+                            return `<tr><td>${date}</td><td>${h.score}</td><td>${h.percentage}%</td><td>${h.timeSpent}s</td><td>${h.streak}</td></tr>`;
+                        }).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+    }
+    
+    statsModal.classList.add('active');
+}
+function hideStatsModal() {
+    if (statsModal) statsModal.classList.remove('active');
+}
+function showQuickActionsModal() {
+    if (quickActionsModal) quickActionsModal.classList.add('active');
+}
+function hideQuickActionsModal() {
+    if (quickActionsModal) quickActionsModal.classList.remove('active');
+}
+function loadPreferences() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme && body) {
+        body.setAttribute('data-theme', savedTheme);
+        if (themeToggle) {
+            themeToggle.innerHTML = savedTheme === 'dark' ? '<i class="fas fa-moon"></i>' :
+                                  savedTheme === 'light' ? '<i class="fas fa-sun"></i>' :
+                                  '<i class="fas fa-paint-brush"></i>';
+        }
+    }
+    
+    const savedSounds = localStorage.getItem('soundsEnabled');
+    if (savedSounds !== null) {
+        soundsEnabled = savedSounds === 'true';
+        if (soundToggle) {
+            soundToggle.innerHTML = soundsEnabled ? '<i class="fas fa-volume-up"></i>' : '<i class="fas fa-volume-mute"></i>';
+        }
+    }
+    
+    const savedStudyMode = localStorage.getItem('studyMode');
+    if (savedStudyMode !== null) {
+        studyMode = savedStudyMode === 'true';
+        if (studyModeToggle) studyModeToggle.checked = studyMode;
+        if (studyMode && showExplanationBtn && explanationContainer) {
+            showExplanationBtn.style.display = 'block';
+            explanationContainer.classList.add('expanded');
+            showExplanationBtn.innerHTML = '<i class="fas fa-info-circle"></i> Hide Explanation';
+        }
+    }
+}
+function saveBookmarks() {
+    localStorage.setItem('bookmarkedQuestions', JSON.stringify(bookmarkedQuestions));
+}
+function loadQuizHistory() {
+    const saved = localStorage.getItem('quizHistory');
+    if (saved) {
+        try {
+            quizHistory = JSON.parse(saved);
+        } catch (e) {
+            quizHistory = [];
+        }
+    }
+    loadBookmarks();
+}
+function saveQuizHistory() {
+    const maxScore = questions.reduce((sum, q) => sum + getScoreForDifficulty(q.difficulty), 0);
+    quizHistory.push({
+        timestamp: new Date().toISOString(),
+        score: score,
+        percentage: ((score / maxScore) * 100).toFixed(1),
+        timeSpent: timeElapsed,
+        streak: streak,
+        answers: answers,
+        performanceMetrics: performanceMetrics
+    });
+    localStorage.setItem('quizHistory', JSON.stringify(quizHistory));
+}
+function loadBookmarks() {
+    const saved = localStorage.getItem('bookmarkedQuestions');
+    if (saved) {
+        try {
+            bookmarkedQuestions = JSON.parse(saved);
+        } catch (e) {
+            bookmarkedQuestions = [];
+        }
+    }
+}
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initQuiz);
+} else {
+    initQuiz();
+}
+</script>
+</body>
+</html>
