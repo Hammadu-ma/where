@@ -1,832 +1,893 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>CineLearn</title>
-  <meta name="description" content="An ultra-modern learning hub for Ethiopian students: navigate quickly to Grade 9–12 and University years. Fast, responsive, and beautiful." />
-  <meta name="theme-color" content="#111118" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cine Learn | Immersive Education</title>
+    <meta name="description" content="An ultra-modern learning hub for Ethiopian students: navigate quickly to Grade 9–12, University years, videos, books, worksheets, exams, and blogs. Fast, responsive, and beautiful.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1f2937">
+    <style>
+        :root {
+            --primary-bg: #f9fafb;
+            --primary-dark: #1f2937;
+            --primary-light: #e5e7eb;
+            --accent-blue: #3b82f6;
+            --accent-gradient: linear-gradient(135deg, #ff4fa3, #ff8a3d);
+            --text-color: #111827;
+            --text-dim: #6b7280;
+            --border: #e5e7eb;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --transition: all 0.2s ease;
+            --radius-sm: 6px;
+            --radius-md: 8px;
+        }
 
-  <style>
-    :root {
-      --bg: #121219;
-      --surface: #171722;
-      --surface-2: #1c1c2a;
-      --shadow-dark: #0b0b12;
-      --shadow-light: #23233a;
-      --text: #f1f1ff;
-      --muted: #bdbde3;
-      --pink: #ff4fa3;
-      --orange: #ff8a3d;
-      --gradient: linear-gradient(135deg, var(--pink), var(--orange));
-      --glass: rgba(255, 255, 255, 0.06);
-      --radius-lg: 16px;
-      --radius-md: 12px;
-      --shadow-neu: 6px 6px 14px var(--shadow-dark), -6px -6px 14px var(--shadow-light);
-      --shadow-neu-inset: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
-      --transition: 240ms cubic-bezier(.2,.8,.2,1);
-    }
+        .dark-mode {
+            --primary-bg: #111827;
+            --primary-dark: #1f2937;
+            --primary-light: #374151;
+            --accent-blue: #60a5fa;
+            --text-color: #f3f4f6;
+            --text-dim: #9ca3af;
+            --border: #374151;
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
 
-    @media (prefers-color-scheme: light) {
-      :root {
-        --bg: #f7f7ff;
-        --surface: #ffffff;
-        --surface-2: #f2f3ff;
-        --shadow-dark: #cfd2f3;
-        --shadow-light: #ffffff;
-        --text: #171721;
-        --muted: #616186;
-      }
-    }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
 
-    * { box-sizing: border-box; }
-    html, body { height: 100%; }
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      line-height: 1.55;
-      padding: 12px;
-      overflow-x: hidden;
-    }
+        body {
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 1rem;
+            line-height: 1.5;
+        }
 
-    .container { max-width: 1100px; margin: 0 auto; padding: 12px; }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
 
-    /* Background */
-    .background-animation { 
-      position: fixed; inset: 0; z-index: -1; pointer-events: none; 
-    }
-    .bubble {
-      position: absolute; border-radius: 50%;
-      background: radial-gradient(closest-side, var(--glass), transparent 70%);
-      filter: blur(6px); opacity: .25;
-      animation: float 16s linear infinite;
-    }
-    .bubble:nth-child(2){ animation-duration: 22s; opacity: .18; }
-    .bubble:nth-child(3){ animation-duration: 28s; opacity: .12; }
-    @keyframes float { 
-      0%{transform:translateY(0) rotate(0)}
-      100%{transform:translateY(-900px) rotate(360deg)} 
-    }
+        /* Splash Screen */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            animation: fadeOut 0.8s ease forwards;
+            animation-delay: 2s;
+        }
 
-    /* Header */
-    header {
-      position: sticky; top: 8px; z-index: 20;
-      background: var(--surface);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-neu);
-      padding: 10px 14px;
-      display: grid; 
-      grid-template-columns: auto 1fr auto auto;
-      gap: 10px; 
-      align-items: center;
-    }
-    .logo { 
-      display: flex; 
-      align-items: center; 
-      gap: 10px; 
-      font-weight: 700; 
-    }
-    .logo i {
-      width: 36px; height: 36px; 
-      border-radius: 12px; 
-      display: grid; 
-      place-items: center;
-      background: var(--gradient); 
-      color: #fff;
-      box-shadow: 0 6px 18px rgba(255,77,90,.25), 0 4px 12px rgba(255,138,61,.22);
-    }
-    .logo span { 
-      font-size: 20px; 
-      font-family: 'Orbitron', sans-serif; 
-      letter-spacing: .6px; 
-    }
+        .splash-content {
+            text-align: center;
+            color: var(--text-color);
+        }
 
-    nav ul { 
-      list-style: none; 
-      display: flex; 
-      gap: 8px; 
-      padding: 0; 
-      margin: 0; 
-    }
-    nav a {
-      display: inline-block; 
-      text-decoration: none; 
-      color: var(--text);
-      font-weight: 600; 
-      font-size: 14px; 
-      padding: 9px 12px; 
-      border-radius: 12px;
-      background: var(--surface); 
-      box-shadow: var(--shadow-neu);
-      position: relative; 
-      overflow: hidden; 
-      transition: transform var(--transition), box-shadow var(--transition), color var(--transition);
-    }
-    nav a::after {
-      content:""; 
-      position:absolute; 
-      inset:0; 
-      border-radius:inherit;
-      background: var(--gradient); 
-      opacity:0; 
-      transition: opacity var(--transition);
-      z-index: -1;
-    }
-    nav a:hover, nav a.active { 
-      color:#fff; 
-      transform: translateY(-2px); 
-    }
-    nav a:hover::after, nav a.active::after { 
-      opacity: .9; 
-    }
+        .splash-logo {
+            width: 80px;
+            animation: bounce 1.5s infinite;
+        }
 
-    .menu-icon {
-      display: none; 
-      width: 40px; 
-      height: 40px; 
-      border: none; 
-      background: var(--surface);
-      border-radius: 12px; 
-      box-shadow: var(--shadow-neu); 
-      position: relative; 
-      cursor: pointer;
-    }
-    .menu-icon span {
-      position: absolute; 
-      left: 10px; 
-      right: 10px; 
-      height: 2px; 
-      background: var(--text);
-      border-radius: 2px; 
-      transition: var(--transition);
-    }
-    .menu-icon span:nth-child(1){ top: 12px; }
-    .menu-icon span:nth-child(2){ top: 19px; }
-    .menu-icon span:nth-child(3){ top: 26px; }
-    .menu-icon.active span:nth-child(1){ top: 19px; transform: rotate(45deg); }
-    .menu-icon.active span:nth-child(2){ opacity: 0; transform: scaleX(0); }
-    .menu-icon.active span:nth-child(3){ top: 19px; transform: rotate(-45deg); }
+        .splash-title {
+            font-size: 1.5rem;
+            margin-top: 0.75rem;
+            font-weight: 600;
+        }
 
-    .user-actions { 
-      display: flex; 
-      gap: 8px; 
-    }
-    .btn {
-      border: 0; 
-      border-radius: 12px; 
-      padding: 9px 14px; 
-      font-weight: 700; 
-      font-size: 14px; 
-      cursor: pointer;
-      transition: transform var(--transition), box-shadow var(--transition);
-    }
-    .btn.neu { 
-      background: var(--surface); 
-      color: var(--text); 
-      box-shadow: var(--shadow-neu); 
-    }
-    .btn.fill { 
-      background: var(--gradient); 
-      color: #fff; 
-      box-shadow: 0 8px 22px rgba(255,79,163,.18), 0 6px 16px rgba(255,138,61,.18); 
-    }
-    .btn:hover { 
-      transform: translateY(-2px); 
-    }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
 
-    /* Hero */
-    .hero {
-      display: grid; 
-      grid-template-columns: 1.1fr 0.9fr; 
-      gap: 20px; 
-      align-items: center;
-      background: var(--surface); 
-      border-radius: var(--radius-lg); 
-      box-shadow: var(--shadow-neu); 
-      padding: 22px; 
-      margin: 18px auto 28px;
-      overflow: clip; 
-      position: relative;
-    }
-    h1 {
-      font-size: clamp(1.8rem, 2.4vw + 1rem, 2.8rem);
-      margin: 0 0 10px; 
-      line-height: 1.15;
-      background: var(--gradient); 
-      -webkit-background-clip: text; 
-      -webkit-text-fill-color: transparent;
-      font-family: 'Orbitron', sans-serif;
-    }
-    .eyebrow { 
-      color: var(--muted); 
-      font-weight: 700; 
-      letter-spacing: .14em; 
-      font-size: 12px; 
-      text-transform: uppercase; 
-      margin-bottom: 8px; 
-    }
-    .hero p { 
-      color: var(--muted); 
-      margin: 0 0 14px; 
-    }
+        @keyframes fadeOut {
+            to { opacity: 0; visibility: hidden; }
+        }
 
-    .searchbox { 
-      position: relative; 
-      margin-top: 10px; 
-    }
-    .searchbox input {
-      width: 100%; 
-      padding: 12px 14px 12px 42px; 
-      border: 0; 
-      border-radius: 12px;
-      background: var(--surface-2); 
-      color: var(--text); 
-      box-shadow: var(--shadow-neu-inset); 
-      font-size: 14px;
-      outline: 2px solid transparent; 
-      outline-offset: 2px; 
-      transition: outline var(--transition);
-    }
-    .searchbox input:focus { 
-      outline: 2px solid var(--pink); 
-    }
-    .searchbox i { 
-      position: absolute; 
-      left: 12px; 
-      top: 50%; 
-      transform: translateY(-50%); 
-      opacity: .8; 
-    }
+        /* Header */
+        header {
+            position: sticky;
+            top: 0.5rem;
+            z-index: 20;
+            background: var(--primary-bg);
+            border-radius: var(--radius-md);
+            box-shadow: 0 2px 8px var(--shadow);
+            padding: 0.75rem 1rem;
+            display: grid;
+            grid-template-columns: auto 1fr auto auto;
+            gap: 0.75rem;
+            align-items: center;
+        }
 
-    .hero-media {
-      aspect-ratio: 16 / 10; 
-      border-radius: 16px; 
-      background: var(--surface-2); 
-      box-shadow: var(--shadow-neu);
-      display: grid; 
-      place-items: center; 
-      position: relative; 
-      overflow: hidden;
-    }
-    .hero-media .badge {
-      position: absolute; 
-      top: 10px; 
-      left: 10px; 
-      padding: 6px 10px; 
-      font-weight: 800; 
-      font-size: 11px; 
-      letter-spacing: .08em;
-      border-radius: 999px; 
-      background: var(--gradient); 
-      color: #fff;
-    }
-    .hero-media .play {
-      width: 64px; 
-      height: 64px; 
-      border-radius: 20px; 
-      background: var(--gradient); 
-      display: grid; 
-      place-items: center; 
-      color: #fff;
-      box-shadow: 0 12px 28px rgba(255,79,163,.25), 0 10px 22px rgba(255,138,61,.25);
-    }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+        }
 
-    /* Sections */
-    .section-title {
-      text-align: center; 
-      font-family: 'Orbitron', sans-serif; 
-      margin: 26px 0 18px; 
-      position: relative;
-      font-size: clamp(1.3rem, .8vw + 1rem, 2rem);
-    }
-    .section-title::after {
-      content:""; 
-      display:block; 
-      height: 3px; 
-      width: 86px; 
-      margin: 8px auto 0; 
-      border-radius: 999px; 
-      background: var(--gradient);
-    }
+        .logo i {
+            font-size: 1.5rem;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-    .features {
-      display: grid; 
-      grid-template-columns: repeat(4, minmax(0, 1fr)); 
-      gap: 16px; 
-      margin-bottom: 28px;
-    }
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 0.75rem;
+        }
 
-    /* Feature cards */
-    .feature-card {
-      position: relative; 
-      border-radius: 16px; 
-      background: var(--surface); 
-      box-shadow: var(--shadow-neu);
-      overflow: hidden; 
-      perspective: 1000px; 
-      cursor: pointer; 
-      min-height: 160px; 
-      transition: transform var(--transition), box-shadow var(--transition);
-      text-decoration: none; 
-      color: inherit; 
-      display: block;
-    }
-    .feature-card-inner { 
-      position: relative; 
-      width: 100%; 
-      height: 100%; 
-      transform-style: preserve-3d; 
-      transition: transform 600ms; 
-    }
-    .feature-card:hover { 
-      transform: translateY(-3px); 
-      box-shadow: 10px 10px 22px var(--shadow-dark), -10px -10px 22px var(--shadow-light); 
-    }
-    .feature-card:hover .feature-card-inner { 
-      transform: rotateY(180deg); 
-    }
-    .feature-card-front, .feature-card-back {
-      position: absolute; 
-      inset: 0; 
-      backface-visibility: hidden;
-      display: grid; 
-      gap: 8px; 
-      place-content: center; 
-      text-align: center; 
-      padding: 18px;
-    }
-    .feature-card-front .feature-icon {
-      width: 60px; 
-      height: 60px; 
-      margin: 0 auto 6px; 
-      border-radius: 50%;
-      background: var(--surface-2); 
-      box-shadow: var(--shadow-neu-inset); 
-      display: grid; 
-      place-items: center; 
-      color: var(--orange); 
-      font-size: 22px;
-    }
-    .feature-card-front h3 { 
-      margin: 4px 0 2px; 
-      font-size: 1.05rem; 
-      color: var(--orange); 
-    }
-    .feature-card-front p { 
-      margin: 0; 
-      color: var(--muted); 
-      font-size: .92rem; 
-    }
+        nav a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+        }
 
-    .feature-card-back {
-      transform: rotateY(180deg);
-      background: radial-gradient(120% 120% at 50% 0%, rgba(255,79,163,.14), rgba(255,138,61,.10)), var(--surface);
-    }
-    .feature-card-back p { 
-      color: #fff; 
-      opacity: .9; 
-      margin-bottom: 10px; 
-    }
-    .feature-card-back .cta {
-      display: inline-block; 
-      padding: 8px 12px; 
-      border-radius: 10px; 
-      background: var(--gradient); 
-      color: #fff; 
-      font-weight: 800; 
-      letter-spacing: .02em;
-    }
+        nav a:hover, nav a.active {
+            background: var(--accent-blue);
+            color: var(--text-color);
+        }
 
-    /* Newsletter */
-    .newsletter {
-      background: var(--surface); 
-      border-radius: var(--radius-lg); 
-      box-shadow: var(--shadow-neu);
-      padding: 20px; 
-      text-align: center; 
-      margin: 16px auto 28px;
-    }
-    .newsletter p { 
-      color: var(--muted); 
-      max-width: 560px; 
-      margin: 8px auto 16px; 
-    }
-    .newsletter-form { 
-      display: flex; 
-      gap: 8px; 
-      max-width: 500px; 
-      margin: 0 auto; 
-    }
-    .newsletter-form input {
-      flex: 1; 
-      padding: 12px; 
-      border: 0; 
-      border-radius: 12px; 
-      background: var(--surface-2); 
-      color: var(--text); 
-      box-shadow: var(--shadow-neu-inset);
-      outline: 2px solid transparent; 
-      outline-offset: 2px; 
-      transition: outline var(--transition);
-    }
-    .newsletter-form input:focus { 
-      outline: 2px solid var(--orange); 
-    }
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
 
-    /* Footer */
-    footer {
-      margin-top: auto; 
-      padding: 24px; 
-      border-radius: var(--radius-lg);
-      background: var(--surface); 
-      box-shadow: var(--shadow-neu); 
-      position: relative; 
-      overflow: hidden;
-    }
-    footer::before {
-      content:""; 
-      position:absolute; 
-      top:0; 
-      left:0; 
-      right:0; 
-      height: 4px; 
-      background: var(--gradient);
-    }
-    .footer-grid {
-      display: grid; 
-      grid-template-columns: repeat(4, minmax(0,1fr)); 
-      gap: 18px; 
-      margin-bottom: 14px;
-    }
-    .footer-col h4 { 
-      margin: 0 0 10px; 
-      font-size: 1rem; 
-      color: var(--pink); 
-      position: relative; 
-      display: inline-block; 
-    }
-    .footer-col h4::after { 
-      content:""; 
-      display:block; 
-      height:2px; 
-      width:28px; 
-      margin-top:6px; 
-      background: var(--orange); 
-      border-radius: 999px; 
-    }
-    .footer-col p { 
-      color: var(--muted); 
-      margin: 0; 
-    }
-    .footer-col ul { 
-      list-style: none; 
-      padding: 0; 
-      margin: 0; 
-    }
-    .footer-col li { 
-      margin: 8px 0; 
-    }
-    .footer-col a { 
-      color: var(--text); 
-      text-decoration: none; 
-      font-size: .95rem; 
-      display: inline-flex; 
-      align-items: center; 
-      gap: 8px; 
-      padding: 6px 8px; 
-      border-radius: 10px; 
-      background: var(--surface); 
-      box-shadow: var(--shadow-neu); 
-      transition: transform var(--transition); 
-    }
-    .footer-col a:hover { 
-      transform: translateY(-2px); 
-      background: linear-gradient(0deg, var(--glass), var(--glass)), var(--surface); 
-    }
+        .hamburger span {
+            width: 20px;
+            height: 2px;
+            background: var(--text-color);
+            margin: 2px 0;
+            border-radius: 2px;
+            transition: var(--transition);
+        }
 
-    .socials { 
-      display: flex; 
-      gap: 8px; 
-      flex-wrap: wrap; 
-      margin-top: 10px; 
-    }
-    .socials a { 
-      width: 38px; 
-      height: 38px; 
-      display: grid; 
-      place-items: center; 
-      border-radius: 12px; 
-      background: var(--surface-2); 
-      box-shadow: var(--shadow-neu); 
-      color: var(--text); 
-    }
-    .copyright { 
-      text-align: center; 
-      font-size: .88rem; 
-      color: var(--muted); 
-      padding-top: 10px; 
-      border-top: 1px solid rgba(255,255,255,.06); 
-    }
+        .hamburger.active span:nth-child(1) {
+            transform: translateY(6px) rotate(45deg);
+        }
 
-    /* Responsive */
-    @media (max-width: 1080px) {
-      .features { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    }
-    @media (max-width: 860px) {
-      .hero { grid-template-columns: 1fr; }
-      .features { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      nav { display: none; }
-      nav.open { 
-        display: block; 
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: var(--surface);
-        padding: 10px;
-        border-radius: var(--radius-md);
-        box-shadow: var(--shadow-neu);
-        margin-top: 10px;
-      }
-      nav ul { flex-direction: column; gap: 10px; margin-top: 6px; }
-      .menu-icon { display: block; }
-      header { grid-template-columns: auto 1fr auto; }
-    }
-    @media (max-width: 520px) {
-      .features { grid-template-columns: 1fr; }
-      .newsletter-form { flex-direction: column; }
-      .footer-grid { grid-template-columns: 1fr; }
-    }
-  </style>
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: translateY(-6px) rotate(-45deg);
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .user-actions button {
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            background: var(--accent-blue);
+            color: var(--text-color);
+            transition: var(--transition);
+        }
+
+        .user-actions button:hover {
+            background: var(--text-dim);
+        }
+
+        /* Hero Section */
+        .hero {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            align-items: center;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-radius: var(--radius-md);
+            background: var(--primary-bg);
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+
+        .hero-content h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-content p {
+            font-size: 1rem;
+            color: var(--text-dim);
+            margin-bottom: 1rem;
+        }
+
+        .searchbox {
+            position: relative;
+            margin-top: 1rem;
+        }
+
+        .searchbox input {
+            width: 100%;
+            padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+            border: none;
+            border-radius: var(--radius-sm);
+            background: var(--primary-light);
+            color: var(--text-color);
+            font-size: 0.9rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .searchbox input:focus {
+            box-shadow: 0 0 0 2px var(--accent-blue);
+        }
+
+        .searchbox i {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-dim);
+        }
+
+        .hero-media {
+            aspect-ratio: 16 / 10;
+            border-radius: var(--radius-md);
+            background: var(--primary-light);
+            box-shadow: 0 2px 8px var(--shadow);
+            display: grid;
+            place-items: center;
+            position: relative;
+        }
+
+        .hero-media .badge {
+            position: absolute;
+            top: 0.75rem;
+            left: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: var(--radius-sm);
+            background: var(--accent-gradient);
+            color: #fff;
+        }
+
+        .hero-media .play {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--accent-gradient);
+            display: grid;
+            place-items: center;
+            color: #fff;
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        /* Sections */
+        .section-title {
+            text-align: center;
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin: 2rem 0 1.5rem;
+            color: var(--text-color);
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 3px;
+            margin: 0.5rem auto 0;
+            background: var(--accent-gradient);
+            border-radius: 2px;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .feature-card {
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            background: var(--primary-bg);
+            box-shadow: 0 2px 8px var(--shadow);
+            transition: var(--transition);
+            text-align: center;
+            text-decoration: none;
+            color: var(--text-color);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 1rem;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-color);
+            font-size: 1.25rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card p {
+            font-size: 0.875rem;
+            color: var(--text-dim);
+        }
+
+        /* Exams Section */
+        .exam-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .exam-card {
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            background: var(--primary-bg);
+            box-shadow: 0 2px 8px var(--shadow);
+            transition: var(--transition);
+        }
+
+        .exam-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .exam-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .exam-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            background: var(--accent-blue);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-color);
+            font-size: 1.1rem;
+        }
+
+        .exam-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .exam-description {
+            font-size: 0.875rem;
+            color: var(--text-dim);
+            margin-bottom: 0.5rem;
+        }
+
+        .quiz-count {
+            display: inline-block;
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--accent-blue);
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+        }
+
+        .quiz-list {
+            list-style: none;
+            max-height: 180px;
+            overflow-y: auto;
+            transition: max-height 0.3s ease;
+        }
+
+        .quiz-list.collapsed {
+            max-height: 180px;
+        }
+
+        .quiz-list.expanded {
+            max-height: 600px;
+        }
+
+        .quiz-list::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .quiz-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .quiz-list::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        .quiz-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .quiz-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.6rem 0.75rem;
+            border-radius: var(--radius-sm);
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 0.875rem;
+        }
+
+        .quiz-link:hover {
+            background: var(--primary-light);
+        }
+
+        .quiz-link-text {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .quiz-link i {
+            color: var(--accent-blue);
+        }
+
+        .view-all-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 0.75rem;
+            color: var(--accent-blue);
+            font-weight: 500;
+            font-size: 0.875rem;
+            border-top: 1px solid var(--border);
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .view-all-btn:hover {
+            background: var(--primary-light);
+        }
+
+        .view-all-btn i {
+            transition: transform 0.2s ease;
+        }
+
+        .view-all-btn.expanded i {
+            transform: rotate(180deg);
+        }
+
+        /* Newsletter */
+        .newsletter {
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            background: var(--primary-bg);
+            box-shadow: 0 2px 8px var(--shadow);
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .newsletter h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .newsletter p {
+            font-size: 0.875rem;
+            color: var(--text-dim);
+            max-width: 500px;
+            margin: 0 auto 1rem;
+        }
+
+        .newsletter-form {
+            display: flex;
+            gap: 0.5rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .newsletter-form input {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            border-radius: var(--radius-sm);
+            background: var(--primary-light);
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+
+        .newsletter-form button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--radius-sm);
+            background: var(--accent-blue);
+            color: var(--text-color);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .newsletter-form button:hover {
+            background: var(--text-dim);
+        }
+
+        /* Footer */
+        footer {
+            margin-top: auto;
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            background: var(--primary-bg);
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-col h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--accent-blue);
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-col a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-size: 0.875rem;
+            transition: var(--transition);
+        }
+
+        .footer-col a:hover {
+            color: var(--accent-blue);
+        }
+
+        .copyright {
+            text-align: center;
+            font-size: 0.875rem;
+            color: var(--text-dim);
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        /* Responsive */
+        @media (max-width: 860px) {
+            header {
+                grid-template-columns: auto 1fr auto;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            nav {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--primary-bg);
+                padding: 1rem;
+                border-radius: var(--radius-md);
+                box-shadow: 0 2px 8px var(--shadow);
+            }
+
+            nav.open {
+                display: block;
+            }
+
+            nav ul {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .hero {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-media {
+                max-width: 500px;
+                margin: 0 auto;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .hero h1 {
+                font-size: 1.5rem;
+            }
+
+            .hero p {
+                font-size: 0.875rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .feature-card, .exam-card {
+                padding: 1rem;
+            }
+
+            .newsletter-form {
+                flex-direction: column;
+            }
+
+            .newsletter-form input,
+            .newsletter-form button {
+                width: 100%;
+                border-radius: var(--radius-sm);
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
-<body>
-  <!-- Background Animation -->
-  <div class="background-animation" aria-hidden="true">
-    <span class="bubble" style="width:80px;height:80px; left:10%; bottom:6%;"></span>
-    <span class="bubble" style="width:50px;height:50px; left:70%; bottom:12%;"></span>
-    <span class="bubble" style="width:100px;height:100px; left:35%; bottom:0%;"></span>
-  </div>
-
-  <!-- Header -->
-  <header class="container" role="banner">
-    <div class="logo" aria-label="CineLearn">
-      <i class="fa-solid fa-rocket" aria-hidden="true"></i>
-      <span>CineLearn</span>
+<body class="light-mode">
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <div class="splash-content">
+            <img src="icon-192.png" alt="App Logo" class="splash-logo" />
+            <h1 class="splash-title">Cine Learn</h1>
+        </div>
     </div>
 
-    <nav id="site-nav" aria-label="Primary">
-      <ul>
-        <li><a href="#" class="active">Grades</a></li>
-        <li><a href="#">University</a></li>
-        <li><a href="#">Subjects</a></li>
-        <li><a href="#">About</a></li>
-      </ul>
-    </nav>
-
-    <div class="user-actions" role="group" aria-label="User actions">
-      <button class="btn neu" type="button">Login</button>
-      <button class="btn fill" type="button">Sign Up</button>
-    </div>
-
-    <button class="menu-icon" id="menu-btn" aria-label="Toggle menu" aria-controls="site-nav" aria-expanded="false">
-      <span></span><span></span><span></span>
-    </button>
-  </header>
-
-  <main id="main" class="container" role="main">
-    <!-- Hero -->
-    <section class="hero" id="home" aria-labelledby="hero-title">
-      <div>
-        <div class="eyebrow">🔥 Cine · Ethiopia-ready</div>
-        <h1 id="hero-title">Learn smarter — <span>from Grade 9 to University</span></h1>
-        <p>All your video lessons, books, and study sheets in one ultra-fast, beautiful place. Pick your grade and start learning instantly.</p>
-
-        <div class="searchbox" role="search" aria-label="Search the site">
-          <i class="fas fa-search" aria-hidden="true"></i>
-          <input id="globalSearch" type="text" placeholder="Search subjects, topics, or videos…" aria-label="Global search" />
+    <header class="container">
+        <div class="logo">
+            <i class="fas fa-play-circle"></i>
+            <span>Cine Learn</span>
         </div>
 
-        <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap;">
-          <a class="btn fill" href="#grades">Browse Grades</a>
-          <a class="btn neu" href="grade9.html">Open Grade 9</a>
+        <nav id="site-nav">
+            <ul>
+                <li><a href="#grades">Grades</a></li>
+                <li><a href="#university">University</a></li>
+                <li><a href="#subjects">Subjects</a></li>
+                <li><a href="videos.html" class="active">Videos</a></li>
+                <li><a href="#exams">Exams</a></li>
+                <li><a href="books.html">Books</a></li>
+                <li><a href="home.html">Worksheets</a></li>
+                <li><a href="#">Blogs</a></li>
+                <li><a href="#">About</a></li>
+            </ul>
+        </nav>
+
+        <div class="user-actions">
+            <button id="themeToggle"><i class="fas fa-moon"></i></button>
+            <a href="2.html"><button>Quiz 1</button></a>
+            <a href="quiz.html"><button>Quiz 2</button></a>
+            <a href="home.html"><button>Question Bank</button></a>
         </div>
 
-        <div style="margin-top:8px; display:flex; gap:10px; flex-wrap:wrap; font-size:13px; color:var(--muted);">
-          <span>⚡ Fast & responsive</span>
-          <span>🎯 Exam-ready</span>
-          <span>📱 Low-data friendly</span>
+        <div class="hamburger" id="hamburger-menu">
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
-      </div>
+    </header>
 
-      <div class="hero-media" aria-label="Featured lesson">
-        <span class="badge">Featured</span>
-        <div class="play" aria-hidden="true"><i class="fa-solid fa-play"></i></div>
-        <div style="position:absolute; bottom:10px; left:10px; font-weight:700;">Linear Equations Crash Course</div>
-      </div>
-    </section>
+    <main class="container">
+        <section class="hero" id="home">
+            <div class="hero-content">
+                <h1>Learn Smarter with Cine Learn</h1>
+                <p>Explore videos, books, worksheets, exams, and blogs tailored for Ethiopian students from Grade 9 to University.</p>
+                <div class="searchbox">
+                    <i class="fas fa-search"></i>
+                    <input id="globalSearch" type="text" placeholder="Search grades, subjects, or topics…" />
+                </div>
+                <div style="margin-top:0.75rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
+                    <a class="btn fill" href="#grades" style="padding:0.75rem 1.5rem; border-radius:6px; background:var(--accent-gradient); color:#fff;">Browse Grades</a>
+                    <a class="btn neu" href="grade9.html" style="padding:0.75rem 1.5rem; border-radius:6px; background:var(--primary-light); color:var(--text-color);">Open Grade 9</a>
+                </div>
+            </div>
+            <div class="hero-media">
+                <span class="badge">Featured</span>
+                <div class="play"><i class="fas fa-play"></i></div>
+                <div style="position:absolute; bottom:0.75rem; left:0.75rem; font-weight:600;">Linear Equations Crash Course</div>
+            </div>
+        </section>
 
-    <!-- Grades -->
-    <section class="section" id="grades" aria-labelledby="grades-title">
-      <h2 class="section-title" id="grades-title">Choose Your Grade</h2>
-      <div class="features" role="list" id="grades-grid"></div>
-    </section>
+        <h2 class="section-title">Grades</h2>
+        <div class="features" id="grades-grid"></div>
 
-    <!-- University -->
-    <section class="section" id="university" aria-labelledby="uni-title">
-      <h2 class="section-title" id="uni-title">University Years</h2>
-      <div class="features" role="list" id="uni-grid"></div>
-    </section>
+        <h2 class="section-title">University Years</h2>
+        <div class="features" id="uni-grid"></div>
 
-    <!-- Popular Subjects -->
-    <section class="section" id="subjects" aria-labelledby="subjects-title">
-      <h2 class="section-title" id="subjects-title">Popular Subjects</h2>
-      <div class="features" role="list" id="subjects-grid"></div>
-    </section>
+        <h2 class="section-title">Popular Subjects</h2>
+        <div class="features" id="subjects-grid"></div>
 
-    <!-- Why CineLearn -->
-    <section class="section" id="about" aria-labelledby="about-title">
-      <h2 class="section-title" id="about-title">Why CineLearn?</h2>
-      <div class="features" id="why-grid"></div>
-      <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap; justify-content:center;">
-        <a class="btn fill" href="#grades">Start Learning</a>
-        <a class="btn neu" href="grade9.html">Open Grade 9</a>
-      </div>
-    </section>
-
-    <!-- Newsletter -->
-    <section class="newsletter">
-      <h3 style="margin:0;">Stay Updated</h3>
-      <p>Join our newsletter for the latest lessons, exam tips, and updates tailored for Ethiopian students.</p>
-      <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Subscribed! 🎉');">
-        <input type="email" placeholder="Enter your email" aria-label="Email address" required>
-        <button class="btn fill" type="submit">Subscribe</button>
-      </form>
-    </section>
-  </main>
-
-  <footer class="container" role="contentinfo">
-    <div class="footer-grid">
-      <div class="footer-col">
-        <h4>CineLearn</h4>
-        <p>Made for students in Ethiopia — clean, fast, and focused on what matters. Learn smarter with curated videos, books, and sheets.</p>
-        <div class="socials" aria-label="Social links">
-          <a href="#" aria-label="Telegram"><i class="fa-brands fa-telegram"></i></a>
-          <a href="#" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
-          <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-          <a href="#" aria-label="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></a>
-        </div>
-      </div>
-      <div class="footer-col">
-        <h4>Explore</h4>
-        <ul>
-          <li><a href="grades"><i class="fa-regular fa-compass"></i> Grades 9–12</a></li>
-          <li><a href="university"><i class="fa-solid fa-user-graduate"></i> University Years</a></li>
-          <li><a href="subjects"><i class="fa-solid fa-book-open"></i> Popular Subjects</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Quick Links</h4>
-        <ul>
-          <li><a href="grade9.html"><i class="fa-solid fa-arrow-right"></i> Go to Grade 9</a></li>
-          <li><a href="#about"><i class="fa-regular fa-circle-question"></i> About</a></li>
-          <li><a href="#home"><i class="fa-solid fa-angle-up"></i> Back to top</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Contact</h4>
-        <p>Email: hello@cinelearn.et</p>
-        <p>Support: Mon–Sat, 9:00–18:00</p>
-        <p style="margin-top:8px;"><span class="btn neu" style="pointer-events:none;">Low-data Mode</span></p>
-      </div>
-    </div>
-    <div class="copyright">© 2025 CineLearn. All rights reserved.</div>
-  </footer>
-
-  <script>
-    // Data for cards with explicit URLs
-    const grades = [
-      { id: 'grade9',  title: 'Grade 9',  meta: 'Videos • Books • Sheets', hint: 'All core subjects', url: 'grade9.html' },
-      { id: 'grade10', title: 'Grade 10', meta: 'Prep for National Exam',   hint: 'Updated past papers', url: 'grade10.html' },
-      { id: 'grade11', title: 'Grade 11', meta: 'Advanced topics • Labs',   hint: 'Tracked progress', url: 'grade11.html' },
-      { id: 'grade12', title: 'Grade 12', meta: 'University-ready content', hint: 'Mock exams & tips', url: 'grade12.html' }
-    ];
-
-    const unis = [
-      { id: 'y1', title: 'Year 1',  meta: 'Common courses & skills', hint: 'Math • Chemistry • ICT', url: 'uni-year1.html' },
-      { id: 'y2', title: 'INTRO TO MED',  meta: 'BUCKLE DOWN',     hint: 'watch • lectures',        url: 'uni-year2.html' },
-      { id: 'y3', title: 'Year 3',  meta: 'Specialized modules',     hint: 'Tutorials • Notes',      url: 'uni-year3.html' },
-      { id: 'y4', title: 'Year 4+', meta: 'Research & internships',  hint: 'Guides • Templates',     url: 'uni-year4.html' }
-    ];
-
-    const subjects = [
-      { id: 'math', title: 'BOOKS • Geometry', tag: 'Math',     meta: 'Short videos • Worksheets', hint: 'Boost your speed',    url: 'book.html' },
-      { id: 'chem', title: 'Organic • Inorganic', tag: 'Chemistry',meta: 'Reactions • Labs',          hint: 'Clear explanations',  url: '#' },
-      { id: 'bio',  title: 'Cells • Genetics',   tag: 'Biology',  meta: 'Animations • Quizzes',      hint: 'Understand deeply',   url: '#' },
-      { id: 'eng',  title: 'Grammar • Reading',  tag: 'English',  meta: 'Practice sets',             hint: 'Improve fast',        url: '#' }
-    ];
-
-    const why = [
-      { icon:'bolt',  title:'Instant Navigation',   meta:'Jump between grades and topics with zero friction.', hint:'Seamless & intuitive', cta:'#grades' },
-      { icon:'bullseye', title:'Exam-ready Content', meta:'Curated videos and past papers aligned with the curriculum.', hint:'Prepare effectively', cta:'#subjects' },
-      { icon:'mobile-alt', title:'Looks Great Everywhere', meta:'From low-end phones to desktop. Smooth, low-data.', hint:'Optimized for all devices', cta:'#home' },
-      { icon:'sync-alt', title:'Updated Weekly', meta:'New lessons and playlists keep learning exciting.', hint:'Fresh content', cta:'#subjects' },
-    ];
-
-    // Feature Card Builder
-    function makeCard(item) {
-      const a = document.createElement('a');
-      a.className = 'feature-card';
-      a.href = item.url || item.cta || '#';
-      a.setAttribute('role', 'listitem');
-      a.setAttribute('aria-label', `Navigate to ${item.title}`);
-      a.innerHTML = `
-        <div class="feature-card-inner">
-          <div class="feature-card-front">
-            <div class="feature-icon"><i class="fas fa-book"></i></div>
-            <h3>${item.title}</h3>
-            <p>${item.meta}</p>
-          </div>
-          <div class="feature-card-back">
-            <p>${item.hint || ''}</p>
-            <span class="cta">Explore ${item.title}</span>
-          </div>
-        </div>
-      `;
-      return a;
-    }
-
-    function makeWhyCard(item) {
-      const a = document.createElement('a');
-      a.className = 'feature-card';
-      a.href = item.cta || '#';
-      a.innerHTML = `
-        <div class="feature-card-inner">
-          <div class="feature-card-front">
-            <div class="feature-icon"><i class="fas fa-${item.icon}</i></div>
-            <h3>${item.title}</h3>
-            <p>${item.meta}</p>
-          </div>
-          <div class="feature-card-back">
-            <p>${item.hint}</p>
-            <span class="cta">Learn more</span>
-          </div>
-        </div>`;
-      return a;
-    }
-
-    function populateGrid(container, items, builder = makeCard) {
-      container.innerHTML = '';
-      items.forEach(it => container.appendChild(builder(it)));
-    }
-
-    // Populate all grids
-    document.addEventListener('DOMContentLoaded', () => {
-      populateGrid(document.getElementById('grades-grid'), grades);
-      populateGrid(document.getElementById('uni-grid'), unis);
-      populateGrid(document.getElementById('subjects-grid'), subjects);
-      populateGrid(document.getElementById('why-grid'), why, makeWhyCard);
-    });
-
-    // Mobile menu toggle
-    const menuBtn = document.getElementById('menu-btn');
-    const nav = document.getElementById('site-nav');
-    if (menuBtn && nav) {
-      menuBtn.addEventListener('click', () => {
-        const open = nav.classList.toggle('open');
-        menuBtn.classList.toggle('active', open);
-        menuBtn.setAttribute('aria-expanded', String(open));
-      });
-    }
-
-    // Enhanced Search (Enter to jump)
-    const field = document.getElementById('globalSearch');
-    field?.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        const q = field.value.trim().toLowerCase();
-        if (!q) return;
-        if (/grade\s?9|g9|nine/.test(q)) window.location.href = 'grade9.html';
-        else if (/grade\s?10|g10|ten/.test(q)) window.location.href = 'grade10.html';
-        else if (/grade\s?11|g11|eleven/.test(q)) window.location.href = 'grade11.html';
-        else if (/grade\s?12|g12|twelve/.test(q)) window.location.href = 'grade12.html';
-        else if (/year\s?1|y1|first\syear/.test(q)) window.location.href = 'uni-year1.html';
-        else if (/year\s?2|y2|second\syear/.test(q)) window.location.href = 'uni-year2.html';
-        else if (/year\s?3|y3|third\syear/.test(q)) window.location.href = 'uni-year3.html';
-        else if (/year\s?4|\+|y4|fourth\syear|capstone/.test(q)) window.location.href = 'uni-year4.html';
-        else if (/math|algebra|geometry/.test(q)) window.location.href = 'subject-math.html';
-        else if (/chem|chemistry/.test(q)) window.location.href = 'subject-chem.html';
-        else if (/bio|biology/.test(q)) window.location.href = 'subject-bio.html';
-        else if (/eng|english/.test(q)) window.location.href = 'subject-eng.html';
-        else window.location.hash = '#subjects';
-      }
-    });
-  </script>
-</body>
-</html>
-
-
+        <h2 class="section-title">Exams</h2>
+        <div class="exam-grid" id="exams">
+            <div class="exam-card">
+                <div class="exam-header">
+                    <div class="exam-icon"><i class="fas fa-baby"></i></div>
+                    <div>
+                        <h3 class="exam-title">Embryology</h3>
+                        <p class="exam-description">Study of embryo development</p>
+                        <span class="quiz-count">6 quizzes</span>
+                    </div>
+                </div>
+                <ul class="quiz-list collapsed">
+                    <li class="quiz-item"><a href="quiz.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-play-circle"></i> Embryology Practice 1</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="2.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-play-circle"></i> Embryology Practice 2</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="equiz3.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-file-alt"></i> Embryology Exam 2014</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="embryoquizlets1.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> Embryology Quizlet 1</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="embryoquizlets2.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> Embryology Quizlet 2</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="embryoquizlets3.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> Embryology Quizlet 3</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="embryoquizlets4.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> Embryology Quizlet 4</span> <i class="fas fa-arrow-right"></i></a></li>
+                </ul>
+                <button class="view-all-btn">
+                    <span>View All Quizzes</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+            </div>
+            <div class="exam-card">
+                <div class="exam-header">
+                    <div class="exam-icon"><i class="fas fa-bone"></i></div>
+                    <div>
+                        <h3 class="exam-title">Anatomy</h3>
+                        <p class="exam-description">Study of body structures</p>
+                        <span class="quiz-count">19 quizzes</span>
+                    </div>
+                </div>
+                <ul class="quiz-list collapsed">
+                    <li class="quiz-item"><a href="anatomy2013.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-file-alt"></i> JU Anatomy Exam 2013</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="anatomy2014.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-file-alt"></i> JU Anatomy Exam 2014</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="anatomy2016.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-file-alt"></i> JU Anatomy Exam 2016</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="anatquiz1.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-file-alt"></i> Anatomy Exam 2014</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="anatomycvs1.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> CVS Anatomy 1</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="anatomycvs2.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> CVS Anatomy 2</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="anatomydhaba.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> Anatomy Dhaba</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="anatomyintro1.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> Anatomy Introduction</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="anatomymedicoinfo1.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> NS Medicoinfo</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="anatomynsdilabpart1.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> NS DILAB Part 1</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="anatomynsfultopic1.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> NS Full Topic 1</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="anatomynsfultopic2.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> NS Full Topic 2</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="anatomynspart1.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> NS Part 1</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="anatomynspart2.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> NS Part 2</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="anatomynspart3.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> NS Part 3</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="anatomynspart4.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> NS Part 4</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="anatomyskeletal1.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> Skeletal Anatomy 1</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="cvsquizlets1.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> CVS Quizlet 1</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="cvsquizlets2.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> Simple CVS</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="cvsquizlets3.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> Medium CVS</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="cvsquizlets4.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> Challenging CVS</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="masterplexus.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> Master NS Part 1</span> <i class="fas fa-arrow-right"></i></a></li>
+                </ul>
+                <button class="view-all-btn">
+                    <span>View All Quizzes</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+            </div>
+            <div class="exam-card">
+                <div class="exam-header">
+                    <div class="exam-icon"><i class="fas fa-heartbeat"></i></div>
+                    <div>
+                        <h3 class="exam-title">Physiology</h3>
+                        <p class="exam-description">Study of body functions</p>
+                        <span class="quiz-count">5 quizzes</span>
+                    </div>
+                </div>
+                <ul class="quiz-list collapsed">
+                    <li class="quiz-item"><a href="physions1.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> Physiology NS 1</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="physions2.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> Physiology NS 2</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="physions3.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-brain"></i> Physiology NS 3</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="PHYSIO2016.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-file-alt"></i> Physiology Exam 2016</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="PHYSIOuniqueto 2015 and 2016.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-file-alt"></i> Physiology Unique 2015-2016</span> <i class="fas fa-arrow-right"></i></a></li>
+                </ul>
+                <button class="view-all-btn">
+                    <span>View All Quizzes</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+            </div>
+            <div class="exam-card">
+                <div class="exam-header">
+                    <div class="exam-icon"><i class="fas fa-vial"></i></div>
+                    <div>
+                        <h3 class="exam-title">Biochemistry</h3>
+                        <p class="exam-description">Chemical processes in organisms</p>
+                        <span class="quiz-count">17 quizzes</span>
+                    </div>
+                </div>
+                <ul class="quiz-list collapsed">
+                    <li class="quiz-item"><a href="biochemEN1.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-play-circle"></i> Biochemistry Enzymes 1</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="biochemEN2.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-play-circle"></i> Biochemistry Enzymes 2</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="biochemENCONC3.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-play-circle"></i> Enzymes Concept 3</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="biochemENCONC4.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-play-circle"></i> Enzymes Concept 4</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="biochemENCONC5.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-play-circle"></i> Enzymes Concept 5</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="biochemEpage24.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-file-alt"></i> Enzymes Page 24</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="biochemEpage24.1.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-file-alt"></i> Enzymes Page 24.1</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="biochemEpage50.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-file-alt"></i> Enzymes Page 50</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="biochemNA1.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-dna"></i> Nucleic Acids 1</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="biochemNA2.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-dna"></i> Nucleic Acids 2</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="biochemNA3.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-dna"></i> Nucleic Acids 3</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="biochemcarbohydrate1.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-play-circle"></i> Carbohydrates 1</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="biochemcarbohydrate2.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-play-circle"></i> Carbohydrates 2</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="BIOcarbohydrate60.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-play-circle"></i> Carbohydrates 60</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="chatterjeacarbohydrate.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-play-circle"></i> Chatterjea Carbohydrates</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="biochemprotein1.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-dna"></i> Proteins 1</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="biochemprotein2.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-dna"></i> Proteins 2</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="biochemprotein3.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-dna"></i> Proteins 3</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="biochemprotein4.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-dna"></i> Proteins 4</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="biochemprotein5.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-dna"></i> Proteins 5</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="biochemprotein6.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-dna"></i> Proteins 6</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="biochemprotein7.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-dna"></i> Proteins 7</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="biochemprotein8.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-dna"></i> Proteins 8</span> <i class="fas fa-arrow-right"></i></a></li>
+                    <li class="quiz-item"><a href="biochemprotein9.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-dna"></i> Proteins 9</span> <i class="fas fa-arrow-right"></i></a></li>
+                </ul>
+                <button class="view-all-btn">
+                    <span>View All Quizzes</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+            </div>
+            <div class="exam-card">
+                <div class="exam-header">
+                    <div class="exam-icon"><i class="fas fa-microscope"></i></div>
+                    <div>
+                        <h3 class="exam-title">Histopathology</h3>
+                        <p class="exam-description">Study of tissue diseases</p>
+                        <span class="quiz-count">1 quiz</span>
+                    </div>
+                </div>
+                <ul class="quiz-list collapsed">
+                    <li class="quiz-item"><a href="histoquiz1.html" class="quiz-link"><span class="quiz-link-text"><i class="fas fa-play-circle"></i> Histopathology Quiz 1</span> <i class="fas fa-arrow-right"></i></a></li>
+                </ul>
+                <button class
