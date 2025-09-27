@@ -1,0 +1,3383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedQUIZ | Advanced Medical Quiz Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <style>
+        :root {
+            --primary: #4F46E5; /* Softer indigo for calm focus */
+            --primary-light: #818CF8;
+            --primary-dark: #3730A3;
+            --secondary: #F472B6; /* Soft pink for accents */
+            --success: #34D399;
+            --warning: #FBBF24;
+            --danger: #F87171;
+            --light: #F9FAFB;
+            --dark: #111827;
+            --gray: #6B7280;
+            --gray-light: #E5E7EB;
+            --border-radius: 12px; /* Softer rounded corners */
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Smoother easing */
+            --gradient-primary: linear-gradient(135deg, var(--primary-light), var(--primary));
+            --glass-bg: rgba(255, 255, 255, 0.8);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        .dark-theme {
+            --primary: #818CF8;
+            --primary-light: #A5B4FC;
+            --primary-dark: #4F46E5;
+            --light: #1F2937;
+            --dark: #F3F4F6;
+            --gray: #9CA3AF;
+            --gray-light: #374151;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.25);
+            --glass-bg: rgba(31, 41, 55, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 2rem;
+            transition: var(--transition);
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .container {
+            max-width: 1200px; /* Reduced for better readability */
+            margin: 0 auto;
+            transition: filter 0.3s ease;
+        }
+
+        .blurred {
+            filter: blur(8px);
+            pointer-events: none;
+        }
+
+        header {
+            text-align: center;
+            padding: 2rem;
+            background: var(--light);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: var(--gradient-primary);
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--gray);
+            font-size: 1rem;
+            max-width: 800px;
+            margin: 0 auto;
+            font-weight: 400;
+        }
+
+        .mode-selector {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 50px;
+            padding: 0.75rem;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: var(--shadow);
+        }
+
+        .mode-btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 50px;
+            background: transparent;
+            color: var(--gray);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.95rem;
+        }
+
+        .mode-btn.active {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .mode-btn:hover {
+            background: rgba(79, 70, 229, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .quiz-info {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .info-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            padding: 0.4rem 0.8rem;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            font-size: 0.8rem;
+            border: 1px solid var(--glass-border);
+        }
+
+        .info-card i {
+            color: var(--primary);
+            font-size: 0.95rem;
+        }
+
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .questions-container {
+            background: var(--light);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .question-section {
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .question-section.current {
+            border-left: 4px solid var(--primary);
+            padding-left: 0.75rem;
+        }
+
+        .question-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            gap: 0.75rem;
+        }
+
+        .question-number {
+            background: var(--gradient-primary);
+            color: white;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.95rem;
+            flex-shrink: 0;
+        }
+
+        .question-text {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--dark);
+            line-height: 1.4;
+            flex: 1;
+        }
+
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .options-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .option {
+            padding: 0.75rem;
+            border: 1px solid var(--gray-light);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            background: var(--light);
+            box-shadow: var(--shadow);
+        }
+
+        .option:hover {
+            border-color: var(--primary);
+            background: rgba(90, 84, 232, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .option.selected {
+            border-color: var(--primary);
+            background: rgba(90, 84, 232, 0.1);
+        }
+
+        .option.correct {
+            border-color: var(--success);
+            background: rgba(74, 222, 128, 0.1);
+        }
+
+        .option.incorrect {
+            border-color: var(--danger);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .option-letter {
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 6px;
+            background: var(--gray-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+
+        .option.selected .option-letter {
+            background: var(--primary);
+            color: white;
+        }
+
+        .option.correct .option-letter {
+            background: var(--success);
+            color: white;
+        }
+
+        .option.incorrect .option-letter {
+            background: var(--danger);
+            color: white;
+        }
+
+        .explanation-toggle {
+            color: var(--primary);
+            background: none;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0;
+            font-size: 0.85rem;
+            align-self: flex-start;
+        }
+
+        .explanation-toggle:hover {
+            color: var(--primary-dark);
+        }
+
+        .explanation {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--glass-border);
+            display: none;
+            animation: slideDown 0.4s ease;
+        }
+
+        .explanation.show {
+            display: block;
+        }
+
+        .explanation.loading::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, var(--gray-light) 25%, rgba(255,255,255,0.3) 50%, var(--gray-light) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: var(--border-radius);
+        }
+
+        .explanation-section {
+            margin-bottom: 0.75rem;
+        }
+
+        .explanation-section h4 {
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .why-not-item {
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .why-not-letter {
+            font-weight: 700;
+            margin-right: 0.5rem;
+            color: var(--primary);
+        }
+
+        .sidebar {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            height: fit-content;
+            transition: var(--transition);
+            order: -1;
+            max-height: calc(100vh - 5rem);
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) var(--glass-bg);
+            position: fixed;
+            top: 0;
+            right: -100%;
+            height: 100%;
+            width: 100%;
+            max-width: 320px;
+            z-index: 1000;
+            transition: right 0.3s ease;
+            box-shadow: var(--shadow-lg);
+            padding-top: 4rem;
+        }
+
+        .sidebar.active {
+            right: 0;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: var(--glass-bg);
+            border-radius: 3px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 3px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
+        .menu-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            z-index: 1001;
+            transition: var(--transition);
+            align-items: center;
+            justify-content: center;
+            display: flex;
+        }
+
+        .menu-toggle:hover {
+            transform: scale(1.05);
+        }
+
+        .menu-toggle.active {
+            background: var(--danger);
+        }
+
+        .hamburger {
+            width: 20px;
+            height: 16px;
+            position: relative;
+            transform: rotate(0deg);
+            transition: .5s ease-in-out;
+            cursor: pointer;
+        }
+
+        .hamburger span {
+            display: block;
+            position: absolute;
+            height: 2px;
+            width: 100%;
+            background: white;
+            border-radius: 2px;
+            opacity: 1;
+            left: 0;
+            transform: rotate(0deg);
+            transition: .25s ease-in-out;
+        }
+
+        .hamburger span:nth-child(1) {
+            top: 0px;
+        }
+
+        .hamburger span:nth-child(2) {
+            top: 7px;
+        }
+
+        .hamburger span:nth-child(3) {
+            top: 14px;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            top: 7px;
+            transform: rotate(135deg);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+            left: -60px;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            top: 7px;
+            transform: rotate(-135deg);
+        }
+
+        .progress-container {
+            margin-bottom: 1.5rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--glass-border);
+            transition: var(--transition);
+        }
+
+        .progress-container:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: var(--gray-light);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            flex: 1;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-3px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: rgba(90, 84, 232, 0.15);
+            transform: translateY(-3px);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .question-jump, .category-jump {
+            margin-bottom: 1.5rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--glass-border);
+            transition: var(--transition);
+        }
+
+        .question-jump:hover, .category-jump:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .question-jump-header, .category-jump-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 0.5rem 0;
+        }
+
+        .question-jump-header h3, .category-jump-header h3 {
+            margin-bottom: 0;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .question-jump-header i, .category-jump-header i {
+            transition: var(--transition);
+            color: var(--gray);
+        }
+
+        .question-jump-header:hover i, .category-jump-header:hover i {
+            color: var(--primary);
+        }
+
+        .question-jump-content, .category-jump-content {
+            margin-top: 0.5rem;
+            transition: var(--transition);
+            overflow: hidden;
+        }
+
+        .question-jump-content.collapsed, .category-jump-content.collapsed {
+            display: none;
+        }
+
+        .question-jump-content.expanded, .category-jump-content.expanded {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(2rem, 1fr));
+            gap: 0.5rem;
+        }
+
+        .question-indicator {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            font-size: 0.85rem;
+        }
+
+        .question-indicator:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .question-indicator.answered {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .question-indicator.current {
+            box-shadow: 0 0 0 2px var(--primary);
+        }
+
+        .category-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .category-item {
+            padding: 0.5rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .category-item:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .timer {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            font-size: 0.9rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+        }
+
+        .timer i {
+            color: var(--warning);
+        }
+
+        .results-container {
+            text-align: center;
+            padding: 2rem;
+            background: var(--light);
+            border-radius: var(--border-radius);
+            margin-top: 2rem;
+            display: none;
+            box-shadow: var(--shadow);
+        }
+
+        .results-container.show {
+            display: block;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .score-circle {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: conic-gradient(var(--gradient-primary) 0% var(--p, 0%), var(--gray-light) var(--p, 0%) 100%);
+            position: relative;
+            box-shadow: var(--shadow);
+        }
+
+        .score-circle::before {
+            content: '';
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--light);
+        }
+
+        .score-text {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .score-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        .score-label {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .results-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 600px) {
+            .results-details {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .result-card {
+            padding: 0.75rem;
+            border-radius: var(--border-radius);
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            transition: var(--transition);
+        }
+
+        .result-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .result-card i {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .result-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .learn-progress {
+            margin-bottom: 1.5rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--glass-border);
+            display: none;
+        }
+
+        .learn-progress.show {
+            display: block;
+        }
+
+        .learn-progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .quality-rate {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .quality-stars {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .quality-stars i {
+            color: var(--warning);
+        }
+
+        .learn-mode-container {
+            display: none;
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--light);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+        }
+
+        .learn-mode-container.show {
+            display: block;
+        }
+
+        .learn-question {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+        }
+
+        .learn-options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .learn-options {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .learn-option {
+            padding: 1rem;
+            border: 1px solid var(--gray-light);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            background: var(--light);
+            box-shadow: var(--shadow);
+        }
+
+        .learn-option:hover {
+            border-color: var(--primary);
+            background: rgba(90, 84, 232, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .learn-option.selected {
+            border-color: var(--primary);
+            background: rgba(90, 84, 232, 0.1);
+        }
+
+        .learn-option.correct {
+            border-color: var(--success);
+            background: rgba(74, 222, 128, 0.1);
+        }
+
+        .learn-option.incorrect {
+            border-color: var(--danger);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .learn-option-letter {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 6px;
+            background: var(--gray-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .learn-option.selected .learn-option-letter {
+            background: var(--primary);
+            color: white;
+        }
+
+        .learn-option.correct .learn-option-letter {
+            background: var(--success);
+            color: white;
+        }
+
+        .learn-option.incorrect .learn-option-letter {
+            background: var(--danger);
+            color: white;
+        }
+
+        .learn-next-btn {
+            margin-top: 1rem;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .learn-completion {
+            text-align: center;
+            padding: 2rem;
+            display: none;
+        }
+
+        .learn-completion.show {
+            display: block;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .completion-icon {
+            font-size: 3rem;
+            color: var(--success);
+            margin-bottom: 0.75rem;
+        }
+
+        .floating-controls {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            display: flex;
+            flex-direction: row;
+            gap: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+
+        .floating-controls.visible {
+            opacity: 1;
+        }
+
+        @media (min-width: 769px) {
+            .floating-controls {
+                opacity: 0;
+            }
+
+            .container:hover .floating-controls {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .floating-controls {
+                opacity: 0;
+            }
+
+            .floating-controls.visible {
+                opacity: 1;
+            }
+        }
+
+        .floating-btn {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .floating-btn:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .mode-indicator {
+            padding: 0.4rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .quiz-mode {
+            background: rgba(90, 84, 232, 0.15);
+            color: var(--primary);
+        }
+
+        .exam-mode {
+            background: rgba(255, 101, 132, 0.15);
+            color: var(--secondary);
+        }
+
+        .learn-mode {
+            background: rgba(74, 222, 128, 0.15);
+            color: var(--success);
+        }
+
+        .flashcard-mode {
+            background: rgba(251, 191, 36, 0.15);
+            color: var(--warning);
+        }
+
+        .flashcard-mode-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.5rem;
+            background: var(--light);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .flashcard-mode-container.show {
+            display: flex;
+        }
+
+        .flashcard-categories {
+            display: flex;
+            overflow-x: auto;
+            gap: 0.4rem;
+            margin-bottom: 1rem;
+            width: 100%;
+            max-width: 100%;
+            padding: 0.5rem 0;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) var(--gray-light);
+        }
+
+        .flashcard-categories::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .flashcard-categories::-webkit-scrollbar-track {
+            background: var(--gray-light);
+            border-radius: 3px;
+        }
+
+        .flashcard-categories::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 3px;
+        }
+
+        .flashcard-category {
+            padding: 0.4rem 0.8rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: var(--transition);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .flashcard-category.active {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .flashcard-category:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .flashcard-wrapper {
+            perspective: 1000px;
+            width: 100%;
+            max-width: 600px;
+            height: 300px;
+            margin-bottom: 1rem;
+        }
+
+        .flashcard {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            border-radius: var(--border-radius);
+        }
+
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, var(--light), var(--gray-light));
+            border-radius: var(--border-radius);
+            overflow-y: auto;
+        }
+
+        .flashcard-back {
+            transform: rotateY(180deg);
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            color: white;
+        }
+
+        .flashcard-question {
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .flashcard-answer {
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .flashcard-explanation {
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .flashcard-controls {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            gap: 0.4rem;
+            flex-wrap: nowrap;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .flashcard-controls .btn {
+            padding: 0.4rem;
+            font-size: 0.85rem;
+            min-width: 50px;
+        }
+
+        .flashcard-controls .btn i {
+            font-size: 0.9rem;
+        }
+
+        .flashcard-stats {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 0.75rem;
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .flashcard-progress {
+            margin-bottom: 1rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            padding: 0.75rem;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--glass-border);
+            display: none;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .flashcard-progress.show {
+            display: block;
+        }
+
+        .flashcard-progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .flashcard-completion {
+            text-align: center;
+            padding: 2rem;
+            display: none;
+        }
+
+        .flashcard-completion.show {
+            display: block;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; max-height: 0; }
+            to { opacity: 1; max-height: 1000px; }
+        }
+
+        @keyframes skeleton-loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 0.75rem;
+            }
+
+            header {
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .questions-container {
+                padding: 1rem;
+            }
+
+            .question-text {
+                font-size: 1rem;
+            }
+
+            .option {
+                padding: 0.5rem;
+                font-size: 0.85rem;
+            }
+
+            .question-header {
+                gap: 0.5rem;
+            }
+
+            .question-number {
+                width: 1.75rem;
+                height: 1.75rem;
+                font-size: 0.85rem;
+            }
+
+            .learn-question {
+                font-size: 1.1rem;
+            }
+
+            .learn-option {
+                padding: 0.75rem;
+                font-size: 0.85rem;
+            }
+
+            .flashcard-wrapper {
+                height: 250px;
+            }
+
+            .flashcard-question {
+                font-size: 1rem;
+            }
+
+            .flashcard-answer {
+                font-size: 0.9rem;
+            }
+
+            .flashcard-explanation {
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.25rem;
+            }
+
+            .subtitle {
+                font-size: 0.8rem;
+            }
+
+            .info-card {
+                font-size: 0.75rem;
+                padding: 0.3rem 0.6rem;
+            }
+
+            .question-text {
+                font-size: 0.9rem;
+            }
+
+            .option {
+                font-size: 0.8rem;
+            }
+
+            .learn-question {
+                font-size: 1rem;
+            }
+
+            .learn-option {
+                font-size: 0.8rem;
+            }
+
+            .flashcard-wrapper {
+                height: 200px;
+            }
+
+            .flashcard-question {
+                font-size: 0.9rem;
+            }
+
+            .flashcard-answer {
+                font-size: 0.8rem;
+            }
+
+            .flashcard-explanation {
+                font-size: 0.75rem;
+            }
+
+            .flashcard-controls .btn {
+                min-width: 40px;
+                padding: 0.3rem;
+                font-size: 0.75rem;
+            }
+
+            .flashcard-controls .btn i {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Registration Modal */
+        #registrationModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: var(--light);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            animation: fadeInUp 0.4s ease;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--gray-light);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .modal-content input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .modal-content button {
+            padding: 0.75rem;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: var(--transition);
+        }
+
+        .modal-content button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+    </style>
+</head>
+<body>
+    <div id="registrationModal">
+        <div class="modal-content">
+            <h2>Welcome to MedQUIZ</h2>
+            <p>Please register to start the quiz.</p>
+            <input type="text" id="fullName" placeholder="Full Name" required>
+            <input type="text" id="section" placeholder="Section (e.g., Medical Department)" required>
+            <button id="registerBtn">Register & Start</button>
+        </div>
+    </div>
+
+    <div class="container blurred" id="quizContainer">
+        <header>
+            <h1>MedQUIZ <span class="mode-indicator quiz-mode" id="modeIndicator">Quiz Mode</span></h1>
+            <p class="subtitle">Test your medical knowledge with interactive, adaptive quizzes powered by advanced physiology insights.</p>
+            <div class="mode-selector">
+                <div class="mode-btn active" data-mode="quiz">Quiz Mode</div>
+                <div class="mode-btn" data-mode="exam">Exam Mode</div>
+                <div class="mode-btn" data-mode="learn">Learn Mode</div>
+                <div class="mode-btn" data-mode="flashcard">Flashcard Mode</div>
+            </div>
+            <div class="quiz-info">
+                <div class="info-card">
+                    <i class="fas fa-book-medical"></i>
+                    <span id="questionCount">4 Questions</span>
+                </div>
+                <div class="info-card">
+                    <i class="fas fa-clock"></i>
+                    <span id="timeInfo">10 Minutes</span>
+                </div>
+                <div class="info-card">
+                    <i class="fas fa-brain"></i>
+                    <span>Advanced Level</span>
+                </div>
+            </div>
+        </header>
+       
+        <button class="menu-toggle" id="menuToggleBtn">
+            <div class="hamburger" id="hamburgerIcon">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </button>
+       
+        <div class="content-wrapper">
+            <div class="learn-mode-container" id="learnModeContainer">
+                <div class="learn-question" id="learnQuestionText"></div>
+                <div class="learn-options" id="learnOptionsContainer"></div>
+                <div class="navigation-buttons">
+                    <button class="btn btn-outline" id="learnPrevBtn">
+                        <i class="fas fa-arrow-left"></i> Prev
+                    </button>
+                    <button class="btn btn-primary" id="learnNextBtn" disabled>
+                        Next <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+                <div class="learn-completion" id="learnCompletion">
+                    <div class="completion-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h2>Learning Complete!</h2>
+                    <p>You've successfully answered all questions correctly.</p>
+                    <button class="btn btn-outline" id="learnRestartBtn" style="margin-top: 1rem;">
+                        <i class="fas fa-redo"></i> Practice Again
+                    </button>
+                </div>
+            </div>
+           
+            <div class="questions-container" id="questionsContainer"></div>
+            <div class="flashcard-mode-container" id="flashcardModeContainer">
+                <div class="flashcard-progress" id="flashcardProgress">
+                    <div class="flashcard-progress-text">
+                        <span>Flashcard Progress</span>
+                        <span id="flashcardProgressPercent">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="flashcardProgressFill"></div>
+                    </div>
+                </div>
+                <div class="flashcard-categories" id="flashcardCategories"></div>
+                <div class="flashcard-stats">
+                    <span id="flashcardRemaining">Remaining: 0</span>
+                    <span id="flashcardKnown">Known: 0</span>
+                    <span id="flashcardTotal">Total: 0</span>
+                </div>
+                <div class="flashcard-wrapper">
+                    <div class="flashcard" id="flashcard">
+                        <div class="flashcard-front">
+                            <div class="flashcard-question" id="flashcardQuestion"></div>
+                            <i class="fas fa-sync-alt" style="position: absolute; bottom: 0.75rem; font-size: 0.9rem; color: var(--gray);">Tap to flip</i>
+                        </div>
+                        <div class="flashcard-back">
+                            <div class="flashcard-answer" id="flashcardAnswer"></div>
+                            <div class="flashcard-explanation" id="flashcardExplanation"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flashcard-controls">
+                    <button class="btn btn-outline" id="flashcardPrevBtn" title="Previous">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <button class="btn btn-primary" id="flashcardNextBtn" title="Next">
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <button class="btn btn-outline" id="flashcardShuffleBtn" title="Shuffle">
+                        <i class="fas fa-random"></i>
+                    </button>
+                    <button class="btn btn-success" id="flashcardKnownBtn" title="I Know This">
+                        <i class="fas fa-check"></i>
+                    </button>
+                    <button class="btn btn-danger" id="flashcardUnknownBtn" title="Review Later">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="flashcard-completion" id="flashcardCompletion">
+                    <div class="completion-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h2>Deck Mastered!</h2>
+                    <p>You've reviewed all flashcards.</p>
+                    <button class="btn btn-outline" id="flashcardRestartBtn" style="margin-top: 1rem;">
+                        <i class="fas fa-redo"></i> Restart Deck
+                    </button>
+                </div>
+            </div>
+           
+            <div class="sidebar" id="sidebar">
+                <div class="learn-progress" id="learnProgress">
+                    <div class="learn-progress-text">
+                        <span>Learning Progress</span>
+                        <span id="learnProgressPercent">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="learnProgressFill"></div>
+                    </div>
+                    <div class="quality-rate">
+                        <span>Quality:</span>
+                        <div class="quality-stars" id="qualityStars">
+                            <i class="far fa-star"></i>
+                            <i class="far fa-star"></i>
+                            <i class="far fa-star"></i>
+                            <i class="far fa-star"></i>
+                            <i class="far fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+               
+                <div class="progress-container" id="progressContainer">
+                    <div class="progress-text">
+                        <span>Progress</span>
+                        <span id="progressPercent">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+               
+                <div class="navigation-buttons">
+                    <button class="btn btn-outline" id="prevBtn">
+                        <i class="fas fa-arrow-left"></i> Prev
+                    </button>
+                    <button class="btn btn-primary" id="nextBtn">
+                        Next <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+               
+                <div class="category-jump">
+                    <div class="category-jump-header" id="categoryJumpToggle">
+                        <h3>Jump to Category</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="category-jump-content expanded" id="categoryJumpContent">
+                        <div class="category-list" id="categoryList"></div>
+                    </div>
+                </div>
+               
+                <div class="question-jump">
+                    <div class="question-jump-header" id="jumpToggle">
+                        <h3>Jump to Question</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="question-jump-content expanded" id="jumpContent">
+                        <div class="question-grid" id="questionIndicators"></div>
+                    </div>
+                </div>
+               
+                <div class="timer">
+                    <i class="fas fa-clock"></i>
+                    <span id="timeDisplay">10:00</span>
+                </div>
+               
+                <button class="btn btn-primary" id="submitBtn" style="width: 100%;">
+                    <i class="fas fa-check"></i> Submit
+                </button>
+            </div>
+        </div>
+       
+        <div class="results-container" id="resultsContainer">
+            <h2>Results</h2>
+            <p>Your performance summary</p>
+            <div class="score-circle" id="scoreCircle">
+                <div class="score-text">
+                    <div class="score-value" id="scoreValue">0%</div>
+                    <div class="score-label">Correct</div>
+                </div>
+            </div>
+            <div class="results-details">
+                <div class="result-card">
+                    <i class="fas fa-check-circle"></i>
+                    <div class="result-value" id="correctCount">0</div>
+                    <div>Correct</div>
+                </div>
+                <div class="result-card">
+                    <i class="fas fa-times-circle"></i>
+                    <div class="result-value" id="incorrectCount">0</div>
+                    <div>Incorrect</div>
+                </div>
+                <div class="result-card">
+                    <i class="fas fa-clock"></i>
+                    <div class="result-value" id="timeTaken">0:00</div>
+                    <div>Time Taken</div>
+                </div>
+            </div>
+            <button class="btn btn-outline" id="restartBtn" style="margin-top: 1rem;">
+                <i class="fas fa-redo"></i> Retake
+            </button>
+        </div>
+    </div>
+   
+    <div class="floating-controls" id="floatingControls">
+        <button class="floating-btn" id="scrollTopBtn" title="Scroll to top">
+            <i class="fas fa-arrow-up"></i>
+        </button>
+        <button class="floating-btn" id="themeToggleBtn" title="Toggle theme">
+            <i class="fas fa-moon"></i>
+        </button>
+        <button class="floating-btn" id="submitFloatingBtn" title="Submit">
+            <i class="fas fa-check"></i>
+        </button>
+    </div>
+    <script>
+        const quizData = [
+    {
+        "id": 1,
+        "question": "What is the primary chemical distinction between a fat and an oil?",
+        "options": [
+            "Fats are esters of glycerol, while oils are not.",
+            "Fats are simple lipids, while oils are complex lipids.",
+            "Fats are solid at room temperature, while oils are liquid.",
+            "Fats contain saturated fatty acids, while oils contain only unsaturated fatty acids."
+        ],
+        "answer": 2,
+        "correctAnswer": "Fats are solid at room temperature, while oils are liquid.",
+        "explanation": "Fats and oils are both triacylglycerols (esters of glycerol with fatty acids), but fats are solid at room temperature due to higher saturated fatty acid content, while oils are liquid due to more unsaturated fatty acids.",
+        "whyNotOtherOptions": {
+            "a": "Both fats and oils are glycerol esters, so this is incorrect.",
+            "b": "Both are simple lipids, not complex lipids.",
+            "d": "Oils often contain unsaturated fatty acids but may also have saturated ones."
+        },
+        "relatedQuestions": ["4 (simple lipids)", "10 (fatty acid fluidity)"],
+        "category": "Lipid Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 2,
+        "question": "Which of the following is a common property of most lipids?",
+        "options": [
+            "High solubility in water.",
+            "They are all polymers of fatty acids.",
+            "Relatively soluble in organic solvents like chloroform.",
+            "They are all solid at room temperature."
+        ],
+        "answer": 2,
+        "correctAnswer": "Relatively soluble in organic solvents like chloroform.",
+        "explanation": "Lipids are hydrophobic and highly soluble in organic solvents like chloroform due to their non-polar nature, a key property distinguishing them from water-soluble molecules.",
+        "whyNotOtherOptions": {
+            "a": "Lipids are poorly soluble in water due to hydrophobicity.",
+            "b": "Lipids are not polymers; only some (e.g., triacylglycerols) contain fatty acids.",
+            "d": "Many lipids (e.g., oils) are liquid at room temperature."
+        },
+        "relatedQuestions": ["1 (fats vs. oils)", "3 (membrane lipids)"],
+        "category": "Lipid Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 3,
+        "question": "Which lipid type is a major structural component of biological membranes and also regulates membrane permeability?",
+        "options": [
+            "Neutral Fats (Triacylglycerols)",
+            "Waxes",
+            "Phospholipids and Cholesterol",
+            "Ketone bodies"
+        ],
+        "answer": 2,
+        "correctAnswer": "Phospholipids and Cholesterol",
+        "explanation": "Phospholipids form the bilayer structure of membranes, while cholesterol modulates fluidity and permeability, stabilizing the membrane.",
+        "whyNotOtherOptions": {
+            "a": "Triacylglycerols are energy stores, not membrane components.",
+            "b": "Waxes are protective coatings, not in membranes.",
+            "d": "Ketone bodies are metabolic intermediates, not structural."
+        },
+        "relatedQuestions": ["5 (complex lipids)", "29 (membrane fluidity)"],
+        "category": "Lipid Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 4,
+        "question": "A 'Simple Lipid' is best defined as an ester of fatty acids with various alcohols. Which of the following is NOT a simple lipid?",
+        "options": [
+            "Triacylglycerol (Neutral fat)",
+            "Cholesterol ester",
+            "Cetyl palmitate (a wax)",
+            "Sphingomyelin"
+        ],
+        "answer": 3,
+        "correctAnswer": "Sphingomyelin",
+        "explanation": "Simple lipids are esters of fatty acids with alcohols (e.g., triacylglycerols, waxes, cholesterol esters). Sphingomyelin is a complex lipid (sphingophospholipid) with a sphingosine backbone and phosphate group.",
+        "whyNotOtherOptions": {
+            "a": "Triacylglycerols are simple lipids (glycerol + fatty acids).",
+            "b": "Cholesterol esters are simple lipids (cholesterol + fatty acid).",
+            "c": "Cetyl palmitate is a wax, a simple lipid."
+        },
+        "relatedQuestions": ["5 (complex lipids)", "15 (sphingolipids)"],
+        "category": "Lipid Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 5,
+        "question": "Phospholipids and glycolipids are classified under which major category of lipids?",
+        "options": [
+            "Simple Lipids",
+            "Derived Lipids",
+            "Compound (Complex) Lipids",
+            "Precursor Lipids"
+        ],
+        "answer": 2,
+        "correctAnswer": "Compound (Complex) Lipids",
+        "explanation": "Phospholipids and glycolipids are complex lipids, containing fatty acids, an alcohol (glycerol or sphingosine), and additional groups (phosphate or carbohydrate).",
+        "whyNotOtherOptions": {
+            "a": "Simple lipids are esters like triacylglycerols or waxes.",
+            "b": "Derived lipids are hydrolysis products (e.g., fatty acids, sterols).",
+            "d": "Precursor lipids is not a standard category."
+        },
+        "relatedQuestions": ["3 (membrane lipids)", "27 (phospholipid structure)"],
+        "category": "Lipid Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 6,
+        "question": "Derived lipids are obtained by the hydrolysis of other lipids. Which of the following is a classic example of a derived lipid?",
+        "options": [
+            "Lecithin (a phospholipid)",
+            "Fatty Acids",
+            "Cholesterol (a sterol)",
+            "Triacylglycerol"
+        ],
+        "answer": 1,
+        "correctAnswer": "Fatty Acids",
+        "explanation": "Derived lipids are products of lipid hydrolysis, such as fatty acids and sterols (e.g., cholesterol). Fatty acids are released from triacylglycerols or phospholipids.",
+        "whyNotOtherOptions": {
+            "a": "Lecithin is a complex lipid, not derived.",
+            "c": "Cholesterol is a derived lipid, but fatty acids are a more classic example.",
+            "d": "Triacylglycerols are simple lipids, not derived."
+        },
+        "relatedQuestions": ["4 (simple lipids)", "21 (cholesterol)"],
+        "category": "Lipid Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 7,
+        "question": "Why do lipids yield more energy per gram than carbohydrates?",
+        "options": [
+            "They contain more oxygen atoms.",
+            "The carbon atoms in fatty acids are more reduced.",
+            "They are hydrolyzed more efficiently.",
+            "They are stored in a more compact form."
+        ],
+        "answer": 1,
+        "correctAnswer": "The carbon atoms in fatty acids are more reduced.",
+        "explanation": "Fatty acids have more reduced carbon atoms (fewer oxygen bonds), yielding more energy (~9 kcal/g) during oxidation compared to carbohydrates (~4 kcal/g).",
+        "whyNotOtherOptions": {
+            "a": "Lipids have fewer oxygen atoms than carbohydrates.",
+            "c": "Hydrolysis efficiency is not the primary factor.",
+            "d": "Compact storage affects quantity, not energy yield per gram."
+        },
+        "relatedQuestions": ["25 (beta-oxidation)", "9 (fatty acid biosynthesis)"],
+        "category": "Lipid Metabolism",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 8,
+        "question": "What is the most common chain length for fatty acids found in biological systems like palmitic and stearic acid?",
+        "options": [
+            "Less than 12 carbons",
+            "13-21 carbons (Long chain)",
+            "6-12 carbons (Medium chain)",
+            "Even-numbered chains of 16 and 18 carbons"
+        ],
+        "answer": 3,
+        "correctAnswer": "Even-numbered chains of 16 and 18 carbons",
+        "explanation": "Palmitic (16:0) and stearic (18:0) acids, common in biological systems, are even-numbered long-chain fatty acids (16 and 18 carbons), prevalent in membranes and storage lipids.",
+        "whyNotOtherOptions": {
+            "a": "Less than 12 carbons is less common (e.g., short-chain fatty acids).",
+            "b": "13-21 carbons is broad; 16 and 18 are more specific.",
+            "c": "6-12 carbons are medium-chain, less common in membranes."
+        },
+        "relatedQuestions": ["9 (fatty acid biosynthesis)", "24 (omega-3 fatty acids)"],
+        "category": "Lipid Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 9,
+        "question": "The fact that most natural fatty acids have an even number of carbon atoms is primarily due to:",
+        "options": [
+            "Their stability in biological membranes.",
+            "Their biosynthesis involving the sequential addition of 2-carbon units.",
+            "Evolutionary preference for even numbers.",
+            "The process of beta-oxidation which removes 2-carbon units."
+        ],
+        "answer": 1,
+        "correctAnswer": "Their biosynthesis involving the sequential addition of 2-carbon units.",
+        "explanation": "Fatty acid biosynthesis uses acetyl-CoA (2-carbon units) added sequentially, resulting in even-numbered chains, as seen in palmitic (16:0) and stearic (18:0) acids.",
+        "whyNotOtherOptions": {
+            "a": "Stability is not the primary reason for even-numbered chains.",
+            "c": "There’s no evidence for evolutionary number preference.",
+            "d": "Beta-oxidation breaks down fatty acids but doesn’t dictate chain length."
+        },
+        "relatedQuestions": ["7 (energy yield)", "25 (beta-oxidation)"],
+        "category": "Lipid Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 10,
+        "question": "Which factor directly enhances the fluidity of a fatty acid?",
+        "options": [
+            "Longer chain length and higher saturation.",
+            "Longer chain length and higher unsaturation.",
+            "Shorter chain length and higher saturation.",
+            "Shorter chain length and higher unsaturation."
+        ],
+        "answer": 3,
+        "correctAnswer": "Shorter chain length and higher unsaturation.",
+        "explanation": "Shorter fatty acid chains reduce van der Waals interactions, and double bonds (unsaturation) introduce kinks, both increasing membrane fluidity.",
+        "whyNotOtherOptions": {
+            "a": "Longer chains and saturation decrease fluidity.",
+            "b": "Longer chains decrease fluidity, despite unsaturation.",
+            "c": "Higher saturation decreases fluidity, despite shorter chains."
+        },
+        "relatedQuestions": ["1 (fats vs. oils)", "29 (membrane fluidity)"],
+        "category": "Lipid Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 11,
+        "question": "Which type of fatty acid contains one double bond in its hydrocarbon chain?",
+        "options": [
+            "Saturated Fatty Acid",
+            "Monounsaturated Fatty Acid (MUFA)",
+            "Polyunsaturated Fatty Acid (PUFA)",
+            "Derived Fatty Acid"
+        ],
+        "answer": 1,
+        "correctAnswer": "Monounsaturated Fatty Acid (MUFA)",
+        "explanation": "MUFAs, like oleic acid, have one double bond in their hydrocarbon chain, distinguishing them from saturated (no double bonds) and polyunsaturated (multiple double bonds) fatty acids.",
+        "whyNotOtherOptions": {
+            "a": "Saturated fatty acids have no double bonds.",
+            "c": "PUFAs have multiple double bonds.",
+            "d": "Derived fatty acid is not a structural category."
+        },
+        "relatedQuestions": ["24 (omega-3 fatty acids)", "13 (PUFAs)"],
+        "category": "Lipid Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 12,
+        "question": "Essential Fatty Acids (EFAs) are characterized by:",
+        "options": [
+            "Being synthesized in large amounts by the human body.",
+            "Having very short hydrocarbon chains.",
+            "Being necessary in the diet because they cannot be synthesized by human cells.",
+            "Being saturated fatty acids like palmitic acid."
+        ],
+        "answer": 2,
+        "correctAnswer": "Being necessary in the diet because they cannot be synthesized by human cells.",
+        "explanation": "EFAs, like linoleic and alpha-linolenic acids, cannot be synthesized by humans due to the lack of enzymes to insert double bonds at specific positions, requiring dietary intake.",
+        "whyNotOtherOptions": {
+            "a": "EFAs cannot be synthesized in humans.",
+            "b": "EFAs are long-chain (18 carbons), not short.",
+            "d": "EFAs are polyunsaturated, not saturated."
+        },
+        "relatedQuestions": ["13 (PUFAs)", "28 (EFA deficiency)"],
+        "category": "Lipid Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 13,
+        "question": "Which of the following is a key biomedical importance of polyunsaturated fatty acids (PUFAs)?",
+        "options": [
+            "They are the primary component of waxes.",
+            "They are precursors for the synthesis of eicosanoids (like prostaglandins).",
+            "They make membranes more rigid.",
+            "They are stored as the main form of energy in adipose tissue."
+        ],
+        "answer": 1,
+        "correctAnswer": "They are precursors for the synthesis of eicosanoids (like prostaglandins).",
+        "explanation": "PUFAs, like arachidonic acid, are precursors for eicosanoids (prostaglandins, thromboxanes), which regulate inflammation, blood clotting, and other processes.",
+        "whyNotOtherOptions": {
+            "a": "Waxes are simple lipids, not PUFAs.",
+            "c": "PUFAs increase membrane fluidity, not rigidity.",
+            "d": "Triacylglycerols, not PUFAs, are the main energy storage form."
+        },
+        "relatedQuestions": ["11 (MUFAs)", "24 (omega-3 fatty acids)"],
+        "category": "Lipid Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 14,
+        "question": "What is the common alcohol backbone found in glycerophospholipids?",
+        "options": [
+            "Sphingosine",
+            "Cholesterol",
+            "Glycerol",
+            "Cetyl Alcohol"
+        ],
+        "answer": 2,
+        "correctAnswer": "Glycerol",
+        "explanation": "Glycerophospholipids, like phosphatidylcholine, have a glycerol backbone esterified to two fatty acids and a phosphate group with a polar head.",
+        "whyNotOtherOptions": {
+            "a": "Sphingosine is the backbone for sphingolipids.",
+            "b": "Cholesterol is a sterol, not a phospholipid backbone.",
+            "d": "Cetyl alcohol is found in waxes, not phospholipids."
+        },
+        "relatedQuestions": ["5 (complex lipids)", "27 (phospholipid structure)"],
+        "category": "Lipid Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 15,
+        "question": "Sphingolipids (like sphingomyelin and glycolipids) are characterized by containing which special alcohol?",
+        "options": [
+            "Glycerol",
+            "Sphingosine (Sphingol)",
+            "Retinol",
+            "Ethanolamine"
+        ],
+        "answer": 1,
+        "correctAnswer": "Sphingosine (Sphingol)",
+        "explanation": "Sphingolipids, including sphingomyelin and glycolipids, have a sphingosine backbone, distinguishing them from glycerophospholipids which use glycerol.",
+        "whyNotOtherOptions": {
+            "a": "Glycerol is the backbone for glycerophospholipids.",
+            "c": "Retinol is a vitamin A derivative, not a lipid backbone.",
+            "d": "Ethanolamine is a headgroup in some phospholipids."
+        },
+        "relatedQuestions": ["4 (simple lipids)", "16 (glycolipids)"],
+        "category": "Lipid Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 16,
+        "question": "Glycolipids are complex lipids that contain:",
+        "options": [
+            "A phosphate group and a nitrogenous base.",
+            "A carbohydrate moiety and sphingosine.",
+            "Only glycerol and fatty acids.",
+            "Esterified cholesterol."
+        ],
+        "answer": 1,
+        "correctAnswer": "A carbohydrate moiety and sphingosine.",
+        "explanation": "Glycolipids are complex lipids with a sphingosine backbone and a carbohydrate group (e.g., glucose or galactose), found in cell membranes, especially in nervous tissue.",
+        "whyNotOtherOptions": {
+            "a": "Phosphate and nitrogenous bases are in phospholipids, not glycolipids.",
+            "c": "Glycerol and fatty acids are in glycerolipids, not glycolipids.",
+            "d": "Esterified cholesterol is a simple lipid, not a glycolipid."
+        },
+        "relatedQuestions": ["5 (complex lipids)", "15 (sphingolipids)"],
+        "category": "Lipid Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 17,
+        "question": "Which of the following is a function of lipids mentioned in the notes?",
+        "options": [
+            "Acting as the primary solvent for water-soluble vitamins.",
+            "Serving as surfactants to reduce surface tension.",
+            "Being the main source of quick energy for neuronal cells.",
+            "Directly coding for genetic information."
+        ],
+        "answer": 1,
+        "correctAnswer": "Serving as surfactants to reduce surface tension.",
+        "explanation": "Lipids like phospholipids (e.g., surfactant in alveoli) reduce surface tension, preventing lung collapse. This is a key physiological function.",
+        "whyNotOtherOptions": {
+            "a": "Lipids are solvents for fat-soluble vitamins, not water-soluble.",
+            "c": "Neurons primarily use glucose for energy.",
+            "d": "Lipids do not code for genetic information; DNA/RNA do."
+        },
+        "relatedQuestions": ["3 (membrane lipids)", "26 (bile salts)"],
+        "category": "Lipid Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 18,
+        "question": "The insulating effect of lipids in the body, such as protecting organs and against cold, is primarily due to:",
+        "options": [
+            "Phospholipids in cell membranes.",
+            "Deposits of fat (triacylglycerols) in subcutaneous tissue and around organs.",
+            "Cholesterol in the blood.",
+            "Waxes on the skin surface."
+        ],
+        "answer": 1,
+        "correctAnswer": "Deposits of fat (triacylglycerols) in subcutaneous tissue and around organs.",
+        "explanation": "Triacylglycerols in adipose tissue provide thermal insulation and physical protection for organs due to their low thermal conductivity and cushioning properties.",
+        "whyNotOtherOptions": {
+            "a": "Phospholipids are in membranes, not insulating deposits.",
+            "c": "Cholesterol in blood regulates membranes, not insulation.",
+            "d": "Waxes are minor skin coatings, not primary insulators."
+        },
+        "relatedQuestions": ["1 (fats vs. oils)", "22 (chylomicrons)"],
+        "category": "Lipid Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 19,
+        "question": "Lipoproteins (like LDL and HDL) are classified as which type of lipid?",
+        "options": [
+            "Simple Lipids",
+            "Derived Lipids",
+            "Compound (Complex) Lipids",
+            "They are not considered lipids."
+        ],
+        "answer": 2,
+        "correctAnswer": "Compound (Complex) Lipids",
+        "explanation": "Lipoproteins, like LDL and HDL, are complex lipids, combining lipids (e.g., cholesterol, triglycerides) with proteins to transport lipids in the blood.",
+        "whyNotOtherOptions": {
+            "a": "Simple lipids are esters like triacylglycerols or waxes.",
+            "b": "Derived lipids are hydrolysis products, not complexes.",
+            "d": "Lipoproteins are lipids, as they contain lipid components."
+        },
+        "relatedQuestions": ["5 (complex lipids)", "22 (chylomicrons)"],
+        "category": "Lipid Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 20,
+        "question": "Which lipid is mentioned as a component of myelinated nerves that acts as an electrical insulator?",
+        "options": [
+            "Triacylglycerol",
+            "Waxes",
+            "Lipids (e.g., sphingolipids) in the myelin sheath",
+            "Fatty Acids"
+        ],
+        "answer": 2,
+        "correctAnswer": "Lipids (e.g., sphingolipids) in the myelin sheath",
+        "explanation": "Sphingolipids, like sphingomyelin, and cholesterol in the myelin sheath provide electrical insulation, enhancing nerve impulse conduction in myelinated nerves.",
+        "whyNotOtherOptions": {
+            "a": "Triacylglycerols are energy stores, not in myelin.",
+            "b": "Waxes are not components of myelin.",
+            "d": "Fatty acids are not structural components of myelin."
+        },
+        "relatedQuestions": ["15 (sphingolipids)", "4 (simple lipids)"],
+        "category": "Lipid Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 21,
+        "question": "Which of the following lipids serves as a precursor for steroid hormones like cortisol and testosterone?",
+        "options": [
+            "Triacylglycerol",
+            "Phosphatidylcholine",
+            "Cholesterol",
+            "Sphingomyelin",
+            "Linoleic acid"
+        ],
+        "answer": 2,
+        "correctAnswer": "Cholesterol",
+        "explanation": "Cholesterol, a sterol, is the precursor for steroid hormones (e.g., cortisol, testosterone, estrogen) synthesized in the adrenal glands and gonads. It provides the core structure for these hormones.",
+        "whyNotOtherOptions": {
+            "a": "Triacylglycerols are energy storage lipids, not hormone precursors.",
+            "b": "Phosphatidylcholine is a phospholipid, used in membranes.",
+            "d": "Sphingomyelin is a sphingolipid, not involved in steroid synthesis.",
+            "e": "Linoleic acid is a PUFA, a precursor for eicosanoids, not steroids."
+        },
+        "relatedQuestions": ["6 (derived lipids)", "13 (PUFAs)"],
+        "category": "Lipid Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 22,
+        "question": "What is the primary role of chylomicrons in lipid metabolism?",
+        "options": [
+            "Transport cholesterol to peripheral tissues",
+            "Deliver dietary triglycerides to tissues",
+            "Remove excess cholesterol from tissues",
+            "Synthesize fatty acids in the liver",
+            "Store lipids in adipose tissue"
+        ],
+        "answer": 1,
+        "correctAnswer": "Deliver dietary triglycerides to tissues",
+        "explanation": "Chylomicrons are lipoproteins that transport dietary triglycerides and cholesterol from the intestines to tissues (e.g., adipose, muscle) via the bloodstream after fat absorption in the gut.",
+        "whyNotOtherOptions": {
+            "a": "LDL transports cholesterol to tissues, not chylomicrons.",
+            "c": "HDL removes cholesterol from tissues to the liver.",
+            "d": "Fatty acid synthesis occurs in hepatocytes, not by chylomicrons.",
+            "e": "Chylomicrons deliver lipids, but storage is a tissue function."
+        },
+        "relatedQuestions": ["19 (lipoproteins)", "18 (insulating lipids)"],
+        "category": "Lipid Metabolism",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 23,
+        "question": "Which enzyme is primarily responsible for hydrolyzing triacylglycerols in chylomicrons and VLDL in the bloodstream?",
+        "options": [
+            "Pancreatic lipase",
+            "Lipoprotein lipase",
+            "Hormone-sensitive lipase",
+            "Phospholipase A2",
+            "Acetyl-CoA carboxylase"
+        ],
+        "answer": 1,
+        "correctAnswer": "Lipoprotein lipase",
+        "explanation": "Lipoprotein lipase, located on capillary endothelial cells, hydrolyzes triacylglycerols in chylomicrons and VLDL, releasing fatty acids for tissue uptake or storage.",
+        "whyNotOtherOptions": {
+            "a": "Pancreatic lipase digests dietary fats in the gut.",
+            "c": "Hormone-sensitive lipase mobilizes stored fats in adipocytes.",
+            "d": "Phospholipase A2 hydrolyzes phospholipids, not triacylglycerols.",
+            "e": "Acetyl-CoA carboxylase is involved in fatty acid synthesis."
+        },
+        "relatedQuestions": ["22 (chylomicrons)", "18 (triacylglycerols)"],
+        "category": "Lipid Metabolism",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 24,
+        "question": "Which of the following fatty acids is an omega-3 polyunsaturated fatty acid?",
+        "options": [
+            "Linoleic acid (18:2)",
+            "Oleic acid (18:1)",
+            "Alpha-linolenic acid (18:3)",
+            "Arachidonic acid (20:4)",
+            "Palmitic acid (16:0)"
+        ],
+        "answer": 2,
+        "correctAnswer": "Alpha-linolenic acid (18:3)",
+        "explanation": "Alpha-linolenic acid (18:3, n-3) is an omega-3 PUFA, with the first double bond at the third carbon from the methyl end. It’s essential and a precursor for other omega-3s like EPA and DHA.",
+        "whyNotOtherOptions": {
+            "a": "Linoleic acid is an omega-6 PUFA, not omega-3.",
+            "b": "Oleic acid is a monounsaturated fatty acid.",
+            "d": "Arachidonic acid is an omega-6 PUFA.",
+            "e": "Palmitic acid is a saturated fatty acid."
+        },
+        "relatedQuestions": ["12 (essential fatty acids)", "13 (PUFAs)"],
+        "category": "Lipid Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 25,
+        "question": "The process of beta-oxidation primarily occurs in which cellular compartment?",
+        "options": [
+            "Cytoplasm",
+            "Mitochondrial matrix",
+            "Endoplasmic reticulum",
+            "Peroxisomes",
+            "Nucleus"
+        ],
+        "answer": 1,
+        "correctAnswer": "Mitochondrial matrix",
+        "explanation": "Beta-oxidation, the breakdown of fatty acids into acetyl-CoA for energy, occurs primarily in the mitochondrial matrix, where enzymes sequentially remove 2-carbon units.",
+        "whyNotOtherOptions": {
+            "a": "Cytoplasm hosts glycolysis, not beta-oxidation.",
+            "c": "Endoplasmic reticulum is for lipid synthesis, not breakdown.",
+            "d": "Peroxisomes handle very-long-chain fatty acid oxidation, not primary.",
+            "e": "Nucleus is for gene expression, not metabolism."
+        },
+        "relatedQuestions": ["7 (energy yield)", "9 (even-numbered chains)"],
+        "category": "Lipid Metabolism",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 26,
+        "question": "Which lipid class is primarily responsible for the emulsification of dietary fats in the small intestine?",
+        "options": [
+            "Cholesterol esters",
+            "Bile salts",
+            "Triacylglycerols",
+            "Sphingolipids",
+            "Waxes"
+        ],
+        "answer": 1,
+        "correctAnswer": "Bile salts",
+        "explanation": "Bile salts, derived from cholesterol, act as emulsifiers in the small intestine, breaking down dietary fats into micelles to facilitate digestion and absorption by pancreatic lipase.",
+        "whyNotOtherOptions": {
+            "a": "Cholesterol esters are stored or transported, not emulsifiers.",
+            "c": "Triacylglycerols are the fats being emulsified, not emulsifiers.",
+            "d": "Sphingolipids are membrane components, not emulsifiers.",
+            "e": "Waxes are protective, not involved in digestion."
+        },
+        "relatedQuestions": ["17 (lipid functions)", "19 (lipoproteins)"],
+        "category": "Lipid Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 27,
+        "question": "Which of the following is a key structural difference between phosphatidylcholine and phosphatidylethanolamine?",
+        "options": [
+            "Phosphatidylcholine contains glycerol, while phosphatidylethanolamine contains sphingosine",
+            "Phosphatidylcholine has a choline group, while phosphatidylethanolamine has an ethanolamine group",
+            "Phosphatidylcholine is a simple lipid, while phosphatidylethanolamine is a complex lipid",
+            "Phosphatidylcholine has three fatty acids, while phosphatidylethanolamine has two",
+            "Phosphatidylcholine is unsaturated, while phosphatidylethanolamine is saturated"
+        ],
+        "answer": 1,
+        "correctAnswer": "Phosphatidylcholine has a choline group, while phosphatidylethanolamine has an ethanolamine group",
+        "explanation": "Both are glycerophospholipids with a glycerol backbone, two fatty acids, and a phosphate group, but phosphatidylcholine has a choline headgroup, while phosphatidylethanolamine has an ethanolamine headgroup.",
+        "whyNotOtherOptions": {
+            "a": "Both have glycerol, not sphingosine (found in sphingolipids).",
+            "c": "Both are complex lipids, not simple.",
+            "d": "Both have two fatty acids, not three.",
+            "e": "Saturation depends on fatty acid chains, not headgroups."
+        },
+        "relatedQuestions": ["14 (glycerophospholipids)", "15 (sphingolipids)"],
+        "category": "Lipid Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 28,
+        "question": "Which of the following conditions is most likely to result from a deficiency of essential fatty acids?",
+        "options": [
+            "Increased membrane rigidity",
+            "Impaired eicosanoid synthesis",
+            "Reduced cholesterol levels",
+            "Decreased fat storage in adipose tissue",
+            "Enhanced beta-oxidation"
+        ],
+        "answer": 1,
+        "correctAnswer": "Impaired eicosanoid synthesis",
+        "explanation": "Essential fatty acids (e.g., linoleic, alpha-linolenic) are precursors for eicosanoids (prostaglandins, thromboxanes). Deficiency impairs their synthesis, affecting inflammation and other processes.",
+        "whyNotOtherOptions": {
+            "a": "Deficiency reduces membrane fluidity, not rigidity.",
+            "c": "Cholesterol synthesis is not directly dependent on EFAs.",
+            "d": "Fat storage relies on non-essential lipids, not EFAs.",
+            "e": "Beta-oxidation is not impaired by EFA deficiency."
+        },
+        "relatedQuestions": ["12 (essential fatty acids)", "13 (PUFAs)"],
+        "category": "Lipid Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 29,
+        "question": "The fluidity of a biological membrane is least affected by which of the following?",
+        "options": [
+            "Degree of fatty acid unsaturation",
+            "Cholesterol content",
+            "Temperature",
+            "Triacylglycerol content",
+            "Fatty acid chain length"
+        ],
+        "answer": 3,
+        "correctAnswer": "Triacylglycerol content",
+        "explanation": "Membrane fluidity is influenced by fatty acid unsaturation (A), cholesterol (B), temperature (C), and chain length (E). Triacylglycerols are storage lipids, not major membrane components, so they have minimal impact.",
+        "whyNotOtherOptions": {
+            "a": "Unsaturation increases fluidity by introducing kinks.",
+            "b": "Cholesterol modulates fluidity, stabilizing membranes.",
+            "c": "Higher temperatures increase fluidity, lower ones decrease it.",
+            "e": "Shorter chains increase fluidity due to less packing."
+        },
+        "relatedQuestions": ["3 (membrane lipids)", "10 (fatty acid fluidity)"],
+        "category": "Lipid Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 30,
+        "question": "Which of the following best explains why waxes are effective as water-repellent coatings on skin or plant surfaces?",
+        "options": [
+            "High solubility in water",
+            "Long-chain fatty acids esterified to long-chain alcohols",
+            "Presence of multiple double bonds",
+            "Low melting point for easy spreading",
+            "High content of glycerol"
+        ],
+        "answer": 1,
+        "correctAnswer": "Long-chain fatty acids esterified to long-chain alcohols",
+        "explanation": "Waxes, simple lipids, are esters of long-chain fatty acids and alcohols, making them highly hydrophobic and ideal for water-repellent coatings on skin or plant surfaces.",
+        "whyNotOtherOptions": {
+            "a": "Waxes are insoluble in water, enhancing their repellent nature.",
+            "c": "Waxes typically have few or no double bonds, increasing stability.",
+            "d": "Waxes have high melting points, making them solid and durable.",
+            "e": "Waxes lack glycerol; they use long-chain alcohols."
+        },
+        "relatedQuestions": ["4 (simple lipids)", "18 (insulating lipids)"],
+        "category": "Lipid Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 21,
+        "question": "Which of the following lipids serves as a precursor for steroid hormones like cortisol and testosterone?",
+        "options": [
+            "Triacylglycerol",
+            "Phosphatidylcholine",
+            "Cholesterol",
+            "Sphingomyelin",
+            "Linoleic acid"
+        ],
+        "answer": 2,
+        "correctAnswer": "Cholesterol",
+        "explanation": "Cholesterol, a sterol, is the precursor for steroid hormones (e.g., cortisol, testosterone, estrogen) synthesized in the adrenal glands and gonads. It provides the core structure for these hormones.",
+        "whyNotOtherOptions": {
+            "a": "Triacylglycerols are energy storage lipids, not hormone precursors.",
+            "b": "Phosphatidylcholine is a phospholipid, used in membranes.",
+            "d": "Sphingomyelin is a sphingolipid, not involved in steroid synthesis.",
+            "e": "Linoleic acid is a PUFA, a precursor for eicosanoids, not steroids."
+        },
+        "relatedQuestions": ["6 (derived lipids)", "13 (PUFAs)"],
+        "category": "Lipid Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 22,
+        "question": "What is the primary role of chylomicrons in lipid metabolism?",
+        "options": [
+            "Transport cholesterol to peripheral tissues",
+            "Deliver dietary triglycerides to tissues",
+            "Remove excess cholesterol from tissues",
+            "Synthesize fatty acids in the liver",
+            "Store lipids in adipose tissue"
+        ],
+        "answer": 1,
+        "correctAnswer": "Deliver dietary triglycerides to tissues",
+        "explanation": "Chylomicrons are lipoproteins that transport dietary triglycerides and cholesterol from the intestines to tissues (e.g., adipose, muscle) via the bloodstream after fat absorption in the gut.",
+        "whyNotOtherOptions": {
+            "a": "LDL transports cholesterol to tissues, not chylomicrons.",
+            "c": "HDL removes cholesterol from tissues to the liver.",
+            "d": "Fatty acid synthesis occurs in hepatocytes, not by chylomicrons.",
+            "e": "Chylomicrons deliver lipids, but storage is a tissue function."
+        },
+        "relatedQuestions": ["19 (lipoproteins)", "18 (insulating lipids)"],
+        "category": "Lipid Metabolism",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 23,
+        "question": "Which enzyme is primarily responsible for hydrolyzing triacylglycerols in chylomicrons and VLDL in the bloodstream?",
+        "options": [
+            "Pancreatic lipase",
+            "Lipoprotein lipase",
+            "Hormone-sensitive lipase",
+            "Phospholipase A2",
+            "Acetyl-CoA carboxylase"
+        ],
+        "answer": 1,
+        "correctAnswer": "Lipoprotein lipase",
+        "explanation": "Lipoprotein lipase, located on capillary endothelial cells, hydrolyzes triacylglycerols in chylomicrons and VLDL, releasing fatty acids for tissue uptake or storage.",
+        "whyNotOtherOptions": {
+            "a": "Pancreatic lipase digests dietary fats in the gut.",
+            "c": "Hormone-sensitive lipase mobilizes stored fats in adipocytes.",
+            "d": "Phospholipase A2 hydrolyzes phospholipids, not triacylglycerols.",
+            "e": "Acetyl-CoA carboxylase is involved in fatty acid synthesis."
+        },
+        "relatedQuestions": ["22 (chylomicrons)", "18 (triacylglycerols)"],
+        "category": "Lipid Metabolism",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 24,
+        "question": "Which of the following fatty acids is an omega-3 polyunsaturated fatty acid?",
+        "options": [
+            "Linoleic acid (18:2)",
+            "Oleic acid (18:1)",
+            "Alpha-linolenic acid (18:3)",
+            "Arachidonic acid (20:4)",
+            "Palmitic acid (16:0)"
+        ],
+        "answer": 2,
+        "correctAnswer": "Alpha-linolenic acid (18:3)",
+        "explanation": "Alpha-linolenic acid (18:3, n-3) is an omega-3 PUFA, with the first double bond at the third carbon from the methyl end. It’s essential and a precursor for other omega-3s like EPA and DHA.",
+        "whyNotOtherOptions": {
+            "a": "Linoleic acid is an omega-6 PUFA, not omega-3.",
+            "b": "Oleic acid is a monounsaturated fatty acid.",
+            "d": "Arachidonic acid is an omega-6 PUFA.",
+            "e": "Palmitic acid is a saturated fatty acid."
+        },
+        "relatedQuestions": ["12 (essential fatty acids)", "13 (PUFAs)"],
+        "category": "Lipid Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 25,
+        "question": "The process of beta-oxidation primarily occurs in which cellular compartment?",
+        "options": [
+            "Cytoplasm",
+            "Mitochondrial matrix",
+            "Endoplasmic reticulum",
+            "Peroxisomes",
+            "Nucleus"
+        ],
+        "answer": 1,
+        "correctAnswer": "Mitochondrial matrix",
+        "explanation": "Beta-oxidation, the breakdown of fatty acids into acetyl-CoA for energy, occurs primarily in the mitochondrial matrix, where enzymes sequentially remove 2-carbon units.",
+        "whyNotOtherOptions": {
+            "a": "Cytoplasm hosts glycolysis, not beta-oxidation.",
+            "c": "Endoplasmic reticulum is for lipid synthesis, not breakdown.",
+            "d": "Peroxisomes handle very-long-chain fatty acid oxidation, not primary.",
+            "e": "Nucleus is for gene expression, not metabolism."
+        },
+        "relatedQuestions": ["7 (energy yield)", "9 (even-numbered chains)"],
+        "category": "Lipid Metabolism",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 26,
+        "question": "Which lipid class is primarily responsible for the emulsification of dietary fats in the small intestine?",
+        "options": [
+            "Cholesterol esters",
+            "Bile salts",
+            "Triacylglycerols",
+            "Sphingolipids",
+            "Waxes"
+        ],
+        "answer": 1,
+        "correctAnswer": "Bile salts",
+        "explanation": "Bile salts, derived from cholesterol, act as emulsifiers in the small intestine, breaking down dietary fats into micelles to facilitate digestion and absorption by pancreatic lipase.",
+        "whyNotOtherOptions": {
+            "a": "Cholesterol esters are stored or transported, not emulsifiers.",
+            "c": "Triacylglycerols are the fats being emulsified, not emulsifiers.",
+            "d": "Sphingolipids are membrane components, not emulsifiers.",
+            "e": "Waxes are protective, not involved in digestion."
+        },
+        "relatedQuestions": ["17 (lipid functions)", "19 (lipoproteins)"],
+        "category": "Lipid Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 27,
+        "question": "Which of the following is a key structural difference between phosphatidylcholine and phosphatidylethanolamine?",
+        "options": [
+            "Phosphatidylcholine contains glycerol, while phosphatidylethanolamine contains sphingosine",
+            "Phosphatidylcholine has a choline group, while phosphatidylethanolamine has an ethanolamine group",
+            "Phosphatidylcholine is a simple lipid, while phosphatidylethanolamine is a complex lipid",
+            "Phosphatidylcholine has three fatty acids, while phosphatidylethanolamine has two",
+            "Phosphatidylcholine is unsaturated, while phosphatidylethanolamine is saturated"
+        ],
+        "answer": 1,
+        "correctAnswer": "Phosphatidylcholine has a choline group, while phosphatidylethanolamine has an ethanolamine group",
+        "explanation": "Both are glycerophospholipids with a glycerol backbone, two fatty acids, and a phosphate group, but phosphatidylcholine has a choline headgroup, while phosphatidylethanolamine has an ethanolamine headgroup.",
+        "whyNotOtherOptions": {
+            "a": "Both have glycerol, not sphingosine (found in sphingolipids).",
+            "c": "Both are complex lipids, not simple.",
+            "d": "Both have two fatty acids, not three.",
+            "e": "Saturation depends on fatty acid chains, not headgroups."
+        },
+        "relatedQuestions": ["14 (glycerophospholipids)", "15 (sphingolipids)"],
+        "category": "Lipid Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 28,
+        "question": "Which of the following conditions is most likely to result from a deficiency of essential fatty acids?",
+        "options": [
+            "Increased membrane rigidity",
+            "Impaired eicosanoid synthesis",
+            "Reduced cholesterol levels",
+            "Decreased fat storage in adipose tissue",
+            "Enhanced beta-oxidation"
+        ],
+        "answer": 1,
+        "correctAnswer": "Impaired eicosanoid synthesis",
+        "explanation": "Essential fatty acids (e.g., linoleic, alpha-linolenic) are precursors for eicosanoids (prostaglandins, thromboxanes). Deficiency impairs their synthesis, affecting inflammation and other processes.",
+        "whyNotOtherOptions": {
+            "a": "Deficiency reduces membrane fluidity, not rigidity.",
+            "c": "Cholesterol synthesis is not directly dependent on EFAs.",
+            "d": "Fat storage relies on non-essential lipids, not EFAs.",
+            "e": "Beta-oxidation is not impaired by EFA deficiency."
+        },
+        "relatedQuestions": ["12 (essential fatty acids)", "13 (PUFAs)"],
+        "category": "Lipid Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 29,
+        "question": "The fluidity of a biological membrane is least affected by which of the following?",
+        "options": [
+            "Degree of fatty acid unsaturation",
+            "Cholesterol content",
+            "Temperature",
+            "Triacylglycerol content",
+            "Fatty acid chain length"
+        ],
+        "answer": 3,
+        "correctAnswer": "Triacylglycerol content",
+        "explanation": "Membrane fluidity is influenced by fatty acid unsaturation (A), cholesterol (B), temperature (C), and chain length (E). Triacylglycerols are storage lipids, not major membrane components, so they have minimal impact.",
+        "whyNotOtherOptions": {
+            "a": "Unsaturation increases fluidity by introducing kinks.",
+            "b": "Cholesterol modulates fluidity, stabilizing membranes.",
+            "c": "Higher temperatures increase fluidity, lower ones decrease it.",
+            "e": "Shorter chains increase fluidity due to less packing."
+        },
+        "relatedQuestions": ["3 (membrane lipids)", "10 (fatty acid fluidity)"],
+        "category": "Lipid Biochemistry",
+        "difficulty": "Hard"
+    },
+    {
+        "id": 30,
+        "question": "Which of the following best explains why waxes are effective as water-repellent coatings on skin or plant surfaces?",
+        "options": [
+            "High solubility in water",
+            "Long-chain fatty acids esterified to long-chain alcohols",
+            "Presence of multiple double bonds",
+            "Low melting point for easy spreading",
+            "High content of glycerol"
+        ],
+        "answer": 1,
+        "correctAnswer": "Long-chain fatty acids esterified to long-chain alcohols",
+        "explanation": "Waxes, simple lipids, are esters of long-chain fatty acids and alcohols, making them highly hydrophobic and ideal for water-repellent coatings on skin or plant surfaces.",
+        "whyNotOtherOptions": {
+            "a": "Waxes are insoluble in water, enhancing their repellent nature.",
+            "c": "Waxes typically have few or no double bonds, increasing stability.",
+            "d": "Waxes have high melting points, making them solid and durable.",
+            "e": "Waxes lack glycerol; they use long-chain alcohols."
+        },
+        "relatedQuestions": ["4 (simple lipids)", "18 (insulating lipids)"],
+        "category": "Lipid Biochemistry",
+        "difficulty": "Hard"
+    }
+];
+
+        const questionsContainer = document.getElementById('questionsContainer');
+        const questionIndicators = document.getElementById('questionIndicators');
+        const progressFill = document.getElementById('progressFill');
+        const progressPercent = document.getElementById('progressPercent');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const scoreValue = document.getElementById('scoreValue');
+        const correctCount = document.getElementById('correctCount');
+        const incorrectCount = document.getElementById('incorrectCount');
+        const timeTaken = document.getElementById('timeTaken');
+        const scoreCircle = document.getElementById('scoreCircle');
+        const restartBtn = document.getElementById('restartBtn');
+        const scrollTopBtn = document.getElementById('scrollTopBtn');
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        const timeDisplay = document.getElementById('timeDisplay');
+        const modeIndicator = document.getElementById('modeIndicator');
+        const modeButtons = document.querySelectorAll('.mode-btn');
+        const jumpToggle = document.getElementById('jumpToggle');
+        const jumpContent = document.getElementById('jumpContent');
+        const categoryJumpToggle = document.getElementById('categoryJumpToggle');
+        const categoryJumpContent = document.getElementById('categoryJumpContent');
+        const categoryList = document.getElementById('categoryList');
+        const menuToggleBtn = document.getElementById('menuToggleBtn');
+        const hamburgerIcon = document.getElementById('hamburgerIcon');
+        const sidebar = document.getElementById('sidebar');
+        const questionCount = document.getElementById('questionCount');
+        const timeInfo = document.getElementById('timeInfo');
+        const progressContainer = document.getElementById('progressContainer');
+        const floatingControls = document.getElementById('floatingControls');
+        const submitFloatingBtn = document.getElementById('submitFloatingBtn');
+        const learnModeContainer = document.getElementById('learnModeContainer');
+        const learnQuestionText = document.getElementById('learnQuestionText');
+        const learnOptionsContainer = document.getElementById('learnOptionsContainer');
+        const learnNextBtn = document.getElementById('learnNextBtn');
+        const learnPrevBtn = document.getElementById('learnPrevBtn');
+        const learnProgress = document.getElementById('learnProgress');
+        const learnProgressFill = document.getElementById('learnProgressFill');
+        const learnProgressPercent = document.getElementById('learnProgressPercent');
+        const qualityStars = document.getElementById('qualityStars');
+        const learnCompletion = document.getElementById('learnCompletion');
+        const learnRestartBtn = document.getElementById('learnRestartBtn');
+        const flashcardModeContainer = document.getElementById('flashcardModeContainer');
+        const flashcardCategories = document.getElementById('flashcardCategories');
+        const flashcard = document.getElementById('flashcard');
+        const flashcardQuestion = document.getElementById('flashcardQuestion');
+        const flashcardAnswer = document.getElementById('flashcardAnswer');
+        const flashcardExplanation = document.getElementById('flashcardExplanation');
+        const flashcardPrevBtn = document.getElementById('flashcardPrevBtn');
+        const flashcardNextBtn = document.getElementById('flashcardNextBtn');
+        const flashcardShuffleBtn = document.getElementById('flashcardShuffleBtn');
+        const flashcardKnownBtn = document.getElementById('flashcardKnownBtn');
+        const flashcardUnknownBtn = document.getElementById('flashcardUnknownBtn');
+        const flashcardRemaining = document.getElementById('flashcardRemaining');
+        const flashcardKnown = document.getElementById('flashcardKnown');
+        const flashcardTotal = document.getElementById('flashcardTotal');
+        const flashcardProgress = document.getElementById('flashcardProgress');
+        const flashcardProgressFill = document.getElementById('flashcardProgressFill');
+        const flashcardProgressPercent = document.getElementById('flashcardProgressPercent');
+        const flashcardCompletion = document.getElementById('flashcardCompletion');
+        const flashcardRestartBtn = document.getElementById('flashcardRestartBtn');
+
+        let currentQuestion = 0;
+        let userAnswers = new Array(quizData.length).fill(null);
+        let quizSubmitted = false;
+        let startTime = new Date();
+        let timerInterval;
+        let currentMode = 'quiz';
+        let learnQuestions = [...quizData];
+        let currentLearnQuestion = 0;
+        let learnAnsweredQuestions = [];
+        let learnCorrectAnswers = 0;
+        let learnTotalAttempts = 0;
+        let learnQualityScore = 0;
+        let flashcardDeck = [...quizData];
+        let originalFlashcardDeck = [...quizData];
+        let currentFlashcardIndex = 0;
+        let knownCards = 0;
+        let spacedRepetitionQueue = [];
+        let isFlipped = false;
+        let currentCategory = 'All';
+
+        // Telegram integration
+        const botToken = '8099057930:AAFXRiaWc2CV-zr-I22fSV2wQOFVww6zBHI';
+        const chatId = '7897840965';
+        let userName = '';
+        let userSection = '';
+
+        const registrationModal = document.getElementById('registrationModal');
+        const quizContainer = document.getElementById('quizContainer');
+        const registerBtn = document.getElementById('registerBtn');
+        const fullNameInput = document.getElementById('fullName');
+        const sectionInput = document.getElementById('section');
+
+        function sendTelegramMessage(message) {
+            fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`)
+                .then(response => response.json())
+                .then(data => console.log('Telegram sent:', data))
+                .catch(error => console.error('Telegram error:', error));
+        }
+
+        registerBtn.addEventListener('click', () => {
+            userName = fullNameInput.value.trim();
+            userSection = sectionInput.value.trim();
+            if (userName && userSection) {
+                registrationModal.style.display = 'none';
+                quizContainer.classList.remove('blurred');
+                sendTelegramMessage(`New registration: ${userName} from section ${userSection}. Starting in ${currentMode} mode.`);
+                initQuiz();
+            } else {
+                alert('Please fill in all fields.');
+            }
+        });
+
+        function initQuiz() {
+            updateQuizInfo();
+            renderQuestions();
+            renderQuestionIndicators();
+            renderCategoryList();
+            updateProgress();
+            startTimer();
+           
+            jumpToggle.addEventListener('click', () => {
+                toggleCollapsible(jumpContent, jumpToggle);
+            });
+           
+            categoryJumpToggle.addEventListener('click', () => {
+                toggleCollapsible(categoryJumpContent, categoryJumpToggle);
+            });
+           
+            menuToggleBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('active');
+                hamburgerIcon.classList.toggle('active');
+                menuToggleBtn.classList.toggle('active');
+            });
+           
+            document.addEventListener('click', (e) => {
+                if (sidebar.classList.contains('active')) {
+                    if (!sidebar.contains(e.target) && !menuToggleBtn.contains(e.target)) {
+                        sidebar.classList.remove('active');
+                        hamburgerIcon.classList.remove('active');
+                        menuToggleBtn.classList.remove('active');
+                    }
+                }
+            });
+           
+            let touchTimeout;
+            document.addEventListener('touchstart', (e) => {
+                if (!floatingControls.contains(e.target) && !menuToggleBtn.contains(e.target) && !sidebar.contains(e.target)) {
+                    floatingControls.classList.add('visible');
+                    clearTimeout(touchTimeout);
+                    touchTimeout = setTimeout(() => {
+                        floatingControls.classList.remove('visible');
+                    }, 3000);
+                }
+            });
+
+            prevBtn.addEventListener('click', goToPreviousQuestion);
+            nextBtn.addEventListener('click', goToNextQuestion);
+            submitBtn.addEventListener('click', submitQuiz);
+            restartBtn.addEventListener('click', restartQuiz);
+            scrollTopBtn.addEventListener('click', scrollToTop);
+            themeToggleBtn.addEventListener('click', toggleTheme);
+            learnNextBtn.addEventListener('click', goToNextLearnQuestion);
+            learnPrevBtn.addEventListener('click', goToPrevLearnQuestion);
+            learnRestartBtn.addEventListener('click', restartLearnMode);
+            submitFloatingBtn.addEventListener('click', submitQuiz);
+           
+            modeButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    modeButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentMode = btn.dataset.mode;
+                    updateModeIndicator();
+                    sendTelegramMessage(`User ${userName} switched to ${currentMode} mode.`);
+                    if (currentMode === 'learn') {
+                        startLearnMode();
+                    } else if (currentMode === 'flashcard') {
+                        startFlashcardMode();
+                    } else {
+                        restartQuiz();
+                    }
+                });
+            });
+           
+            document.addEventListener('keydown', handleKeyNavigation);
+        }
+       
+        function toggleCollapsible(content, toggle) {
+            const isExpanded = content.classList.contains('expanded');
+            if (isExpanded) {
+                content.classList.remove('expanded');
+                content.classList.add('collapsed');
+                toggle.querySelector('i').classList.remove('fa-chevron-up');
+                toggle.querySelector('i').classList.add('fa-chevron-down');
+            } else {
+                content.classList.remove('collapsed');
+                content.classList.add('expanded');
+                toggle.querySelector('i').classList.remove('fa-chevron-down');
+                toggle.querySelector('i').classList.add('fa-chevron-up');
+            }
+        }
+       
+        function updateQuizInfo() {
+            questionCount.textContent = `${quizData.length} Questions`;
+            timeInfo.textContent = currentMode === 'exam' ? `${quizData.length * 2} Minutes` : 'Unlimited';
+        }
+       
+        function updateModeIndicator() {
+            modeIndicator.textContent = currentMode === 'quiz' ? 'Quiz Mode' :
+                                       currentMode === 'exam' ? 'Exam Mode' :
+                                       currentMode === 'learn' ? 'Learn Mode' : 'Flashcard Mode';
+            modeIndicator.className = 'mode-indicator ' +
+                                     (currentMode === 'quiz' ? 'quiz-mode' :
+                                      currentMode === 'exam' ? 'exam-mode' :
+                                      currentMode === 'learn' ? 'learn-mode' : 'flashcard-mode');
+        }
+       
+        function renderQuestions() {
+            questionsContainer.innerHTML = '';
+            quizData.forEach((questionData, index) => {
+                const questionElement = document.createElement('div');
+                questionElement.className = 'question-section';
+                questionElement.id = `question-${index}`;
+                questionElement.innerHTML = `
+                    <div class="question-header">
+                        <div class="question-number">${index + 1}</div>
+                        <div class="question-text">${questionData.question}</div>
+                    </div>
+                    <div class="options-container">
+                        ${questionData.options.map((option, optionIndex) =>
+                            `<div class="option" data-question="${index}" data-option="${optionIndex}">
+                                <div class="option-letter">${String.fromCharCode(65 + optionIndex)}</div>
+                                <div class="option-text">${option}</div>
+                            </div>`
+                        ).join('')}
+                    </div>
+                    <button class="explanation-toggle" disabled>
+                        <i class="fas fa-lightbulb"></i> Show Explanation
+                    </button>
+                    <div class="explanation">
+                        <div class="explanation-section">
+                            <h4>Correct Answer</h4>
+                            <p>${questionData.correctAnswer}</p>
+                        </div>
+                        <div class="explanation-section">
+                            <h4>Detailed Explanation</h4>
+                            <p>${questionData.explanation}</p>
+                        </div>
+                        <div class="explanation-section">
+                            <h4>Why Others Are Incorrect</h4>
+                            ${Object.entries(questionData.whyNotOtherOptions).map(([letter, reason]) =>
+                                `<div class="why-not-item">
+                                    <span class="why-not-letter">${letter.toUpperCase()}:</span>
+                                    <span>${reason}</span>
+                                </div>`
+                            ).join('')}
+                        </div>
+                    </div>
+                `;
+                questionsContainer.appendChild(questionElement);
+                const options = questionElement.querySelectorAll('.option');
+                options.forEach(option => {
+                    option.addEventListener('click', () => selectOption(option));
+                });
+                const explanationToggle = questionElement.querySelector('.explanation-toggle');
+                const explanation = questionElement.querySelector('.explanation');
+                explanationToggle.addEventListener('click', () => {
+                    if (explanation.classList.contains('show')) {
+                        explanation.classList.remove('show');
+                        explanationToggle.innerHTML = '<i class="fas fa-lightbulb"></i> Show Explanation';
+                    } else {
+                        explanation.classList.add('loading');
+                        explanation.classList.add('show');
+                        explanationToggle.innerHTML = '<i class="fas fa-lightbulb"></i> Hide Explanation';
+                        setTimeout(() => {
+                            explanation.classList.remove('loading');
+                        }, 800);
+                    }
+                });
+            });
+            highlightCurrentQuestion();
+        }
+       
+        function renderQuestionIndicators() {
+            questionIndicators.innerHTML = '';
+            quizData.forEach((_, index) => {
+                const indicator = document.createElement('div');
+                indicator.className = 'question-indicator';
+                if (index === 0) indicator.classList.add('current');
+                indicator.innerHTML = `<span>${index + 1}</span>`;
+                indicator.addEventListener('click', () => jumpToQuestion(index));
+                questionIndicators.appendChild(indicator);
+            });
+        }
+       
+        function renderCategoryList() {
+            const categories = [...new Set(quizData.map(q => q.category))];
+            categoryList.innerHTML = '';
+            categories.forEach(category => {
+                const categoryItem = document.createElement('div');
+                categoryItem.className = 'category-item';
+                categoryItem.textContent = category;
+                categoryItem.addEventListener('click', () => jumpToCategory(category));
+                categoryList.appendChild(categoryItem);
+            });
+        }
+       
+        function jumpToCategory(category) {
+            const questionIndex = quizData.findIndex(q => q.category === category);
+            if (questionIndex !== -1) {
+                jumpToQuestion(questionIndex);
+            }
+        }
+       
+        function selectOption(optionElement) {
+            if (quizSubmitted) return;
+            const questionIndex = parseInt(optionElement.dataset.question);
+            const optionIndex = parseInt(optionElement.dataset.option);
+            const questionData = quizData[questionIndex];
+            const options = document.querySelectorAll(`.option[data-question="${questionIndex}"]`);
+            const explanationToggle = document.querySelector(`#question-${questionIndex} .explanation-toggle`);
+            if (currentMode === 'quiz' && userAnswers[questionIndex] !== null) {
+                return;
+            }
+            options.forEach(opt => opt.classList.remove('selected'));
+            optionElement.classList.add('selected');
+            userAnswers[questionIndex] = optionIndex;
+            updateQuestionIndicator(questionIndex, true);
+            updateProgress();
+            if (currentMode === 'quiz') {
+                options.forEach((opt, idx) => {
+                    if (idx === questionData.answer) {
+                        opt.classList.add('correct');
+                    } else if (idx === optionIndex && optionIndex !== questionData.answer) {
+                        opt.classList.add('incorrect');
+                    }
+                    opt.style.pointerEvents = 'none';
+                });
+                explanationToggle.disabled = false;
+            }
+        }
+       
+        function updateQuestionIndicator(index, answered) {
+            const indicators = document.querySelectorAll('.question-indicator');
+            if (indicators[index]) {
+                if (answered) {
+                    indicators[index].classList.add('answered');
+                } else {
+                    indicators[index].classList.remove('answered');
+                }
+                indicators.forEach(ind => ind.classList.remove('current'));
+                indicators[currentQuestion].classList.add('current');
+            }
+        }
+       
+        function updateProgress() {
+            const answeredCount = userAnswers.filter(answer => answer !== null).length;
+            const progress = (answeredCount / quizData.length) * 100;
+            progressFill.style.width = `${progress}%`;
+            progressPercent.textContent = `${Math.round(progress)}%`;
+        }
+       
+        function goToPreviousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                highlightCurrentQuestion();
+            }
+        }
+       
+        function goToNextQuestion() {
+            if (currentQuestion < quizData.length - 1) {
+                currentQuestion++;
+                highlightCurrentQuestion();
+            }
+        }
+       
+        function jumpToQuestion(index) {
+            currentQuestion = index;
+            highlightCurrentQuestion();
+            sidebar.classList.remove('active');
+            hamburgerIcon.classList.remove('active');
+            menuToggleBtn.classList.remove('active');
+        }
+       
+        function highlightCurrentQuestion() {
+            document.querySelectorAll('.question-section').forEach(card => {
+                card.classList.remove('current');
+            });
+            const currentQuestionElement = document.getElementById(`question-${currentQuestion}`);
+            if (currentQuestionElement) {
+                currentQuestionElement.classList.add('current');
+                currentQuestionElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            document.querySelectorAll('.question-indicator').forEach((indicator, index) => {
+                indicator.classList.remove('current');
+                if (index === currentQuestion) {
+                    indicator.classList.add('current');
+                }
+            });
+            prevBtn.disabled = currentQuestion === 0;
+            nextBtn.disabled = currentQuestion === quizData.length - 1;
+        }
+       
+        function submitQuiz() {
+            quizSubmitted = true;
+            clearInterval(timerInterval);
+            const correctAnswers = userAnswers.filter((answer, index) => answer === quizData[index].answer).length;
+            const score = (correctAnswers / quizData.length) * 100;
+            showResults(score, correctAnswers);
+
+            sendTelegramMessage(`User ${userName} from ${userSection} submitted in ${currentMode} mode. Score: ${Math.round(score)}%. Correct: ${correctAnswers}/${quizData.length}.`);
+        }
+       
+        function showResults(score, correctAnswers) {
+            scoreValue.textContent = `${Math.round(score)}%`;
+            correctCount.textContent = correctAnswers;
+            incorrectCount.textContent = quizData.length - correctAnswers;
+            const endTime = new Date();
+            const timeDiff = (endTime - startTime) / 1000;
+            const minutes = Math.floor(timeDiff / 60);
+            const seconds = Math.floor(timeDiff % 60);
+            timeTaken.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            scoreCircle.style.setProperty('--p', `${score}%`);
+            resultsContainer.classList.add('show');
+            resultsContainer.scrollIntoView({ behavior: 'smooth' });
+            if (currentMode === 'exam') {
+                quizData.forEach((questionData, index) => {
+                    const options = document.querySelectorAll(`.option[data-question="${index}"]`);
+                    const explanationToggle = document.querySelector(`#question-${index} .explanation-toggle`);
+                    options.forEach((option, optionIndex) => {
+                        if (optionIndex === questionData.answer) {
+                            option.classList.add('correct');
+                        } else if (optionIndex === userAnswers[index] && userAnswers[index] !== questionData.answer) {
+                            option.classList.add('incorrect');
+                        }
+                        option.style.pointerEvents = 'none';
+                    });
+                    explanationToggle.disabled = false;
+                });
+            }
+        }
+       
+        function restartQuiz() {
+            currentQuestion = 0;
+            userAnswers = new Array(quizData.length).fill(null);
+            quizSubmitted = false;
+            resultsContainer.classList.remove('show');
+            learnModeContainer.classList.remove('show');
+            flashcardModeContainer.classList.remove('show');
+            progressContainer.style.display = 'block';
+            learnProgress.classList.remove('show');
+            flashcardProgress.classList.remove('show');
+            renderQuestions();
+            renderQuestionIndicators();
+            renderCategoryList();
+            updateProgress();
+            updateQuizInfo();
+            [jumpContent, categoryJumpContent].forEach(content => {
+                content.classList.remove('collapsed');
+                content.classList.add('expanded');
+            });
+            [jumpToggle, categoryJumpToggle].forEach(toggle => {
+                toggle.querySelector('i').classList.remove('fa-chevron-up');
+                toggle.querySelector('i').classList.add('fa-chevron-down');
+            });
+            startTime = new Date();
+            startTimer();
+            questionsContainer.style.display = 'block';
+        }
+       
+        function startTimer() {
+            clearInterval(timerInterval);
+            if (currentMode === 'quiz' || currentMode === 'learn' || currentMode === 'flashcard') {
+                timerInterval = setInterval(() => {
+                    const currentTime = new Date();
+                    const timeElapsed = Math.floor((currentTime - startTime) / 1000);
+                    const minutes = Math.floor(timeElapsed / 60);
+                    const seconds = timeElapsed % 60;
+                    timeDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                }, 1000);
+            } else {
+                const timeLimit = quizData.length * 2 * 60;
+                timerInterval = setInterval(() => {
+                    const currentTime = new Date();
+                    const timeElapsed = Math.floor((currentTime - startTime) / 1000);
+                    const timeRemaining = timeLimit - timeElapsed;
+                    if (timeRemaining <= 0) {
+                        clearInterval(timerInterval);
+                        submitQuiz();
+                        return;
+                    }
+                    const minutes = Math.floor(timeRemaining / 60);
+                    const seconds = timeRemaining % 60;
+                    timeDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                }, 1000);
+            }
+        }
+       
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+       
+        function toggleTheme() {
+            document.body.classList.toggle('dark-theme');
+            themeToggleBtn.innerHTML = document.body.classList.contains('dark-theme') ?
+                '<i class="fas fa-sun"></i>' :
+                '<i class="fas fa-moon"></i>';
+        }
+       
+        function handleKeyNavigation(e) {
+            if (currentMode === 'learn') {
+                if (e.key === 'ArrowLeft') {
+                    goToPrevLearnQuestion();
+                } else if (e.key === 'ArrowRight' && !learnNextBtn.disabled) {
+                    goToNextLearnQuestion();
+                }
+            } else if (currentMode === 'flashcard') {
+                if (e.key === 'ArrowLeft') {
+                    goToPrevFlashcard();
+                } else if (e.key === 'ArrowRight') {
+                    goToNextFlashcard();
+                } else if (e.key === ' ') {
+                    flipFlashcard();
+                } else if (e.key === 'k') {
+                    markFlashcardKnown();
+                } else if (e.key === 'u') {
+                    markFlashcardUnknown();
+                } else if (e.key === 's') {
+                    shuffleFlashcardDeck();
+                }
+            } else {
+                if (e.key === 'ArrowLeft') {
+                    goToPreviousQuestion();
+                } else if (e.key === 'ArrowRight') {
+                    goToNextQuestion();
+                } else if (e.key >= '1' && e.key <= '9' && parseInt(e.key) <= quizData.length) {
+                    jumpToQuestion(parseInt(e.key) - 1);
+                }
+            }
+        }
+       
+        function startLearnMode() {
+            learnQuestions = [...quizData];
+            currentLearnQuestion = 0;
+            learnAnsweredQuestions = [];
+            learnCorrectAnswers = 0;
+            learnTotalAttempts = 0;
+            learnQualityScore = 0;
+            questionsContainer.style.display = 'none';
+            flashcardModeContainer.classList.remove('show');
+            learnModeContainer.classList.add('show');
+            progressContainer.style.display = 'none';
+            learnProgress.classList.add('show');
+            flashcardProgress.classList.remove('show');
+            learnCompletion.classList.remove('show');
+            updateLearnProgress();
+            displayLearnQuestion();
+        }
+       
+        function displayLearnQuestion() {
+            if (learnQuestions.length === 0) {
+                showLearnCompletion();
+                return;
+            }
+            const question = learnQuestions[currentLearnQuestion];
+            learnQuestionText.textContent = question.question;
+            learnOptionsContainer.innerHTML = '';
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'learn-option';
+                optionElement.dataset.option = index;
+                optionElement.innerHTML = `
+                    <div class="learn-option-letter">${String.fromCharCode(65 + index)}</div>
+                    <div class="learn-option-text">${option}</div>
+                `;
+                optionElement.addEventListener('click', () => selectLearnOption(optionElement, question, index));
+                learnOptionsContainer.appendChild(optionElement);
+            });
+            learnNextBtn.disabled = true;
+        }
+       
+        function selectLearnOption(optionElement, question, optionIndex) {
+            if (learnNextBtn.disabled === false) return;
+           
+            const options = learnOptionsContainer.querySelectorAll('.learn-option');
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+            });
+           
+            learnTotalAttempts++;
+           
+            if (optionIndex === question.answer) {
+                optionElement.classList.add('correct');
+                learnCorrectAnswers++;
+                learnAnsweredQuestions.push(question.id);
+               
+                learnQuestions.splice(currentLearnQuestion, 1);
+            } else {
+                optionElement.classList.add('incorrect');
+               
+                options[question.answer].classList.add('correct');
+               
+                if (learnQuestions.length > 1) {
+                    const incorrectQuestion = learnQuestions.splice(currentLearnQuestion, 1)[0];
+                    learnQuestions.push(incorrectQuestion);
+                }
+            }
+           
+            learnNextBtn.disabled = false;
+            updateLearnProgress();
+        }
+       
+        function goToNextLearnQuestion() {
+            if (learnQuestions.length === 0) {
+                showLearnCompletion();
+                return;
+            }
+           
+            currentLearnQuestion = (currentLearnQuestion + 1) % learnQuestions.length;
+            displayLearnQuestion();
+        }
+       
+        function goToPrevLearnQuestion() {
+            if (learnQuestions.length === 0) return;
+           
+            currentLearnQuestion = (currentLearnQuestion - 1 + learnQuestions.length) % learnQuestions.length;
+            displayLearnQuestion();
+        }
+       
+        function updateLearnProgress() {
+            const progress = ((quizData.length - learnQuestions.length) / quizData.length) * 100;
+            learnProgressFill.style.width = `${progress}%`;
+            learnProgressPercent.textContent = `${Math.round(progress)}%`;
+           
+            if (learnTotalAttempts > 0) {
+                learnQualityScore = (learnCorrectAnswers / learnTotalAttempts) * 100;
+            }
+           
+            const stars = qualityStars.querySelectorAll('i');
+            const filledStars = Math.round((learnQualityScore / 100) * 5);
+           
+            stars.forEach((star, index) => {
+                if (index < filledStars) {
+                    star.classList.remove('far');
+                    star.classList.add('fas');
+                } else {
+                    star.classList.remove('fas');
+                    star.classList.add('far');
+                }
+            });
+        }
+       
+        function showLearnCompletion() {
+            learnModeContainer.style.display = 'none';
+            learnCompletion.classList.add('show');
+        }
+       
+        function restartLearnMode() {
+            learnCompletion.classList.remove('show');
+            startLearnMode();
+            learnModeContainer.style.display = 'block';
+        }
+
+        function startFlashcardMode() {
+            originalFlashcardDeck = [...quizData];
+            flashcardDeck = [...originalFlashcardDeck];
+            currentFlashcardIndex = 0;
+            knownCards = 0;
+            spacedRepetitionQueue = [];
+            isFlipped = false;
+            currentCategory = 'All';
+            questionsContainer.style.display = 'none';
+            learnModeContainer.classList.remove('show');
+            flashcardModeContainer.classList.add('show');
+            progressContainer.style.display = 'none';
+            learnProgress.classList.remove('show');
+            flashcardProgress.classList.add('show');
+            flashcardCompletion.classList.remove('show');
+            renderFlashcardCategories();
+            updateFlashcardDeckByCategory();
+            updateFlashcardProgress();
+            displayFlashcard();
+            flashcard.addEventListener('click', flipFlashcard);
+            flashcardPrevBtn.addEventListener('click', goToPrevFlashcard);
+            flashcardNextBtn.addEventListener('click', goToNextFlashcard);
+            flashcardShuffleBtn.addEventListener('click', shuffleFlashcardDeck);
+            flashcardKnownBtn.addEventListener('click', markFlashcardKnown);
+            flashcardUnknownBtn.addEventListener('click', markFlashcardUnknown);
+            flashcardRestartBtn.addEventListener('click', restartFlashcardMode);
+        }
+
+        function renderFlashcardCategories() {
+            const categories = ['All', ...new Set(originalFlashcardDeck.map(q => q.category))];
+            flashcardCategories.innerHTML = '';
+            categories.forEach(cat => {
+                const catElement = document.createElement('div');
+                catElement.className = 'flashcard-category';
+                catElement.textContent = cat;
+                if (cat === currentCategory) catElement.classList.add('active');
+                catElement.addEventListener('click', () => {
+                    document.querySelectorAll('.flashcard-category').forEach(el => el.classList.remove('active'));
+                    catElement.classList.add('active');
+                    currentCategory = cat;
+                    updateFlashcardDeckByCategory();
+                    updateFlashcardProgress();
+                    displayFlashcard();
+                });
+                flashcardCategories.appendChild(catElement);
+            });
+        }
+
+        function updateFlashcardDeckByCategory() {
+            if (currentCategory === 'All') {
+                flashcardDeck = [...originalFlashcardDeck];
+            } else {
+                flashcardDeck = originalFlashcardDeck.filter(q => q.category === currentCategory);
+            }
+            currentFlashcardIndex = 0;
+            knownCards = 0;
+        }
+
+        function displayFlashcard() {
+            if (flashcardDeck.length === 0) {
+                showFlashcardCompletion();
+                return;
+            }
+            const card = flashcardDeck[currentFlashcardIndex];
+            flashcardQuestion.textContent = card.question;
+            flashcardAnswer.textContent = card.correctAnswer;
+            flashcardExplanation.innerHTML = `
+                <p>${card.explanation}</p>
+            `;
+            flashcard.classList.remove('flipped');
+            isFlipped = false;
+        }
+
+        function flipFlashcard() {
+            flashcard.classList.toggle('flipped');
+            isFlipped = !isFlipped;
+        }
+
+        function goToNextFlashcard() {
+            currentFlashcardIndex = (currentFlashcardIndex + 1) % flashcardDeck.length;
+            displayFlashcard();
+        }
+
+        function goToPrevFlashcard() {
+            currentFlashcardIndex = (currentFlashcardIndex - 1 + flashcardDeck.length) % flashcardDeck.length;
+            displayFlashcard();
+        }
+
+        function shuffleFlashcardDeck() {
+            flashcardDeck.sort(() => Math.random() - 0.5);
+            currentFlashcardIndex = 0;
+            displayFlashcard();
+        }
+
+        function markFlashcardKnown() {
+            knownCards++;
+            flashcardDeck.splice(currentFlashcardIndex, 1);
+            if (currentFlashcardIndex >= flashcardDeck.length) {
+                currentFlashcardIndex = 0;
+            }
+            updateFlashcardProgress();
+            displayFlashcard();
+        }
+
+        function markFlashcardUnknown() {
+            const unknownCard = flashcardDeck.splice(currentFlashcardIndex, 1)[0];
+            const reinsertIndex = Math.min(currentFlashcardIndex + 3, flashcardDeck.length);
+            flashcardDeck.splice(reinsertIndex, 0, unknownCard);
+            if (currentFlashcardIndex >= flashcardDeck.length) {
+                currentFlashcardIndex = 0;
+            }
+            displayFlashcard();
+        }
+
+        function updateFlashcardProgress() {
+            const total = currentCategory === 'All' ? quizData.length : originalFlashcardDeck.filter(q => q.category === currentCategory).length;
+            const progress = (knownCards / total) * 100;
+            flashcardProgressFill.style.width = `${progress}%`;
+            flashcardProgressPercent.textContent = `${Math.round(progress)}%`;
+            flashcardRemaining.textContent = `Remaining: ${flashcardDeck.length}`;
+            flashcardKnown.textContent = `Known: ${knownCards}`;
+            flashcardTotal.textContent = `Total: ${total}`;
+        }
+
+        function showFlashcardCompletion() {
+            flashcardModeContainer.style.display = 'none';
+            flashcardCompletion.classList.add('show');
+        }
+
+        function restartFlashcardMode() {
+            flashcardCompletion.classList.remove('show');
+            startFlashcardMode();
+            flashcardModeContainer.style.display = 'flex';
+        }
+       
+        // The registration modal is shown by default, initQuiz called after registration
+    </script>
+</body>
+</html>
