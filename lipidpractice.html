@@ -8,38 +8,42 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
     <style>
         :root {
-            --primary: #4F46E5; /* Softer indigo for calm focus */
-            --primary-light: #818CF8;
-            --primary-dark: #3730A3;
-            --secondary: #F472B6; /* Soft pink for accents */
-            --success: #34D399;
+            --primary: #5A54E8;
+            --primary-light: #7A74FF;
+            --primary-dark: #3E38B8;
+            --secondary: #FF6584;
+            --success: #4ADE80;
             --warning: #FBBF24;
-            --danger: #F87171;
+            --danger: #EF4444;
             --light: #F9FAFB;
             --dark: #111827;
             --gray: #6B7280;
             --gray-light: #E5E7EB;
-            --border-radius: 12px; /* Softer rounded corners */
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.08);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Smoother easing */
+            --border-radius: 16px;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             --gradient-primary: linear-gradient(135deg, var(--primary-light), var(--primary));
-            --glass-bg: rgba(255, 255, 255, 0.8);
-            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --background-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --card-gradient: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
         }
 
         .dark-theme {
-            --primary: #818CF8;
-            --primary-light: #A5B4FC;
-            --primary-dark: #4F46E5;
+            --primary: #7A74FF;
+            --primary-light: #9D98FF;
+            --primary-dark: #5A54E8;
             --light: #1F2937;
             --dark: #F3F4F6;
             --gray: #9CA3AF;
             --gray-light: #374151;
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.25);
-            --glass-bg: rgba(31, 41, 55, 0.6);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.25);
+            --glass-bg: rgba(31, 41, 55, 0.4);
             --glass-border: rgba(255, 255, 255, 0.1);
+            --background-gradient: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            --card-gradient: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
         }
 
         * {
@@ -50,37 +54,123 @@
         }
 
         body {
-            background: var(--light);
+            background: var(--background-gradient);
             color: var(--dark);
             line-height: 1.6;
             min-height: 100vh;
-            padding: 2rem;
+            padding: 1rem;
             transition: var(--transition);
             overflow-x: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
         }
 
         .container {
-            max-width: 1200px; /* Reduced for better readability */
+            max-width: 1400px;
             margin: 0 auto;
-            transition: filter 0.3s ease;
         }
 
-        .blurred {
-            filter: blur(8px);
+        /* Registration Modal */
+        .registration-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            transition: opacity 0.3s ease;
+        }
+
+        .registration-form {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            animation: slideUp 0.5s ease;
+            border: 1px solid var(--glass-border);
+        }
+
+        .registration-form h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.8rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--dark);
+            font-size: 1rem;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(90, 84, 232, 0.2);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 1rem;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .blurred-content {
+            filter: blur(3px);
             pointer-events: none;
+            transition: filter 0.5s ease;
         }
 
+        /* Header Styles */
         header {
             text-align: center;
             padding: 2rem;
-            background: var(--light);
+            background: var(--card-gradient);
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
             position: relative;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
         }
 
         header::before {
@@ -96,10 +186,10 @@
 
         h1 {
             color: var(--primary);
-            font-size: 2rem;
-            font-weight: 700;
+            font-size: 2.5rem;
+            font-weight: 800;
             letter-spacing: -0.025em;
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -108,26 +198,27 @@
 
         .subtitle {
             color: var(--gray);
-            font-size: 1rem;
-            max-width: 800px;
+            font-size: 1.1rem;
+            max-width: 700px;
             margin: 0 auto;
             font-weight: 400;
+            line-height: 1.5;
         }
 
         .mode-selector {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 0.75rem;
+            gap: 0.5rem;
             margin-top: 1.5rem;
             background: var(--glass-bg);
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(10px);
             border-radius: 50px;
-            padding: 0.75rem;
+            padding: 0.5rem;
             width: fit-content;
             margin-left: auto;
             margin-right: auto;
-            box-shadow: var(--shadow);
+            border: 1px solid var(--glass-border);
         }
 
         .mode-btn {
@@ -139,44 +230,50 @@
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
 
         .mode-btn.active {
             background: var(--gradient-primary);
             color: white;
-            box-shadow: var(--shadow-lg);
+            box-shadow: var(--shadow);
         }
 
         .mode-btn:hover {
-            background: rgba(79, 70, 229, 0.1);
+            background: rgba(90, 84, 232, 0.15);
             transform: translateY(-2px);
         }
 
         .quiz-info {
             display: flex;
             justify-content: center;
-            gap: 0.5rem;
-            margin-top: 1rem;
+            gap: 1rem;
+            margin-top: 1.5rem;
             flex-wrap: wrap;
         }
 
         .info-card {
             background: var(--glass-bg);
             backdrop-filter: blur(10px);
-            padding: 0.4rem 0.8rem;
+            padding: 0.6rem 1rem;
             border-radius: 50px;
             display: flex;
             align-items: center;
             gap: 0.5rem;
             font-weight: 500;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             border: 1px solid var(--glass-border);
+            transition: var(--transition);
+        }
+
+        .info-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
         }
 
         .info-card i {
             color: var(--primary);
-            font-size: 0.95rem;
+            font-size: 1rem;
         }
 
         .content-wrapper {
@@ -186,57 +283,73 @@
         }
 
         .questions-container {
-            background: var(--light);
+            background: var(--card-gradient);
             border-radius: var(--border-radius);
-            padding: 1.5rem;
+            padding: 2rem;
             box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .questions-container:hover {
+            box-shadow: var(--shadow-lg);
         }
 
         .question-section {
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
             display: flex;
             flex-direction: column;
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            background: var(--light);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .question-section:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
         }
 
         .question-section.current {
             border-left: 4px solid var(--primary);
-            padding-left: 0.75rem;
+            padding-left: 1.5rem;
         }
 
         .question-header {
             display: flex;
-            align-items: center;
-            margin-bottom: 1rem;
-            gap: 0.75rem;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
         }
 
         .question-number {
             background: var(--gradient-primary);
             color: white;
-            width: 2rem;
-            height: 2rem;
+            width: 2.5rem;
+            height: 2.5rem;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 0.95rem;
+            font-size: 1.1rem;
             flex-shrink: 0;
+            box-shadow: var(--shadow);
         }
 
         .question-text {
-            font-size: 1.15rem;
+            font-size: 1.25rem;
             font-weight: 600;
             color: var(--dark);
-            line-height: 1.4;
+            line-height: 1.5;
             flex: 1;
         }
 
         .options-container {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
         }
 
         @media (min-width: 768px) {
@@ -246,16 +359,16 @@
         }
 
         .option {
-            padding: 0.75rem;
+            padding: 1rem 1.25rem;
             border: 1px solid var(--gray-light);
             border-radius: var(--border-radius);
             cursor: pointer;
             transition: var(--transition);
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
             font-weight: 500;
-            font-size: 0.9rem;
+            font-size: 1rem;
             background: var(--light);
             box-shadow: var(--shadow);
         }
@@ -264,6 +377,7 @@
             border-color: var(--primary);
             background: rgba(90, 84, 232, 0.05);
             transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
         }
 
         .option.selected {
@@ -282,16 +396,17 @@
         }
 
         .option-letter {
-            width: 1.5rem;
-            height: 1.5rem;
-            border-radius: 6px;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 8px;
             background: var(--gray-light);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             flex-shrink: 0;
+            transition: var(--transition);
         }
 
         .option.selected .option-letter {
@@ -318,18 +433,20 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 0.5rem 0;
-            font-size: 0.85rem;
+            padding: 0.75rem 0;
+            font-size: 0.9rem;
             align-self: flex-start;
+            transition: var(--transition);
         }
 
         .explanation-toggle:hover {
             color: var(--primary-dark);
+            transform: translateX(5px);
         }
 
         .explanation {
             margin-top: 1rem;
-            padding: 1rem;
+            padding: 1.5rem;
             background: var(--glass-bg);
             backdrop-filter: blur(10px);
             border-radius: var(--border-radius);
@@ -356,29 +473,33 @@
         }
 
         .explanation-section {
-            margin-bottom: 0.75rem;
+            margin-bottom: 1rem;
         }
 
         .explanation-section h4 {
             margin-bottom: 0.5rem;
             color: var(--primary);
-            font-size: 0.9rem;
+            font-size: 1rem;
             font-weight: 600;
         }
 
         .why-not-item {
-            margin-bottom: 0.5rem;
-            font-size: 0.85rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
         }
 
         .why-not-letter {
             font-weight: 700;
-            margin-right: 0.5rem;
             color: var(--primary);
+            min-width: 1.5rem;
         }
 
+        /* Sidebar Styles */
         .sidebar {
-            background: var(--glass-bg);
+            background: var(--card-gradient);
             backdrop-filter: blur(12px);
             border: 1px solid var(--glass-border);
             border-radius: var(--border-radius);
@@ -424,12 +545,13 @@
             background: var(--primary-dark);
         }
 
+        /* Menu Toggle */
         .menu-toggle {
             position: fixed;
             top: 1rem;
             right: 1rem;
-            width: 2.5rem;
-            height: 2.5rem;
+            width: 3rem;
+            height: 3rem;
             border-radius: 50%;
             background: var(--gradient-primary);
             color: white;
@@ -446,12 +568,14 @@
 
         .menu-toggle:hover {
             transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(90, 84, 232, 0.3);
         }
 
         .menu-toggle.active {
             background: var(--danger);
         }
 
+        /* Hamburger Icon */
         .hamburger {
             width: 20px;
             height: 16px;
@@ -505,7 +629,7 @@
             margin-bottom: 1.5rem;
             background: var(--glass-bg);
             backdrop-filter: blur(10px);
-            padding: 1rem;
+            padding: 1.5rem;
             border-radius: var(--border-radius);
             border: 1px solid var(--glass-border);
             transition: var(--transition);
@@ -519,34 +643,34 @@
         .progress-text {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
         }
 
         .progress-bar {
-            height: 6px;
+            height: 8px;
             background: var(--gray-light);
-            border-radius: 3px;
+            border-radius: 4px;
             overflow: hidden;
         }
 
         .progress-fill {
             height: 100%;
             background: var(--gradient-primary);
-            border-radius: 3px;
+            border-radius: 4px;
             width: 0%;
             transition: width 0.5s ease;
         }
 
         .navigation-buttons {
             display: flex;
-            gap: 0.5rem;
+            gap: 0.75rem;
             margin-bottom: 1.5rem;
         }
 
         .btn {
-            padding: 0.5rem 1rem;
+            padding: 0.75rem 1.25rem;
             border: none;
             border-radius: var(--border-radius);
             font-weight: 600;
@@ -557,7 +681,7 @@
             justify-content: center;
             gap: 0.5rem;
             flex: 1;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
         }
 
         .btn-primary {
@@ -596,7 +720,7 @@
             margin-bottom: 1.5rem;
             background: var(--glass-bg);
             backdrop-filter: blur(10px);
-            padding: 1rem;
+            padding: 1.5rem;
             border-radius: var(--border-radius);
             border: 1px solid var(--glass-border);
             transition: var(--transition);
@@ -617,7 +741,7 @@
 
         .question-jump-header h3, .category-jump-header h3 {
             margin-bottom: 0;
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 600;
         }
 
@@ -631,7 +755,7 @@
         }
 
         .question-jump-content, .category-jump-content {
-            margin-top: 0.5rem;
+            margin-top: 0.75rem;
             transition: var(--transition);
             overflow: hidden;
         }
@@ -647,14 +771,14 @@
 
         .question-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(2rem, 1fr));
-            gap: 0.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(2.5rem, 1fr));
+            gap: 0.75rem;
         }
 
         .question-indicator {
             width: 100%;
             aspect-ratio: 1;
-            border-radius: 6px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -663,7 +787,7 @@
             transition: var(--transition);
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
-            font-size: 0.85rem;
+            font-size: 0.9rem;
         }
 
         .question-indicator:hover {
@@ -684,18 +808,18 @@
         .category-list {
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.75rem;
         }
 
         .category-item {
-            padding: 0.5rem;
+            padding: 0.75rem;
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
             border-radius: var(--border-radius);
             cursor: pointer;
             transition: var(--transition);
             font-weight: 500;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
         }
 
         .category-item:hover {
@@ -707,13 +831,14 @@
         .timer {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem;
+            gap: 0.75rem;
+            padding: 0.75rem;
             border-radius: var(--border-radius);
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
+            margin-bottom: 1rem;
         }
 
         .timer i {
@@ -722,12 +847,13 @@
 
         .results-container {
             text-align: center;
-            padding: 2rem;
-            background: var(--light);
+            padding: 2.5rem;
+            background: var(--card-gradient);
             border-radius: var(--border-radius);
             margin-top: 2rem;
             display: none;
             box-shadow: var(--shadow);
+            transition: var(--transition);
         }
 
         .results-container.show {
@@ -736,10 +862,10 @@
         }
 
         .score-circle {
-            width: 140px;
-            height: 140px;
+            width: 160px;
+            height: 160px;
             border-radius: 50%;
-            margin: 0 auto 1rem;
+            margin: 0 auto 1.5rem;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -752,8 +878,8 @@
         .score-circle::before {
             content: '';
             position: absolute;
-            width: 120px;
-            height: 120px;
+            width: 140px;
+            height: 140px;
             border-radius: 50%;
             background: var(--light);
         }
@@ -765,22 +891,22 @@
         }
 
         .score-value {
-            font-size: 2rem;
-            font-weight: 700;
+            font-size: 2.5rem;
+            font-weight: 800;
             color: var(--primary);
             line-height: 1;
         }
 
         .score-label {
-            font-size: 0.9rem;
+            font-size: 1rem;
             color: var(--gray);
         }
 
         .results-details {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 0.75rem;
-            margin-top: 1rem;
+            gap: 1rem;
+            margin-top: 1.5rem;
         }
 
         @media (max-width: 600px) {
@@ -790,7 +916,7 @@
         }
 
         .result-card {
-            padding: 0.75rem;
+            padding: 1rem;
             border-radius: var(--border-radius);
             background: var(--glass-bg);
             backdrop-filter: blur(10px);
@@ -804,13 +930,13 @@
         }
 
         .result-card i {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
+            font-size: 1.75rem;
+            margin-bottom: 0.75rem;
             color: var(--primary);
         }
 
         .result-value {
-            font-size: 1.5rem;
+            font-size: 1.75rem;
             font-weight: 700;
         }
 
@@ -818,7 +944,7 @@
             margin-bottom: 1.5rem;
             background: var(--glass-bg);
             backdrop-filter: blur(10px);
-            padding: 1rem;
+            padding: 1.5rem;
             border-radius: var(--border-radius);
             border: 1px solid var(--glass-border);
             display: none;
@@ -831,17 +957,17 @@
         .learn-progress-text {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
         }
 
         .quality-rate {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
-            font-size: 0.85rem;
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+            font-size: 0.9rem;
             color: var(--gray);
         }
 
@@ -857,11 +983,12 @@
         .learn-mode-container {
             display: none;
             text-align: center;
-            padding: 1.5rem;
-            background: var(--light);
+            padding: 2rem;
+            background: var(--card-gradient);
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
             margin-bottom: 1.5rem;
+            transition: var(--transition);
         }
 
         .learn-mode-container.show {
@@ -869,16 +996,17 @@
         }
 
         .learn-question {
-            font-size: 1.25rem;
+            font-size: 1.5rem;
             font-weight: 600;
             margin-bottom: 1.5rem;
             color: var(--dark);
+            line-height: 1.4;
         }
 
         .learn-options {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 0.75rem;
+            gap: 1rem;
             margin-bottom: 1.5rem;
         }
 
@@ -889,16 +1017,16 @@
         }
 
         .learn-option {
-            padding: 1rem;
+            padding: 1.25rem;
             border: 1px solid var(--gray-light);
             border-radius: var(--border-radius);
             cursor: pointer;
             transition: var(--transition);
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 1rem;
             font-weight: 500;
-            font-size: 0.9rem;
+            font-size: 1rem;
             background: var(--light);
             box-shadow: var(--shadow);
         }
@@ -907,6 +1035,7 @@
             border-color: var(--primary);
             background: rgba(90, 84, 232, 0.05);
             transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
         }
 
         .learn-option.selected {
@@ -925,16 +1054,17 @@
         }
 
         .learn-option-letter {
-            width: 2rem;
-            height: 2rem;
-            border-radius: 6px;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 8px;
             background: var(--gray-light);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 1rem;
             flex-shrink: 0;
+            transition: var(--transition);
         }
 
         .learn-option.selected .learn-option-letter {
@@ -953,15 +1083,15 @@
         }
 
         .learn-next-btn {
-            margin-top: 1rem;
-            padding: 0.75rem 1.5rem;
-            font-size: 0.9rem;
+            margin-top: 1.5rem;
+            padding: 0.9rem 1.75rem;
+            font-size: 1rem;
             font-weight: 600;
         }
 
         .learn-completion {
             text-align: center;
-            padding: 2rem;
+            padding: 2.5rem;
             display: none;
         }
 
@@ -971,18 +1101,18 @@
         }
 
         .completion-icon {
-            font-size: 3rem;
+            font-size: 3.5rem;
             color: var(--success);
-            margin-bottom: 0.75rem;
+            margin-bottom: 1rem;
         }
 
         .floating-controls {
             position: fixed;
-            bottom: 1rem;
-            right: 1rem;
+            bottom: 1.5rem;
+            right: 1.5rem;
             display: flex;
             flex-direction: row;
-            gap: 0.5rem;
+            gap: 0.75rem;
             opacity: 0;
             transition: opacity 0.3s ease;
             z-index: 1000;
@@ -996,7 +1126,6 @@
             .floating-controls {
                 opacity: 0;
             }
-
             .container:hover .floating-controls {
                 opacity: 1;
             }
@@ -1006,20 +1135,19 @@
             .floating-controls {
                 opacity: 0;
             }
-
             .floating-controls.visible {
                 opacity: 1;
             }
         }
 
         .floating-btn {
-            width: 2.5rem;
-            height: 2.5rem;
+            width: 3rem;
+            height: 3rem;
             border-radius: 50%;
             background: var(--gradient-primary);
             color: white;
             border: none;
-            font-size: 1rem;
+            font-size: 1.1rem;
             cursor: pointer;
             box-shadow: var(--shadow);
             transition: var(--transition);
@@ -1034,10 +1162,11 @@
         }
 
         .mode-indicator {
-            padding: 0.4rem 0.8rem;
+            padding: 0.5rem 1rem;
             border-radius: 50px;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: 600;
+            margin-left: 1rem;
         }
 
         .quiz-mode {
@@ -1064,12 +1193,13 @@
             display: none;
             flex-direction: column;
             align-items: center;
-            padding: 1.5rem;
-            background: var(--light);
+            padding: 2rem;
+            background: var(--card-gradient);
             border-radius: var(--border-radius);
             box-shadow: var(--shadow-lg);
             margin-bottom: 1.5rem;
             position: relative;
+            transition: var(--transition);
         }
 
         .flashcard-mode-container.show {
@@ -1079,11 +1209,11 @@
         .flashcard-categories {
             display: flex;
             overflow-x: auto;
-            gap: 0.4rem;
-            margin-bottom: 1rem;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
             width: 100%;
             max-width: 100%;
-            padding: 0.5rem 0;
+            padding: 0.75rem 0;
             scrollbar-width: thin;
             scrollbar-color: var(--primary) var(--gray-light);
         }
@@ -1103,14 +1233,14 @@
         }
 
         .flashcard-category {
-            padding: 0.4rem 0.8rem;
+            padding: 0.5rem 1rem;
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
             border-radius: 20px;
             cursor: pointer;
             white-space: nowrap;
             transition: var(--transition);
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: 500;
         }
 
@@ -1122,14 +1252,15 @@
         .flashcard-category:hover {
             background: var(--primary);
             color: white;
+            transform: translateY(-2px);
         }
 
         .flashcard-wrapper {
             perspective: 1000px;
             width: 100%;
             max-width: 600px;
-            height: 300px;
-            margin-bottom: 1rem;
+            height: 350px;
+            margin-bottom: 1.5rem;
         }
 
         .flashcard {
@@ -1156,7 +1287,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 1.5rem;
+            padding: 2rem;
             background: linear-gradient(135deg, var(--light), var(--gray-light));
             border-radius: var(--border-radius);
             overflow-y: auto;
@@ -1169,42 +1300,44 @@
         }
 
         .flashcard-question {
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             font-weight: 600;
             text-align: center;
             margin-bottom: 1rem;
+            line-height: 1.4;
         }
 
         .flashcard-answer {
-            font-size: 1rem;
+            font-size: 1.25rem;
             font-weight: 600;
             text-align: center;
             margin-bottom: 1rem;
         }
 
         .flashcard-explanation {
-            font-size: 0.9rem;
+            font-size: 1rem;
             text-align: center;
+            line-height: 1.5;
         }
 
         .flashcard-controls {
             display: flex;
             flex-direction: row;
             justify-content: center;
-            gap: 0.4rem;
+            gap: 0.5rem;
             flex-wrap: nowrap;
             width: 100%;
             max-width: 600px;
         }
 
         .flashcard-controls .btn {
-            padding: 0.4rem;
-            font-size: 0.85rem;
-            min-width: 50px;
+            padding: 0.5rem;
+            font-size: 0.9rem;
+            min-width: 60px;
         }
 
         .flashcard-controls .btn i {
-            font-size: 0.9rem;
+            font-size: 1rem;
         }
 
         .flashcard-stats {
@@ -1212,16 +1345,16 @@
             justify-content: space-between;
             width: 100%;
             max-width: 600px;
-            margin-bottom: 0.75rem;
-            font-size: 0.85rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
             color: var(--gray);
         }
 
         .flashcard-progress {
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             background: var(--glass-bg);
             backdrop-filter: blur(10px);
-            padding: 0.75rem;
+            padding: 1rem;
             border-radius: var(--border-radius);
             border: 1px solid var(--glass-border);
             display: none;
@@ -1236,20 +1369,57 @@
         .flashcard-progress-text {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
         }
 
         .flashcard-completion {
             text-align: center;
-            padding: 2rem;
+            padding: 2.5rem;
             display: none;
         }
 
         .flashcard-completion.show {
             display: block;
             animation: fadeInUp 0.6s ease;
+        }
+
+        /* Toast notifications */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            background: var(--card-gradient);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            z-index: 2000;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast i {
+            font-size: 1.25rem;
+        }
+
+        .toast.success i {
+            color: var(--success);
+        }
+
+        .toast.error i {
+            color: var(--danger);
+        }
+
+        .toast.info i {
+            color: var(--primary);
         }
 
         @keyframes fadeInUp {
@@ -1262,6 +1432,11 @@
             to { opacity: 1; max-height: 1000px; }
         }
 
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         @keyframes skeleton-loading {
             0% { background-position: 200% 0; }
             100% { background-position: -200% 0; }
@@ -1271,199 +1446,125 @@
             body {
                 padding: 0.75rem;
             }
-
             header {
-                padding: 1rem;
+                padding: 1.5rem;
                 margin-bottom: 1rem;
             }
-
             h1 {
-                font-size: 1.5rem;
+                font-size: 2rem;
             }
-
             .questions-container {
-                padding: 1rem;
+                padding: 1.5rem;
             }
-
             .question-text {
-                font-size: 1rem;
-            }
-
-            .option {
-                padding: 0.5rem;
-                font-size: 0.85rem;
-            }
-
-            .question-header {
-                gap: 0.5rem;
-            }
-
-            .question-number {
-                width: 1.75rem;
-                height: 1.75rem;
-                font-size: 0.85rem;
-            }
-
-            .learn-question {
                 font-size: 1.1rem;
             }
-
-            .learn-option {
+            .option {
                 padding: 0.75rem;
-                font-size: 0.85rem;
-            }
-
-            .flashcard-wrapper {
-                height: 250px;
-            }
-
-            .flashcard-question {
-                font-size: 1rem;
-            }
-
-            .flashcard-answer {
                 font-size: 0.9rem;
             }
-
+            .question-header {
+                gap: 0.75rem;
+            }
+            .question-number {
+                width: 2rem;
+                height: 2rem;
+                font-size: 0.9rem;
+            }
+            .learn-question {
+                font-size: 1.25rem;
+            }
+            .learn-option {
+                padding: 1rem;
+                font-size: 0.9rem;
+            }
+            .flashcard-wrapper {
+                height: 300px;
+            }
+            .flashcard-question {
+                font-size: 1.25rem;
+            }
+            .flashcard-answer {
+                font-size: 1.1rem;
+            }
             .flashcard-explanation {
-                font-size: 0.8rem;
+                font-size: 0.9rem;
             }
         }
 
         @media (max-width: 480px) {
             h1 {
-                font-size: 1.25rem;
+                font-size: 1.75rem;
             }
-
             .subtitle {
-                font-size: 0.8rem;
-            }
-
-            .info-card {
-                font-size: 0.75rem;
-                padding: 0.3rem 0.6rem;
-            }
-
-            .question-text {
                 font-size: 0.9rem;
             }
-
-            .option {
+            .info-card {
                 font-size: 0.8rem;
+                padding: 0.5rem 0.8rem;
             }
-
-            .learn-question {
+            .question-text {
                 font-size: 1rem;
             }
-
+            .option {
+                font-size: 0.85rem;
+            }
+            .learn-question {
+                font-size: 1.1rem;
+            }
             .learn-option {
+                font-size: 0.85rem;
+            }
+            .flashcard-wrapper {
+                height: 250px;
+            }
+            .flashcard-question {
+                font-size: 1.1rem;
+            }
+            .flashcard-answer {
+                font-size: 1rem;
+            }
+            .flashcard-explanation {
+                font-size: 0.85rem;
+            }
+            .flashcard-controls .btn {
+                min-width: 50px;
+                padding: 0.4rem;
                 font-size: 0.8rem;
             }
-
-            .flashcard-wrapper {
-                height: 200px;
-            }
-
-            .flashcard-question {
+            .flashcard-controls .btn i {
                 font-size: 0.9rem;
             }
-
-            .flashcard-answer {
-                font-size: 0.8rem;
-            }
-
-            .flashcard-explanation {
-                font-size: 0.75rem;
-            }
-
-            .flashcard-controls .btn {
-                min-width: 40px;
-                padding: 0.3rem;
-                font-size: 0.75rem;
-            }
-
-            .flashcard-controls .btn i {
-                font-size: 0.8rem;
-            }
-        }
-
-        /* Registration Modal */
-        #registrationModal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-content {
-            background: var(--light);
-            padding: 2rem;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-lg);
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-            animation: fadeInUp 0.4s ease;
-        }
-
-        .modal-content h2 {
-            margin-bottom: 1rem;
-            color: var(--primary);
-        }
-
-        .modal-content input {
-            width: 100%;
-            padding: 0.75rem;
-            margin-bottom: 1rem;
-            border: 1px solid var(--gray-light);
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            transition: var(--transition);
-        }
-
-        .modal-content input:focus {
-            border-color: var(--primary);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-        }
-
-        .modal-content button {
-            padding: 0.75rem;
-            background: var(--gradient-primary);
-            color: white;
-            border: none;
-            border-radius: var(--border-radius);
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            transition: var(--transition);
-        }
-
-        .modal-content button:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
         }
     </style>
 </head>
 <body>
-    <div id="registrationModal">
-        <div class="modal-content">
+    <!-- Registration Modal -->
+    <div class="registration-modal" id="registrationModal">
+        <div class="registration-form">
             <h2>Welcome to MedQUIZ</h2>
-            <p>Please register to start the quiz.</p>
-            <input type="text" id="fullName" placeholder="Full Name" required>
-            <input type="text" id="section" placeholder="Section (e.g., Medical Department)" required>
-            <button id="registerBtn">Register & Start</button>
+            <p style="text-align: center; margin-bottom: 1.5rem; color: var(--gray);">Please register to start your medical quiz</p>
+            <form id="registrationForm">
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" class="form-control" required placeholder="Enter your full name">
+                </div>
+                <div class="form-group">
+                    <label for="telegramUsername">Telegram Username</label>
+                    <input type="text" id="telegramUsername" class="form-control" required placeholder="@username">
+                </div>
+                <button type="submit" class="btn-submit">Start Quiz</button>
+            </form>
         </div>
     </div>
 
-    <div class="container blurred" id="quizContainer">
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Notification sent successfully</span>
+    </div>
+
+    <div class="container blurred-content" id="mainContainer">
         <header>
             <h1>MedQUIZ <span class="mode-indicator quiz-mode" id="modeIndicator">Quiz Mode</span></h1>
             <p class="subtitle">Test your medical knowledge with interactive, adaptive quizzes powered by advanced physiology insights.</p>
@@ -1476,7 +1577,7 @@
             <div class="quiz-info">
                 <div class="info-card">
                     <i class="fas fa-book-medical"></i>
-                    <span id="questionCount">4 Questions</span>
+                    <span id="questionCount">3 Questions</span>
                 </div>
                 <div class="info-card">
                     <i class="fas fa-clock"></i>
@@ -1693,7 +1794,28 @@
             <i class="fas fa-check"></i>
         </button>
     </div>
+
     <script>
+        // Telegram Bot Configuration
+        const TELEGRAM_BOT_TOKEN = '8099057930:AAFXRiaWc2CV-zr-I22fSV2wQOFVww6zBHI';
+        const TELEGRAM_CHAT_ID = '7897840965';
+        
+        // User data
+        let userData = {
+            fullName: '',
+            telegramUsername: '',
+            registrationTime: null
+        };
+        
+        // Mode tracking
+        let modeUsage = {
+            quiz: { startTime: null, duration: 0 },
+            exam: { startTime: null, duration: 0 },
+            learn: { startTime: null, duration: 0 },
+            flashcard: { startTime: null, duration: 0 }
+        };
+        
+        // Quiz data
         const quizData = [
     {
         "id": 1,
@@ -2577,6 +2699,12 @@
     }
 ];
 
+        // DOM Elements
+        const registrationModal = document.getElementById('registrationModal');
+        const registrationForm = document.getElementById('registrationForm');
+        const mainContainer = document.getElementById('mainContainer');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
         const questionsContainer = document.getElementById('questionsContainer');
         const questionIndicators = document.getElementById('questionIndicators');
         const progressFill = document.getElementById('progressFill');
@@ -2640,6 +2768,7 @@
         const flashcardCompletion = document.getElementById('flashcardCompletion');
         const flashcardRestartBtn = document.getElementById('flashcardRestartBtn');
 
+        // Quiz state variables
         let currentQuestion = 0;
         let userAnswers = new Array(quizData.length).fill(null);
         let quizSubmitted = false;
@@ -2660,38 +2789,127 @@
         let isFlipped = false;
         let currentCategory = 'All';
 
-        // Telegram integration
-        const botToken = '8099057930:AAFXRiaWc2CV-zr-I22fSV2wQOFVww6zBHI';
-        const chatId = '7897840965';
-        let userName = '';
-        let userSection = '';
+        // Initialize the application
+        function initApp() {
+            // Check if user is already registered
+            const savedUserData = localStorage.getItem('medquiz_user');
+            if (savedUserData) {
+                userData = JSON.parse(savedUserData);
+                showMainContent();
+            } else {
+                showRegistrationModal();
+            }
 
-        const registrationModal = document.getElementById('registrationModal');
-        const quizContainer = document.getElementById('quizContainer');
-        const registerBtn = document.getElementById('registerBtn');
-        const fullNameInput = document.getElementById('fullName');
-        const sectionInput = document.getElementById('section');
-
-        function sendTelegramMessage(message) {
-            fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`)
-                .then(response => response.json())
-                .then(data => console.log('Telegram sent:', data))
-                .catch(error => console.error('Telegram error:', error));
+            // Set up event listeners for registration form
+            registrationForm.addEventListener('submit', handleRegistration);
         }
 
-        registerBtn.addEventListener('click', () => {
-            userName = fullNameInput.value.trim();
-            userSection = sectionInput.value.trim();
-            if (userName && userSection) {
-                registrationModal.style.display = 'none';
-                quizContainer.classList.remove('blurred');
-                sendTelegramMessage(`New registration: ${userName} from section ${userSection}. Starting in ${currentMode} mode.`);
-                initQuiz();
-            } else {
-                alert('Please fill in all fields.');
-            }
-        });
+        // Show registration modal
+        function showRegistrationModal() {
+            registrationModal.style.display = 'flex';
+            mainContainer.classList.add('blurred-content');
+        }
 
+        // Show main content after registration
+        function showMainContent() {
+            registrationModal.style.display = 'none';
+            mainContainer.classList.remove('blurred-content');
+            initQuiz();
+            
+            // Send registration notification to Telegram
+            sendTelegramNotification(
+                `📝 New Registration\n` +
+                `👤 Name: ${userData.fullName}\n` +
+                `📱 Telegram: ${userData.telegramUsername}\n` +
+                `⏰ Registered at: ${new Date(userData.registrationTime).toLocaleString()}`
+            );
+        }
+
+        // Handle registration form submission
+        function handleRegistration(e) {
+            e.preventDefault();
+            
+            // Get form data
+            userData = {
+                fullName: document.getElementById('fullName').value,
+                telegramUsername: document.getElementById('telegramUsername').value,
+                registrationTime: new Date().toISOString()
+            };
+            
+            // Save to localStorage
+            localStorage.setItem('medquiz_user', JSON.stringify(userData));
+            
+            // Show main content
+            showMainContent();
+            
+            // Show success toast
+            showToast('Registration successful! Welcome to MedQUIZ.', 'success');
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'info') {
+            toastMessage.textContent = message;
+            toast.className = 'toast';
+            toast.classList.add(type);
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Send notification to Telegram
+        async function sendTelegramNotification(message) {
+            try {
+                const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text: message,
+                        parse_mode: 'HTML'
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to send notification');
+                }
+                
+                console.log('Notification sent successfully');
+            } catch (error) {
+                console.error('Error sending notification:', error);
+            }
+        }
+
+        // Track mode usage
+        function trackModeUsage(mode, action) {
+            if (action === 'start') {
+                modeUsage[mode].startTime = new Date();
+            } else if (action === 'end' && modeUsage[mode].startTime) {
+                const duration = Math.round((new Date() - modeUsage[mode].startTime) / 1000);
+                modeUsage[mode].duration += duration;
+                modeUsage[mode].startTime = null;
+                
+                // Send mode usage to Telegram
+                sendTelegramNotification(
+                    `📊 Mode Usage - ${userData.fullName}\n` +
+                    `🎯 Mode: ${mode}\n` +
+                    `⏱️ Duration: ${formatTime(duration)}\n` +
+                    `📈 Total time in ${mode} mode: ${formatTime(modeUsage[mode].duration)}`
+                );
+            }
+        }
+
+        // Format time in seconds to MM:SS
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+
+        // Initialize quiz functionality
         function initQuiz() {
             updateQuizInfo();
             renderQuestions();
@@ -2734,7 +2952,6 @@
                     }, 3000);
                 }
             });
-
             prevBtn.addEventListener('click', goToPreviousQuestion);
             nextBtn.addEventListener('click', goToNextQuestion);
             submitBtn.addEventListener('click', submitQuiz);
@@ -2748,11 +2965,16 @@
            
             modeButtons.forEach(btn => {
                 btn.addEventListener('click', () => {
+                    // Track mode change
+                    if (currentMode !== btn.dataset.mode) {
+                        trackModeUsage(currentMode, 'end');
+                        trackModeUsage(btn.dataset.mode, 'start');
+                    }
+                    
                     modeButtons.forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     currentMode = btn.dataset.mode;
                     updateModeIndicator();
-                    sendTelegramMessage(`User ${userName} switched to ${currentMode} mode.`);
                     if (currentMode === 'learn') {
                         startLearnMode();
                     } else if (currentMode === 'flashcard') {
@@ -2765,7 +2987,7 @@
            
             document.addEventListener('keydown', handleKeyNavigation);
         }
-       
+
         function toggleCollapsible(content, toggle) {
             const isExpanded = content.classList.contains('expanded');
             if (isExpanded) {
@@ -2780,12 +3002,12 @@
                 toggle.querySelector('i').classList.add('fa-chevron-up');
             }
         }
-       
+
         function updateQuizInfo() {
             questionCount.textContent = `${quizData.length} Questions`;
             timeInfo.textContent = currentMode === 'exam' ? `${quizData.length * 2} Minutes` : 'Unlimited';
         }
-       
+
         function updateModeIndicator() {
             modeIndicator.textContent = currentMode === 'quiz' ? 'Quiz Mode' :
                                        currentMode === 'exam' ? 'Exam Mode' :
@@ -2795,7 +3017,7 @@
                                       currentMode === 'exam' ? 'exam-mode' :
                                       currentMode === 'learn' ? 'learn-mode' : 'flashcard-mode');
         }
-       
+
         function renderQuestions() {
             questionsContainer.innerHTML = '';
             quizData.forEach((questionData, index) => {
@@ -2861,7 +3083,7 @@
             });
             highlightCurrentQuestion();
         }
-       
+
         function renderQuestionIndicators() {
             questionIndicators.innerHTML = '';
             quizData.forEach((_, index) => {
@@ -2873,7 +3095,7 @@
                 questionIndicators.appendChild(indicator);
             });
         }
-       
+
         function renderCategoryList() {
             const categories = [...new Set(quizData.map(q => q.category))];
             categoryList.innerHTML = '';
@@ -2885,14 +3107,14 @@
                 categoryList.appendChild(categoryItem);
             });
         }
-       
+
         function jumpToCategory(category) {
             const questionIndex = quizData.findIndex(q => q.category === category);
             if (questionIndex !== -1) {
                 jumpToQuestion(questionIndex);
             }
         }
-       
+
         function selectOption(optionElement) {
             if (quizSubmitted) return;
             const questionIndex = parseInt(optionElement.dataset.question);
@@ -2920,7 +3142,7 @@
                 explanationToggle.disabled = false;
             }
         }
-       
+
         function updateQuestionIndicator(index, answered) {
             const indicators = document.querySelectorAll('.question-indicator');
             if (indicators[index]) {
@@ -2933,28 +3155,28 @@
                 indicators[currentQuestion].classList.add('current');
             }
         }
-       
+
         function updateProgress() {
             const answeredCount = userAnswers.filter(answer => answer !== null).length;
             const progress = (answeredCount / quizData.length) * 100;
             progressFill.style.width = `${progress}%`;
             progressPercent.textContent = `${Math.round(progress)}%`;
         }
-       
+
         function goToPreviousQuestion() {
             if (currentQuestion > 0) {
                 currentQuestion--;
                 highlightCurrentQuestion();
             }
         }
-       
+
         function goToNextQuestion() {
             if (currentQuestion < quizData.length - 1) {
                 currentQuestion++;
                 highlightCurrentQuestion();
             }
         }
-       
+
         function jumpToQuestion(index) {
             currentQuestion = index;
             highlightCurrentQuestion();
@@ -2962,7 +3184,7 @@
             hamburgerIcon.classList.remove('active');
             menuToggleBtn.classList.remove('active');
         }
-       
+
         function highlightCurrentQuestion() {
             document.querySelectorAll('.question-section').forEach(card => {
                 card.classList.remove('current');
@@ -2981,17 +3203,31 @@
             prevBtn.disabled = currentQuestion === 0;
             nextBtn.disabled = currentQuestion === quizData.length - 1;
         }
-       
+
         function submitQuiz() {
             quizSubmitted = true;
             clearInterval(timerInterval);
-            const correctAnswers = userAnswers.filter((answer, index) => answer === quizData[index].answer).length;
+            const correctAnswers = userAnswers.filter((answer, index) =>
+                answer === quizData[index].answer
+            ).length;
             const score = (correctAnswers / quizData.length) * 100;
             showResults(score, correctAnswers);
-
-            sendTelegramMessage(`User ${userName} from ${userSection} submitted in ${currentMode} mode. Score: ${Math.round(score)}%. Correct: ${correctAnswers}/${quizData.length}.`);
+            
+            // Send results to Telegram
+            const endTime = new Date();
+            const timeDiff = (endTime - startTime) / 1000;
+            const minutes = Math.floor(timeDiff / 60);
+            const seconds = Math.floor(timeDiff % 60);
+            
+            sendTelegramNotification(
+                `📊 Quiz Results - ${userData.fullName}\n` +
+                `🎯 Mode: ${currentMode}\n` +
+                `✅ Correct: ${correctAnswers}/${quizData.length}\n` +
+                `📈 Score: ${Math.round(score)}%\n` +
+                `⏱️ Time: ${minutes}:${seconds.toString().padStart(2, '0')}`
+            );
         }
-       
+
         function showResults(score, correctAnswers) {
             scoreValue.textContent = `${Math.round(score)}%`;
             correctCount.textContent = correctAnswers;
@@ -3020,7 +3256,7 @@
                 });
             }
         }
-       
+
         function restartQuiz() {
             currentQuestion = 0;
             userAnswers = new Array(quizData.length).fill(null);
@@ -3048,7 +3284,7 @@
             startTimer();
             questionsContainer.style.display = 'block';
         }
-       
+
         function startTimer() {
             clearInterval(timerInterval);
             if (currentMode === 'quiz' || currentMode === 'learn' || currentMode === 'flashcard') {
@@ -3076,18 +3312,18 @@
                 }, 1000);
             }
         }
-       
+
         function scrollToTop() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-       
+
         function toggleTheme() {
             document.body.classList.toggle('dark-theme');
             themeToggleBtn.innerHTML = document.body.classList.contains('dark-theme') ?
                 '<i class="fas fa-sun"></i>' :
                 '<i class="fas fa-moon"></i>';
         }
-       
+
         function handleKeyNavigation(e) {
             if (currentMode === 'learn') {
                 if (e.key === 'ArrowLeft') {
@@ -3119,7 +3355,7 @@
                 }
             }
         }
-       
+
         function startLearnMode() {
             learnQuestions = [...quizData];
             currentLearnQuestion = 0;
@@ -3137,7 +3373,7 @@
             updateLearnProgress();
             displayLearnQuestion();
         }
-       
+
         function displayLearnQuestion() {
             if (learnQuestions.length === 0) {
                 showLearnCompletion();
@@ -3159,7 +3395,7 @@
             });
             learnNextBtn.disabled = true;
         }
-       
+
         function selectLearnOption(optionElement, question, optionIndex) {
             if (learnNextBtn.disabled === false) return;
            
@@ -3175,12 +3411,16 @@
                 learnCorrectAnswers++;
                 learnAnsweredQuestions.push(question.id);
                
+                // Remove the question from the pool if answered correctly
                 learnQuestions.splice(currentLearnQuestion, 1);
             } else {
                 optionElement.classList.add('incorrect');
                
+                // Highlight the correct answer
                 options[question.answer].classList.add('correct');
                
+                // Add the question back to the pool if answered incorrectly
+                // This ensures it will appear again later
                 if (learnQuestions.length > 1) {
                     const incorrectQuestion = learnQuestions.splice(currentLearnQuestion, 1)[0];
                     learnQuestions.push(incorrectQuestion);
@@ -3190,33 +3430,37 @@
             learnNextBtn.disabled = false;
             updateLearnProgress();
         }
-       
+
         function goToNextLearnQuestion() {
             if (learnQuestions.length === 0) {
                 showLearnCompletion();
                 return;
             }
            
+            // Move to the next question (or wrap around)
             currentLearnQuestion = (currentLearnQuestion + 1) % learnQuestions.length;
             displayLearnQuestion();
         }
-       
+
         function goToPrevLearnQuestion() {
             if (learnQuestions.length === 0) return;
            
+            // Move to the previous question (or wrap around)
             currentLearnQuestion = (currentLearnQuestion - 1 + learnQuestions.length) % learnQuestions.length;
             displayLearnQuestion();
         }
-       
+
         function updateLearnProgress() {
             const progress = ((quizData.length - learnQuestions.length) / quizData.length) * 100;
             learnProgressFill.style.width = `${progress}%`;
             learnProgressPercent.textContent = `${Math.round(progress)}%`;
            
+            // Calculate quality score (correct answers / total attempts)
             if (learnTotalAttempts > 0) {
                 learnQualityScore = (learnCorrectAnswers / learnTotalAttempts) * 100;
             }
            
+            // Update stars based on quality score
             const stars = qualityStars.querySelectorAll('i');
             const filledStars = Math.round((learnQualityScore / 100) * 5);
            
@@ -3230,18 +3474,19 @@
                 }
             });
         }
-       
+
         function showLearnCompletion() {
             learnModeContainer.style.display = 'none';
             learnCompletion.classList.add('show');
         }
-       
+
         function restartLearnMode() {
             learnCompletion.classList.remove('show');
             startLearnMode();
             learnModeContainer.style.display = 'block';
         }
 
+        // Flashcard Mode Functions
         function startFlashcardMode() {
             originalFlashcardDeck = [...quizData];
             flashcardDeck = [...originalFlashcardDeck];
@@ -3348,6 +3593,7 @@
 
         function markFlashcardUnknown() {
             const unknownCard = flashcardDeck.splice(currentFlashcardIndex, 1)[0];
+            // Add to spaced repetition queue (reappear after 3 cards or at end)
             const reinsertIndex = Math.min(currentFlashcardIndex + 3, flashcardDeck.length);
             flashcardDeck.splice(reinsertIndex, 0, unknownCard);
             if (currentFlashcardIndex >= flashcardDeck.length) {
@@ -3376,8 +3622,9 @@
             startFlashcardMode();
             flashcardModeContainer.style.display = 'flex';
         }
-       
-        // The registration modal is shown by default, initQuiz called after registration
+
+        // Initialize the app when DOM is loaded
+        window.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
 </html>
