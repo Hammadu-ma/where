@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Medical Quizzes | MediLearn Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #60a5fa;
+            --primary-dark: #3b82f6;
+            --primary-light: #93c5fd;
+            --secondary: #94a3b8;
+            --success: #22c55e;
+            --error: #ef4444;
+            --warning: #eab308;
+            --info: #0ea5e9;
+            --background: #0f172a;
+            --surface: #1e293b;
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+            --text-tertiary: #6b7280;
+            --border: #334155;
+            --shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+            --radius: 8px;
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --gradient: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            touch-action: manipulation;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-size: 16px;
+            transition: var(--transition);
+            min-height: 100vh;
+            overflow-x: hidden;
+            /* Prevent zoom */
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            touch-action: pan-x pan-y;
+        }
+
+        /* Prevent pinch-to-zoom */
+        html {
+            touch-action: none;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: var(--background);
+            border-bottom: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .logo i {
+            font-size: 1.5rem;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .action-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .action-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary-light);
+        }
+
+        .action-btn.primary {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .action-btn.primary:hover {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 80px 1rem 2rem;
+            display: none;
+        }
+
+        /* Page Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .page-subtitle {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Year Filter */
+        .year-filter {
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .year-filter-container {
+            display: flex;
+            gap: 0.5rem;
+            padding: 0.5rem 0;
+        }
+
+        .year-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--surface);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+            font-weight: 500;
+        }
+
+        .year-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Year Sections */
+        .year-section {
+            margin-bottom: 2rem;
+        }
+
+        .year-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .year-title i {
+            color: var(--primary);
+        }
+
+        .cards-container {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            padding-bottom: 1rem;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-light) transparent;
+        }
+
+        .cards-container::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .cards-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .cards-container::-webkit-scrollbar-thumb {
+            background: var(--primary-light);
+            border-radius: 3px;
+        }
+
+        .cards-container::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* Quiz Cards */
+        .quiz-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1rem;
+            min-width: 200px;
+            max-width: 200px;
+            transition: var(--transition);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .quiz-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+            border-color: var(--primary-light);
+        }
+
+        .quiz-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+        }
+
+        .quiz-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .quiz-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .quiz-stats {
+            display: flex;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .difficulty {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 1rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .difficulty.beginner {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+        }
+
+        .difficulty.intermediate {
+            background: rgba(234, 179, 8, 0.1);
+            color: var(--warning);
+        }
+
+        .difficulty.advanced {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+
+        /* Registration Modal */
+        #registrationModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1001;
+        }
+
+        .modal-content {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: var(--radius);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .modal-content form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .modal-content input {
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--background);
+            color: var(--text-primary);
+        }
+
+        .modal-content button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .modal-content button:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 0.75rem;
+            }
+
+            .main-content {
+                padding: 70px 0.75rem 1rem;
+            }
+
+            .page-title {
+                font-size: 1.75rem;
+            }
+
+            .year-title {
+                font-size: 1.25rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-title {
+                font-size: 1.5rem;
+            }
+
+            .quiz-card {
+                min-width: 180px;
+                max-width: 180px;
+            }
+
+            .year-title {
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <!-- Registration Modal -->
+    <div id="registrationModal">
+        <div class="modal-content">
+            <h2>Register</h2>
+            <form id="regForm">
+                <input id="name" placeholder="Full Name" required>
+                <input id="phone" type="tel" placeholder="Phone Number" required>
+                <input id="telegram" placeholder="Telegram Username (optional)">
+                <input id="receipt" type="file" accept="image/*" required>
+                <button type="submit">Submit Registration</button>
+            </form>
+            <div id="verifyForm" style="display:none">
+                <h2>Enter Verification Code</h2>
+                <input id="verifyCode" placeholder="6-digit code" maxlength="6" required>
+                <button id="verifyBtn">Verify</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="header-container">
+            <a href="#" class="logo">
+                <i class="fas fa-stethoscope"></i>
+                <span>MediLearn Pro</span>
+            </a>
+            
+            <div class="nav-actions">
+                <button class="action-btn" id="themeToggle">
+                    <i class="fas fa-sun"></i>
+                </button>
+                <a href="home.html" class="action-btn primary">
+                    <i class="fas fa-home"></i>
+                    Dashboard
+                </a>
+                <a href="#" id="logout" class="action-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="mainContent" class="main-content">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">Medical Quizzes</h1>
+            <p class="page-subtitle">Test your knowledge with quizzes organized by your year of study</p>
+        </div>
+
+        <!-- Year Filter -->
+        <div class="year-filter">
+            <div class="year-filter-container">
+                <button class="year-btn active" data-year="all">All Years</button>
+                <button class="year-btn" data-year="1">1st Year</button>
+                <button class="year-btn" data-year="2">2nd Year</button>
+                <button class="year-btn" data-year="3">3rd Year</button>
+                <button class="year-btn" data-year="4">4th Year</button>
+                <button class="year-btn" data-year="5">5th Year</button>
+                <button class="year-btn" data-year="6">6th Year</button>
+                <button class="year-btn" data-year="7">7th Year</button>
+            </div>
+        </div>
+
+        <!-- Year Sections -->
+        <section class="year-section" data-year="1">
+            <h2 class="year-title">
+                <i class="fas fa-book-medical"></i>
+                1st Year Quizzes
+            </h2>
+            <div class="cards-container">
+                <!-- Cards will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <section class="year-section" data-year="2">
+            <h2 class="year-title">
+                <i class="fas fa-book-medical"></i>
+                2nd Year Quizzes
+            </h2>
+            <div class="cards-container">
+                <!-- Cards will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <section class="year-section" data-year="3">
+            <h2 class="year-title">
+                <i class="fas fa-book-medical"></i>
+                3rd Year Quizzes
+            </h2>
+            <div class="cards-container">
+                <!-- Cards will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <section class="year-section" data-year="4">
+            <h2 class="year-title">
+                <i class="fas fa-book-medical"></i>
+                4th Year Quizzes
+            </h2>
+            <div class="cards-container">
+                <!-- Cards will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <section class="year-section" data-year="5">
+            <h2 class="year-title">
+                <i class="fas fa-book-medical"></i>
+                5th Year Quizzes
+            </h2>
+            <div class="cards-container">
+                <!-- Cards will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <section class="year-section" data-year="6">
+            <h2 class="year-title">
+                <i class="fas fa-book-medical"></i>
+                6th Year Quizzes
+            </h2>
+            <div class="cards-container">
+                <!-- Cards will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <section class="year-section" data-year="7">
+            <h2 class="year-title">
+                <i class="fas fa-book-medical"></i>
+                7th Year Quizzes
+            </h2>
+            <div class="cards-container">
+                <!-- Cards will be populated by JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Security measures
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.keyCode === 123 || 
+                (e.ctrlKey && e.shiftKey && e.keyCode === 73) || 
+                (e.ctrlKey && e.shiftKey && e.keyCode === 74) || 
+                (e.ctrlKey && e.keyCode === 85) || 
+                (e.ctrlKey && e.keyCode === 83)) {
+                e.preventDefault();
+            }
+        });
+        
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'hidden') {
+                document.body.style.filter = 'blur(10px)';
+            } else {
+                document.body.style.filter = 'none';
+            }
+        });
+
+        // Prevent zoom on double tap and pinch
+        document.addEventListener('touchstart', function(e) {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        document.addEventListener('gesturestart', function(e) {
+            e.preventDefault();
+        });
+
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('themeToggle');
+        
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const icon = themeToggle.querySelector('i');
+            
+            if (document.body.classList.contains('dark-mode')) {
+                icon.className = 'fas fa-sun';
+            } else {
+                icon.className = 'fas fa-moon';
+            }
+        }
+        
+        themeToggle.addEventListener('click', toggleTheme);
+
+        // Sample quiz data organized by year
+        const quizData = {
+            1: [
+                { id: 1, title: "Basic Anatomy", icon: "fas fa-brain", questions: 20, time: 15, difficulty: "beginner", rating: 4.5, page: "year1/basic-anatomy.html" },
+                { id: 2, title: "Cell Biology", icon: "fas fa-microscope", questions: 15, time: 10, difficulty: "beginner", rating: 4.2, page: "year1/cell-biology.html" },
+                { id: 3, title: "Medical Terminology", icon: "fas fa-book", questions: 25, time: 20, difficulty: "beginner", rating: 4.7, page: "year1/medical-terminology.html" },
+                { id: 4, title: "Basic Biochemistry", icon: "fas fa-flask", questions: 18, time: 15, difficulty: "beginner", rating: 4.3, page: "year1/basic-biochemistry.html" },
+                { id: 5, title: "Introduction to Physiology", icon: "fas fa-heartbeat", questions: 22, time: 18, difficulty: "beginner", rating: 4.4, page: "year1/intro-physiology.html" }
+            ],
+            2: [
+                { id: 6, title: "Human Anatomy", icon: "fas fa-brain", questions: 30, time: 25, difficulty: "intermediate", rating: 4.6, page: "year2/human-anatomy.html" },
+                { id: 7, title: "Physiology I", icon: "fas fa-heartbeat", questions: 25, time: 20, difficulty: "intermediate", rating: 4.5, page: "year2/physiology-i.html" },
+                { id: 8, title: "Histology", icon: "fas fa-microscope", questions: 20, time: 15, difficulty: "intermediate", rating: 4.3, page: "year2/histology.html" },
+                { id: 9, title: "Biochemistry II", icon: "fas fa-flask", questions: 28, time: 22, difficulty: "intermediate", rating: 4.4, page: "year2/biochemistry-ii.html" }
+            ],
+            3: [
+                { id: 10, title: "Pathology", icon: "fas fa-virus", questions: 35, time: 30, difficulty: "intermediate", page: "year3/pathology.html", rating: 4.7 },
+                { id: 11, title: "Pharmacology I", icon: "fas fa-pills", questions: 30, time: 25, difficulty: "intermediate", rating: 4.6, page: "year3/pharmacology-i.html" },
+                { id: 12, title: "Microbiology", icon: "fas fa-bacteria", questions: 25, time: 20, difficulty: "intermediate", rating: 4.5, page: "year3/microbiology.html" },
+                { id: 13, title: "Immunology", icon: "fas fa-shield-virus", questions: 28, time: 22, difficulty: "intermediate", rating: 4.4, page: "year3/immunology.html" }
+            ],
+            4: [
+                { id: 14, title: "Clinical Medicine I", icon: "fas fa-stethoscope", questions: 40, time: 35, difficulty: "advanced", rating: 4.8, page: "year4/clinical-medicine-i.html" },
+                { id: 15, title: "Surgery Basics", icon: "fas fa-syringe", questions: 35, time: 30, difficulty: "advanced", rating: 4.7, page: "year4/surgery-basics.html" },
+                { id: 16, title: "Pharmacology II", icon: "fas fa-pills", questions: 38, time: 32, difficulty: "advanced", rating: 4.6, page: "year4/pharmacology-ii.html" },
+                { id: 17, title: "Pathology II", icon: "fas fa-virus", questions: 42, time: 35, difficulty: "advanced", rating: 4.7, page: "year4/pathology-ii.html" }
+            ],
+            5: [
+                { id: 18, title: "Internal Medicine", icon: "fas fa-stethoscope", questions: 45, time: 40, difficulty: "advanced", rating: 4.8, page: "year5/internal-medicine.html" },
+                { id: 19, title: "Surgery", icon: "fas fa-syringe", questions: 40, time: 35, difficulty: "advanced", rating: 4.7, page: "year5/surgery.html" },
+                { id: 20, title: "Pediatrics", icon: "fas fa-baby", questions: 38, time: 32, difficulty: "advanced", rating: 4.6, page: "year5/pediatrics.html" },
+                { id: 21, title: "Obstetrics & Gynecology", icon: "fas fa-female", questions: 42, time: 35, difficulty: "advanced", rating: 4.7, page: "year5/obstetrics-gynecology.html" }
+            ],
+            6: [
+                { id: 22, title: "Clinical Rotations I", icon: "fas fa-hospital-user", questions: 50, time: 45, difficulty: "advanced", rating: 4.9, page: "year6/clinical-rotations-i.html" },
+                { id: 23, title: "Emergency Medicine", icon: "fas fa-ambulance", questions: 45, time: 40, difficulty: "advanced", rating: 4.8, page: "year6/emergency-medicine.html" },
+                { id: 24, title: "Psychiatry", icon: "fas fa-brain", questions: 40, time: 35, difficulty: "advanced", rating: 4.7, page: "year6/psychiatry.html" },
+                { id: 25, title: "Radiology", icon: "fas fa-x-ray", questions: 38, time: 32, difficulty: "advanced", rating: 4.6, page: "year6/radiology.html" }
+            ],
+            7: [
+                { id: 26, title: "Clinical Rotations II", icon: "fas fa-hospital-user", questions: 55, time: 50, difficulty: "advanced", rating: 4.9, page: "year7/clinical-rotations-ii.html" },
+                { id: 27, title: "Specialty Medicine", icon: "fas fa-stethoscope", questions: 50, time: 45, difficulty: "advanced", rating: 4.8, page: "year7/specialty-medicine.html" },
+                { id: 28, title: "Medical Ethics", icon: "fas fa-balance-scale", questions: 35, time: 30, difficulty: "advanced", rating: 4.7, page: "year7/medical-ethics.html" },
+                { id: 29, title: "Board Exam Prep", icon: "fas fa-graduation-cap", questions: 60, time: 55, difficulty: "advanced", rating: 4.9, page: "year7/board-exam-prep.html" }
+            ]
+        };
+
+        // Render quiz cards for each year
+        function renderQuizCards() {
+            for (let year = 1; year <= 7; year++) {
+                const container = document.querySelector(`.year-section[data-year="${year}"] .cards-container`);
+                if (!container) continue;
+                
+                container.innerHTML = '';
+                
+                if (quizData[year]) {
+                    quizData[year].forEach(quiz => {
+                        const card = document.createElement('div');
+                        card.className = 'quiz-card';
+                        card.innerHTML = `
+                            <div class="quiz-icon">
+                                <i class="${quiz.icon}"></i>
+                            </div>
+                            <h3 class="quiz-title">${quiz.title}</h3>
+                            <div class="quiz-meta">
+                                <span>${quiz.questions} Qs</span>
+                                <span>${quiz.time} min</span>
+                            </div>
+                            <div class="quiz-stats">
+                                <span class="difficulty ${quiz.difficulty}">${quiz.difficulty}</span>
+                                <div class="stat">
+                                    <i class="fas fa-star"></i>
+                                    <span>${quiz.rating}</span>
+                                </div>
+                            </div>
+                        `;
+                        
+                        card.addEventListener('click', () => {
+                            window.location.href = quiz.page;
+                        });
+                        
+                        container.appendChild(card);
+                    });
+                }
+            }
+        }
+
+        // Year filter functionality
+        const yearButtons = document.querySelectorAll('.year-btn');
+        const yearSections = document.querySelectorAll('.year-section');
+        
+        yearButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const year = button.dataset.year;
+                
+                // Update active button
+                yearButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                // Show/hide sections based on filter
+                if (year === 'all') {
+                    yearSections.forEach(section => {
+                        section.style.display = 'block';
+                    });
+                } else {
+                    yearSections.forEach(section => {
+                        if (section.dataset.year === year) {
+                            section.style.display = 'block';
+                        } else {
+                            section.style.display = 'none';
+                        }
+                    });
+                }
+            });
+        });
+
+        // Registration logic
+        const modal = document.getElementById('registrationModal');
+        const mainContent = document.getElementById('mainContent');
+        const regForm = document.getElementById('regForm');
+        const verifyForm = document.getElementById('verifyForm');
+        const logout = document.getElementById('logout');
+
+        if (localStorage.getItem('verified') === 'true') {
+            modal.style.display = 'none';
+            mainContent.style.display = 'block';
+        } else {
+            modal.style.display = 'flex';
+            mainContent.style.display = 'none';
+            if (localStorage.getItem('pendingCode')) {
+                regForm.style.display = 'none';
+                verifyForm.style.display = 'block';
+            }
+        }
+
+        regForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const telegram = document.getElementById('telegram').value || 'N/A';
+            const receipt = document.getElementById('receipt').files[0];
+
+            if (!name || !phone || !receipt) {
+                alert('Please fill all required fields.');
+                return;
+            }
+
+            const code = Math.floor(100000 + Math.random() * 900000).toString();
+            localStorage.setItem('pendingCode', code);
+            localStorage.setItem('userName', name);
+            localStorage.setItem('userPhone', phone);
+            localStorage.setItem('userTelegram', telegram);
+
+            const caption = `*New Registration*\n*Name:* ${name}\n*Phone:* ${phone}\n*Telegram:* ${telegram}\n*Verification Code:* ${code}`;
+            const formData = new FormData();
+            formData.append('chat_id', '7897840965');
+            formData.append('photo', receipt);
+            formData.append('caption', caption);
+            formData.append('parse_mode', 'Markdown');
+
+            fetch('https://api.telegram.org/bot8237566699:AAHICwsiqIrs-4_vUdrsORPlD8-WFSFYB2Y/sendPhoto', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    regForm.style.display = 'none';
+                    verifyForm.style.display = 'block';
+                } else {
+                    alert('Error sending to Telegram: ' + data.description);
+                }
+            })
+            .catch(err => alert('Error: ' + err));
+        });
+
+        document.getElementById('verifyBtn').addEventListener('click', function() {
+            const enteredCode = document.getElementById('verifyCode').value;
+            if (enteredCode === localStorage.getItem('pendingCode')) {
+                localStorage.setItem('verified', 'true');
+                localStorage.removeItem('pendingCode');
+                location.reload();
+            } else {
+                alert('Invalid verification code.');
+            }
+        });
+
+        logout.addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.clear();
+            location.reload();
+        });
+
+        // Initialize the page
+        renderQuizCards();
+    </script>
+</body>
+</html>
