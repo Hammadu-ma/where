@@ -676,7 +676,7 @@
     </style>
 </head>
 <body class="dark-mode">
-    <!-- Admin Login Modal -->
+    <!-- Admin Login Modal (unchanged) -->
     <div id="adminLoginModal" class="modal">
         <div class="modal-content">
             <h2><i class="fas fa-lock"></i> Admin Login</h2>
@@ -697,7 +697,7 @@
         </div>
     </div>
 
-    <!-- Edit User Modal -->
+    <!-- Edit User Modal (added expiration duration select) -->
     <div id="editUserModal" class="modal">
         <div class="modal-content">
             <h2><i class="fas fa-edit"></i> Edit User</h2>
@@ -756,11 +756,24 @@
                 <div class="form-row">
                     <div class="input-group">
                         <i class="fas fa-key"></i>
-                        <input id="editVerificationCode" placeholder="Verification Code">
-                        <button type="button" class="btn btn-secondary" onclick="generateVerificationCode()" style="margin-left: 0.5rem;">
+                        <input id="editVerificationCode" placeholder="Temporary Password">
+                        <button type="button" class="btn btn-secondary" onclick="generateTemporaryPassword('edit')" style="margin-left: 0.5rem;">
                             <i class="fas fa-sync"></i> Generate
                         </button>
                     </div>
+                    <div class="input-group">
+                        <i class="fas fa-clock"></i>
+                        <select id="editExpirationDuration" required>
+                            <option value="">Set Expiration</option>
+                            <option value="1h">1 Hour</option>
+                            <option value="24h">1 Day</option>
+                            <option value="168h">1 Week</option>
+                            <option value="custom">Custom (hours)</option>
+                        </select>
+                        <input id="editCustomHours" type="number" placeholder="Custom hours" style="display: none; margin-left: 0.5rem;">
+                    </div>
+                </div>
+                <div class="form-row">
                     <div class="input-group">
                         <i class="fas fa-calendar"></i>
                         <input id="editRegistrationDate" type="date" placeholder="Registration Date">
@@ -783,7 +796,7 @@
         </div>
     </div>
 
-    <!-- Add User Modal -->
+    <!-- Add User Modal (added expiration duration select) -->
     <div id="addUserModal" class="modal">
         <div class="modal-content">
             <h2><i class="fas fa-user-plus"></i> Add New User</h2>
@@ -838,12 +851,25 @@
                         </select>
                     </div>
                 </div>
-                <div class="input-group">
-                    <i class="fas fa-key"></i>
-                    <input id="addVerificationCode" placeholder="Verification Code">
-                    <button type="button" class="btn btn-secondary" onclick="generateAddVerificationCode()" style="margin-left: 0.5rem;">
-                        <i class="fas fa-sync"></i> Generate
-                    </button>
+                <div class="form-row">
+                    <div class="input-group">
+                        <i class="fas fa-key"></i>
+                        <input id="addVerificationCode" placeholder="Temporary Password">
+                        <button type="button" class="btn btn-secondary" onclick="generateTemporaryPassword('add')" style="margin-left: 0.5rem;">
+                            <i class="fas fa-sync"></i> Generate
+                        </button>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-clock"></i>
+                        <select id="addExpirationDuration" required>
+                            <option value="">Set Expiration</option>
+                            <option value="1h">1 Hour</option>
+                            <option value="24h">1 Day</option>
+                            <option value="168h">1 Week</option>
+                            <option value="custom">Custom (hours)</option>
+                        </select>
+                        <input id="addCustomHours" type="number" placeholder="Custom hours" style="display: none; margin-left: 0.5rem;">
+                    </div>
                 </div>
                 <div class="input-group">
                     <i class="fas fa-map-marker-alt"></i>
@@ -858,7 +884,7 @@
         </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
+    <!-- Delete Confirmation Modal (unchanged) -->
     <div id="deleteConfirmModal" class="modal">
         <div class="modal-content">
             <h2><i class="fas fa-exclamation-triangle"></i> Confirm Deletion</h2>
@@ -870,7 +896,7 @@
         </div>
     </div>
 
-    <!-- Header -->
+    <!-- Header (unchanged) -->
     <header class="header" id="header">
         <div class="header-container">
             <div class="logo" id="logoBtn">
@@ -894,7 +920,7 @@
         </div>
     </header>
 
-    <!-- Admin Content -->
+    <!-- Admin Content (unchanged except for table updates in JS) -->
     <main id="adminContent" class="main-content">
         <div class="page-header">
             <h1 class="page-title">Enhanced User Management</h1>
@@ -941,7 +967,7 @@
                     <i class="fas fa-user-shield"></i> Promote to Moderator
                 </button>
                 <button class="quick-action-btn" onclick="userManager.bulkGenerateCodes()">
-                    <i class="fas fa-key"></i> Generate Codes
+                    <i class="fas fa-key"></i> Generate Temp Passwords
                 </button>
                 <button class="quick-action-btn danger" onclick="userManager.bulkDelete()">
                     <i class="fas fa-trash"></i> Delete Selected
@@ -1033,7 +1059,7 @@
     </main>
 
     <script>
-        // Firebase configuration
+        // Firebase configuration (unchanged)
         const firebaseConfig = {
             apiKey: "AIzaSyC4DSMVg4c98kQf5sSF8ueD631QgO4SXn0",
             authDomain: "medical-quiz-40228.firebaseapp.com",
@@ -1043,17 +1069,17 @@
             appId: "1:483043078873:web:4029dd83e53557f08b04c8"
         };
 
-        // Initialize Firebase
+        // Initialize Firebase (unchanged)
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // Admin credentials
+        // Admin credentials (unchanged)
         const ADMIN_CREDENTIALS = {
             username: "admin",
             password: "admin123"
         };
 
-        // Enhanced User Management Class
+        // Enhanced User Management Class (updated with temporary password logic)
         class EnhancedUserManager {
             constructor() {
                 this.usersCollection = db.collection('users');
@@ -1088,8 +1114,8 @@
             }
 
             applyFilters() {
+                // Unchanged, but you could add a filter for expired passwords if needed
                 this.filteredUsers = this.users.filter(user => {
-                    // Search filter across multiple fields
                     const matchesSearch = this.searchTerm === '' || 
                         user.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
                         user.phone.includes(this.searchTerm) ||
@@ -1097,20 +1123,16 @@
                         (user.email && user.email.toLowerCase().includes(this.searchTerm.toLowerCase())) ||
                         (user.role && user.role.toLowerCase().includes(this.searchTerm.toLowerCase()));
                     
-                    // Status filter
                     const matchesStatus = this.statusFilter === 'all' || user.status === this.statusFilter;
                     
-                    // Role filter
                     const matchesRole = this.roleFilter === 'all' || user.role === this.roleFilter;
                     
-                    // Year filter
                     const matchesYear = this.yearFilter === 'all' || 
                         (user.registeredYears && user.registeredYears.includes(this.yearFilter));
                     
                     return matchesSearch && matchesStatus && matchesRole && matchesYear;
                 });
 
-                // Apply sorting
                 this.filteredUsers.sort((a, b) => {
                     switch(this.sortBy) {
                         case 'newest':
@@ -1128,6 +1150,7 @@
             }
 
             updateStats() {
+                // Unchanged
                 const total = this.users.length;
                 const verified = this.users.filter(u => u.status === 'verified').length;
                 const admins = this.users.filter(u => u.role === 'admin').length;
@@ -1153,16 +1176,25 @@
                 
                 emptyState.style.display = 'none';
                 
-                // Calculate pagination
                 const totalPages = Math.ceil(this.filteredUsers.length / this.usersPerPage);
                 const startIndex = (this.currentPage - 1) * this.usersPerPage;
                 const endIndex = Math.min(startIndex + this.usersPerPage, this.filteredUsers.length);
                 const pageUsers = this.filteredUsers.slice(startIndex, endIndex);
                 
                 tableBody.innerHTML = pageUsers.map(user => {
-                    const isNew = Date.now() - (user.createdAt || 0) < 7 * 24 * 60 * 60 * 1000; // 7 days
+                    const isNew = Date.now() - (user.createdAt || 0) < 7 * 24 * 60 * 60 * 1000;
                     const isAdmin = user.role === 'admin';
                     const isModerator = user.role === 'moderator';
+                    
+                    // New: Calculate if password is expired and display expiration info
+                    let expirationInfo = '';
+                    if (user.passwordExpiration) {
+                        const now = Date.now();
+                        const expiresInMs = user.passwordExpiration - now;
+                        const isExpired = expiresInMs <= 0;
+                        const expiresInHours = Math.round(expiresInMs / (1000 * 60 * 60));
+                        expirationInfo = isExpired ? '<span style="color: var(--error);">Expired</span>' : `Expires in ${expiresInHours} hours`;
+                    }
                     
                     return `
                     <tr>
@@ -1207,6 +1239,9 @@
                                 <div class="verification-code" style="margin-top: 0.5rem;">
                                     ${user.verificationCode}
                                 </div>
+                                <div style="font-size: 0.8rem; color: var(--text-tertiary);">
+                                    ${expirationInfo}
+                                </div>
                             ` : ''}
                         </td>
                         <td>
@@ -1237,6 +1272,7 @@
                 this.attachEventListeners();
             }
 
+            // Unchanged renderPagination and attachEventListeners
             renderPagination(totalPages) {
                 const pagination = document.getElementById('pagination');
                 
@@ -1247,12 +1283,10 @@
                 
                 let paginationHTML = '';
                 
-                // Previous button
                 if (this.currentPage > 1) {
                     paginationHTML += `<div class="page-btn" data-page="${this.currentPage - 1}"><i class="fas fa-chevron-left"></i></div>`;
                 }
                 
-                // Page numbers
                 for (let i = 1; i <= totalPages; i++) {
                     if (i === 1 || i === totalPages || (i >= this.currentPage - 1 && i <= this.currentPage + 1)) {
                         paginationHTML += `<div class="page-btn ${i === this.currentPage ? 'active' : ''}" data-page="${i}">${i}</div>`;
@@ -1261,14 +1295,12 @@
                     }
                 }
                 
-                // Next button
                 if (this.currentPage < totalPages) {
                     paginationHTML += `<div class="page-btn" data-page="${this.currentPage + 1}"><i class="fas fa-chevron-right"></i></div>`;
                 }
                 
                 pagination.innerHTML = paginationHTML;
                 
-                // Attach event listeners to pagination buttons
                 pagination.querySelectorAll('.page-btn').forEach(btn => {
                     if (btn.textContent !== '...') {
                         btn.addEventListener('click', () => {
@@ -1280,7 +1312,6 @@
             }
 
             attachEventListeners() {
-                // User checkbox selection
                 document.querySelectorAll('.user-checkbox').forEach(checkbox => {
                     checkbox.addEventListener('click', () => {
                         const userId = checkbox.dataset.userId;
@@ -1296,7 +1327,6 @@
                     });
                 });
 
-                // Edit user buttons
                 document.querySelectorAll('.action-edit').forEach(btn => {
                     btn.addEventListener('click', () => {
                         const userId = btn.dataset.userId;
@@ -1304,7 +1334,6 @@
                     });
                 });
 
-                // Role change buttons
                 document.querySelectorAll('.action-role').forEach(btn => {
                     btn.addEventListener('click', () => {
                         const userId = btn.dataset.userId;
@@ -1312,7 +1341,6 @@
                     });
                 });
 
-                // Delete user buttons
                 document.querySelectorAll('.action-delete').forEach(btn => {
                     btn.addEventListener('click', () => {
                         const userId = btn.dataset.userId;
@@ -1322,11 +1350,13 @@
             }
 
             updateSelectedCount() {
+                // Unchanged
                 const count = this.selectedUsers.size;
                 document.getElementById('selectedCount').textContent = `${count} user${count !== 1 ? 's' : ''} selected`;
             }
 
             updateBulkActions() {
+                // Unchanged
                 const hasSelection = this.selectedUsers.size > 0;
                 document.getElementById('bulkVerifyBtn').disabled = !hasSelection;
                 document.getElementById('bulkRejectBtn').disabled = !hasSelection;
@@ -1338,7 +1368,6 @@
                 const user = this.users.find(u => u.id === userId);
                 if (!user) return;
 
-                // Populate form with user data
                 document.getElementById('editUserId').value = user.id;
                 document.getElementById('editName').value = user.name || '';
                 document.getElementById('editPhone').value = user.phone || '';
@@ -1354,12 +1383,15 @@
                     document.getElementById('editRegistrationDate').value = new Date(user.registrationDate).toISOString().split('T')[0];
                 }
                 
-                // Set years
                 const yearsSelect = document.getElementById('editYears');
                 Array.from(yearsSelect.options).forEach(option => {
                     option.selected = user.registeredYears && user.registeredYears.includes(option.value);
                 });
                 
+                // New: Populate expiration if set
+                document.getElementById('editExpirationDuration').value = '';
+                document.getElementById('editCustomHours').style.display = 'none';
+
                 document.getElementById('editUserModal').style.display = 'flex';
             }
 
@@ -1379,6 +1411,19 @@
                 const yearsSelect = document.getElementById('editYears');
                 const selectedYears = Array.from(yearsSelect.selectedOptions).map(option => option.value);
                 
+                // New: Calculate expiration based on selected duration
+                let passwordExpiration = null;
+                const durationSelect = document.getElementById('editExpirationDuration').value;
+                let hours = 0;
+                if (durationSelect === '1h') hours = 1;
+                else if (durationSelect === '24h') hours = 24;
+                else if (durationSelect === '168h') hours = 168;
+                else if (durationSelect === 'custom') hours = parseInt(document.getElementById('editCustomHours').value) || 0;
+                
+                if (hours > 0 && verificationCode) {
+                    passwordExpiration = Date.now() + (hours * 60 * 60 * 1000);
+                }
+                
                 try {
                     const updateData = {
                         name,
@@ -1390,7 +1435,8 @@
                         verificationCode,
                         role,
                         status,
-                        registeredYears: selectedYears
+                        registeredYears: selectedYears,
+                        passwordExpiration // New field
                     };
                     
                     if (registrationDate) {
@@ -1398,7 +1444,7 @@
                     }
                     
                     if (verificationCode && !updateData.codeTimestamp) {
-                        updateData.codeTimestamp = new Date().getTime();
+                        updateData.codeTimestamp = Date.now();
                     }
                     
                     await this.usersCollection.doc(userId).update(updateData);
@@ -1413,6 +1459,7 @@
             }
 
             async changeUserRole(userId) {
+                // Unchanged
                 const user = this.users.find(u => u.id === userId);
                 if (!user) return;
 
@@ -1424,7 +1471,7 @@
                 } else if (currentRole === 'moderator') {
                     newRole = 'user';
                 } else {
-                    return; // Don't change admin roles
+                    return;
                 }
                 
                 try {
@@ -1442,16 +1489,29 @@
 
             async createUser(userData) {
                 try {
-                    // Check if phone already exists
                     const existingUser = await this.usersCollection.where('phone', '==', userData.phone).get();
                     if (!existingUser.empty) {
                         return { success: false, error: 'Phone number already registered' };
                     }
 
+                    // New: Calculate expiration for new user
+                    let passwordExpiration = null;
+                    const durationSelect = document.getElementById('addExpirationDuration').value;
+                    let hours = 0;
+                    if (durationSelect === '1h') hours = 1;
+                    else if (durationSelect === '24h') hours = 24;
+                    else if (durationSelect === '168h') hours = 168;
+                    else if (durationSelect === 'custom') hours = parseInt(document.getElementById('addCustomHours').value) || 0;
+                    
+                    if (hours > 0 && userData.verificationCode) {
+                        passwordExpiration = Date.now() + (hours * 60 * 60 * 1000);
+                    }
+
                     const userRecord = {
                         ...userData,
-                        createdAt: new Date().getTime(),
-                        codeTimestamp: userData.verificationCode ? new Date().getTime() : null
+                        createdAt: Date.now(),
+                        codeTimestamp: userData.verificationCode ? Date.now() : null,
+                        passwordExpiration // New field
                     };
 
                     const docRef = await this.usersCollection.add(userRecord);
@@ -1463,6 +1523,7 @@
             }
 
             confirmDeleteUser(userId) {
+                // Unchanged
                 const user = this.users.find(u => u.id === userId);
                 if (!user) return;
 
@@ -1474,6 +1535,7 @@
             }
 
             async deleteUser(userId) {
+                // Unchanged
                 try {
                     await this.usersCollection.doc(userId).delete();
                     document.getElementById('deleteConfirmModal').style.display = 'none';
@@ -1486,6 +1548,7 @@
             }
 
             async bulkVerify() {
+                // Unchanged
                 if (this.selectedUsers.size === 0) return;
                 
                 try {
@@ -1506,6 +1569,7 @@
             }
 
             async bulkReject() {
+                // Unchanged
                 if (this.selectedUsers.size === 0) return;
                 
                 try {
@@ -1526,6 +1590,7 @@
             }
 
             async bulkPromoteToModerator() {
+                // Unchanged
                 if (this.selectedUsers.size === 0) return;
                 
                 try {
@@ -1548,28 +1613,35 @@
             async bulkGenerateCodes() {
                 if (this.selectedUsers.size === 0) return;
                 
+                // New: Prompt for default duration for bulk
+                const defaultDuration = prompt('Enter default expiration hours for bulk passwords (e.g., 24):');
+                const hours = parseInt(defaultDuration) || 24;
+                
                 try {
                     const batch = db.batch();
                     this.selectedUsers.forEach(userId => {
-                        const code = Math.floor(100000 + Math.random() * 900000).toString();
+                        const code = generateRandomPassword(); // Use new generator
+                        const expiration = Date.now() + (hours * 60 * 60 * 1000);
                         const userRef = this.usersCollection.doc(userId);
                         batch.update(userRef, { 
                             verificationCode: code,
-                            codeTimestamp: new Date().getTime()
+                            codeTimestamp: Date.now(),
+                            passwordExpiration: expiration
                         });
                     });
                     
                     await batch.commit();
                     this.selectedUsers.clear();
                     this.loadUsers();
-                    this.showMessage('Verification codes generated successfully', 'success');
+                    this.showMessage('Temporary passwords generated successfully', 'success');
                 } catch (error) {
-                    console.error('Error bulk generating codes:', error);
-                    this.showMessage('Error generating codes: ' + error.message, 'error');
+                    console.error('Error bulk generating passwords:', error);
+                    this.showMessage('Error generating passwords: ' + error.message, 'error');
                 }
             }
 
             bulkDelete() {
+                // Unchanged
                 if (this.selectedUsers.size === 0) return;
                 
                 document.getElementById('deleteMessage').textContent = 
@@ -1598,6 +1670,7 @@
             }
 
             showMessage(message, type) {
+                // Unchanged
                 const messageEl = document.createElement('div');
                 messageEl.textContent = message;
                 messageEl.style.cssText = `
@@ -1621,10 +1694,10 @@
             }
         }
 
-        // Initialize User Manager
+        // Initialize User Manager (unchanged)
         const userManager = new EnhancedUserManager();
 
-        // DOM Elements
+        // DOM Elements (added new ones for expiration)
         const adminLoginModal = document.getElementById('adminLoginModal');
         const adminContent = document.getElementById('adminContent');
         const adminLoginForm = document.getElementById('adminLoginForm');
@@ -1651,19 +1724,25 @@
         const cancelAddBtn = document.getElementById('cancelAddBtn');
         const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
 
-        // Utility Functions
-        function generateVerificationCode() {
-            const code = Math.floor(100000 + Math.random() * 900000).toString();
-            document.getElementById('editVerificationCode').value = code;
+        // New: Function to generate stronger random password (8 chars alphanumeric)
+        function generateRandomPassword(length = 8) {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let password = '';
+            for (let i = 0; i < length; i++) {
+                password += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return password;
         }
 
-        function generateAddVerificationCode() {
-            const code = Math.floor(100000 + Math.random() * 900000).toString();
-            document.getElementById('addVerificationCode').value = code;
+        // New: Generate temporary password and set in field
+        function generateTemporaryPassword(mode) {
+            const password = generateRandomPassword();
+            document.getElementById(`${mode}VerificationCode`).value = password;
         }
 
-        // Check if admin is logged in
+        // Utility Functions (updated for temporary password)
         function checkAdminLogin() {
+            // Unchanged
             const isAdmin = localStorage.getItem('isAdmin') === 'true';
             if (isAdmin) {
                 adminLoginModal.style.display = 'none';
@@ -1675,7 +1754,7 @@
             }
         }
 
-        // Admin login
+        // Admin login (unchanged)
         adminLoginForm.addEventListener('submit', e => {
             e.preventDefault();
             const username = document.getElementById('adminUsername').value;
@@ -1689,24 +1768,25 @@
             }
         });
 
-        // Logout
+        // Logout (unchanged)
         logoutBtn.addEventListener('click', () => {
             localStorage.removeItem('isAdmin');
             checkAdminLogin();
         });
 
-        // Refresh data
+        // Refresh data (unchanged)
         refreshBtn.addEventListener('click', () => {
             userManager.loadUsers();
         });
 
-        // Add User button
+        // Add User button (unchanged)
         addUserBtn.addEventListener('click', () => {
             document.getElementById('addUserForm').reset();
+            document.getElementById('addCustomHours').style.display = 'none';
             document.getElementById('addUserModal').style.display = 'flex';
         });
 
-        // Add User form submission
+        // Add User form submission (updated for expiration)
         addUserForm.addEventListener('submit', async e => {
             e.preventDefault();
             
@@ -1733,7 +1813,7 @@
             }
         });
 
-        // Search functionality
+        // Search functionality (unchanged)
         searchInput.addEventListener('input', () => {
             userManager.searchTerm = searchInput.value;
             userManager.currentPage = 1;
@@ -1741,7 +1821,7 @@
             userManager.renderUsers();
         });
 
-        // Filter functionality
+        // Filter functionality (unchanged)
         statusFilter.addEventListener('change', () => {
             userManager.statusFilter = statusFilter.value;
             userManager.currentPage = 1;
@@ -1769,17 +1849,15 @@
             userManager.renderUsers();
         });
 
-        // Select all functionality
+        // Select all functionality (unchanged)
         selectAllCheckbox.addEventListener('click', () => {
             const isChecked = selectAllCheckbox.querySelector('.checkbox').classList.contains('checked');
             
             if (isChecked) {
-                // Deselect all
                 userManager.selectedUsers.clear();
                 selectAllCheckbox.querySelector('.checkbox').classList.remove('checked');
                 bulkSelectCheckbox.classList.remove('checked');
             } else {
-                // Select all on current page
                 const startIndex = (userManager.currentPage - 1) * userManager.usersPerPage;
                 const endIndex = Math.min(startIndex + userManager.usersPerPage, userManager.filteredUsers.length);
                 
@@ -1796,17 +1874,15 @@
             userManager.renderUsers();
         });
 
-        // Bulk select checkbox
+        // Bulk select checkbox (unchanged)
         bulkSelectCheckbox.addEventListener('click', () => {
             const isChecked = bulkSelectCheckbox.classList.contains('checked');
             
             if (isChecked) {
-                // Deselect all
                 userManager.selectedUsers.clear();
                 bulkSelectCheckbox.classList.remove('checked');
                 selectAllCheckbox.querySelector('.checkbox').classList.remove('checked');
             } else {
-                // Select all filtered users
                 userManager.filteredUsers.forEach(user => {
                     userManager.selectedUsers.add(user.id);
                 });
@@ -1820,7 +1896,7 @@
             userManager.renderUsers();
         });
 
-        // Bulk actions
+        // Bulk actions (unchanged)
         bulkVerifyBtn.addEventListener('click', () => {
             userManager.bulkVerify();
         });
@@ -1837,13 +1913,13 @@
             userManager.bulkDelete();
         });
 
-        // Edit user form
+        // Edit user form (unchanged)
         editUserForm.addEventListener('submit', e => {
             e.preventDefault();
             userManager.saveUserChanges();
         });
 
-        // Modal cancel buttons
+        // Modal cancel buttons (unchanged)
         cancelEditBtn.addEventListener('click', () => {
             document.getElementById('editUserModal').style.display = 'none';
         });
@@ -1856,7 +1932,18 @@
             document.getElementById('deleteConfirmModal').style.display = 'none';
         });
 
-        // Theme toggle
+        // New: Handle custom duration input display for edit/add modals
+        document.getElementById('editExpirationDuration').addEventListener('change', (e) => {
+            const customInput = document.getElementById('editCustomHours');
+            customInput.style.display = e.target.value === 'custom' ? 'inline-block' : 'none';
+        });
+
+        document.getElementById('addExpirationDuration').addEventListener('change', (e) => {
+            const customInput = document.getElementById('addCustomHours');
+            customInput.style.display = e.target.value === 'custom' ? 'inline-block' : 'none';
+        });
+
+        // Theme toggle (unchanged)
         const themeToggle = document.getElementById('themeToggle');
         function toggleTheme() {
             if (document.body.classList.contains('dark-mode')) {
@@ -1871,7 +1958,7 @@
         }
         themeToggle.addEventListener('click', toggleTheme);
 
-        // Current time display
+        // Current time display (unchanged)
         function updateCurrentTime() {
             const now = new Date();
             document.getElementById('currentTime').textContent = now.toLocaleString();
@@ -1879,7 +1966,7 @@
         setInterval(updateCurrentTime, 1000);
         updateCurrentTime();
 
-        // Initialize
+        // Initialize (unchanged)
         checkAdminLogin();
     </script>
 </body>
