@@ -360,11 +360,11 @@
             background: var(--error);
             color: white;
         }
-        .action-premium {
+        .action-role {
             background: rgba(139, 92, 246, 0.1);
             color: var(--purple);
         }
-        .action-premium:hover {
+        .action-role:hover {
             background: var(--purple);
             color: white;
         }
@@ -602,6 +602,15 @@
             background: var(--primary-light);
             border-color: var(--primary-light);
         }
+        .quick-action-btn.danger {
+            background: var(--error);
+            color: white;
+            border-color: var(--error);
+        }
+        .quick-action-btn.danger:hover {
+            background: #dc2626;
+            border-color: #dc2626;
+        }
         .verification-code {
             font-family: monospace;
             background: rgba(59, 130, 246, 0.1);
@@ -806,6 +815,8 @@
                         <option value="2">2nd Year</option>
                         <option value="3">3rd Year</option>
                         <option value="4">4th Year</option>
+                        <option value="5">5th Year</option>
+                        <option value="6">6th Year</option>
                     </select>
                 </div>
                 <div class="form-row">
@@ -815,6 +826,7 @@
                             <option value="pending">Pending</option>
                             <option value="verified">Verified</option>
                             <option value="rejected">Rejected</option>
+                            <option value="premium">Premium</option>
                         </select>
                     </div>
                     <div class="input-group">
@@ -912,6 +924,10 @@
                     <div class="stat-value" id="moderatorUsers">0</div>
                     <div class="stat-label">Moderators</div>
                 </div>
+                <div class="stat-card premium">
+                    <div class="stat-value" id="premiumUsers">0</div>
+                    <div class="stat-label">Premium Users</div>
+                </div>
             </div>
 
             <div class="quick-actions">
@@ -926,6 +942,9 @@
                 </button>
                 <button class="quick-action-btn" onclick="userManager.bulkGenerateCodes()">
                     <i class="fas fa-key"></i> Generate Codes
+                </button>
+                <button class="quick-action-btn danger" onclick="userManager.bulkDelete()">
+                    <i class="fas fa-trash"></i> Delete Selected
                 </button>
             </div>
             
@@ -954,6 +973,8 @@
                         <option value="2">2nd Year</option>
                         <option value="3">3rd Year</option>
                         <option value="4">4th Year</option>
+                        <option value="5">5th Year</option>
+                        <option value="6">6th Year</option>
                     </select>
                     <select id="sortBy" class="filter-select">
                         <option value="newest">Newest First</option>
@@ -1111,11 +1132,13 @@
                 const verified = this.users.filter(u => u.status === 'verified').length;
                 const admins = this.users.filter(u => u.role === 'admin').length;
                 const moderators = this.users.filter(u => u.role === 'moderator').length;
+                const premium = this.users.filter(u => u.status === 'premium').length;
 
                 document.getElementById('totalUsers').textContent = total;
                 document.getElementById('verifiedUsers').textContent = verified;
                 document.getElementById('adminUsers').textContent = admins;
                 document.getElementById('moderatorUsers').textContent = moderators;
+                document.getElementById('premiumUsers').textContent = premium;
             }
 
             renderUsers() {
@@ -1197,7 +1220,7 @@
                                 <i class="fas fa-edit"></i>
                             </div>
                             ${!isAdmin ? `
-                                <div class="action-icon action-premium" data-user-id="${user.id}" title="Change Role">
+                                <div class="action-icon action-role" data-user-id="${user.id}" title="Change Role">
                                     <i class="fas fa-user-tag"></i>
                                 </div>
                             ` : ''}
@@ -1282,7 +1305,7 @@
                 });
 
                 // Role change buttons
-                document.querySelectorAll('.action-premium').forEach(btn => {
+                document.querySelectorAll('.action-role').forEach(btn => {
                     btn.addEventListener('click', () => {
                         const userId = btn.dataset.userId;
                         this.changeUserRole(userId);
@@ -1544,6 +1567,34 @@
                     console.error('Error bulk generating codes:', error);
                     this.showMessage('Error generating codes: ' + error.message, 'error');
                 }
+            }
+
+            bulkDelete() {
+                if (this.selectedUsers.size === 0) return;
+                
+                document.getElementById('deleteMessage').textContent = 
+                    `Are you sure you want to delete ${this.selectedUsers.size} selected users? This action cannot be undone.`;
+                
+                document.getElementById('confirmDeleteBtn').onclick = async () => {
+                    try {
+                        const batch = db.batch();
+                        this.selectedUsers.forEach(userId => {
+                            const userRef = this.usersCollection.doc(userId);
+                            batch.delete(userRef);
+                        });
+                        
+                        await batch.commit();
+                        document.getElementById('deleteConfirmModal').style.display = 'none';
+                        this.selectedUsers.clear();
+                        this.loadUsers();
+                        this.showMessage('Users deleted successfully', 'success');
+                    } catch (error) {
+                        console.error('Error bulk deleting users:', error);
+                        this.showMessage('Error deleting users: ' + error.message, 'error');
+                    }
+                };
+                
+                document.getElementById('deleteConfirmModal').style.display = 'flex';
             }
 
             showMessage(message, type) {
