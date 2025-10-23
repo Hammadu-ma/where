@@ -1,0 +1,1835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Enhanced Admin Panel | MediLearn Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <style>
+        :root {
+            --primary: #60a5fa;
+            --primary-dark: #3b82f6;
+            --primary-light: #93c5fd;
+            --secondary: #94a3b8;
+            --success: #22c55e;
+            --error: #ef4444;
+            --warning: #eab308;
+            --info: #0ea5e9;
+            --purple: #8b5cf6;
+            --pink: #ec4899;
+            --shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+            --radius: 12px;
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --gradient: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+            --gradient-premium: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+        }
+        body.light-mode {
+            --background: #f3f4f6;
+            --surface: #ffffff;
+            --text-primary: #111827;
+            --text-secondary: #4b5563;
+            --text-tertiary: #9ca3af;
+            --border: #d1d5db;
+        }
+        body.dark-mode {
+            --background: #0f172a;
+            --surface: #1e293b;
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+            --text-tertiary: #6b7280;
+            --border: #334155;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            touch-action: manipulation;
+        }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-size: 16px;
+            transition: var(--transition);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            touch-action: pan-x pan-y;
+        }
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: var(--background);
+            border-bottom: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .logo i {
+            font-size: 1.5rem;
+        }
+        .nav-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .action-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            text-decoration: none;
+        }
+        .action-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary-light);
+        }
+        .action-btn.primary {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .action-btn.primary:hover {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+        .action-btn.danger {
+            background: var(--error);
+            color: white;
+            border-color: var(--error);
+        }
+        .action-btn.danger:hover {
+            background: #dc2626;
+            border-color: #dc2626;
+        }
+        .action-btn.premium {
+            background: var(--gradient-premium);
+            color: white;
+            border: none;
+        }
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 80px 1rem 2rem;
+            display: none;
+        }
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .page-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+        .page-subtitle {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .admin-panel {
+            background: var(--surface);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        .admin-header {
+            padding: 1.5rem;
+            background: var(--gradient);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .admin-header h2 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            padding: 1.5rem;
+            background: var(--background);
+            border-bottom: 1px solid var(--border);
+        }
+        .stat-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 1rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card.premium {
+            background: var(--gradient-premium);
+            color: white;
+        }
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        .admin-controls {
+            padding: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--background);
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+        .filter-group {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .filter-select {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--background);
+            color: var(--text-primary);
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        .users-table-container {
+            overflow-x: auto;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .users-table th,
+        .users-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        .users-table th {
+            background: var(--background);
+            font-weight: 600;
+            color: var(--text-secondary);
+            position: sticky;
+            top: 0;
+        }
+        .users-table tbody tr:hover {
+            background: rgba(59, 130, 246, 0.05);
+        }
+        .user-status {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .status-pending {
+            background: rgba(234, 179, 8, 0.1);
+            color: var(--warning);
+        }
+        .status-verified {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+        }
+        .status-rejected {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+        .status-premium {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--purple);
+        }
+        .role-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin: 0.1rem;
+        }
+        .role-user {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+        .role-moderator {
+            background: var(--warning);
+            color: white;
+        }
+        .role-admin {
+            background: var(--gradient-premium);
+            color: white;
+        }
+        .user-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .action-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .action-edit {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary);
+        }
+        .action-edit:hover {
+            background: var(--primary);
+            color: white;
+        }
+        .action-delete {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+        .action-delete:hover {
+            background: var(--error);
+            color: white;
+        }
+        .action-premium {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--purple);
+        }
+        .action-premium:hover {
+            background: var(--purple);
+            color: white;
+        }
+        .bulk-actions {
+            padding: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            border-top: 1px solid var(--border);
+        }
+        .select-all {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .checkbox {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            background: var(--background);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .checkbox.checked {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+        .checkbox.checked::after {
+            content: '✓';
+            color: white;
+            font-size: 12px;
+        }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1001;
+        }
+        .modal-content {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: var(--radius);
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            animation: slideIn 0.3s ease-out;
+            overflow-y: auto;
+            max-height: 80vh;
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .modal-content h2 {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            font-size: 1.75rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .modal-content h2 i {
+            color: var(--primary);
+        }
+        .input-group {
+            position: relative;
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .input-group i {
+            position: absolute;
+            left: 1rem;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+        .modal-content select, .modal-content input, .modal-content textarea {
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--background);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            width: 100%;
+        }
+        .modal-content textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        .modal-content select:focus, .modal-content input:focus, .modal-content textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        .form-row {
+            display: flex;
+            gap: 1rem;
+        }
+        .form-row .input-group {
+            flex: 1;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            border: none;
+        }
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+        }
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+        .btn-secondary {
+            background: var(--surface);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary-light);
+        }
+        .btn-danger {
+            background: var(--error);
+            color: white;
+        }
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+        .btn-premium {
+            background: var(--gradient-premium);
+            color: white;
+        }
+        .btn-premium:hover {
+            background: var(--purple);
+        }
+        .error {
+            color: var(--error);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .success {
+            color: var(--success);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+        .page-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .page-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .page-btn:hover:not(.active) {
+            background: var(--primary-light);
+            border-color: var(--primary-light);
+        }
+        .empty-state {
+            padding: 3rem;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--text-tertiary);
+        }
+        .quick-actions {
+            display: flex;
+            gap: 0.5rem;
+            padding: 1rem 1.5rem;
+            background: var(--background);
+            border-bottom: 1px solid var(--border);
+        }
+        .quick-action-btn {
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .quick-action-btn:hover {
+            background: var(--primary-light);
+            border-color: var(--primary-light);
+        }
+        .verification-code {
+            font-family: monospace;
+            background: rgba(59, 130, 246, 0.1);
+            padding: 0.5rem;
+            border-radius: var(--radius);
+            margin: 0.5rem 0;
+        }
+        .user-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+        .badge-premium {
+            background: var(--gradient-premium);
+            color: white;
+        }
+        .badge-new {
+            background: var(--gradient);
+            color: white;
+        }
+        .badge-verified {
+            background: var(--success);
+            color: white;
+        }
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 0.75rem;
+            }
+            .main-content {
+                padding: 70px 0.75rem 1rem;
+            }
+            .page-title {
+                font-size: 1.75rem;
+            }
+            .admin-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .search-box {
+                min-width: 100%;
+            }
+            .users-table th:nth-child(4),
+            .users-table td:nth-child(4),
+            .users-table th:nth-child(5),
+            .users-table td:nth-child(5) {
+                display: none;
+            }
+            .modal-content {
+                padding: 1.5rem;
+                width: 95%;
+            }
+            .bulk-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .form-row {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <!-- Admin Login Modal -->
+    <div id="adminLoginModal" class="modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-lock"></i> Admin Login</h2>
+            <form id="adminLoginForm">
+                <div class="input-group">
+                    <i class="fas fa-user-shield"></i>
+                    <input id="adminUsername" placeholder="Admin Username" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-key"></i>
+                    <input id="adminPassword" type="password" placeholder="Password" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Login</button>
+                </div>
+                <div id="adminLoginError" class="error"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div id="editUserModal" class="modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-edit"></i> Edit User</h2>
+            <form id="editUserForm">
+                <input type="hidden" id="editUserId">
+                <div class="form-row">
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input id="editName" placeholder="Full Name" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-phone"></i>
+                        <input id="editPhone" type="tel" placeholder="Phone Number" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="input-group">
+                        <i class="fab fa-telegram-plane"></i>
+                        <input id="editTelegram" placeholder="Telegram Username">
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input id="editEmail" type="email" placeholder="Email Address">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-graduation-cap"></i>
+                    <select id="editYears" multiple style="height: 120px;">
+                        <option value="1">1st Year</option>
+                        <option value="2">2nd Year</option>
+                        <option value="3">3rd Year</option>
+                        <option value="4">4th Year</option>
+                        <option value="5">5th Year</option>
+                        <option value="6">6th Year</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="input-group">
+                        <i class="fas fa-check-circle"></i>
+                        <select id="editStatus" required>
+                            <option value="pending">Pending</option>
+                            <option value="verified">Verified</option>
+                            <option value="rejected">Rejected</option>
+                            <option value="premium">Premium</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-user-tag"></i>
+                        <select id="editRole" required>
+                            <option value="user">User</option>
+                            <option value="moderator">Moderator</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="input-group">
+                        <i class="fas fa-key"></i>
+                        <input id="editVerificationCode" placeholder="Verification Code">
+                        <button type="button" class="btn btn-secondary" onclick="generateVerificationCode()" style="margin-left: 0.5rem;">
+                            <i class="fas fa-sync"></i> Generate
+                        </button>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-calendar"></i>
+                        <input id="editRegistrationDate" type="date" placeholder="Registration Date">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <input id="editLocation" placeholder="Location">
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-comment"></i>
+                    <textarea id="editNotes" placeholder="Admin Notes"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Changes</button>
+                    <button type="button" class="btn btn-secondary" id="cancelEditBtn"><i class="fas fa-times"></i> Cancel</button>
+                </div>
+                <div id="editUserError" class="error"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add User Modal -->
+    <div id="addUserModal" class="modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-user-plus"></i> Add New User</h2>
+            <form id="addUserForm">
+                <div class="form-row">
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input id="addName" placeholder="Full Name" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-phone"></i>
+                        <input id="addPhone" type="tel" placeholder="Phone Number" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="input-group">
+                        <i class="fab fa-telegram-plane"></i>
+                        <input id="addTelegram" placeholder="Telegram Username">
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input id="addEmail" type="email" placeholder="Email Address">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-graduation-cap"></i>
+                    <select id="addYears" multiple style="height: 120px;">
+                        <option value="1">1st Year</option>
+                        <option value="2">2nd Year</option>
+                        <option value="3">3rd Year</option>
+                        <option value="4">4th Year</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="input-group">
+                        <i class="fas fa-check-circle"></i>
+                        <select id="addStatus" required>
+                            <option value="pending">Pending</option>
+                            <option value="verified">Verified</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-user-tag"></i>
+                        <select id="addRole" required>
+                            <option value="user">User</option>
+                            <option value="moderator">Moderator</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-key"></i>
+                    <input id="addVerificationCode" placeholder="Verification Code">
+                    <button type="button" class="btn btn-secondary" onclick="generateAddVerificationCode()" style="margin-left: 0.5rem;">
+                        <i class="fas fa-sync"></i> Generate
+                    </button>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <input id="addLocation" placeholder="Location">
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-user-plus"></i> Create User</button>
+                    <button type="button" class="btn btn-secondary" id="cancelAddBtn"><i class="fas fa-times"></i> Cancel</button>
+                </div>
+                <div id="addUserError" class="error"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteConfirmModal" class="modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-exclamation-triangle"></i> Confirm Deletion</h2>
+            <p id="deleteMessage">Are you sure you want to delete this user?</p>
+            <div class="modal-actions">
+                <button class="btn btn-danger" id="confirmDeleteBtn"><i class="fas fa-trash"></i> Delete</button>
+                <button class="btn btn-secondary" id="cancelDeleteBtn"><i class="fas fa-times"></i> Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="header-container">
+            <div class="logo" id="logoBtn">
+                <i class="fas fa-stethoscope"></i>
+                <span>ALIF | MED Admin</span>
+            </div>
+            <div class="nav-actions">
+                <button class="action-btn" id="themeToggle">
+                    <i class="fas fa-sun"></i>
+                </button>
+                <button id="addUserBtn" class="action-btn primary">
+                    <i class="fas fa-user-plus"></i> Add User
+                </button>
+                <button id="refreshBtn" class="action-btn">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+                <button id="logoutBtn" class="action-btn danger">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Admin Content -->
+    <main id="adminContent" class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">Enhanced User Management</h1>
+            <p class="page-subtitle">Advanced user management with role-based access and verification controls</p>
+        </div>
+        
+        <div class="admin-panel">
+            <div class="admin-header">
+                <h2><i class="fas fa-users-cog"></i> User Management Dashboard</h2>
+                <div id="currentTime"></div>
+            </div>
+            
+            <div class="admin-stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalUsers">0</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="verifiedUsers">0</div>
+                    <div class="stat-label">Verified Users</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="adminUsers">0</div>
+                    <div class="stat-label">Admin Users</div>
+                </div>
+                <div class="stat-card premium">
+                    <div class="stat-value" id="moderatorUsers">0</div>
+                    <div class="stat-label">Moderators</div>
+                </div>
+            </div>
+
+            <div class="quick-actions">
+                <button class="quick-action-btn" onclick="userManager.bulkVerify()">
+                    <i class="fas fa-check-circle"></i> Verify Selected
+                </button>
+                <button class="quick-action-btn" onclick="userManager.bulkReject()">
+                    <i class="fas fa-times-circle"></i> Reject Selected
+                </button>
+                <button class="quick-action-btn" onclick="userManager.bulkPromoteToModerator()">
+                    <i class="fas fa-user-shield"></i> Promote to Moderator
+                </button>
+                <button class="quick-action-btn" onclick="userManager.bulkGenerateCodes()">
+                    <i class="fas fa-key"></i> Generate Codes
+                </button>
+            </div>
+            
+            <div class="admin-controls">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search users by name, phone, email, or role...">
+                </div>
+                <div class="filter-group">
+                    <select id="statusFilter" class="filter-select">
+                        <option value="all">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="verified">Verified</option>
+                        <option value="rejected">Rejected</option>
+                        <option value="premium">Premium</option>
+                    </select>
+                    <select id="roleFilter" class="filter-select">
+                        <option value="all">All Roles</option>
+                        <option value="user">User</option>
+                        <option value="moderator">Moderator</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                    <select id="yearFilter" class="filter-select">
+                        <option value="all">All Years</option>
+                        <option value="1">1st Year</option>
+                        <option value="2">2nd Year</option>
+                        <option value="3">3rd Year</option>
+                        <option value="4">4th Year</option>
+                    </select>
+                    <select id="sortBy" class="filter-select">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="name">Name A-Z</option>
+                        <option value="role">Role</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="users-table-container">
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>
+                                <div class="select-all" id="selectAllCheckbox">
+                                    <div class="checkbox"></div>
+                                    <span>Select All</span>
+                                </div>
+                            </th>
+                            <th>User Info</th>
+                            <th>Contact</th>
+                            <th>Years & Role</th>
+                            <th>Status & Verification</th>
+                            <th>Registration</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <!-- Users will be populated here -->
+                    </tbody>
+                </table>
+                
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    <i class="fas fa-users"></i>
+                    <h3>No Users Found</h3>
+                    <p>Try adjusting your search or filter criteria</p>
+                </div>
+            </div>
+            
+            <div class="bulk-actions">
+                <div class="select-all">
+                    <div class="checkbox" id="bulkSelectCheckbox"></div>
+                    <span id="selectedCount">0 users selected</span>
+                </div>
+                <button class="btn btn-primary" id="bulkVerifyBtn" disabled><i class="fas fa-check-circle"></i> Verify Selected</button>
+                <button class="btn btn-secondary" id="bulkRejectBtn" disabled><i class="fas fa-times-circle"></i> Reject Selected</button>
+                <button class="btn btn-premium" id="bulkPromoteBtn" disabled><i class="fas fa-user-shield"></i> Promote to Moderator</button>
+                <button class="btn btn-danger" id="bulkDeleteBtn" disabled><i class="fas fa-trash"></i> Delete Selected</button>
+            </div>
+            
+            <div class="pagination" id="pagination">
+                <!-- Pagination will be generated here -->
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyC4DSMVg4c98kQf5sSF8ueD631QgO4SXn0",
+            authDomain: "medical-quiz-40228.firebaseapp.com",
+            projectId: "medical-quiz-40228",
+            storageBucket: "medical-quiz-40228.firebasestorage.app",
+            messagingSenderId: "483043078873",
+            appId: "1:483043078873:web:4029dd83e53557f08b04c8"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Admin credentials
+        const ADMIN_CREDENTIALS = {
+            username: "admin",
+            password: "admin123"
+        };
+
+        // Enhanced User Management Class
+        class EnhancedUserManager {
+            constructor() {
+                this.usersCollection = db.collection('users');
+                this.users = [];
+                this.filteredUsers = [];
+                this.selectedUsers = new Set();
+                this.currentPage = 1;
+                this.usersPerPage = 10;
+                this.searchTerm = '';
+                this.statusFilter = 'all';
+                this.roleFilter = 'all';
+                this.yearFilter = 'all';
+                this.sortBy = 'newest';
+            }
+
+            async loadUsers() {
+                try {
+                    const snapshot = await this.usersCollection.get();
+                    this.users = snapshot.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }));
+                    this.applyFilters();
+                    this.updateStats();
+                    this.renderUsers();
+                    return true;
+                } catch (error) {
+                    console.error('Error loading users:', error);
+                    this.showMessage('Error loading users: ' + error.message, 'error');
+                    return false;
+                }
+            }
+
+            applyFilters() {
+                this.filteredUsers = this.users.filter(user => {
+                    // Search filter across multiple fields
+                    const matchesSearch = this.searchTerm === '' || 
+                        user.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+                        user.phone.includes(this.searchTerm) ||
+                        (user.telegram && user.telegram.toLowerCase().includes(this.searchTerm.toLowerCase())) ||
+                        (user.email && user.email.toLowerCase().includes(this.searchTerm.toLowerCase())) ||
+                        (user.role && user.role.toLowerCase().includes(this.searchTerm.toLowerCase()));
+                    
+                    // Status filter
+                    const matchesStatus = this.statusFilter === 'all' || user.status === this.statusFilter;
+                    
+                    // Role filter
+                    const matchesRole = this.roleFilter === 'all' || user.role === this.roleFilter;
+                    
+                    // Year filter
+                    const matchesYear = this.yearFilter === 'all' || 
+                        (user.registeredYears && user.registeredYears.includes(this.yearFilter));
+                    
+                    return matchesSearch && matchesStatus && matchesRole && matchesYear;
+                });
+
+                // Apply sorting
+                this.filteredUsers.sort((a, b) => {
+                    switch(this.sortBy) {
+                        case 'newest':
+                            return (b.createdAt || 0) - (a.createdAt || 0);
+                        case 'oldest':
+                            return (a.createdAt || 0) - (b.createdAt || 0);
+                        case 'name':
+                            return a.name.localeCompare(b.name);
+                        case 'role':
+                            return (a.role || 'user').localeCompare(b.role || 'user');
+                        default:
+                            return 0;
+                    }
+                });
+            }
+
+            updateStats() {
+                const total = this.users.length;
+                const verified = this.users.filter(u => u.status === 'verified').length;
+                const admins = this.users.filter(u => u.role === 'admin').length;
+                const moderators = this.users.filter(u => u.role === 'moderator').length;
+
+                document.getElementById('totalUsers').textContent = total;
+                document.getElementById('verifiedUsers').textContent = verified;
+                document.getElementById('adminUsers').textContent = admins;
+                document.getElementById('moderatorUsers').textContent = moderators;
+            }
+
+            renderUsers() {
+                const tableBody = document.getElementById('usersTableBody');
+                const emptyState = document.getElementById('emptyState');
+                
+                if (this.filteredUsers.length === 0) {
+                    tableBody.innerHTML = '';
+                    emptyState.style.display = 'block';
+                    return;
+                }
+                
+                emptyState.style.display = 'none';
+                
+                // Calculate pagination
+                const totalPages = Math.ceil(this.filteredUsers.length / this.usersPerPage);
+                const startIndex = (this.currentPage - 1) * this.usersPerPage;
+                const endIndex = Math.min(startIndex + this.usersPerPage, this.filteredUsers.length);
+                const pageUsers = this.filteredUsers.slice(startIndex, endIndex);
+                
+                tableBody.innerHTML = pageUsers.map(user => {
+                    const isNew = Date.now() - (user.createdAt || 0) < 7 * 24 * 60 * 60 * 1000; // 7 days
+                    const isAdmin = user.role === 'admin';
+                    const isModerator = user.role === 'moderator';
+                    
+                    return `
+                    <tr>
+                        <td>
+                            <div class="checkbox user-checkbox ${this.selectedUsers.has(user.id) ? 'checked' : ''}" 
+                                 data-user-id="${user.id}"></div>
+                        </td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <strong>${user.name}</strong>
+                                ${isNew ? '<span class="user-badge badge-new">NEW</span>' : ''}
+                                ${user.status === 'verified' ? '<span class="user-badge badge-verified">VERIFIED</span>' : ''}
+                            </div>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.25rem;">
+                                ID: ${user.id.substring(0, 8)}...
+                            </div>
+                        </td>
+                        <td>
+                            <div><i class="fas fa-phone"></i> ${user.phone}</div>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.25rem;">
+                                <i class="fab fa-telegram"></i> ${user.telegram || 'N/A'}
+                            </div>
+                            ${user.email ? `<div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.25rem;">
+                                <i class="fas fa-envelope"></i> ${user.email}
+                            </div>` : ''}
+                        </td>
+                        <td>
+                            <div>
+                                ${user.registeredYears ? user.registeredYears.map(year => 
+                                    `<span class="role-badge role-user">Year ${year}</span>`
+                                ).join('') : 'N/A'}
+                            </div>
+                            <div style="margin-top: 0.5rem;">
+                                <span class="role-badge ${isAdmin ? 'role-admin' : isModerator ? 'role-moderator' : 'role-user'}">
+                                    ${user.role || 'user'}
+                                </span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="user-status status-${user.status || 'pending'}">${user.status || 'pending'}</span>
+                            ${user.verificationCode ? `
+                                <div class="verification-code" style="margin-top: 0.5rem;">
+                                    ${user.verificationCode}
+                                </div>
+                            ` : ''}
+                        </td>
+                        <td>
+                            <div>${user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}</div>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.25rem;">
+                                ${user.location || 'No location'}
+                            </div>
+                        </td>
+                        <td class="user-actions">
+                            <div class="action-icon action-edit" data-user-id="${user.id}" title="Edit User">
+                                <i class="fas fa-edit"></i>
+                            </div>
+                            ${!isAdmin ? `
+                                <div class="action-icon action-premium" data-user-id="${user.id}" title="Change Role">
+                                    <i class="fas fa-user-tag"></i>
+                                </div>
+                            ` : ''}
+                            <div class="action-icon action-delete" data-user-id="${user.id}" title="Delete User">
+                                <i class="fas fa-trash"></i>
+                            </div>
+                        </td>
+                    </tr>
+                    `;
+                }).join('');
+                
+                this.renderPagination(totalPages);
+                this.updateSelectedCount();
+                this.attachEventListeners();
+            }
+
+            renderPagination(totalPages) {
+                const pagination = document.getElementById('pagination');
+                
+                if (totalPages <= 1) {
+                    pagination.innerHTML = '';
+                    return;
+                }
+                
+                let paginationHTML = '';
+                
+                // Previous button
+                if (this.currentPage > 1) {
+                    paginationHTML += `<div class="page-btn" data-page="${this.currentPage - 1}"><i class="fas fa-chevron-left"></i></div>`;
+                }
+                
+                // Page numbers
+                for (let i = 1; i <= totalPages; i++) {
+                    if (i === 1 || i === totalPages || (i >= this.currentPage - 1 && i <= this.currentPage + 1)) {
+                        paginationHTML += `<div class="page-btn ${i === this.currentPage ? 'active' : ''}" data-page="${i}">${i}</div>`;
+                    } else if (i === this.currentPage - 2 || i === this.currentPage + 2) {
+                        paginationHTML += `<div class="page-btn">...</div>`;
+                    }
+                }
+                
+                // Next button
+                if (this.currentPage < totalPages) {
+                    paginationHTML += `<div class="page-btn" data-page="${this.currentPage + 1}"><i class="fas fa-chevron-right"></i></div>`;
+                }
+                
+                pagination.innerHTML = paginationHTML;
+                
+                // Attach event listeners to pagination buttons
+                pagination.querySelectorAll('.page-btn').forEach(btn => {
+                    if (btn.textContent !== '...') {
+                        btn.addEventListener('click', () => {
+                            this.currentPage = parseInt(btn.dataset.page);
+                            this.renderUsers();
+                        });
+                    }
+                });
+            }
+
+            attachEventListeners() {
+                // User checkbox selection
+                document.querySelectorAll('.user-checkbox').forEach(checkbox => {
+                    checkbox.addEventListener('click', () => {
+                        const userId = checkbox.dataset.userId;
+                        if (this.selectedUsers.has(userId)) {
+                            this.selectedUsers.delete(userId);
+                            checkbox.classList.remove('checked');
+                        } else {
+                            this.selectedUsers.add(userId);
+                            checkbox.classList.add('checked');
+                        }
+                        this.updateSelectedCount();
+                        this.updateBulkActions();
+                    });
+                });
+
+                // Edit user buttons
+                document.querySelectorAll('.action-edit').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const userId = btn.dataset.userId;
+                        this.editUser(userId);
+                    });
+                });
+
+                // Role change buttons
+                document.querySelectorAll('.action-premium').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const userId = btn.dataset.userId;
+                        this.changeUserRole(userId);
+                    });
+                });
+
+                // Delete user buttons
+                document.querySelectorAll('.action-delete').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const userId = btn.dataset.userId;
+                        this.confirmDeleteUser(userId);
+                    });
+                });
+            }
+
+            updateSelectedCount() {
+                const count = this.selectedUsers.size;
+                document.getElementById('selectedCount').textContent = `${count} user${count !== 1 ? 's' : ''} selected`;
+            }
+
+            updateBulkActions() {
+                const hasSelection = this.selectedUsers.size > 0;
+                document.getElementById('bulkVerifyBtn').disabled = !hasSelection;
+                document.getElementById('bulkRejectBtn').disabled = !hasSelection;
+                document.getElementById('bulkPromoteBtn').disabled = !hasSelection;
+                document.getElementById('bulkDeleteBtn').disabled = !hasSelection;
+            }
+
+            async editUser(userId) {
+                const user = this.users.find(u => u.id === userId);
+                if (!user) return;
+
+                // Populate form with user data
+                document.getElementById('editUserId').value = user.id;
+                document.getElementById('editName').value = user.name || '';
+                document.getElementById('editPhone').value = user.phone || '';
+                document.getElementById('editTelegram').value = user.telegram || '';
+                document.getElementById('editEmail').value = user.email || '';
+                document.getElementById('editLocation').value = user.location || '';
+                document.getElementById('editNotes').value = user.notes || '';
+                document.getElementById('editVerificationCode').value = user.verificationCode || '';
+                document.getElementById('editRole').value = user.role || 'user';
+                document.getElementById('editStatus').value = user.status || 'pending';
+                
+                if (user.registrationDate) {
+                    document.getElementById('editRegistrationDate').value = new Date(user.registrationDate).toISOString().split('T')[0];
+                }
+                
+                // Set years
+                const yearsSelect = document.getElementById('editYears');
+                Array.from(yearsSelect.options).forEach(option => {
+                    option.selected = user.registeredYears && user.registeredYears.includes(option.value);
+                });
+                
+                document.getElementById('editUserModal').style.display = 'flex';
+            }
+
+            async saveUserChanges() {
+                const userId = document.getElementById('editUserId').value;
+                const name = document.getElementById('editName').value;
+                const phone = document.getElementById('editPhone').value;
+                const telegram = document.getElementById('editTelegram').value;
+                const email = document.getElementById('editEmail').value;
+                const location = document.getElementById('editLocation').value;
+                const notes = document.getElementById('editNotes').value;
+                const verificationCode = document.getElementById('editVerificationCode').value;
+                const role = document.getElementById('editRole').value;
+                const status = document.getElementById('editStatus').value;
+                const registrationDate = document.getElementById('editRegistrationDate').value;
+                
+                const yearsSelect = document.getElementById('editYears');
+                const selectedYears = Array.from(yearsSelect.selectedOptions).map(option => option.value);
+                
+                try {
+                    const updateData = {
+                        name,
+                        phone,
+                        telegram,
+                        email,
+                        location,
+                        notes,
+                        verificationCode,
+                        role,
+                        status,
+                        registeredYears: selectedYears
+                    };
+                    
+                    if (registrationDate) {
+                        updateData.registrationDate = new Date(registrationDate).getTime();
+                    }
+                    
+                    if (verificationCode && !updateData.codeTimestamp) {
+                        updateData.codeTimestamp = new Date().getTime();
+                    }
+                    
+                    await this.usersCollection.doc(userId).update(updateData);
+                    
+                    document.getElementById('editUserModal').style.display = 'none';
+                    this.loadUsers();
+                    this.showMessage('User updated successfully', 'success');
+                } catch (error) {
+                    console.error('Error updating user:', error);
+                    document.getElementById('editUserError').textContent = 'Error updating user: ' + error.message;
+                }
+            }
+
+            async changeUserRole(userId) {
+                const user = this.users.find(u => u.id === userId);
+                if (!user) return;
+
+                const currentRole = user.role || 'user';
+                let newRole;
+                
+                if (currentRole === 'user') {
+                    newRole = 'moderator';
+                } else if (currentRole === 'moderator') {
+                    newRole = 'user';
+                } else {
+                    return; // Don't change admin roles
+                }
+                
+                try {
+                    await this.usersCollection.doc(userId).update({
+                        role: newRole
+                    });
+                    
+                    this.loadUsers();
+                    this.showMessage(`User role changed to ${newRole}`, 'success');
+                } catch (error) {
+                    console.error('Error changing user role:', error);
+                    this.showMessage('Error changing user role: ' + error.message, 'error');
+                }
+            }
+
+            async createUser(userData) {
+                try {
+                    // Check if phone already exists
+                    const existingUser = await this.usersCollection.where('phone', '==', userData.phone).get();
+                    if (!existingUser.empty) {
+                        return { success: false, error: 'Phone number already registered' };
+                    }
+
+                    const userRecord = {
+                        ...userData,
+                        createdAt: new Date().getTime(),
+                        codeTimestamp: userData.verificationCode ? new Date().getTime() : null
+                    };
+
+                    const docRef = await this.usersCollection.add(userRecord);
+                    return { success: true, userId: docRef.id };
+                } catch (error) {
+                    console.error('Error creating user:', error);
+                    return { success: false, error: error.message };
+                }
+            }
+
+            confirmDeleteUser(userId) {
+                const user = this.users.find(u => u.id === userId);
+                if (!user) return;
+
+                document.getElementById('deleteMessage').textContent = 
+                    `Are you sure you want to delete user "${user.name}" (${user.phone})? This action cannot be undone.`;
+                
+                document.getElementById('confirmDeleteBtn').onclick = () => this.deleteUser(userId);
+                document.getElementById('deleteConfirmModal').style.display = 'flex';
+            }
+
+            async deleteUser(userId) {
+                try {
+                    await this.usersCollection.doc(userId).delete();
+                    document.getElementById('deleteConfirmModal').style.display = 'none';
+                    this.loadUsers();
+                    this.showMessage('User deleted successfully', 'success');
+                } catch (error) {
+                    console.error('Error deleting user:', error);
+                    this.showMessage('Error deleting user: ' + error.message, 'error');
+                }
+            }
+
+            async bulkVerify() {
+                if (this.selectedUsers.size === 0) return;
+                
+                try {
+                    const batch = db.batch();
+                    this.selectedUsers.forEach(userId => {
+                        const userRef = this.usersCollection.doc(userId);
+                        batch.update(userRef, { status: 'verified' });
+                    });
+                    
+                    await batch.commit();
+                    this.selectedUsers.clear();
+                    this.loadUsers();
+                    this.showMessage('Users verified successfully', 'success');
+                } catch (error) {
+                    console.error('Error bulk verifying users:', error);
+                    this.showMessage('Error verifying users: ' + error.message, 'error');
+                }
+            }
+
+            async bulkReject() {
+                if (this.selectedUsers.size === 0) return;
+                
+                try {
+                    const batch = db.batch();
+                    this.selectedUsers.forEach(userId => {
+                        const userRef = this.usersCollection.doc(userId);
+                        batch.update(userRef, { status: 'rejected' });
+                    });
+                    
+                    await batch.commit();
+                    this.selectedUsers.clear();
+                    this.loadUsers();
+                    this.showMessage('Users rejected successfully', 'success');
+                } catch (error) {
+                    console.error('Error bulk rejecting users:', error);
+                    this.showMessage('Error rejecting users: ' + error.message, 'error');
+                }
+            }
+
+            async bulkPromoteToModerator() {
+                if (this.selectedUsers.size === 0) return;
+                
+                try {
+                    const batch = db.batch();
+                    this.selectedUsers.forEach(userId => {
+                        const userRef = this.usersCollection.doc(userId);
+                        batch.update(userRef, { role: 'moderator' });
+                    });
+                    
+                    await batch.commit();
+                    this.selectedUsers.clear();
+                    this.loadUsers();
+                    this.showMessage('Users promoted to moderator successfully', 'success');
+                } catch (error) {
+                    console.error('Error bulk promoting users:', error);
+                    this.showMessage('Error promoting users: ' + error.message, 'error');
+                }
+            }
+
+            async bulkGenerateCodes() {
+                if (this.selectedUsers.size === 0) return;
+                
+                try {
+                    const batch = db.batch();
+                    this.selectedUsers.forEach(userId => {
+                        const code = Math.floor(100000 + Math.random() * 900000).toString();
+                        const userRef = this.usersCollection.doc(userId);
+                        batch.update(userRef, { 
+                            verificationCode: code,
+                            codeTimestamp: new Date().getTime()
+                        });
+                    });
+                    
+                    await batch.commit();
+                    this.selectedUsers.clear();
+                    this.loadUsers();
+                    this.showMessage('Verification codes generated successfully', 'success');
+                } catch (error) {
+                    console.error('Error bulk generating codes:', error);
+                    this.showMessage('Error generating codes: ' + error.message, 'error');
+                }
+            }
+
+            showMessage(message, type) {
+                const messageEl = document.createElement('div');
+                messageEl.textContent = message;
+                messageEl.style.cssText = `
+                    position: fixed;
+                    top: 100px;
+                    right: 20px;
+                    padding: 1rem 1.5rem;
+                    border-radius: var(--radius);
+                    color: white;
+                    font-weight: 600;
+                    z-index: 10000;
+                    animation: slideInRight 0.3s ease-out;
+                    ${type === 'success' ? 'background: var(--success);' : 'background: var(--error);'}
+                `;
+                
+                document.body.appendChild(messageEl);
+                
+                setTimeout(() => {
+                    messageEl.remove();
+                }, 3000);
+            }
+        }
+
+        // Initialize User Manager
+        const userManager = new EnhancedUserManager();
+
+        // DOM Elements
+        const adminLoginModal = document.getElementById('adminLoginModal');
+        const adminContent = document.getElementById('adminContent');
+        const adminLoginForm = document.getElementById('adminLoginForm');
+        const adminLoginError = document.getElementById('adminLoginError');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const addUserBtn = document.getElementById('addUserBtn');
+        const searchInput = document.getElementById('searchInput');
+        const statusFilter = document.getElementById('statusFilter');
+        const roleFilter = document.getElementById('roleFilter');
+        const yearFilter = document.getElementById('yearFilter');
+        const sortBy = document.getElementById('sortBy');
+        const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+        const bulkSelectCheckbox = document.getElementById('bulkSelectCheckbox');
+        const bulkVerifyBtn = document.getElementById('bulkVerifyBtn');
+        const bulkRejectBtn = document.getElementById('bulkRejectBtn');
+        const bulkPromoteBtn = document.getElementById('bulkPromoteBtn');
+        const bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
+        const editUserForm = document.getElementById('editUserForm');
+        const editUserError = document.getElementById('editUserError');
+        const addUserForm = document.getElementById('addUserForm');
+        const addUserError = document.getElementById('addUserError');
+        const cancelEditBtn = document.getElementById('cancelEditBtn');
+        const cancelAddBtn = document.getElementById('cancelAddBtn');
+        const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+
+        // Utility Functions
+        function generateVerificationCode() {
+            const code = Math.floor(100000 + Math.random() * 900000).toString();
+            document.getElementById('editVerificationCode').value = code;
+        }
+
+        function generateAddVerificationCode() {
+            const code = Math.floor(100000 + Math.random() * 900000).toString();
+            document.getElementById('addVerificationCode').value = code;
+        }
+
+        // Check if admin is logged in
+        function checkAdminLogin() {
+            const isAdmin = localStorage.getItem('isAdmin') === 'true';
+            if (isAdmin) {
+                adminLoginModal.style.display = 'none';
+                adminContent.style.display = 'block';
+                userManager.loadUsers();
+            } else {
+                adminLoginModal.style.display = 'flex';
+                adminContent.style.display = 'none';
+            }
+        }
+
+        // Admin login
+        adminLoginForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const username = document.getElementById('adminUsername').value;
+            const password = document.getElementById('adminPassword').value;
+            
+            if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+                localStorage.setItem('isAdmin', 'true');
+                checkAdminLogin();
+            } else {
+                adminLoginError.textContent = 'Invalid username or password';
+            }
+        });
+
+        // Logout
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('isAdmin');
+            checkAdminLogin();
+        });
+
+        // Refresh data
+        refreshBtn.addEventListener('click', () => {
+            userManager.loadUsers();
+        });
+
+        // Add User button
+        addUserBtn.addEventListener('click', () => {
+            document.getElementById('addUserForm').reset();
+            document.getElementById('addUserModal').style.display = 'flex';
+        });
+
+        // Add User form submission
+        addUserForm.addEventListener('submit', async e => {
+            e.preventDefault();
+            
+            const userData = {
+                name: document.getElementById('addName').value,
+                phone: document.getElementById('addPhone').value,
+                telegram: document.getElementById('addTelegram').value,
+                email: document.getElementById('addEmail').value,
+                location: document.getElementById('addLocation').value,
+                status: document.getElementById('addStatus').value,
+                role: document.getElementById('addRole').value,
+                verificationCode: document.getElementById('addVerificationCode').value,
+                registeredYears: Array.from(document.getElementById('addYears').selectedOptions).map(option => option.value)
+            };
+
+            const result = await userManager.createUser(userData);
+            
+            if (result.success) {
+                document.getElementById('addUserModal').style.display = 'none';
+                userManager.loadUsers();
+                userManager.showMessage('User created successfully', 'success');
+            } else {
+                document.getElementById('addUserError').textContent = result.error;
+            }
+        });
+
+        // Search functionality
+        searchInput.addEventListener('input', () => {
+            userManager.searchTerm = searchInput.value;
+            userManager.currentPage = 1;
+            userManager.applyFilters();
+            userManager.renderUsers();
+        });
+
+        // Filter functionality
+        statusFilter.addEventListener('change', () => {
+            userManager.statusFilter = statusFilter.value;
+            userManager.currentPage = 1;
+            userManager.applyFilters();
+            userManager.renderUsers();
+        });
+
+        roleFilter.addEventListener('change', () => {
+            userManager.roleFilter = roleFilter.value;
+            userManager.currentPage = 1;
+            userManager.applyFilters();
+            userManager.renderUsers();
+        });
+
+        yearFilter.addEventListener('change', () => {
+            userManager.yearFilter = yearFilter.value;
+            userManager.currentPage = 1;
+            userManager.applyFilters();
+            userManager.renderUsers();
+        });
+
+        sortBy.addEventListener('change', () => {
+            userManager.sortBy = sortBy.value;
+            userManager.applyFilters();
+            userManager.renderUsers();
+        });
+
+        // Select all functionality
+        selectAllCheckbox.addEventListener('click', () => {
+            const isChecked = selectAllCheckbox.querySelector('.checkbox').classList.contains('checked');
+            
+            if (isChecked) {
+                // Deselect all
+                userManager.selectedUsers.clear();
+                selectAllCheckbox.querySelector('.checkbox').classList.remove('checked');
+                bulkSelectCheckbox.classList.remove('checked');
+            } else {
+                // Select all on current page
+                const startIndex = (userManager.currentPage - 1) * userManager.usersPerPage;
+                const endIndex = Math.min(startIndex + userManager.usersPerPage, userManager.filteredUsers.length);
+                
+                for (let i = startIndex; i < endIndex; i++) {
+                    userManager.selectedUsers.add(userManager.filteredUsers[i].id);
+                }
+                
+                selectAllCheckbox.querySelector('.checkbox').classList.add('checked');
+                bulkSelectCheckbox.classList.add('checked');
+            }
+            
+            userManager.updateSelectedCount();
+            userManager.updateBulkActions();
+            userManager.renderUsers();
+        });
+
+        // Bulk select checkbox
+        bulkSelectCheckbox.addEventListener('click', () => {
+            const isChecked = bulkSelectCheckbox.classList.contains('checked');
+            
+            if (isChecked) {
+                // Deselect all
+                userManager.selectedUsers.clear();
+                bulkSelectCheckbox.classList.remove('checked');
+                selectAllCheckbox.querySelector('.checkbox').classList.remove('checked');
+            } else {
+                // Select all filtered users
+                userManager.filteredUsers.forEach(user => {
+                    userManager.selectedUsers.add(user.id);
+                });
+                
+                bulkSelectCheckbox.classList.add('checked');
+                selectAllCheckbox.querySelector('.checkbox').classList.add('checked');
+            }
+            
+            userManager.updateSelectedCount();
+            userManager.updateBulkActions();
+            userManager.renderUsers();
+        });
+
+        // Bulk actions
+        bulkVerifyBtn.addEventListener('click', () => {
+            userManager.bulkVerify();
+        });
+
+        bulkRejectBtn.addEventListener('click', () => {
+            userManager.bulkReject();
+        });
+
+        bulkPromoteBtn.addEventListener('click', () => {
+            userManager.bulkPromoteToModerator();
+        });
+
+        bulkDeleteBtn.addEventListener('click', () => {
+            userManager.bulkDelete();
+        });
+
+        // Edit user form
+        editUserForm.addEventListener('submit', e => {
+            e.preventDefault();
+            userManager.saveUserChanges();
+        });
+
+        // Modal cancel buttons
+        cancelEditBtn.addEventListener('click', () => {
+            document.getElementById('editUserModal').style.display = 'none';
+        });
+
+        cancelAddBtn.addEventListener('click', () => {
+            document.getElementById('addUserModal').style.display = 'none';
+        });
+
+        cancelDeleteBtn.addEventListener('click', () => {
+            document.getElementById('deleteConfirmModal').style.display = 'none';
+        });
+
+        // Theme toggle
+        const themeToggle = document.getElementById('themeToggle');
+        function toggleTheme() {
+            if (document.body.classList.contains('dark-mode')) {
+                document.body.classList.remove('dark-mode');
+                document.body.classList.add('light-mode');
+                themeToggle.querySelector('i').className = 'fas fa-moon';
+            } else {
+                document.body.classList.remove('light-mode');
+                document.body.classList.add('dark-mode');
+                themeToggle.querySelector('i').className = 'fas fa-sun';
+            }
+        }
+        themeToggle.addEventListener('click', toggleTheme);
+
+        // Current time display
+        function updateCurrentTime() {
+            const now = new Date();
+            document.getElementById('currentTime').textContent = now.toLocaleString();
+        }
+        setInterval(updateCurrentTime, 1000);
+        updateCurrentTime();
+
+        // Initialize
+        checkAdminLogin();
+    </script>
+</body>
+</html>
