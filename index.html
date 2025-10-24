@@ -346,6 +346,10 @@
             background: var(--gradient-premium);
             color: white;
         }
+        .plan-trial {
+            background: var(--gradient);
+            color: white;
+        }
         .status-dot {
             width: 10px;
             height: 10px;
@@ -355,9 +359,13 @@
         }
         .online {
             background: var(--success);
+            animation: pulse 2s infinite;
         }
         .offline {
             background: var(--text-tertiary);
+        }
+        .idle {
+            background: var(--warning);
         }
         .user-actions {
             display: flex;
@@ -459,6 +467,11 @@
         @keyframes slideIn {
             from { transform: translateY(-50px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
         }
         .modal-content h2 {
             margin-bottom: 1rem;
@@ -667,6 +680,64 @@
             background: var(--success);
             color: white;
         }
+        .badge-trial {
+            background: var(--info);
+            color: white;
+        }
+        
+        /* Online Users Panel Styles */
+        .online-users-panel {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+        
+        .online-users-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .online-users-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 0.75rem;
+        }
+        
+        .online-user-card {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--background);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+        
+        .online-user-card:hover {
+            border-color: var(--primary-light);
+            transform: translateY(-2px);
+        }
+        
+        .online-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+        
+        .last-active {
+            font-size: 0.7rem;
+            color: var(--text-tertiary);
+            margin-top: 0.1rem;
+        }
+
         @media (max-width: 768px) {
             .header-container {
                 padding: 0.75rem;
@@ -701,11 +772,14 @@
             .form-row {
                 flex-direction: column;
             }
+            .online-users-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body class="dark-mode">
-    <!-- Admin Login Modal (unchanged) -->
+    <!-- Admin Login Modal -->
     <div id="adminLoginModal" class="modal">
         <div class="modal-content">
             <h2><i class="fas fa-lock"></i> Admin Login</h2>
@@ -726,7 +800,7 @@
         </div>
     </div>
 
-    <!-- Edit User Modal (added plan and uses allowed) -->
+    <!-- Edit User Modal -->
     <div id="editUserModal" class="modal">
         <div class="modal-content">
             <h2><i class="fas fa-edit"></i> Edit User</h2>
@@ -788,7 +862,18 @@
                         <select id="editPlan" required>
                             <option value="basic">Basic</option>
                             <option value="premium">Premium</option>
+                            <option value="trial">Trial</option>
                         </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="input-group">
+                        <i class="fas fa-clock"></i>
+                        <input id="editTrialDuration" type="number" min="1" placeholder="Free Trial Duration (days)" value="7">
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-calendar"></i>
+                        <input id="editTrialStart" type="date" placeholder="Trial Start Date">
                     </div>
                 </div>
                 <div class="form-row">
@@ -840,7 +925,7 @@
         </div>
     </div>
 
-    <!-- Add User Modal (added plan and uses allowed) -->
+    <!-- Add User Modal -->
     <div id="addUserModal" class="modal">
         <div class="modal-content">
             <h2><i class="fas fa-user-plus"></i> Add New User</h2>
@@ -901,7 +986,18 @@
                         <select id="addPlan" required>
                             <option value="basic">Basic</option>
                             <option value="premium">Premium</option>
+                            <option value="trial">Trial</option>
                         </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="input-group">
+                        <i class="fas fa-clock"></i>
+                        <input id="addTrialDuration" type="number" min="1" placeholder="Free Trial Duration (days)" value="7">
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-calendar"></i>
+                        <input id="addTrialStart" type="date" placeholder="Trial Start Date">
                     </div>
                 </div>
                 <div class="form-row">
@@ -943,7 +1039,7 @@
         </div>
     </div>
 
-    <!-- Delete Confirmation Modal (unchanged) -->
+    <!-- Delete Confirmation Modal -->
     <div id="deleteConfirmModal" class="modal">
         <div class="modal-content">
             <h2><i class="fas fa-exclamation-triangle"></i> Confirm Deletion</h2>
@@ -955,7 +1051,43 @@
         </div>
     </div>
 
-    <!-- Header (unchanged) -->
+    <!-- Broadcast Message Modal -->
+    <div id="broadcastModal" class="modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-bullhorn"></i> Broadcast Message</h2>
+            <form id="broadcastForm">
+                <div class="input-group">
+                    <i class="fas fa-comment-alt"></i>
+                    <textarea id="broadcastMessage" placeholder="Enter your announcement..." required style="min-height: 120px;"></textarea>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-users"></i>
+                    <select id="broadcastTarget" required>
+                        <option value="all">All Users</option>
+                        <option value="verified">Verified Only</option>
+                        <option value="premium">Premium Users</option>
+                        <option value="trial">Trial Users</option>
+                        <option value="online">Online Now</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-bell"></i>
+                    <select id="broadcastType">
+                        <option value="info">Info</option>
+                        <option value="success">Success</option>
+                        <option value="warning">Warning</option>
+                        <option value="error">Urgent</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Send Broadcast</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeBroadcastModal()"><i class="fas fa-times"></i> Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Header -->
     <header class="header" id="header">
         <div class="header-container">
             <div class="logo" id="logoBtn">
@@ -979,11 +1111,27 @@
         </div>
     </header>
 
-    <!-- Admin Content (updated table in JS) -->
+    <!-- Admin Content -->
     <main id="adminContent" class="main-content">
         <div class="page-header">
             <h1 class="page-title">Enhanced User Management</h1>
-            <p class="page-subtitle">Advanced user management with role-based access and verification controls</p>
+            <p class="page-subtitle">Advanced user management with real-time online tracking</p>
+        </div>
+        
+        <!-- Online Users Panel -->
+        <div class="online-users-panel">
+            <div class="online-users-header">
+                <h3><i class="fas fa-users"></i> Online Users <span id="onlineCount" class="user-badge badge-verified">0</span></h3>
+                <button class="quick-action-btn" onclick="userManager.refreshOnlineStatus()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+            <div class="online-users-grid" id="onlineUsersGrid">
+                <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: var(--text-tertiary);">
+                    <i class="fas fa-users-slash" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                    <p>No users online at the moment</p>
+                </div>
+            </div>
         </div>
         
         <div class="admin-panel">
@@ -1013,6 +1161,14 @@
                     <div class="stat-value" id="premiumUsers">0</div>
                     <div class="stat-label">Premium Users</div>
                 </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="trialUsers">0</div>
+                    <div class="stat-label">Trial Users</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="onlineUsers">0</div>
+                    <div class="stat-label">Online Users</div>
+                </div>
             </div>
 
             <div class="quick-actions">
@@ -1028,8 +1184,14 @@
                 <button class="quick-action-btn" onclick="userManager.bulkGenerateCodes()">
                     <i class="fas fa-key"></i> Generate Temp Passwords
                 </button>
+                <button class="quick-action-btn" onclick="userManager.bulkStartTrial()">
+                    <i class="fas fa-gift"></i> Start Free Trial
+                </button>
                 <button class="quick-action-btn danger" onclick="userManager.bulkDelete()">
                     <i class="fas fa-trash"></i> Delete Selected
+                </button>
+                <button class="quick-action-btn" onclick="openBroadcastModal()">
+                    <i class="fas fa-bullhorn"></i> Broadcast Message
                 </button>
             </div>
             
@@ -1065,6 +1227,7 @@
                         <option value="all">All Plans</option>
                         <option value="basic">Basic</option>
                         <option value="premium">Premium</option>
+                        <option value="trial">Trial</option>
                     </select>
                     <select id="sortBy" class="filter-select">
                         <option value="newest">Newest First</option>
@@ -1113,6 +1276,7 @@
                 <button class="btn btn-primary" id="bulkVerifyBtn" disabled><i class="fas fa-check-circle"></i> Verify Selected</button>
                 <button class="btn btn-secondary" id="bulkRejectBtn" disabled><i class="fas fa-times-circle"></i> Reject Selected</button>
                 <button class="btn btn-premium" id="bulkPromoteBtn" disabled><i class="fas fa-user-shield"></i> Promote to Moderator</button>
+                <button class="btn btn-premium" id="bulkTrialBtn" disabled><i class="fas fa-gift"></i> Start Trial Selected</button>
                 <button class="btn btn-danger" id="bulkDeleteBtn" disabled><i class="fas fa-trash"></i> Delete Selected</button>
             </div>
             
@@ -1123,7 +1287,7 @@
     </main>
 
     <script>
-        // Firebase configuration (unchanged)
+        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyC4DSMVg4c98kQf5sSF8ueD631QgO4SXn0",
             authDomain: "medical-quiz-40228.firebaseapp.com",
@@ -1133,17 +1297,17 @@
             appId: "1:483043078873:web:4029dd83e53557f08b04c8"
         };
 
-        // Initialize Firebase (unchanged)
+        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // Admin credentials (unchanged)
+        // Admin credentials
         const ADMIN_CREDENTIALS = {
             username: "admin",
             password: "admin123"
         };
 
-        // Enhanced User Management Class (updated with new features)
+        // Enhanced User Management Class with Online Tracking
         class EnhancedUserManager {
             constructor() {
                 this.usersCollection = db.collection('users');
@@ -1158,6 +1322,118 @@
                 this.yearFilter = 'all';
                 this.planFilter = 'all';
                 this.sortBy = 'newest';
+                this.onlineUsers = new Map();
+                this.onlineStatusInterval = null;
+            }
+
+            // Initialize online status tracking
+            initOnlineTracking() {
+                // Update online status every 30 seconds
+                this.onlineStatusInterval = setInterval(() => {
+                    this.updateOnlineStatus();
+                }, 30000);
+                
+                // Initial update
+                this.updateOnlineStatus();
+                
+                // Listen for page visibility changes
+                document.addEventListener('visibilitychange', () => {
+                    if (!document.hidden) {
+                        this.updateOnlineStatus();
+                    }
+                });
+            }
+
+            // Update online status for all users
+            updateOnlineStatus() {
+                const now = Date.now();
+                const fiveMinutesAgo = now - (5 * 60 * 1000); // 5 minutes threshold for online status
+                
+                this.onlineUsers.clear();
+                
+                this.users.forEach(user => {
+                    if (user.lastActive && user.lastActive > fiveMinutesAgo) {
+                        this.onlineUsers.set(user.id, {
+                            user: user,
+                            lastActive: user.lastActive,
+                            status: this.getUserStatus(user.lastActive)
+                        });
+                    }
+                });
+                
+                this.updateOnlineUsersDisplay();
+                this.updateStats();
+            }
+
+            // Get user status based on last activity
+            getUserStatus(lastActive) {
+                const now = Date.now();
+                const oneMinuteAgo = now - (1 * 60 * 1000);
+                
+                if (lastActive > oneMinuteAgo) {
+                    return 'online';
+                } else {
+                    return 'idle';
+                }
+            }
+
+            // Update online users display
+            updateOnlineUsersDisplay() {
+                const onlineUsersGrid = document.getElementById('onlineUsersGrid');
+                const onlineCount = document.getElementById('onlineCount');
+                
+                onlineCount.textContent = this.onlineUsers.size;
+                
+                if (this.onlineUsers.size === 0) {
+                    onlineUsersGrid.innerHTML = `
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: var(--text-tertiary);">
+                            <i class="fas fa-users-slash" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                            <p>No users online at the moment</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                onlineUsersGrid.innerHTML = Array.from(this.onlineUsers.values())
+                    .map(onlineUser => {
+                        const user = onlineUser.user;
+                        const lastSeen = this.formatLastSeen(onlineUser.lastActive);
+                        
+                        return `
+                        <div class="online-user-card">
+                            <span class="status-dot ${onlineUser.status}" title="${onlineUser.status === 'online' ? 'Online' : 'Idle'}"></span>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600;">${user.name}</div>
+                                <div style="font-size: 0.8rem; color: var(--text-secondary);">
+                                    ${user.role || 'user'} • ${lastSeen}
+                                </div>
+                            </div>
+                        </div>
+                        `;
+                    })
+                    .join('');
+            }
+
+            // Format last seen time
+            formatLastSeen(timestamp) {
+                const now = Date.now();
+                const diff = now - timestamp;
+                const minutes = Math.floor(diff / (1000 * 60));
+                
+                if (minutes < 1) return 'Just now';
+                if (minutes < 60) return `${minutes}m ago`;
+                
+                const hours = Math.floor(minutes / 60);
+                if (hours < 24) return `${hours}h ago`;
+                
+                const days = Math.floor(hours / 24);
+                return `${days}d ago`;
+            }
+
+            // Refresh online status manually
+            refreshOnlineStatus() {
+                this.updateOnlineStatus();
+                this.showMessage('Online status refreshed', 'success');
             }
 
             loadUsers() {
@@ -1169,6 +1445,7 @@
                     this.applyFilters();
                     this.updateStats();
                     this.renderUsers();
+                    this.updateOnlineStatus();
                 });
             }
 
@@ -1215,12 +1492,22 @@
                 const admins = this.users.filter(u => u.role === 'admin').length;
                 const moderators = this.users.filter(u => u.role === 'moderator').length;
                 const premium = this.users.filter(u => u.status === 'premium' || u.plan === 'premium').length;
+                const trials = this.users.filter(u => u.plan === 'trial' && this.isTrialActive(u)).length;
+                const online = this.onlineUsers.size;
 
                 document.getElementById('totalUsers').textContent = total;
                 document.getElementById('verifiedUsers').textContent = verified;
                 document.getElementById('adminUsers').textContent = admins;
                 document.getElementById('moderatorUsers').textContent = moderators;
                 document.getElementById('premiumUsers').textContent = premium;
+                document.getElementById('trialUsers').textContent = trials;
+                document.getElementById('onlineUsers').textContent = online;
+            }
+
+            isTrialActive(user) {
+                if (!user.trialStart || !user.trialDuration) return false;
+                const trialEnd = user.trialStart + (user.trialDuration * 24 * 60 * 60 * 1000);
+                return Date.now() < trialEnd;
             }
 
             renderUsers() {
@@ -1244,7 +1531,12 @@
                     const isNew = Date.now() - (user.createdAt || 0) < 7 * 24 * 60 * 60 * 1000;
                     const isAdmin = user.role === 'admin';
                     const isModerator = user.role === 'moderator';
-                    const isOnline = user.lastActive && (Date.now() - user.lastActive < 5 * 60 * 1000);
+                    
+                    // Get online status
+                    const onlineUser = this.onlineUsers.get(user.id);
+                    const isOnline = !!onlineUser;
+                    const status = onlineUser ? onlineUser.status : 'offline';
+                    const lastSeen = user.lastActive ? this.formatLastSeen(user.lastActive) : 'Never';
                     
                     let expirationInfo = '';
                     let isTimeExpired = false;
@@ -1263,6 +1555,15 @@
                         isUsesExpired = usesCount >= user.tempPasswordUsesAllowed;
                         usesInfo = `Uses: ${usesCount}/${user.tempPasswordUsesAllowed} ${isUsesExpired ? '<span style="color: var(--error);"> (Expired)</span>' : ''}`;
                     }
+
+                    let trialInfo = '';
+                    if (user.plan === 'trial') {
+                        const isActive = this.isTrialActive(user);
+                        const daysLeft = user.trialDuration ? Math.max(0, Math.ceil((user.trialStart + (user.trialDuration * 24 * 60 * 60 * 1000) - Date.now()) / (24 * 60 * 60 * 1000))) : 0;
+                        trialInfo = `<div style="font-size: 0.8rem; color: ${isActive ? 'var(--success)' : 'var(--error)'}; margin-top: 0.25rem;">
+                            Trial: ${isActive ? 'Active' : 'Expired'} (${daysLeft} days left)
+                        </div>`;
+                    }
                     
                     return `
                     <tr>
@@ -1272,13 +1573,16 @@
                         </td>
                         <td>
                             <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                <strong>${user.name}<span class="status-dot ${isOnline ? 'online' : 'offline'}"></span></strong>
+                                <strong>${user.name}</strong>
                                 ${isNew ? '<span class="user-badge badge-new">NEW</span>' : ''}
                                 ${user.status === 'verified' ? '<span class="user-badge badge-verified">VERIFIED</span>' : ''}
+                                ${user.plan === 'trial' && this.isTrialActive(user) ? '<span class="user-badge badge-trial">TRIAL</span>' : ''}
                             </div>
-                            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.25rem;">
-                                ID: ${user.id.substring(0, 8)}...
+                            <div class="online-status">
+                                <span class="status-dot ${status}" title="${status === 'online' ? 'Online' : status === 'idle' ? 'Idle' : 'Offline'}"></span>
+                                <span>${status === 'online' ? 'Online' : status === 'idle' ? 'Idle' : 'Offline'}</span>
                             </div>
+                            <div class="last-active">Last seen: ${lastSeen}</div>
                         </td>
                         <td>
                             <div><i class="fas fa-phone"></i> ${user.phone}</div>
@@ -1303,6 +1607,7 @@
                             <div style="margin-top: 0.5rem;">
                                 <span class="plan-badge plan-${user.plan || 'basic'}">${user.plan || 'basic'}</span>
                             </div>
+                            ${trialInfo}
                         </td>
                         <td>
                             <span class="user-status status-${user.status || 'pending'}">${user.status || 'pending'}</span>
@@ -1430,6 +1735,7 @@
                 document.getElementById('bulkRejectBtn').disabled = !hasSelection;
                 document.getElementById('bulkPromoteBtn').disabled = !hasSelection;
                 document.getElementById('bulkDeleteBtn').disabled = !hasSelection;
+                document.getElementById('bulkTrialBtn').disabled = !hasSelection;
             }
 
             editUser(userId) {
@@ -1448,6 +1754,11 @@
                 document.getElementById('editStatus').value = user.status || 'pending';
                 document.getElementById('editPlan').value = user.plan || 'basic';
                 document.getElementById('editUsesAllowed').value = user.tempPasswordUsesAllowed || 1;
+                document.getElementById('editTrialDuration').value = user.trialDuration || 7;
+                
+                if (user.trialStart) {
+                    document.getElementById('editTrialStart').value = new Date(user.trialStart).toISOString().split('T')[0];
+                }
                 
                 if (user.registrationDate) {
                     document.getElementById('editRegistrationDate').value = new Date(user.registrationDate).toISOString().split('T')[0];
@@ -1477,6 +1788,8 @@
                 const status = document.getElementById('editStatus').value;
                 const plan = document.getElementById('editPlan').value;
                 const usesAllowed = parseInt(document.getElementById('editUsesAllowed').value) || 1;
+                const trialDuration = parseInt(document.getElementById('editTrialDuration').value) || 0;
+                const trialStart = document.getElementById('editTrialStart').value;
                 const registrationDate = document.getElementById('editRegistrationDate').value;
                 
                 const yearsSelect = document.getElementById('editYears');
@@ -1509,11 +1822,18 @@
                         plan,
                         registeredYears: selectedYears,
                         passwordExpiration,
-                        tempPasswordUsesAllowed: usesAllowed
+                        tempPasswordUsesAllowed: usesAllowed,
+                        trialDuration: plan === 'trial' ? trialDuration : null
                     };
                     
                     if (oldUser.verificationCode !== verificationCode) {
                         updateData.tempPasswordUsesCount = 0;
+                    }
+                    
+                    if (trialStart && plan === 'trial') {
+                        updateData.trialStart = new Date(trialStart).getTime();
+                    } else {
+                        updateData.trialStart = null;
                     }
                     
                     if (registrationDate) {
@@ -1581,14 +1901,19 @@
                     }
 
                     const usesAllowed = parseInt(document.getElementById('addUsesAllowed').value) || 1;
+                    const trialDuration = parseInt(document.getElementById('addTrialDuration').value) || 0;
+                    const trialStart = document.getElementById('addTrialStart').value;
 
                     const userRecord = {
                         ...userData,
                         createdAt: Date.now(),
+                        lastActive: Date.now(),
                         codeTimestamp: userData.verificationCode ? Date.now() : null,
                         passwordExpiration,
                         tempPasswordUsesAllowed: usesAllowed,
-                        tempPasswordUsesCount: userData.verificationCode ? 0 : null
+                        tempPasswordUsesCount: userData.verificationCode ? 0 : null,
+                        trialDuration: userData.plan === 'trial' ? trialDuration : null,
+                        trialStart: userData.plan === 'trial' && trialStart ? new Date(trialStart).getTime() : (userData.plan === 'trial' ? Date.now() : null)
                     };
 
                     const docRef = await this.usersCollection.add(userRecord);
@@ -1604,7 +1929,7 @@
                 if (!user) return;
 
                 document.getElementById('deleteMessage').textContent = 
-                    `Are you sure you want to delete user "${user.name}" (${user.phone})? This action cannot be undone.`;
+                    `Are you sure you want to delete user "${user.name}"? This action cannot be undone.`;
                 
                 document.getElementById('confirmDeleteBtn').onclick = () => this.deleteUser(userId);
                 document.getElementById('deleteConfirmModal').style.display = 'flex';
@@ -1711,6 +2036,32 @@
                 }
             }
 
+            async bulkStartTrial() {
+                if (this.selectedUsers.size === 0) return;
+                
+                const defaultDuration = prompt('Enter default trial duration in days (e.g., 7):') || '7';
+                const duration = parseInt(defaultDuration) || 7;
+                
+                try {
+                    const batch = db.batch();
+                    this.selectedUsers.forEach(userId => {
+                        const userRef = this.usersCollection.doc(userId);
+                        batch.update(userRef, { 
+                            plan: 'trial',
+                            trialStart: Date.now(),
+                            trialDuration: duration
+                        });
+                    });
+                    
+                    await batch.commit();
+                    this.selectedUsers.clear();
+                    this.showMessage('Free trials started successfully', 'success');
+                } catch (error) {
+                    console.error('Error starting bulk trials:', error);
+                    this.showMessage('Error starting trials: ' + error.message, 'error');
+                }
+            }
+
             bulkDelete() {
                 if (this.selectedUsers.size === 0) return;
                 
@@ -1760,12 +2111,19 @@
                     messageEl.remove();
                 }, 3000);
             }
+
+            // Clean up when done
+            destroy() {
+                if (this.onlineStatusInterval) {
+                    clearInterval(this.onlineStatusInterval);
+                }
+            }
         }
 
         // Initialize User Manager
         const userManager = new EnhancedUserManager();
 
-        // DOM Elements (added planFilter)
+        // DOM Elements
         const adminLoginModal = document.getElementById('adminLoginModal');
         const adminContent = document.getElementById('adminContent');
         const adminLoginForm = document.getElementById('adminLoginForm');
@@ -1785,6 +2143,7 @@
         const bulkRejectBtn = document.getElementById('bulkRejectBtn');
         const bulkPromoteBtn = document.getElementById('bulkPromoteBtn');
         const bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
+        const bulkTrialBtn = document.getElementById('bulkTrialBtn');
         const editUserForm = document.getElementById('editUserForm');
         const editUserError = document.getElementById('editUserError');
         const addUserForm = document.getElementById('addUserForm');
@@ -1816,6 +2175,7 @@
                 adminLoginModal.style.display = 'none';
                 adminContent.style.display = 'block';
                 userManager.loadUsers();
+                userManager.initOnlineTracking();
             } else {
                 adminLoginModal.style.display = 'flex';
                 adminContent.style.display = 'none';
@@ -1839,6 +2199,7 @@
         // Logout
         logoutBtn.addEventListener('click', () => {
             localStorage.removeItem('isAdmin');
+            userManager.destroy();
             checkAdminLogin();
         });
 
@@ -1988,6 +2349,10 @@
             userManager.bulkDelete();
         });
 
+        bulkTrialBtn.addEventListener('click', () => {
+            userManager.bulkStartTrial();
+        });
+
         // Edit user form
         editUserForm.addEventListener('submit', e => {
             e.preventDefault();
@@ -2040,6 +2405,53 @@
         }
         setInterval(updateCurrentTime, 1000);
         updateCurrentTime();
+
+        // Clean up when leaving the page
+        window.addEventListener('beforeunload', () => {
+            userManager.destroy();
+        });
+
+        // Open Broadcast Modal
+        function openBroadcastModal() {
+            document.getElementById('broadcastModal').style.display = 'flex';
+            document.getElementById('broadcastMessage').value = '';
+        }
+
+        // Close Broadcast Modal
+        function closeBroadcastModal() {
+            document.getElementById('broadcastModal').style.display = 'none';
+        }
+
+        // Broadcast Form Submission
+        document.getElementById('broadcastForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const message = document.getElementById('broadcastMessage').value.trim();
+            const target = document.getElementById('broadcastTarget').value;
+            const type = document.getElementById('broadcastType').value;
+
+            if (!message) {
+                userManager.showMessage('Message cannot be empty', 'error');
+                return;
+            }
+
+            try {
+                await db.collection('broadcasts').add({
+                    message,
+                    target,
+                    type,
+                    timestamp: Date.now(),
+                    sentBy: 'admin',
+                    readBy: [] // track who saw it
+                });
+
+                closeBroadcastModal();
+                userManager.showMessage('Broadcast sent successfully!', 'success');
+            } catch (error) {
+                console.error('Broadcast error:', error);
+                userManager.showMessage('Failed to send broadcast', 'error');
+            }
+        });
 
         // Initialize
         checkAdminLogin();
