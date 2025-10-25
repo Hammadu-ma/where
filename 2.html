@@ -2,881 +2,2739 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professional Embryology Quiz</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>MediLearn Pro | Enhanced Platform</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <style>
+        :root {
+            --primary: #60a5fa;
+            --primary-dark: #3b82f6;
+            --primary-light: #93c5fd;
+            --secondary: #94a3b8;
+            --success: #22c55e;
+            --error: #ef4444;
+            --warning: #eab308;
+            --info: #0ea5e9;
+            --purple: #8b5cf6;
+            --pink: #ec4899;
+            --shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+            --radius: 12px;
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --gradient: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+            --gradient-premium: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+        }
+        body.light-mode {
+            --background: #f3f4f6;
+            --surface: #ffffff;
+            --text-primary: #111827;
+            --text-secondary: #4b5563;
+            --text-tertiary: #9ca3af;
+            --border: #d1d5db;
+        }
+        body.dark-mode {
+            --background: #0f172a;
+            --surface: #1e293b;
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+            --text-tertiary: #6b7280;
+            --border: #334155;
+        }
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            touch-action: manipulation;
         }
-        
         body {
-            background: linear-gradient(135deg, #0a192f, #0d1b2a);
-            color: #e0e1dd;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-size: 16px;
+            transition: var(--transition);
             min-height: 100vh;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            touch-action: pan-x pan-y;
         }
-        
-        .quiz-container {
-            width: 100%;
-            max-width: 900px;
-            background: rgba(13, 27, 42, 0.9);
-            border-radius: 16px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(95, 158, 160, 0.3);
-        }
-        
         .header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid rgba(95, 158, 160, 0.5);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: var(--background);
+            border-bottom: 1px solid var(--border);
+            box-shadow: var(--shadow);
         }
-        
-        h1 {
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 10px;
-            color: #5f9ea0;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-        }
-        
-        .subtitle {
-            font-size: 18px;
-            opacity: 0.8;
-            margin-bottom: 5px;
-        }
-        
-        .instructions {
-            font-size: 16px;
-            opacity: 0.7;
-            margin-top: 10px;
-        }
-        
-        .progress-container {
-            background: rgba(224, 225, 221, 0.1);
-            border-radius: 10px;
-            height: 8px;
-            margin: 20px 0;
-            overflow: hidden;
-        }
-        
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #5f9ea0, #7cb9e8);
-            width: 0%;
-            transition: width 0.5s ease;
-            border-radius: 10px;
-        }
-        
-        .question-number {
-            font-size: 16px;
-            margin-bottom: 8px;
-            color: #7cb9e8;
-            font-weight: 600;
-        }
-        
-        .question-text {
-            font-size: 22px;
-            font-weight: 500;
-            margin-bottom: 25px;
-            line-height: 1.4;
-        }
-        
-        .options-container {
-            display: grid;
-            gap: 12px;
-            margin-bottom: 30px;
-        }
-        
-        .option {
-            background: rgba(224, 225, 221, 0.05);
-            border: 2px solid rgba(95, 158, 160, 0.3);
-            border-radius: 12px;
-            padding: 16px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 17px;
-            display: flex;
-            align-items: center;
-        }
-        
-        .option:hover {
-            background: rgba(95, 158, 160, 0.2);
-            transform: translateY(-2px);
-            border-color: #5f9ea0;
-        }
-        
-        .option.selected {
-            background: rgba(95, 158, 160, 0.3);
-            border-color: #5f9ea0;
-            box-shadow: 0 0 15px rgba(95, 158, 160, 0.3);
-        }
-        
-        .option.correct {
-            background: rgba(0, 184, 148, 0.2);
-            border-color: #00b894;
-        }
-        
-        .option.incorrect {
-            background: rgba(214, 48, 49, 0.2);
-            border-color: #d63031;
-        }
-        
-        .option-letter {
-            font-weight: bold;
-            margin-right: 12px;
-            color: #5f9ea0;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            background: rgba(95, 158, 160, 0.2);
-        }
-        
-        .navigation {
+        .header-container {
             display: flex;
             justify-content: space-between;
-            margin-top: 20px;
+            align-items: center;
+            padding: 1rem;
+            max-width: 1400px;
+            margin: 0 auto;
         }
-        
-        button {
-            padding: 14px 28px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
-            background: rgba(95, 158, 160, 0.3);
-            color: #e0e1dd;
-            font-size: 16px;
+        .logo {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-decoration: none;
+            cursor: pointer;
         }
-        
-        #prev-btn {
-            background: rgba(95, 158, 160, 0.2);
+        .logo i {
+            font-size: 1.5rem;
         }
-        
-        #prev-btn:hover:not(:disabled) {
-            background: rgba(95, 158, 160, 0.4);
+        .nav-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
         }
-        
-        #next-btn {
-            background: linear-gradient(90deg, #5f9ea0, #7cb9e8);
-        }
-        
-        #next-btn:hover {
-            background: linear-gradient(90deg, #4a8c8e, #6aa6d6);
-            box-shadow: 0 0 15px rgba(95, 158, 160, 0.4);
-        }
-        
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        .quiz-completed {
-            text-align: center;
-            padding: 40px 20px;
-        }
-        
-        .score-text {
-            font-size: 24px;
-            margin-bottom: 16px;
-            color: #e0e1dd;
-        }
-        
-        .score-value {
-            font-size: 48px;
-            font-weight: 700;
-            color: #5f9ea0;
-            margin-bottom: 30px;
-        }
-        
-        #restart-btn {
-            background: linear-gradient(90deg, #5f9ea0, #7cb9e8);
-            padding: 16px 40px;
-            font-size: 18px;
-            margin-top: 20px;
-        }
-        
-        #restart-btn:hover {
-            background: linear-gradient(90deg, #4a8c8e, #6aa6d6);
-            box-shadow: 0 0 20px rgba(95, 158, 160, 0.5);
-        }
-        
-        .feedback {
-            text-align: center;
-            margin-top: 20px;
+        .action-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
             font-weight: 500;
-            min-height: 24px;
-            color: #7cb9e8;
+            text-decoration: none;
         }
-        
-        .explanation {
-            background: rgba(95, 158, 160, 0.1);
-            border-left: 4px solid #5f9ea0;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 25px;
+        .action-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary-light);
+        }
+        .action-btn.primary {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .action-btn.primary:hover {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 80px 1rem 2rem;
             display: none;
         }
-        
-        .explanation-title {
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: #5f9ea0;
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
         }
-        
-        .timer {
-            text-align: right;
-            margin-bottom: 10px;
-            font-size: 18px;
-            color: #5f9ea0;
+        .page-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+        .page-subtitle {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .year-filter {
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+        .year-filter-container {
+            display: flex;
+            gap: 0.5rem;
+            padding: 0.5rem 0;
+        }
+        .year-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--surface);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+            font-weight: 500;
+        }
+        .year-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .year-section {
+            margin-bottom: 2rem;
+        }
+        .year-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
             display: flex;
             align-items: center;
-            justify-content: flex-end;
-            gap: 8px;
+            gap: 0.5rem;
         }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .year-title i {
+            color: var(--primary);
         }
-        
-        .pulse {
-            animation: pulse 0.5s;
+        .cards-container {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            padding-bottom: 1rem;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-light) transparent;
         }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.03); }
-            100% { transform: scale(1); }
+        .cards-container::-webkit-scrollbar {
+            height: 6px;
         }
-        
-        @media (max-width: 600px) {
-            .quiz-container {
-                padding: 20px;
+        .cards-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .cards-container::-webkit-scrollbar-thumb {
+            background: var(--primary-light);
+            border-radius: 3px;
+        }
+        .cards-container::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+        .quiz-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1rem;
+            min-width: 200px;
+            max-width: 200px;
+            transition: var(--transition);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            flex-shrink: 0;
+            position: relative;
+        }
+        .quiz-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+            border-color: var(--primary-light);
+        }
+        .quiz-card.locked {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .quiz-card.locked::after {
+            content: '\f023';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            color: var(--error);
+            opacity: 0.8;
+        }
+        .quiz-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+        }
+        .quiz-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .quiz-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        .quiz-stats {
+            display: flex;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        .difficulty {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 1rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .difficulty.beginner {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+        }
+        .difficulty.intermediate {
+            background: rgba(234, 179, 8, 0.1);
+            color: var(--warning);
+        }
+        .difficulty.advanced {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+        #registrationModal, #addModal, #confirmAddModal, #accessDeniedModal, #tempPasswordModal, #notificationModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1001;
+        }
+        .modal-content {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: var(--radius);
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            animation: slideIn 0.3s ease-out;
+            overflow-y: auto;
+            max-height: 80vh;
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .modal-content h2 {
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            font-size: 1.75rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .modal-content h2 i {
+            color: var(--primary);
+        }
+        .modal-content .price-info {
+            margin-bottom: 1.5rem;
+            color: var(--warning);
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        .modal-content form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+        .input-group {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .input-group i {
+            position: absolute;
+            left: 1rem;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+        .modal-content select, .modal-content input {
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--background);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            width: 100%;
+        }
+        .modal-content select:focus, .modal-content input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        .file-upload {
+            position: relative;
+            padding: 1rem;
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+        .file-upload:hover {
+            border-color: var(--primary-light);
+        }
+        .file-upload i {
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .file-upload input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .file-upload span {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        .receipt-preview {
+            margin-top: 1rem;
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            display: none;
+        }
+        .modal-content button {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            position: relative;
+        }
+        .modal-content button:hover {
+            background: var(--primary-dark);
+        }
+        .modal-content button.loading::after {
+            content: '';
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid white;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            margin-left: 8px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .modal-content .error {
+            color: var(--error);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .back-btn, .cancel-btn, .ok-btn {
+            background: var(--surface);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+            padding: 0.75rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        .back-btn:hover, .cancel-btn:hover, .ok-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary-light);
+        }
+        .ok-btn {
+            background: var(--gradient);
+            color: white;
+            border: none;
+        }
+        .ok-btn:hover {
+            background: var(--primary-dark);
+        }
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+        #logoutModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1001;
+        }
+        /* Profile Styles */
+        #profileContent {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 80px 1rem 2rem;
+            background: linear-gradient(to bottom, var(--background), var(--surface));
+            min-height: calc(100vh - 80px);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .profile-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2rem;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+        .profile-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        .profile-pic {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary);
+            margin-bottom: 1rem;
+        }
+        .change-pic-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+        .change-pic-btn:hover {
+            background: var(--primary-dark);
+        }
+        .profile-info {
+            margin-bottom: 2rem;
+        }
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .info-label {
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        .info-value {
+            color: var(--text-primary);
+        }
+        .add-year-btn {
+            color: var(--primary);
+            cursor: pointer;
+            margin-left: 0.5rem;
+        }
+        .contact-section {
+            margin-bottom: 2rem;
+        }
+        .contact-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .contact-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        .contact-link {
+            background: var(--gradient);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: var(--transition);
+        }
+        .contact-link:hover {
+            transform: scale(1.1);
+        }
+        .comment-section {
+            margin-bottom: 2rem;
+        }
+        .comment-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        #commentBox {
+            width: 100%;
+            min-height: 100px;
+            padding: 1rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--background);
+            color: var(--text-primary);
+            resize: vertical;
+        }
+        #sendCommentBtn {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+        #sendCommentBtn:hover {
+            background: var(--primary-dark);
+        }
+        #commentError {
+            color: var(--error);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        #profileLogoutBtn {
+            background: var(--error);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            margin-top: 2rem;
+            width: 100%;
+        }
+        #profileLogoutBtn:hover {
+            background: #dc2626;
+        }
+        #backToMainBtn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            margin-top: 1rem;
+            width: 100%;
+        }
+        #backToMainBtn:hover {
+            background: var(--primary-dark);
+        }
+        .account-section {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: rgba(59, 130, 246, 0.05);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+        .account-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .account-title i {
+            color: var(--primary);
+        }
+        .account-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .account-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: var(--surface);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+        .account-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        .account-name {
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+        .account-number {
+            font-family: monospace;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+        .copy-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            padding: 0.5rem 0.75rem;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        .copy-btn:hover {
+            background: var(--primary-dark);
+        }
+        .copy-btn.copied {
+            background: var(--success);
+        }
+        .payment-note {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+        .temp-login-section {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: rgba(139, 92, 246, 0.05);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+        .temp-login-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .temp-login-title i {
+            color: var(--purple);
+        }
+        .temp-login-btn {
+            background: var(--gradient-premium);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .temp-login-btn:hover {
+            background: var(--purple);
+        }
+        /* Notification Styles */
+        .notification-bell {
+            position: relative;
+        }
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--error);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .notification-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .notification-item:hover {
+            background: var(--background);
+        }
+        .notification-item.unread {
+            background: rgba(59, 130, 246, 0.1);
+        }
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .notification-message {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        .notification-time {
+            font-size: 0.8rem;
+            color: var(--text-tertiary);
+            margin-top: 0.5rem;
+        }
+        .notification-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        .notification-action-btn {
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .notification-mark-read {
+            background: var(--primary);
+            color: white;
+            border: none;
+        }
+        .notification-delete {
+            background: var(--error);
+            color: white;
+            border: none;
+        }
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 0.75rem;
             }
-            
-            h1 {
-                font-size: 24px;
+            .main-content {
+                padding: 70px 0.75rem 1rem;
             }
-            
-            .question-text {
-                font-size: 19px;
+            .page-title {
+                font-size: 1.75rem;
             }
-            
-            .option {
-                padding: 14px;
-                font-size: 16px;
+            .year-title {
+                font-size: 1.25rem;
             }
-            
-            button {
-                padding: 12px 20px;
+            .modal-content {
+                padding: 1.5rem;
+                width: 95%;
+            }
+            .profile-card {
+                padding: 1.5rem;
+            }
+        }
+        @media (max-width: 480px) {
+            .page-title {
+                font-size: 1.5rem;
+            }
+            .quiz-card {
+                min-width: 180px;
+                max-width: 180px;
+            }
+            .year-title {
+                font-size: 1.25rem;
+            }
+            .modal-content h2 {
+                font-size: 1.5rem;
+            }
+            .profile-pic {
+                width: 100px;
+                height: 100px;
             }
         }
     </style>
 </head>
-<body>
-    <div class="quiz-container">
-        <div class="timer">
-            <i class="fas fa-clock"></i>
-            <span id="timer">00:00</span>
+<body class="dark-mode">
+    <!-- Registration Modal -->
+    <div id="registrationModal">
+        <div class="modal-content">
+            <h2><i class="fas fa-user-plus"></i> Register</h2>
+            <div id="priceInfo" class="price-info">Select Year to View Price</div>
+            
+            <!-- Account Numbers Section -->
+            <div class="account-section">
+                <h3 class="account-title"><i class="fas fa-university"></i> Payment Accounts</h3>
+                <div class="account-list">
+                    <div class="account-item">
+                        <div class="account-info">
+                            <span class="account-name">CBE</span>
+                            <span class="account-number">1000544233185</span>
+                        </div>
+                        <button class="copy-btn" onclick="copyToClipboard('1000544233185', this)">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                    <div class="account-item">
+                        <div class="account-info">
+                            <span class="account-name">Awash Bank</span>
+                            <span class="account-number">014251165418600</span>
+                        </div>
+                        <button class="copy-btn" onclick="copyToClipboard('014251165418600', this)">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                    <div class="account-item">
+                        <div class="account-info">
+                            <span class="account-name">Tele birr</span>
+                            <span class="account-number">0912496441</span>
+                        </div>
+                        <button class="copy-btn" onclick="copyToClipboard('0912496441', this)">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                </div>
+                <p class="payment-note">Please use your name as payment reference</p>
+            </div>
+
+            <!-- Temporary Password Login Section -->
+            <div class="temp-login-section">
+                <h3 class="temp-login-title"><i class="fas fa-key"></i> Admin Password Login</h3>
+                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                    Already registered? Login with temporary password from admin
+                </p>
+                <button class="temp-login-btn" id="tempPasswordLoginBtn">
+                    <i class="fas fa-sign-in-alt"></i> Login with Admin Password
+                </button>
+            </div>
+            
+            <form id="regForm">
+                <div class="input-group">
+                    <i class="fas fa-graduation-cap"></i>
+                    <select id="year" required>
+                        <option value="" disabled selected>Select Year of Study</option>
+                        <option value="1">Pre Med - 100 ETB</option>
+                        <option value="2">Intro Med - 100 ETB</option>
+                        <option value="3">Meta - 100 ETB</option>
+                        <option value="4">Hema - 100 ETB</option>
+                        <option value="5">CVS - 100 ETB</option>
+                        <option value="6">RESPA - 100 ETB</option>
+                        <option value="7">Musclo - 100 ETB</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input id="name" placeholder="Full Name" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-phone"></i>
+                    <input id="phone" type="tel" placeholder="Phone Number" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input id="email" type="email" placeholder="Email (optional)">
+                </div>
+                <div class="input-group">
+                    <i class="fab fa-telegram-plane"></i>
+                    <input id="telegram" placeholder="Telegram Username (required for fast auth.)">
+                </div>
+                <div class="file-upload">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <span id="uploadText">Upload Payment Receipt</span>
+                    <input id="receipt" type="file" accept="image/*" required>
+                </div>
+                <img id="receiptPreview" class="receipt-preview" alt="Receipt Preview">
+                <button type="submit" id="submitBtn"><i class="fas fa-paper-plane"></i>Submit</button>
+                <div id="regError" class="error"></div>
+            </form>
+            
+            <p id="loginLink" style="cursor:pointer; color:var(--primary);">Already registered? Login here</p>
+            <div id="loginForm" style="display:none">
+                <div class="input-group">
+                    <i class="fas fa-phone"></i>
+                    <input id="loginPhone" type="tel" placeholder="Phone Number" required>
+                </div>
+                <button id="loginSubmitBtn"><i class="fas fa-sign-in-alt"></i> Request Verification Code</button>
+                <div id="loginError" class="error"></div>
+            </div>
+            <p id="registerLink" style="display:none; cursor:pointer; color:var(--primary);">New user? Register here</p>
+            <div id="verifyForm" style="display:none">
+                <h2><i class="fas fa-lock"></i> Enter Verification Code</h2>
+                <div class="input-group">
+                    <i class="fas fa-key"></i>
+                    <input id="verifyCode" placeholder="6-digit code" maxlength="6" required>
+                </div>
+                <button id="verifyBtn"><i class="fas fa-check-circle"></i> Verify</button>
+                <button class="back-btn" id="backBtn"><i class="fas fa-arrow-left"></i> Back to Registration</button>
+                <div id="verifyError" class="error"></div>
+            </div>
         </div>
-        
-        <div class="header">
-            <h1>Embryology Quiz</h1>
-            <div class="subtitle">Professional Questions with Detailed Explanations</div>
-            <div class="instructions">Based on your PDF content and Langman's Medical Embryology</div>
-        </div>
-        
-        <div class="progress-container">
-            <div class="progress-bar" id="progress-bar"></div>
-        </div>
-        
-        <div class="question-number">Question <span id="current-question">1</span> of <span id="total-questions">60</span></div>
-        
-        <div class="question-text" id="question">During which week does the embryonic period proper begin?</div>
-        
-        <div class="options-container" id="options-container">
-            <!-- Options will be inserted here by JavaScript -->
-        </div>
-        
-        <div class="explanation" id="explanation">
-            <div class="explanation-title">Explanation:</div>
-            <div id="explanation-text"></div>
-        </div>
-        
-        <div class="feedback" id="feedback"></div>
-        
-        <div class="navigation">
-            <button id="prev-btn" disabled>
-                <i class="fas fa-arrow-left"></i> Previous
-            </button>
-            <button id="next-btn">
-                Next <i class="fas fa-arrow-right"></i>
+    </div>
+
+    <!-- Temporary Password Login Modal -->
+    <div id="tempPasswordModal" style="display: none;">
+        <div class="modal-content">
+            <h2><i class="fas fa-key"></i> Admin Password Login</h2>
+            <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">
+                Enter your phone number and temporary password provided by admin
+            </p>
+            
+            <form id="tempPasswordForm">
+                <div class="input-group">
+                    <i class="fas fa-phone"></i>
+                    <input id="tempPhone" type="tel" placeholder="Your registered phone number" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input id="tempPassword" type="text" placeholder="Temporary password from admin" required>
+                </div>
+                <button type="submit" id="tempLoginBtn">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                <div id="tempLoginError" class="error"></div>
+            </form>
+            
+            <button class="back-btn" id="backToRegBtn">
+                <i class="fas fa-arrow-left"></i> Back to Registration
             </button>
         </div>
     </div>
 
-    <script>
-        // Quiz questions with explanations
-        const questions =
-        [
-  {
-    "question": "During which week does the embryonic period proper begin?",
-    "options": ["Week 3", "Week 4", "Week 5", "Week 8"],
-    "answer": 1,
-    "explanation": "The embryonic period spans weeks 4-8, characterized by organogenesis and high susceptibility to teratogens. This is when all major organs begin to form."
-  },
-  {
-    "question": "What process establishes the three germ layers?",
-    "options": ["Neurulation", "Gastrulation", "Folding", "Implantation"],
-    "answer": 1,
-    "explanation": "Gastrulation occurs during week 3 via the primitive streak, forming ectoderm, mesoderm, and endoderm. This process transforms the bilaminar disc into a trilaminar disc."
-  },
-  {
-    "question": "Which structure induces neural tube formation?",
-    "options": ["Somites", "Notochord", "Primitive streak", "Pharyngeal arches"],
-    "answer": 1,
-    "explanation": "The notochord secretes signaling molecules (like Sonic Hedgehog) that induce overlying ectoderm to form the neural plate, which then folds to create the neural tube."
-  },
-  {
-    "question": "Failure of cranial neuropore closure results in:",
-    "options": ["Spina bifida", "Anencephaly", "Hydrocephalus", "Encephalocele"],
-    "answer": 1,
-    "explanation": "Cranial neuropore closure occurs at day 25; failure causes anencephaly where the brain fails to develop, a condition incompatible with postnatal life."
-  },
-  {
-    "question": "Somites differentiate into all EXCEPT:",
-    "options": ["Vertebrae", "Dermis", "Kidneys", "Skeletal muscle"],
-    "answer": 2,
-    "explanation": "Somites form sclerotome (vertebrae), dermatome (dermis), and myotome (muscle). Kidneys derive from intermediate mesoderm, not somites."
-  },
-  {
-    "question": "Lateral folding of the embryo incorporates the endoderm into:",
-    "options": ["Neural tube", "Gut tube", "Heart tube", "Notochord"],
-    "answer": 1,
-    "explanation": "Lateral folding transforms the flat embryonic disc into a cylindrical embryo, incorporating endoderm into the primitive gut."
-  },
-  {
-    "question": "Pharyngeal arches are first visible at:",
-    "options": ["24 days", "28 days", "32 days", "36 days"],
-    "answer": 0,
-    "explanation": "The first and second pharyngeal arches appear by day 24, contributing to facial and neck structures."
-  },
-  {
-    "question": "Umbilical intestinal herniation occurs during:",
-    "options": ["Week 4", "Week 6", "Week 8", "Week 10"],
-    "answer": 1,
-    "explanation": "Rapid intestinal growth causes physiological herniation into the umbilical cord during week 6."
-  },
-  {
-    "question": "The most critical period for teratogen-induced cardiac malformations is:",
-    "options": ["Weeks 3-4", "Weeks 4-8", "Weeks 8-12", "Weeks 12-16"],
-    "answer": 1,
-    "explanation": "Cardiac development occurs primarily during weeks 4-8, making this the critical period for defects."
-  },
-  {
-    "question": "Which germ layer gives rise to the liver parenchyma?",
-    "options": ["Ectoderm", "Mesoderm", "Endoderm", "Trophoblast"],
-    "answer": 2,
-    "explanation": "The liver parenchyma derives from endodermal epithelial proliferation into surrounding mesoderm."
-  },
-  {
-    "question": "The apical ectodermal ridge regulates:",
-    "options": ["Neural tube closure", "Limb patterning", "Heart looping", "Somite differentiation"],
-    "answer": 1,
-    "explanation": "This ridge secretes FGFs controlling proximal-distal limb development."
-  },
-  {
-    "question": "Cleft lip results from failure of fusion between:",
-    "options": ["Maxillary and medial nasal processes", "Mandibular and maxillary processes", "Lateral nasal and maxillary processes", "Frontonasal and mandibular processes"],
-    "answer": 0,
-    "explanation": "Fusion occurs during weeks 6-7; failure causes cleft lip/palate."
-  },
-  {
-    "question": "The most common site of ectopic pregnancy is:",
-    "options": ["Ovary", "Abdominal cavity", "Uterine tube", "Cervix"],
-    "answer": 2,
-    "explanation": "Tubal implants account for ~95% of ectopic pregnancies, often causing rupture."
-  },
-  {
-    "question": "Diethylstilbestrol exposure in utero causes:",
-    "options": ["Limb defects", "Cardiac anomalies", "Vaginal clear cell adenocarcinoma", "Neural tube defects"],
-    "answer": 2,
-    "explanation": "DES daughters show increased risk of this rare cancer due to uterine lining changes."
-  },
-  {
-    "question": "Fetal alcohol syndrome is characterized by all EXCEPT:",
-    "options": ["Microcephaly", "Long palpebral fissures", "Intellectual disability", "Smooth philtrum"],
-    "answer": 1,
-    "explanation": "FAS features include short palpebral fissures, smooth philtrum, and cognitive impairment."
-  },
-  {
-    "question": "The umbilical cord normally contains:",
-    "options": ["Two arteries and one vein", "Two veins and one artery", "Two arteries and two veins", "One artery and one vein"],
-    "answer": 0,
-    "explanation": "The umbilical vein carries oxygenated blood to the fetus; arteries return deoxygenated blood."
-  },
-  {
-    "question": "Which vitamin deficiency increases neural tube defect risk?",
-    "options": ["Vitamin A", "Vitamin B9 (Folate)", "Vitamin C", "Vitamin D"],
-    "answer": 1,
-    "explanation": "Folate supplementation reduces NTD risk by 70% by supporting rapid cell division."
-  },
-  {
-    "question": "Teratogen susceptibility is highest during:",
-    "options": ["Pre-implantation period", "Embryonic period", "Fetal period", "Neonatal period"],
-    "answer": 1,
-    "explanation": "Weeks 4-8 involve organogenesis, with maximal sensitivity to teratogens."
-  },
-  {
-    "question": "The definitive placenta includes:",
-    "options": ["Decidua basalis and chorion frondosum", "Decidua capsularis and chorion laeve", "Decidua parietalis and amnion", "Decidua basalis and amnion"],
-    "answer": 0,
-    "explanation": "The functional placenta combines maternal decidua basalis with fetal chorionic villi."
-  },
-  {
-    "question": "Monozygotic twinning occurs after fertilization and may involve:",
-    "options": ["Two placentas and two amniotic sacs", "One placenta and one amniotic sac", "Either A or B depending on timing", "Always two placentas"],
-    "answer": 2,
-    "explanation": "Early splitting (≤3 days) gives dichorionic/diamniotic; later splitting yields monochorionic/monoamniotic."
-  },
-  {
-    "question": "Neural crest cells contribute to all EXCEPT:",
-    "options": ["Dorsal root ganglia", "Melanocytes", "Adrenal cortex", "Cardiac outflow tract septum"],
-    "answer": 2,
-    "explanation": "Neural crest forms adrenal medulla; cortex derives from mesoderm."
-  },
-  {
-    "question": "The allantois becomes the:",
-    "options": ["Urinary bladder", "Urachus", "Umbilical artery", "Vitelline duct"],
-    "answer": 1,
-    "explanation": "The allantois normally obliterates, forming the median umbilical ligament; persistence causes urachal fistula."
-  },
-  {
-    "question": "Meckel's diverticulum results from:",
-    "options": ["Persistent vitelline duct", "Persistent allantois", "Persistent notochord", "Persistent neuropore"],
-    "answer": 0,
-    "explanation": "This ileal outpouching represents incomplete vitelline duct closure."
-  },
-  {
-    "question": "The most common congenital heart defect is:",
-    "options": ["Tetralogy of Fallot", "Ventricular septal defect", "Atrial septal defect", "Transposition of great arteries"],
-    "answer": 1,
-    "explanation": "VSDs account for 25% of CHDs, often in the membranous septum."
-  },
-  {
-    "question": "Cystic hygromas are associated with:",
-    "options": ["Turner syndrome (45,X)", "Down syndrome (21 trisomy)", "Edwards syndrome (18 trisomy)", "Patau syndrome (13 trisomy)"],
-    "answer": 0,
-    "explanation": "Lymphatic malformations in the neck arise from failed jugular lymph sac development."
-  },
-  {
-    "question": "Holoprosencephaly is often linked to:",
-    "options": ["Maternal diabetes", "Alcohol exposure", "Chromosome 13 anomalies", "All of the above"],
-    "answer": 3,
-    "explanation": "Failed forebrain division involves multiple genetic and environmental factors."
-  },
-  {
-    "question": "The ductus arteriosus:",
-    "options": ["Connects pulmonary artery to aorta", "Connects umbilical vein to IVC", "Becomes the ligamentum teres", "Closes immediately after birth"],
-    "answer": 0,
-    "explanation": "This shunt bypasses fetal lungs; persistence causes PDA."
-  },
-  {
-    "question": "Erythropoiesis begins first in the:",
-    "options": ["Yolk sac", "Liver", "Spleen", "Bone marrow"],
-    "answer": 0,
-    "explanation": "Primitive nucleated RBCs appear in yolk sac blood islands by week 3."
-  },
-  {
-    "question": "The most sensitive period for limb reduction defects is:",
-    "options": ["Weeks 4-5", "Weeks 6-7", "Weeks 8-9", "Weeks 10-11"],
-    "answer": 1,
-    "explanation": "Limb buds form at week 4; differentiation occurs weeks 6-7."
-  },
-  {
-    "question": "Amniotic band syndrome may cause:",
-    "options": ["Digital amputations", "Craniofacial clefts", "Body wall defects", "All of the above"],
-    "answer": 3,
-    "explanation": "Mesenchymal bands entangle developing parts, causing disruptive defects."
-  },
-  {
-    "question": "The primary organizer in early development is the:",
-    "options": ["Primitive streak", "Notochord", "Neural crest", "Prechordal plate"],
-    "answer": 1,
-    "explanation": "The notochord induces neural tube formation and axial patterning."
-  },
-  {
-    "question": "The thyroid gland develops from:",
-    "options": ["Pharyngeal pouch 1", "Pharyngeal pouch 2", "Pharyngeal pouch 3", "Pharyngeal pouch 4"],
-    "answer": 3,
-    "explanation": "The thyroid diverticulum arises from the floor of the pharynx."
-  },
-  {
-    "question": "Treacher Collins syndrome involves defects in:",
-    "options": ["Pharyngeal arch 1 derivatives", "Pharyngeal arch 2 derivatives", "Pharyngeal arch 3 derivatives", "Pharyngeal arch 4 derivatives"],
-    "answer": 0,
-    "explanation": "Mandibulofacial dysostosis affects neural crest-derived structures."
-  },
-  {
-    "question": "The most common type of tracheoesophageal fistula is:",
-    "options": ["Proximal atresia with distal fistula", "Distal atresia with proximal fistula", "H-type fistula", "Esophageal atresia alone"],
-    "answer": 0,
-    "explanation": "This type accounts for 85% of TEF cases."
-  },
-  {
-    "question": "Hirschsprung's disease results from:",
-    "options": ["Failed neural crest migration", "Failed mesoderm formation", "Failed endoderm proliferation", "Failed ectoderm differentiation"],
-    "answer": 0,
-    "explanation": "Absence of enteric ganglia causes functional intestinal obstruction."
-  },
-  {
-    "question": "The ureteric bud gives rise to the:",
-    "options": ["Renal glomeruli", "Collecting system", "Nephron tubules", "Renal cortex"],
-    "answer": 1,
-    "explanation": "The ureteric bud induces metanephric mesenchyme and forms calyces, pelvis, and ureters."
-  },
-  {
-    "question": "Testicular descent requires:",
-    "options": ["Gubernaculum", "Processus vaginalis", "Androgens", "All of the above"],
-    "answer": 3,
-    "explanation": "Cryptorchidism may result from defects in any component."
-  },
-  {
-    "question": "The most common anomaly of the genital system is:",
-    "options": ["Hypospadias", "Epispadias", "Uterine didelphys", "Cryptorchidism"],
-    "answer": 0,
-    "explanation": "Faulty urethral fold fusion causes abnormal urethral opening in males."
-  },
-  {
-    "question": "The foramen ovale becomes the:",
-    "options": ["Fossa ovalis", "Ligamentum arteriosum", "Ligamentum teres", "Median umbilical ligament"],
-    "answer": 0,
-    "explanation": "This interatrial shunt closes functionally at birth."
-  },
-  {
-    "question": "Maternal rubella infection causes:",
-    "options": ["Cardiac defects", "Cataracts", "Deafness", "All of the above"],
-    "answer": 3,
-    "explanation": "The virus is teratogenic during organogenesis, especially weeks 4-8."
-  },
-  {
-    "question": "ACE inhibitors are teratogenic for:",
-    "options": ["Renal defects", "Cardiac defects", "Neural tube defects", "Limb defects"],
-    "answer": 0,
-    "explanation": "Fetal hypotension leads to renal tubular dysgenesis."
-  },
-  {
-    "question": "Vitamin A excess causes:",
-    "options": ["Craniofacial abnormalities", "Limb abnormalities", "Central nervous system defects", "All of the above"],
-    "answer": 3,
-    "explanation": "Retinoic acid disrupts HOX gene expression."
-  },
-  {
-    "question": "The most common chromosomal anomaly is:",
-    "options": ["Turner syndrome", "Klinefelter syndrome", "Down syndrome", "Edwards syndrome"],
-    "answer": 2,
-    "explanation": "Trisomy 21 occurs in ~1:800 live births."
-  },
-  {
-    "question": "Neural tube defects can be detected by:",
-    "options": ["Maternal serum AFP", "Ultrasound", "Amniotic fluid AFP", "All of the above"],
-    "answer": 3,
-    "explanation": "Elevated AFP suggests open defects; confirmed by imaging."
-  },
-  {
-    "question": "The most critical period for CNS teratogenesis is:",
-    "options": ["Weeks 3-4", "Weeks 5-6", "Weeks 7-8", "Weeks 9-10"],
-    "answer": 0,
-    "explanation": "Neural tube closure occurs during this period."
-  },
-  {
-    "question": "Diabetic embryopathy often includes:",
-    "options": ["Caudal regression syndrome", "Neural tube defects", "Cardiac defects", "All of the above"],
-    "answer": 3,
-    "explanation": "Hyperglycemia disrupts multiple developmental processes."
-  },
-  {
-    "question": "The most common neural tube defect is:",
-    "options": ["Anencephaly", "Spina bifida occulta", "Spina bifida cystica", "Encephalocele"],
-    "answer": 1,
-    "explanation": "Often asymptomatic with only vertebral arch defects."
-  },
-  {
-    "question": "Folic acid supplementation should begin:",
-    "options": ["At conception", "1 month before conception", "3 months before conception", "During the embryonic period"],
-    "answer": 2,
-    "explanation": "Neural tube closure occurs before many women know they're pregnant."
-  },
-  {
-    "question": "The most common cause of intellectual disability is:",
-    "options": ["Fetal alcohol syndrome", "Down syndrome", "Fragile X syndrome", "Cerebral palsy"],
-    "answer": 1,
-    "explanation": "Trisomy 21 causes variable cognitive impairment."
-  },
-  {
-    "question": "Potter sequence involves:",
-    "options": ["Oligohydramnios", "Pulmonary hypoplasia", "Characteristic facies", "All of the above"],
-    "answer": 3,
-    "explanation": "Renal agenesis leads to reduced amniotic fluid."
-  },
-  {
-    "question": "The most common renal anomaly is:",
-    "options": ["Renal agenesis", "Horseshoe kidney", "Polycystic kidney disease", "Duplex collecting system"],
-    "answer": 1,
-    "explanation": "Fusion of inferior poles during ascent."
-  },
-  {
-    "question": "Esophageal atresia is associated with:",
-    "options": ["Tracheoesophageal fistula", "Polyhydramnios", "VACTERL association", "All of the above"],
-    "answer": 3,
-    "explanation": "Failed foregut separation causes these related defects."
-  },
-  {
-    "question": "The most common diaphragmatic defect is:",
-    "options": ["Bochdalek hernia", "Morgagni hernia", "Eventration", "Central tendon defect"],
-    "answer": 0,
-    "explanation": "Posterolateral defect allowing abdominal contents into thorax."
-  },
-  {
-    "question": "Omphalocele differs from gastroschisis in:",
-    "options": ["Having a covering membrane", "Location relative to umbilicus", "Associated anomalies", "All of the above"],
-    "answer": 3,
-    "explanation": "Omphalocele is central and covered; gastroschisis is lateral and uncovered."
-  },
-  {
-    "question": "The most common limb reduction defect is:",
-    "options": ["Radial aplasia", "Phocomelia", "Amelia", "Longitudinal deficiency"],
-    "answer": 0,
-    "explanation": "Often associated with thrombocytopenia absent radius (TAR) syndrome."
-  },
-  {
-    "question": "Talipes equinovarus (clubfoot) involves:",
-    "options": ["Foot inversion", "Foot adduction", "Ankle plantar flexion", "All of the above"],
-    "answer": 3,
-    "explanation": "Multifactorial etiology with genetic and environmental components."
-  },
-  {
-    "question": "Developmental dysplasia of the hip is:",
-    "options": ["More common in females", "More common in breech delivery", "Associated with joint laxity", "All of the above"],
-    "answer": 3,
-    "explanation": "Shallow acetabulum allows femoral head dislocation."
-  },
-  {
-    "question": "The most common craniosynostosis is:",
-    "options": ["Sagittal suture", "Coronal suture", "Metopic suture", "Lambdoid suture"],
-    "answer": 0,
-    "explanation": "Premature fusion causes scaphocephaly."
-  },
-  {
-    "question": "Arnold-Chiari malformation involves:",
-    "options": ["Cerebellar tonsillar herniation", "Hydrocephalus", "Syringomyelia", "All of the above"],
-    "answer": 3,
-    "explanation": "Type II is associated with myelomeningocele."
-  },
-  {
-    "question": "Dandy-Walker malformation features:",
-    "options": ["Cerebellar vermis hypoplasia", "Cystic fourth ventricle", "Hydrocephalus", "All of the above"],
-    "answer": 3,
-    "explanation": "Abnormal roof of the fourth ventricle development."
-  }
-            // Additional questions would be added here in a real implementation
-        ];
-
-        // DOM elements
-        const questionElement = document.getElementById('question');
-        const optionsContainer = document.getElementById('options-container');
-        const currentQuestionElement = document.getElementById('current-question');
-        const totalQuestionsElement = document.getElementById('total-questions');
-        const progressBar = document.getElementById('progress-bar');
-        const prevButton = document.getElementById('prev-btn');
-        const nextButton = document.getElementById('next-btn');
-        const feedbackElement = document.getElementById('feedback');
-        const timerElement = document.getElementById('timer');
-        const explanationElement = document.getElementById('explanation');
-        const explanationTextElement = document.getElementById('explanation-text');
-        
-        // Quiz state
-        let currentQuestionIndex = 0;
-        let score = 0;
-        let selectedOption = null;
-        let timeStarted = null;
-        let timerInterval = null;
-        
-        // Initialize quiz
-        function initQuiz() {
-            totalQuestionsElement.textContent = questions.length;
-            loadQuestion();
-            startTimer();
+    <!-- Add Year Modal -->
+    <div id="addModal" style="display: none;">
+        <div class="modal-content">
+            <h2><i class="fas fa-plus"></i> Add program </h2>
+            <div class="price-info">Additional Charge: 50 ETB</div>
             
-            // Event listeners
-            prevButton.addEventListener('click', goToPreviousQuestion);
-            nextButton.addEventListener('click', goToNextQuestion);
-        }
-        
-        // Start timer
-        function startTimer() {
-            timeStarted = new Date();
-            timerInterval = setInterval(updateTimer, 1000);
-        }
-        
-        // Update timer
-        function updateTimer() {
-            const now = new Date();
-            const diff = new Date(now - timeStarted);
-            const minutes = diff.getMinutes().toString().padStart(2, '0');
-            const seconds = diff.getSeconds().toString().padStart(2, '0');
-            timerElement.textContent = `${minutes}:${seconds}`;
-        }
-        
-        // Load question
-        function loadQuestion() {
-            const question = questions[currentQuestionIndex];
-            questionElement.textContent = question.question;
-            currentQuestionElement.textContent = currentQuestionIndex + 1;
-            
-            // Update progress bar
-            progressBar.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
-            
-            // Clear options
-            optionsContainer.innerHTML = '';
-            
-            // Add options
-            const optionLetters = ['A', 'B', 'C', 'D'];
-            question.options.forEach((option, index) => {
-                const optionElement = document.createElement('div');
-                optionElement.classList.add('option');
-                
-                const optionLetter = document.createElement('div');
-                optionLetter.classList.add('option-letter');
-                optionLetter.textContent = optionLetters[index];
-                
-                const optionText = document.createElement('div');
-                optionText.textContent = option;
-                
-                optionElement.appendChild(optionLetter);
-                optionElement.appendChild(optionText);
-                
-                optionElement.addEventListener('click', () => selectOption(index));
-                optionsContainer.appendChild(optionElement);
-            });
-            
-            // Update navigation buttons
-            prevButton.disabled = currentQuestionIndex === 0;
-            nextButton.textContent = currentQuestionIndex === questions.length - 1 ? 'Finish' : 'Next';
-            
-            // Clear feedback and selection
-            feedbackElement.textContent = '';
-            explanationElement.style.display = 'none';
-            selectedOption = null;
-        }
-        
-        // Select option
-        function selectOption(index) {
-            // Remove previous selection
-            const options = document.querySelectorAll('.option');
-            options.forEach(option => option.classList.remove('selected'));
-            
-            // Set new selection
-            options[index].classList.add('selected');
-            selectedOption = index;
-            
-            // Check if correct
-            const isCorrect = index === questions[currentQuestionIndex].answer;
-            
-            // Show feedback
-            if (isCorrect) {
-                feedbackElement.textContent = 'Correct! 🎉';
-                feedbackElement.style.color = '#00b894';
-                score++;
-            } else {
-                feedbackElement.textContent = 'Incorrect 😢';
-                feedbackElement.style.color = '#d63031';
-                
-                // Show correct answer
-                options[questions[currentQuestionIndex].answer].classList.add('correct');
-            }
-            
-            // Show explanation
-            explanationTextElement.textContent = questions[currentQuestionIndex].explanation;
-            explanationElement.style.display = 'block';
-            
-            // Disable all options after selection
-            options.forEach(option => {
-                option.style.pointerEvents = 'none';
-            });
-            
-            // Enable next button
-            nextButton.disabled = false;
-        }
-        
-        // Navigate to next question
-        function goToNextQuestion() {
-            if (currentQuestionIndex < questions.length - 1) {
-                currentQuestionIndex++;
-                loadQuestion();
-            } else {
-                showResults();
-            }
-        }
-        
-        // Navigate to previous question
-        function goToPreviousQuestion() {
-            if (currentQuestionIndex > 0) {
-                currentQuestionIndex--;
-                loadQuestion();
-            }
-        }
-        
-        // Show results
-        function showResults() {
-            clearInterval(timerInterval);
-            const quizContainer = document.querySelector('.quiz-container');
-            quizContainer.classList.add('pulse');
-            
-            const now = new Date();
-            const diff = new Date(now - timeStarted);
-            const minutes = diff.getMinutes().toString().padStart(2, '0');
-            const seconds = diff.getSeconds().toString().padStart(2, '0');
-            
-            quizContainer.innerHTML = `
-                <div class="quiz-completed">
-                    <div class="score-text">Your Score</div>
-                    <div class="score-value">${score}/${questions.length}</div>
-                    <div class="score-text">Time: ${minutes}:${seconds}</div>
-                    <button id="restart-btn">
-                        <i class="fas fa-redo"></i> Restart Quiz
-                    </button>
+            <!-- Account Numbers Section -->
+            <div class="account-section">
+                <h3 class="account-title"><i class="fas fa-university"></i> Payment Accounts</h3>
+                <div class="account-list">
+                    <div class="account-item">
+                        <div class="account-info">
+                            <span class="account-name">CBE</span>
+                            <span class="account-number">1000544233185</span>
+                        </div>
+                        <button class="copy-btn" onclick="copyToClipboard('1000544233185', this)">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                    <div class="account-item">
+                        <div class="account-info">
+                            <span class="account-name">Awash Bank</span>
+                            <span class="account-number">014251165418600</span>
+                        </div>
+                        <button class="copy-btn" onclick="copyToClipboard('014251165418600', this)">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                    <div class="account-item">
+                        <div class="account-info">
+                            <span class="account-name">Tele Birr</span>
+                            <span class="account-number">0912496441</span>
+                        </div>
+                        <button class="copy-btn" onclick="copyToClipboard('0912496441', this)">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
                 </div>
-            `;
+                <p class="payment-note">Please use your name as payment reference</p>
+            </div>
             
-            document.getElementById('restart-btn').addEventListener('click', () => {
-                currentQuestionIndex = 0;
-                score = 0;
-                quizContainer.classList.remove('pulse');
-                initQuiz();
+            <form id="addForm">
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input id="addName" placeholder="Full Name (for verification)" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-graduation-cap"></i>
+                    <select id="newYear" required>
+                        <option value="" disabled selected>Select New Year</option>
+                        <option value="1">Pre Med - 100 ETB</option>
+                        <option value="2">Intro Med - 100 ETB</option>
+                        <option value="3">Meta - 100 ETB</option>
+                        <option value="4">Hema - 100 ETB</option>
+                        <option value="5">CVS - 100 ETB</option>
+                        <option value="6">RESPA - 100 ETB</option>
+                        <option value="7">Musclo - 100 ETB</option>
+                    </select>
+                </div>
+                <div class="file-upload">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <span id="addUploadText">Upload Payment Receipt (50 ETB)</span>
+                    <input id="addReceipt" type="file" accept="image/*" required>
+                </div>
+                <img id="addReceiptPreview" class="receipt-preview" alt="Receipt Preview">
+                <button type="submit" id="addSubmitBtn"><i class="fas fa-paper-plane"></i> Submit </button>
+                <div id="addError" class="error"></div>
+            </form>
+            <div id="addVerifyForm" style="display:none">
+                <h2><i class="fas fa-lock"></i> Enter Verification Code</h2>
+                <div class="input-group">
+                    <i class="fas fa-key"></i>
+                    <input id="addVerifyCode" placeholder="6-digit code" maxlength="6" required>
+                </div>
+                <button id="addVerifyBtn"><i class="fas fa-check-circle"></i> Verify</button>
+                <button class="back-btn" id="addBackBtn"><i class="fas fa-arrow-left"></i> Back to Addition</button>
+                <div id="addVerifyError" class="error"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Add Modal -->
+    <div id="confirmAddModal" style="display: none;">
+        <div class="modal-content">
+            <h2><i class="fas fa-exclamation-triangle"></i> Confirm Add</h2>
+            <p>Additional Program charges additional 50 ETB. Do you want to continue?</p>
+            <div class="button-group">
+                <button class="cancel-btn" id="cancelAddBtn">no</button>
+                <button class="ok-btn" id="okAddBtn">yes</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Access Denied Modal -->
+    <div id="accessDeniedModal" style="display: none;">
+        <div class="modal-content">
+            <h2><i class="fas fa-lock"></i> Access Denied</h2>
+            <p id="deniedMessage"></p>
+            <button class="ok-btn" id="closeDeniedBtn">OK</button>
+        </div>
+    </div>
+    
+    <!-- Logout Modal -->
+    <div id="logoutModal" style="display: none;">
+        <div class="modal-content">
+            <h2><i class="fas fa-sign-out-alt"></i> Confirm Logout</h2>
+            <div class="input-group">
+                <i class="fas fa-key"></i>
+                <input id="logoutCode" placeholder="6-digit logout code" maxlength="6" required>
+            </div>
+            <button id="confirmLogoutBtn"><i class="fas fa-check-circle"></i> Confirm Logout</button>
+            <div id="logoutError" class="error"></div>
+        </div>
+    </div>
+
+    <!-- Notification Modal -->
+    <div id="notificationModal" style="display: none;">
+        <div class="modal-content" style="max-width: 500px;">
+            <h2><i class="fas fa-bell"></i> Notifications</h2>
+            <div id="notificationsList" style="max-height: 400px; overflow-y: auto;">
+                <!-- Notifications will be populated here -->
+            </div>
+            <button class="ok-btn" id="closeNotificationBtn" style="margin-top: 1rem;">Close</button>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="header-container">
+            <div class="logo" id="logoBtn">
+                <i class="fas fa-stethoscope"></i>
+                <span>ALIF | MED</span>
+            </div>
+            <div class="nav-actions">
+                <button class="action-btn" id="themeToggle">
+                    <i class="fas fa-sun"></i>
+                </button>
+                <button class="action-btn notification-bell" id="notificationBtn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge" id="notificationCount" style="display: none;">0</span>
+                </button>
+                <button id="profileBtn" class="action-btn primary">
+                    <i class="fas fa-user"></i> Profile
+                </button>
+                <button id="adminBtn" class="action-btn primary" style="display: none;">
+                    <i class="fas fa-cog"></i> Admin
+                </button>
+                <a href="#" id="logout" class="action-btn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Quizzes Content -->
+    <main id="mainContent" class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">Medical Quiz Platform</h1>
+            <p class="page-subtitle">Test your medical knowledge with our comprehensive quiz collection</p>
+        </div>
+        <div class="year-filter">
+            <div class="year-filter-container">
+                <button class="year-btn active" data-year="all">All</button>
+                <button class="year-btn" data-year="1"><i class="fas fa-book-medical"></i> PRE-MED</button>
+                <button class="year-btn" data-year="2"><i class="fas fa-book-medical"></i> INTRODUCTION-MED</button>
+                <button class="year-btn" data-year="3"><i class="fas fa-book-medical"></i> METABOLISM</button>
+                <button class="year-btn" data-year="4"><i class="fas fa-book-medical"></i> HEMATOLOGY</button>
+                <button class="year-btn" data-year="5"><i class="fas fa-book-medical"></i> CVS</button>
+                <button class="year-btn" data-year="6"><i class="fas fa-book-medical"></i> RESPIRATORY</button>
+                <button class="year-btn" data-year="7"><i class="fas fa-book-medical"></i> MUSCULOSKELETAL</button>
+            </div>
+        </div>
+        <section class="year-section" data-year="1">
+            <h2 class="year-title"><i class="fas fa-book-medical"></i> PRE-MED</h2>
+            <div class="cards-container"></div>
+        </section>
+        <section class="year-section" data-year="2">
+            <h2 class="year-title"><i class="fas fa-book-medical"></i> INTRODUCTION-MED</h2>
+            <div class="cards-container"></div>
+        </section>
+        <section class="year-section" data-year="3">
+            <h2 class="year-title"><i class="fas fa-book-medical"></i> METABOLISM</h2>
+            <div class="cards-container"></div>
+        </section>
+        <section class="year-section" data-year="4">
+            <h2 class="year-title"><i class="fas fa-book-medical"></i> HEMATOLOGY</h2>
+            <div class="cards-container"></div>
+        </section>
+        <section class="year-section" data-year="5">
+            <h2 class="year-title"><i class="fas fa-book-medical"></i> CVS</h2>
+            <div class="cards-container"></div>
+        </section>
+        <section class="year-section" data-year="6">
+            <h2 class="year-title"><i class="fas fa-book-medical"></i> RESPIRATORY</h2>
+            <div class="cards-container"></div>
+        </section>
+        <section class="year-section" data-year="7">
+            <h2 class="year-title"><i class="fas fa-book-medical"></i> MUSCULOSKELETAL</h2>
+            <div class="cards-container"></div>
+        </section>
+    </main>
+    
+    <!-- Profile Content -->
+    <main id="profileContent" class="main-content" style="display: none;">
+        <div class="profile-card">
+            <div class="profile-header">
+                <img id="profilePic" class="profile-pic" src="" alt="Profile Picture">
+                <label for="profilePicInput" class="change-pic-btn"><i class="fas fa-camera"></i> Change Picture</label>
+                <input id="profilePicInput" type="file" accept="image/*" style="display: none;">
+            </div>
+            <div class="profile-info">
+                <h2 class="page-title">Your Profile</h2>
+                <div class="info-item">
+                    <span class="info-label">Name:</span>
+                    <span class="info-value" id="profileName"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Phone:</span>
+                    <span class="info-value" id="profilePhone"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Email:</span>
+                    <span class="info-value" id="profileEmail"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Telegram:</span>
+                    <span class="info-value" id="profileTelegram"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Year(s):</span>
+                    <span class="info-value" id="profileYears"></span>
+                    <span id="addYearBtn" class="add-year-btn"><i class="fas fa-plus"></i> Add</span>
+                </div>
+            </div>
+            <div class="contact-section">
+                <h3 class="contact-title">Contact Us</h3>
+                <div class="contact-links">
+                    <a href="https://t.me/yourchannel" class="contact-link" target="_blank"><i class="fab fa-telegram-plane"></i></a>
+                    <a href="mailto:support@medilearnpro.com" class="contact-link"><i class="fas fa-envelope"></i></a>
+                </div>
+            </div>
+            <div class="comment-section">
+                <h3 class="comment-title">Send Us Your Comment</h3>
+                <textarea id="commentBox" placeholder="Write your message here..."></textarea>
+                <button id="sendCommentBtn"><i class="fas fa-paper-plane"></i> Send</button>
+                <div id="commentError" class="error"></div>
+            </div>
+            <button id="profileLogoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            <button id="backToMainBtn"><i class="fas fa-arrow-left"></i> Back to Quizzes</button>
+        </div>
+    </main>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyC4DSMVg4c98kQf5sSF8ueD631QgO4SXn0",
+            authDomain: "medical-quiz-40228.firebaseapp.com",
+            projectId: "medical-quiz-40228",
+            storageBucket: "medical-quiz-40228.firebasestorage.app",
+            messagingSenderId: "483043078873",
+            appId: "1:483043078873:web:4029dd83e53557f08b04c8"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Enhanced Firebase User Manager with Telegram Integration
+        class FirebaseUserManager {
+            constructor() {
+                this.usersCollection = db.collection('users');
+                this.notificationsCollection = db.collection('notifications');
+                this.telegramBotToken = '8237566699:AAHICwsiqIrs-4_vUdrsORPlD8-WFSFYB2Y';
+                this.adminChatId = '7897840965';
+            }
+
+            // Enhanced Telegram API call with error handling
+            async sendTelegramMessage(text, options = {}) {
+                try {
+                    const url = `https://api.telegram.org/bot${this.telegramBotToken}/sendMessage`;
+                    const payload = {
+                        chat_id: this.adminChatId,
+                        text: text,
+                        parse_mode: 'HTML',
+                        ...options
+                    };
+                    
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (!data.ok) {
+                        console.error('Telegram API Error:', data);
+                        throw new Error(data.description || 'Telegram API error');
+                    }
+                    
+                    return data;
+                } catch (error) {
+                    console.error('Failed to send Telegram message:', error);
+                    // Don't throw error to prevent blocking user flow
+                    return { ok: false, error: error.message };
+                }
+            }
+
+            // Enhanced Telegram photo upload with error handling
+            async sendTelegramPhoto(photoFile, caption = '') {
+                try {
+                    const formData = new FormData();
+                    formData.append('chat_id', this.adminChatId);
+                    formData.append('photo', photoFile);
+                    formData.append('caption', caption);
+                    formData.append('parse_mode', 'HTML');
+                    
+                    const response = await fetch(`https://api.telegram.org/bot${this.telegramBotToken}/sendPhoto`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (!data.ok) {
+                        console.error('Telegram Photo Upload Error:', data);
+                        throw new Error(data.description || 'Telegram photo upload failed');
+                    }
+                    
+                    return data;
+                } catch (error) {
+                    console.error('Failed to send Telegram photo:', error);
+                    // Don't throw error to prevent blocking user flow
+                    return { ok: false, error: error.message };
+                }
+            }
+
+            async checkPhoneExists(phone) {
+                const snapshot = await this.usersCollection.where('phone', '==', phone).get();
+                return !snapshot.empty;
+            }
+
+            isCodeExpired(timestamp) {
+                const now = new Date().getTime();
+                const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
+                return now - timestamp > twoDaysInMs;
+            }
+
+            // Enhanced temporary password login method
+            async loginWithTemporaryPassword(phone, password) {
+                try {
+                    const snapshot = await this.usersCollection.where('phone', '==', phone).get();
+                    if (snapshot.empty) {
+                        return { success: false, error: 'Phone number not found. Please register first.' };
+                    }
+
+                    const doc = snapshot.docs[0];
+                    const user = doc.data();
+                    
+                    if (!user.verificationCode) {
+                        return { success: false, error: 'No temporary password set. Please use regular login.' };
+                    }
+
+                    if (user.verificationCode !== password) {
+                        return { success: false, error: 'Invalid temporary password.' };
+                    }
+
+                    // Check time-based expiration
+                    if (user.passwordExpiration && user.passwordExpiration < Date.now()) {
+                        return { success: false, error: 'Temporary password has expired (time limit).' };
+                    }
+
+                    // Check usage-based expiration
+                    if (user.tempPasswordUsesAllowed) {
+                        const usesCount = user.tempPasswordUsesCount || 0;
+                        if (usesCount >= user.tempPasswordUsesAllowed) {
+                            return { success: false, error: 'Temporary password usage limit reached.' };
+                        }
+                    }
+
+                    // Check if user has active trial
+                    if (user.plan === 'trial' && user.trialStart && user.trialDuration) {
+                        const trialEnd = user.trialStart + (user.trialDuration * 24 * 60 * 60 * 1000);
+                        if (Date.now() > trialEnd) {
+                            return { success: false, error: 'Your free trial has expired. Please contact admin.' };
+                        }
+                    }
+
+                    // Increment usage count if applicable
+                    const updateData = {
+                        status: 'verified',
+                        lastLogin: new Date().getTime(),
+                        lastActive: new Date().getTime(),
+                        isOnline: true
+                    };
+
+                    if (user.tempPasswordUsesAllowed) {
+                        updateData.tempPasswordUsesCount = (user.tempPasswordUsesCount || 0) + 1;
+                    }
+
+                    await this.usersCollection.doc(doc.id).update(updateData);
+
+                    user.id = doc.id;
+                    user.status = 'verified';
+                    user.lastLogin = new Date().getTime();
+                    user.lastActive = new Date().getTime();
+                    if (user.tempPasswordUsesAllowed) {
+                        user.tempPasswordUsesCount = (user.tempPasswordUsesCount || 0) + 1;
+                    }
+
+                    return { success: true, user };
+                } catch (error) {
+                    console.error('Error logging in with temporary password:', error);
+                    return { success: false, error: 'Login failed. Please try again.' };
+                }
+            }
+
+            async createUser(userData) {
+                try {
+                    if (await this.checkPhoneExists(userData.phone)) {
+                        return { success: false, error: 'Phone already registered. Please login.' };
+                    }
+                    const code = Math.floor(100000 + Math.random() * 900000).toString();
+                    const userRecord = {
+                        ...userData,
+                        verificationCode: code,
+                        codeTimestamp: new Date().getTime(),
+                        registeredYears: [userData.year],
+                        createdAt: new Date().getTime(),
+                        lastLogin: null,
+                        lastActive: new Date().getTime(),
+                        isOnline: true,
+                        status: 'pending',
+                        role: 'user',
+                        plan: 'basic'
+                    };
+
+                    const docRef = await this.usersCollection.add(userRecord);
+                    return { success: true, userId: docRef.id, code };
+                } catch (error) {
+                    console.error('Error creating user:', error);
+                    return { success: false, error: error.message };
+                }
+            }
+
+            async login(phone) {
+                try {
+                    const snapshot = await this.usersCollection.where('phone', '==', phone).get();
+                    if (snapshot.empty) {
+                        return { success: false, error: 'Phone not registered. Please register.' };
+                    }
+                    const doc = snapshot.docs[0];
+                    const user = doc.data();
+                    
+                    // Check if user has active temporary password
+                    if (user.verificationCode) {
+                        // Check if temporary password is still valid
+                        if (user.passwordExpiration && user.passwordExpiration > Date.now()) {
+                            if (user.tempPasswordUsesAllowed) {
+                                const usesCount = user.tempPasswordUsesCount || 0;
+                                if (usesCount < user.tempPasswordUsesAllowed) {
+                                    return { 
+                                        success: false, 
+                                        error: 'You have an active temporary password. Please use it to login or contact admin.' 
+                                    };
+                                }
+                            } else {
+                                return { 
+                                    success: false, 
+                                    error: 'You have an active temporary password. Please use it to login or contact admin.' 
+                                };
+                            }
+                        }
+                    }
+                    
+                    if (user.verificationCode && !this.isCodeExpired(user.codeTimestamp)) {
+                        return { success: false, error: 'Account is currently active. Please logout first or contact admin.' };
+                    }
+                    
+                    const code = Math.floor(100000 + Math.random() * 900000).toString();
+                    await this.usersCollection.doc(doc.id).update({
+                        verificationCode: code,
+                        codeTimestamp: new Date().getTime(),
+                        status: 'pending'
+                    });
+                    return { success: true, code, userId: doc.id };
+                } catch (error) {
+                    console.error('Error logging in:', error);
+                    return { success: false, error: error.message };
+                }
+            }
+
+            async verifyUser(phone, code) {
+                try {
+                    const snapshot = await this.usersCollection.where('phone', '==', phone).get();
+                    if (snapshot.empty) {
+                        return { success: false, error: 'User not found' };
+                    }
+
+                    let user = null;
+                    let userDocId = null;
+                    
+                    snapshot.forEach(doc => {
+                        user = doc.data();
+                        userDocId = doc.id;
+                    });
+
+                    if (user.verificationCode !== code) {
+                        return { success: false, error: 'Invalid verification code' };
+                    }
+
+                    const codeTimestamp = user.codeTimestamp;
+                    const now = new Date().getTime();
+                    const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
+                    
+                    if (now - codeTimestamp > twoDaysInMs) {
+                        return { success: false, error: 'Verification code has expired' };
+                    }
+
+                    // Check if user has active trial
+                    if (user.plan === 'trial' && user.trialStart && user.trialDuration) {
+                        const trialEnd = user.trialStart + (user.trialDuration * 24 * 60 * 60 * 1000);
+                        if (Date.now() > trialEnd) {
+                            return { success: false, error: 'Your free trial has expired. Please contact admin.' };
+                        }
+                    }
+
+                    // Update with online tracking
+                    await this.usersCollection.doc(userDocId).update({
+                        status: 'verified',
+                        verifiedAt: new Date().getTime(),
+                        lastLogin: new Date().getTime(),
+                        lastActive: new Date().getTime(),
+                        isOnline: true
+                    });
+
+                    user.id = userDocId;
+                    user.status = 'verified';
+                    user.lastLogin = new Date().getTime();
+                    user.lastActive = new Date().getTime();
+
+                    return { success: true, user };
+                } catch (error) {
+                    console.error('Error verifying user:', error);
+                    return { success: false, error: 'Verification failed' };
+                }
+            }
+
+            async addYearToUser(userId, newYear, userData) {
+                try {
+                    const userDoc = await this.usersCollection.doc(userId).get();
+                    if (!userDoc.exists) {
+                        return { success: false, error: 'User not found' };
+                    }
+
+                    const user = userDoc.data();
+                    const currentYears = user.registeredYears || [];
+
+                    if (currentYears.includes(newYear)) {
+                        return { success: false, error: 'Year already registered' };
+                    }
+
+                    const code = Math.floor(100000 + Math.random() * 900000).toString();
+                    
+                    await this.usersCollection.doc(userId).update({
+                        registeredYears: [...currentYears, newYear],
+                        verificationCode: code,
+                        codeTimestamp: new Date().getTime(),
+                        status: 'pending_addition'
+                    });
+
+                    return { success: true, code };
+                } catch (error) {
+                    console.error('Error adding year to user:', error);
+                    return { success: false, error: error.message };
+                }
+            }
+
+            async verifyYearAddition(userId, code) {
+                try {
+                    const userDoc = await this.usersCollection.doc(userId).get();
+                    if (!userDoc.exists) {
+                        return { success: false, error: 'User not found' };
+                    }
+
+                    const user = userDoc.data();
+
+                    if (user.verificationCode !== code) {
+                        return { success: false, error: 'Invalid verification code' };
+                    }
+
+                    const codeTimestamp = user.codeTimestamp;
+                    const now = new Date().getTime();
+                    const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
+                    
+                    if (now - codeTimestamp > twoDaysInMs) {
+                        return { success: false, error: 'Verification code has expired' };
+                    }
+
+                    await this.usersCollection.doc(userId).update({
+                        status: 'verified',
+                        lastLogin: new Date().getTime(),
+                        lastActive: new Date().getTime()
+                    });
+
+                    return { success: true, user: { id: userId, ...user, status: 'verified', lastLogin: new Date().getTime() } };
+                } catch (error) {
+                    console.error('Error verifying year addition:', error);
+                    return { success: false, error: 'Verification failed' };
+                }
+            }
+
+            async getUserByPhone(phone) {
+                try {
+                    const snapshot = await this.usersCollection.where('phone', '==', phone).get();
+                    if (snapshot.empty) return null;
+                    
+                    let user = null;
+                    snapshot.forEach(doc => {
+                        user = { id: doc.id, ...doc.data() };
+                    });
+                    return user;
+                } catch (error) {
+                    console.error('Error getting user:', error);
+                    return null;
+                }
+            }
+
+            // Check if user has active trial
+            hasActiveTrial(user) {
+                if (!user || user.plan !== 'trial' || !user.trialStart || !user.trialDuration) {
+                    return false;
+                }
+                
+                const trialEnd = user.trialStart + (user.trialDuration * 24 * 60 * 60 * 1000);
+                return Date.now() < trialEnd;
+            }
+
+            // Get trial days remaining
+            getTrialDaysRemaining(user) {
+                if (!this.hasActiveTrial(user)) {
+                    return 0;
+                }
+                
+                const trialEnd = user.trialStart + (user.trialDuration * 24 * 60 * 60 * 1000);
+                const daysRemaining = Math.ceil((trialEnd - Date.now()) / (24 * 60 * 60 * 1000));
+                return Math.max(0, daysRemaining);
+            }
+
+            // Notification System
+            async getUserNotifications(userId) {
+                try {
+                    const snapshot = await this.notificationsCollection
+                        .where('userId', '==', userId)
+                        .orderBy('timestamp', 'desc')
+                        .limit(20)
+                        .get();
+                    
+                    return snapshot.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }));
+                } catch (error) {
+                    console.error('Error getting notifications:', error);
+                    return [];
+                }
+            }
+
+            async markNotificationAsRead(notificationId) {
+                try {
+                    await this.notificationsCollection.doc(notificationId).update({
+                        read: true,
+                        readAt: new Date().getTime()
+                    });
+                    return true;
+                } catch (error) {
+                    console.error('Error marking notification as read:', error);
+                    return false;
+                }
+            }
+
+            async deleteNotification(notificationId) {
+                try {
+                    await this.notificationsCollection.doc(notificationId).delete();
+                    return true;
+                } catch (error) {
+                    console.error('Error deleting notification:', error);
+                    return false;
+                }
+            }
+
+            async createNotification(userId, title, message, type = 'info') {
+                try {
+                    await this.notificationsCollection.add({
+                        userId,
+                        title,
+                        message,
+                        type,
+                        read: false,
+                        timestamp: new Date().getTime()
+                    });
+                    return true;
+                } catch (error) {
+                    console.error('Error creating notification:', error);
+                    return false;
+                }
+            }
+
+            async getUnreadNotificationCount(userId) {
+                try {
+                    const snapshot = await this.notificationsCollection
+                        .where('userId', '==', userId)
+                        .where('read', '==', false)
+                        .get();
+                    
+                    return snapshot.size;
+                } catch (error) {
+                    console.error('Error getting unread count:', error);
+                    return 0;
+                }
+            }
+        }
+
+        const firebaseUserManager = new FirebaseUserManager();
+
+        // Quiz data
+        const quizData = {
+            1: [
+                { id: 6, title: "Organic Chemistry", icon: "fas fa-brain", questions: 30, time: 25, difficulty: "intermediate", rating: 4.6, page: "year2/human-anatomy.html" },
+                { id: 7, title: "ENTREPRENUERSHIP", icon: "fas fa-heartbeat", questions: 25, time: 20, difficulty: "intermediate", rating: 4.5, page: "year2/physiology-i.html" },
+                { id: 8, title: "ECONOMICS", icon: "fas fa-microscope", questions: 20, time: 15, difficulty: "intermediate", rating: 4.3, page: "year2/histology.html" },
+                { id: 9, title: "CIVIC", icon: "fas fa-flask", questions: 28, time: 22, difficulty: "intermediate", rating: 4.4, page: "year2/biochemistry-ii.html" }
+            ],
+            2: [
+                { id: 4, title: "Pathology", icon: "fas fa-flask", questions: 400, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/pt.html" },
+                { id: 5, title: "Pharmacology", icon: "fas fa-heartbeat", questions: 400, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/pc.html" },
+                { id: 6, title: "PCD", icon: "fas fa-heartbeat", questions: 150, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/pcd.html" },
+                { id: 7, title: "PARASITOLOGY", icon: "fas fa-heartbeat", questions: 180, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/pr.html" },
+                { id: 8, title: "immunology", icon: "fas fa-heartbeat", questions: 235, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/im.html" },
+                { id: 9, title: "Microbiology", icon: "fas fa-heartbeat", questions: 320, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/micro.html" },
+                { id: 1, title: "Anatomy", icon: "fas fa-brain", questions: 700, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/an.html" },
+                { id: 2, title: "Physiology", icon: "fas fa-microscope", questions: 600, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/ps.html" },
+                { id: 3, title: "Biochemistry", icon: "fas fa-book", questions: 800, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/bc.html" }
+            ],  
+            3: [
+                { id: 10, title: "Anatomy", icon: "fas fa-virus", questions: 35, time: 30, difficulty: "intermediate", page: "year3/pathology.html", rating: 4.7 },
+                { id: 11, title: "Physiology", icon: "fas fa-pills", questions: 30, time: 25, difficulty: "intermediate", rating: 4.6, page: "year3/pharmacology-i.html" },
+                { id: 12, title: "Pharma", icon: "fas fa-bacteria", questions: 25, time: 20, difficulty: "intermediate", rating: 4.5, page: "year3/microbiology.html" },
+                { id: 13, title: "Pathology", icon: "fas fa-shield-virus", questions: 28, time: 22, difficulty: "intermediate", rating: 4.4, page: "year3/immunology.html" }
+            ],
+            4: [
+                { id: 14, title: "Anatomy", icon: "fas fa-stethoscope", questions: 40, time: 35, difficulty: "advanced", rating: 4.8, page: "year4/clinical-medicine-i.html" },
+                { id: 15, title: "Physiology", icon: "fas fa-syringe", questions: 35, time: 30, difficulty: "advanced", rating: 4.7, page: "year4/surgery-basics.html" },
+                { id: 16, title: "Pharmacology", icon: "fas fa-pills", questions: 38, time: 32, difficulty: "advanced", rating: 4.6, page: "year4/pharmacology-ii.html" },
+                { id: 17, title: "Pathology", icon: "fas fa-virus", questions: 42, time: 35, difficulty: "advanced", rating: 4.7, page: "year4/pathology-ii.html" }
+            ],
+            5: [
+                { id: 18, title: "Anatomy", icon: "fas fa-stethoscope", questions: 45, time: 40, difficulty: "advanced", rating: 4.8, page: "year5/internal-medicine.html" },
+                { id: 19, title: "Physiology", icon: "fas fa-syringe", questions: 40, time: 35, difficulty: "advanced", rating: 4.7, page: "year5/surgery.html" },
+                { id: 20, title: "Pharma", icon: "fas fa-baby", questions: 38, time: 32, difficulty: "advanced", rating: 4.6, page: "year5/pediatrics.html" },
+                { id: 21, title: "Pathology", icon: "fas fa-female", questions: 42, time: 35, difficulty: "advanced", rating: 4.7, page: "year5/obstetrics-gynecology.html" }
+            ],
+            6: [
+                { id: 22, title: "Anatomy", icon: "fas fa-hospital-user", questions: 50, time: 45, difficulty: "advanced", rating: 4.9, page: "year6/clinical-rotations-i.html" },
+                { id: 23, title: "Physiology", icon: "fas fa-ambulance", questions: 45, time: 40, difficulty: "advanced", rating: 4.8, page: "year6/emergency-medicine.html" },
+                { id: 24, title: "Pharma", icon: "fas fa-brain", questions: 40, time: 35, difficulty: "advanced", rating: 4.7, page: "year6/psychiatry.html" },
+                { id: 25, title: "Patho", icon: "fas fa-x-ray", questions: 38, time: 32, difficulty: "advanced", rating: 4.6, page: "year6/radiology.html" }
+            ],
+            7: [
+                { id: 26, title: "Anatomy", icon: "fas fa-hospital-user", questions: 55, time: 50, difficulty: "advanced", rating: 4.9, page: "year7/clinical-rotations-ii.html" },
+                { id: 27, title: "Physiology", icon: "fas fa-stethoscope", questions: 50, time: 45, difficulty: "advanced", rating: 4.8, page: "year7/specialty-medicine.html" },
+                { id: 28, title: "Pharma", icon: "fas fa-balance-scale", questions: 35, time: 30, difficulty: "advanced", rating: 4.7, page: "year7/medical-ethics.html" },
+                { id: 29, title: "Patho", icon: "fas fa-graduation-cap", questions: 60, time: 55, difficulty: "advanced", rating: 4.9, page: "year7/board-exam-prep.html" }
+            ]
+        };
+
+        // Price data
+        const prices = {
+            1: 100,
+            2: 100,
+            3: 100,
+            4: 100,
+            5: 100,
+            6: 100,
+            7: 100
+        };
+
+        // DOM Elements
+        const themeToggle = document.getElementById('themeToggle');
+        const notificationBtn = document.getElementById('notificationBtn');
+        const notificationCount = document.getElementById('notificationCount');
+        const notificationModal = document.getElementById('notificationModal');
+        const notificationsList = document.getElementById('notificationsList');
+        const closeNotificationBtn = document.getElementById('closeNotificationBtn');
+        const mainContent = document.getElementById('mainContent');
+        const profileContent = document.getElementById('profileContent');
+        const profileBtn = document.getElementById('profileBtn');
+        const adminBtn = document.getElementById('adminBtn');
+        const logoBtn = document.getElementById('logoBtn');
+        const backToMainBtn = document.getElementById('backToMainBtn');
+        const regModal = document.getElementById('registrationModal');
+        const tempPasswordModal = document.getElementById('tempPasswordModal');
+        const regForm = document.getElementById('regForm');
+        const tempPasswordForm = document.getElementById('tempPasswordForm');
+        const loginForm = document.getElementById('loginForm');
+        const verifyForm = document.getElementById('verifyForm');
+        const logout = document.getElementById('logout');
+        const logoutModal = document.getElementById('logoutModal');
+        const regError = document.getElementById('regError');
+        const tempLoginError = document.getElementById('tempLoginError');
+        const loginError = document.getElementById('loginError');
+        const verifyError = document.getElementById('verifyError');
+        const logoutError = document.getElementById('logoutError');
+        const receiptInput = document.getElementById('receipt');
+        const receiptPreview = document.getElementById('receiptPreview');
+        const uploadText = document.getElementById('uploadText');
+        const yearSelect = document.getElementById('year');
+        const priceInfo = document.getElementById('priceInfo');
+        const submitBtn = document.getElementById('submitBtn');
+        const tempLoginBtn = document.getElementById('tempLoginBtn');
+        const loginSubmitBtn = document.getElementById('loginSubmitBtn');
+        const backBtn = document.getElementById('backBtn');
+        const backToRegBtn = document.getElementById('backToRegBtn');
+        const loginLink = document.getElementById('loginLink');
+        const registerLink = document.getElementById('registerLink');
+        const tempPasswordLoginBtn = document.getElementById('tempPasswordLoginBtn');
+
+        // Theme toggle
+        function toggleTheme() {
+            if (document.body.classList.contains('dark-mode')) {
+                document.body.classList.remove('dark-mode');
+                document.body.classList.add('light-mode');
+                themeToggle.querySelector('i').className = 'fas fa-moon';
+            } else {
+                document.body.classList.remove('light-mode');
+                document.body.classList.add('dark-mode');
+                themeToggle.querySelector('i').className = 'fas fa-sun';
+            }
+        }
+        themeToggle.addEventListener('click', toggleTheme);
+
+        // Notification system
+        async function loadNotifications() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (!currentUser) return;
+
+            const notifications = await firebaseUserManager.getUserNotifications(currentUser.id);
+            const unreadCount = await firebaseUserManager.getUnreadNotificationCount(currentUser.id);
+            
+            // Update notification badge
+            if (unreadCount > 0) {
+                notificationCount.textContent = unreadCount;
+                notificationCount.style.display = 'flex';
+            } else {
+                notificationCount.style.display = 'none';
+            }
+            
+            // Store notifications for modal display
+            localStorage.setItem('userNotifications', JSON.stringify(notifications));
+        }
+
+        function displayNotifications() {
+            const notifications = JSON.parse(localStorage.getItem('userNotifications') || '[]');
+            
+            if (notifications.length === 0) {
+                notificationsList.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: var(--text-tertiary);">
+                        <i class="fas fa-bell-slash" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                        <p>No notifications yet</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            notificationsList.innerHTML = notifications.map(notification => `
+                <div class="notification-item ${notification.read ? '' : 'unread'}" data-id="${notification.id}">
+                    <div class="notification-title">
+                        <i class="fas fa-${getNotificationIcon(notification.type)}"></i>
+                        ${notification.title}
+                    </div>
+                    <div class="notification-message">${notification.message}</div>
+                    <div class="notification-time">${formatTime(notification.timestamp)}</div>
+                    <div class="notification-actions">
+                        ${!notification.read ? `
+                            <button class="notification-action-btn notification-mark-read" onclick="markNotificationAsRead('${notification.id}')">
+                                <i class="fas fa-check"></i> Mark as Read
+                            </button>
+                        ` : ''}
+                        <button class="notification-action-btn notification-delete" onclick="deleteNotification('${notification.id}')">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getNotificationIcon(type) {
+            switch(type) {
+                case 'success': return 'check-circle';
+                case 'warning': return 'exclamation-triangle';
+                case 'error': return 'exclamation-circle';
+                default: return 'info-circle';
+            }
+        }
+
+        function formatTime(timestamp) {
+            const now = new Date().getTime();
+            const diff = now - timestamp;
+            const minutes = Math.floor(diff / (1000 * 60));
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
+            
+            if (minutes < 1) return 'Just now';
+            if (minutes < 60) return `${minutes}m ago`;
+            if (hours < 24) return `${hours}h ago`;
+            return `${days}d ago`;
+        }
+
+        async function markNotificationAsRead(notificationId) {
+            const success = await firebaseUserManager.markNotificationAsRead(notificationId);
+            if (success) {
+                await loadNotifications();
+                displayNotifications();
+            }
+        }
+
+        async function deleteNotification(notificationId) {
+            const success = await firebaseUserManager.deleteNotification(notificationId);
+            if (success) {
+                await loadNotifications();
+                displayNotifications();
+            }
+        }
+
+        // Notification button click
+        notificationBtn.addEventListener('click', async () => {
+            await loadNotifications();
+            displayNotifications();
+            notificationModal.style.display = 'flex';
+        });
+
+        // Close notification modal
+        closeNotificationBtn.addEventListener('click', () => {
+            notificationModal.style.display = 'none';
+        });
+
+        // Render quiz cards with trial status
+        function renderQuizCards() {
+            const userYears = JSON.parse(localStorage.getItem('userYears')) || [];
+            const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {};
+            
+            // Check trial status
+            const hasActiveTrial = firebaseUserManager.hasActiveTrial(currentUser);
+            const trialDaysRemaining = firebaseUserManager.getTrialDaysRemaining(currentUser);
+            
+            for (let year = 1; year <= 7; year++) {
+                const container = document.querySelector(`.year-section[data-year="${year}"] .cards-container`);
+                if (!container) continue;
+                container.innerHTML = '';
+                if (quizData[year]) {
+                    quizData[year].forEach(quiz => {
+                        const card = document.createElement('div');
+                        card.className = 'quiz-card';
+                        card.dataset.year = year.toString();
+                        
+                        // Add trial badge if user has active trial
+                        const trialBadge = hasActiveTrial ? 
+                            `<div class="difficulty beginner" style="margin-top: 0.5rem;">
+                                <i class="fas fa-crown"></i> Trial: ${trialDaysRemaining} days left
+                            </div>` : '';
+                        
+                        card.innerHTML = `
+                            <div class="quiz-icon"><i class="${quiz.icon}"></i></div>
+                            <h3 class="quiz-title">${quiz.title}</h3>
+                            <div class="quiz-meta">
+                                <span>${quiz.questions} Qs</span>
+                                <span>${quiz.time} min</span>
+                            </div>
+                            <div class="quiz-stats">
+                                <span class="difficulty ${quiz.difficulty}">${quiz.difficulty}</span>
+                                <div class="stat">
+                                    <i class="fas fa-star"></i>
+                                    <span>${quiz.rating}</span>
+                                </div>
+                            </div>
+                            ${trialBadge}
+                        `;
+                        
+                        if (!userYears.includes(year.toString()) && !hasActiveTrial) {
+                            card.classList.add('locked');
+                        }
+                        
+                        card.addEventListener('click', (e) => {
+                            const quizYear = e.currentTarget.dataset.year;
+                            
+                            // Allow access if user has active trial, regardless of registered years
+                            if (!userYears.includes(quizYear) && !hasActiveTrial) {
+                                showAccessDeniedModal(userYears, quizYear);
+                                return;
+                            }
+                            
+                            // Update activity before navigating to quiz
+                            window.location.href = quiz.page;
+                        });
+                        container.appendChild(card);
+                    });
+                }
+            }
+            
+            // Show trial status in header if active
+            if (hasActiveTrial) {
+                const pageTitle = document.querySelector('.page-title');
+                if (pageTitle && !pageTitle.querySelector('.trial-badge')) {
+                    const trialBadge = document.createElement('span');
+                    trialBadge.className = 'user-badge badge-trial';
+                    trialBadge.style.marginLeft = '10px';
+                    trialBadge.innerHTML = `<i class="fas fa-crown"></i> Trial: ${trialDaysRemaining} days left`;
+                    pageTitle.appendChild(trialBadge);
+                }
+            }
+        }
+
+        // Year filter
+        const yearButtons = document.querySelectorAll('.year-btn');
+        const yearSections = document.querySelectorAll('.year-section');
+        yearButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const year = button.dataset.year;
+                yearButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                if (year === 'all') {
+                    yearSections.forEach(section => section.style.display = 'block');
+                } else {
+                    yearSections.forEach(section => {
+                        section.style.display = section.dataset.year === year ? 'block' : 'none';
+                    });
+                }
+            });
+        });
+
+        // Navigation
+        logoBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            mainContent.style.display = 'block';
+            profileContent.style.display = 'none';
+        });
+
+        profileBtn.addEventListener('click', () => {
+            mainContent.style.display = 'none';
+            profileContent.style.display = 'block';
+            loadProfile();
+        });
+
+        backToMainBtn.addEventListener('click', () => {
+            mainContent.style.display = 'block';
+            profileContent.style.display = 'none';
+        });
+
+        // Temporary password login button
+        tempPasswordLoginBtn.addEventListener('click', () => {
+            regModal.style.display = 'none';
+            tempPasswordModal.style.display = 'flex';
+        });
+
+        // Back to registration from temp password modal
+        backToRegBtn.addEventListener('click', () => {
+            tempPasswordModal.style.display = 'none';
+            regModal.style.display = 'flex';
+        });
+
+        // Temporary password form submission
+        tempPasswordForm.addEventListener('submit', async e => {
+            e.preventDefault();
+            tempLoginBtn.classList.add('loading');
+            tempLoginBtn.disabled = true;
+            
+            const phone = document.getElementById('tempPhone').value;
+            const password = document.getElementById('tempPassword').value;
+
+            if (!phone || !password) {
+                tempLoginError.textContent = 'Please enter both phone number and password.';
+                tempLoginBtn.classList.remove('loading');
+                tempLoginBtn.disabled = false;
+                return;
+            }
+
+            const result = await firebaseUserManager.loginWithTemporaryPassword(phone, password);
+            
+            if (result.success) {
+                // Store user data in localStorage
+                localStorage.setItem('currentUser', JSON.stringify(result.user));
+                localStorage.setItem('userYears', JSON.stringify(result.user.registeredYears));
+                localStorage.setItem('verified', 'true');
+                
+                // Check role for admin
+                if (result.user.role === 'admin') {
+                    adminBtn.style.display = 'inline-flex';
+                }
+                
+                // Close modal and show main content
+                tempPasswordModal.style.display = 'none';
+                mainContent.style.display = 'block';
+                renderQuizCards();
+                
+                // Load notifications
+                await loadNotifications();
+                
+                // Show success message with trial info if applicable
+                let successMessage = 'Login successful! Welcome back ' + result.user.name;
+                if (firebaseUserManager.hasActiveTrial(result.user)) {
+                    const daysLeft = firebaseUserManager.getTrialDaysRemaining(result.user);
+                    successMessage += ` (Trial active: ${daysLeft} days remaining)`;
+                }
+                alert(successMessage);
+            } else {
+                tempLoginError.textContent = result.error;
+            }
+
+            tempLoginBtn.classList.remove('loading');
+            tempLoginBtn.disabled = false;
+        });
+
+        // Toggle between register and login
+        loginLink.addEventListener('click', () => {
+            regForm.style.display = 'none';
+            loginForm.style.display = 'block';
+            registerLink.style.display = 'block';
+            loginLink.style.display = 'none';
+            verifyForm.style.display = 'none';
+        });
+
+        registerLink.addEventListener('click', () => {
+            regForm.style.display = 'block';
+            loginForm.style.display = 'none';
+            registerLink.style.display = 'none';
+            loginLink.style.display = 'block';
+            verifyForm.style.display = 'none';
+        });
+
+        // Update price display on year selection
+        yearSelect.addEventListener('change', () => {
+            const year = yearSelect.value;
+            priceInfo.textContent = year ? `Price: ${prices[year]} ETB` : 'Select Year to View Price';
+        });
+
+        // Receipt preview
+        receiptInput.addEventListener('change', () => {
+            const file = receiptInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    receiptPreview.src = e.target.result;
+                    receiptPreview.style.display = 'block';
+                    uploadText.textContent = 'Change Payment Receipt';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                receiptPreview.style.display = 'none';
+                uploadText.textContent = 'Upload Payment Receipt';
+            }
+        });
+
+        function copyToClipboard(text, button) {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+                
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                button.innerHTML = '<i class="fas fa-times"></i> Failed';
+                button.style.background = 'var(--error)';
+                
+                setTimeout(() => {
+                    button.innerHTML = '<i class="fas fa-copy"></i> Copy';
+                    button.style.background = 'var(--primary)';
+                }, 2000);
             });
         }
-        
-        // Start the quiz
-        initQuiz();
+
+        // Initialize modal state
+        async function init() {
+            console.log('Checking user authentication...');
+            
+            const currentUser = localStorage.getItem('currentUser');
+            
+            if (currentUser) {
+                try {
+                    const user = JSON.parse(currentUser);
+                    console.log('Found cached user:', user.name);
+                    
+                    // Show main content immediately
+                    regModal.style.display = 'none';
+                    mainContent.style.display = 'block';
+                    renderQuizCards();
+
+                    // Load notifications
+                    await loadNotifications();
+
+                    // Add timeout for Firebase check
+                    const firebaseCheck = firebaseUserManager.getUserByPhone(user.phone);
+                    const timeoutPromise = new Promise((_, reject) => 
+                        setTimeout(() => reject(new Error('Timeout')), 5000)
+                    );
+
+                    const latestUser = await Promise.race([firebaseCheck, timeoutPromise]);
+                    
+                    if (latestUser && latestUser.status === 'verified') {
+                        console.log('User is verified in Firebase');
+                        localStorage.setItem('currentUser', JSON.stringify(latestUser));
+                        localStorage.setItem('userYears', JSON.stringify(latestUser.registeredYears));
+                        
+                        if (latestUser.role === 'admin') {
+                            adminBtn.style.display = 'inline-flex';
+                        }
+                        renderQuizCards();
+                    } else {
+                        console.log('User verification failed');
+                        if (latestUser) {
+                            localStorage.clear();
+                            showRegistrationModal();
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error checking user status:', error);
+                    console.log('Using cached user data due to error');
+                }
+            } else {
+                console.log('No cached user found');
+                showRegistrationModal();
+            }
+        }
+
+        // Force status check on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check status every minute
+            setInterval(async () => {
+                const currentUser = localStorage.getItem('currentUser');
+                if (currentUser) {
+                    const user = JSON.parse(currentUser);
+                    const latestUser = await firebaseUserManager.getUserByPhone(user.phone);
+                    if (!latestUser || latestUser.status !== 'verified') {
+                        localStorage.clear();
+                        location.reload();
+                    }
+                }
+            }, 60000);
+        });
+
+        function showRegistrationModal() {
+            regModal.style.display = 'flex';
+            mainContent.style.display = 'none';
+            profileContent.style.display = 'none';
+        }
+
+        // Back button to return to registration form
+        backBtn.addEventListener('click', () => {
+            regForm.style.display = 'block';
+            loginForm.style.display = 'none';
+            registerLink.style.display = 'none';
+            loginLink.style.display = 'block';
+            verifyForm.style.display = 'none';
+            verifyError.textContent = '';
+        });
+
+        // Registration form submission - FIXED TELEGRAM INTEGRATION
+        regForm.addEventListener('submit', async e => {
+            e.preventDefault();
+            submitBtn.classList.add('loading');
+            submitBtn.disabled = true;
+            
+            const year = document.getElementById('year').value;
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value || '';
+            const telegram = document.getElementById('telegram').value || 'N/A';
+            const receipt = document.getElementById('receipt').files[0];
+
+            if (!year || !name || !phone || !receipt) {
+                regError.textContent = 'Please fill all required fields.';
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+                return;
+            }
+
+            // Create user in Firebase
+            const userData = {
+                name: name,
+                phone: phone,
+                email: email,
+                telegram: telegram,
+                year: year,
+                price: prices[year]
+            };
+
+            const result = await firebaseUserManager.createUser(userData);
+            
+            if (result.success) {
+                // Send to Telegram with the code - FIXED
+                const caption = `📋 <b>New Registration</b>\n\n📚 Year: ${year} (${prices[year]} ETB)\n👤 Name: ${name}\n📱 Phone: ${phone}\n📧 Email: ${email || 'N/A'}\n🔑 Code: <code>${result.code}</code>\n\n<i>Please verify this registration</i>`;
+                
+                // Send receipt photo to Telegram
+                const telegramResult = await firebaseUserManager.sendTelegramPhoto(receipt, caption);
+                
+                if (telegramResult.ok) {
+                    // Store temporary data
+                    localStorage.setItem('pendingPhone', phone);
+                    localStorage.setItem('tempUserData', JSON.stringify(userData));
+                    localStorage.setItem('codeTimestamp', new Date().getTime());
+                    
+                    regForm.style.display = 'none';
+                    loginForm.style.display = 'none';
+                    verifyForm.style.display = 'block';
+                    regError.textContent = '';
+                } else {
+                    regError.textContent = 'Error sending to Telegram. Please try again.';
+                }
+            } else {
+                regError.textContent = 'Error creating user: ' + result.error;
+            }
+
+            submitBtn.classList.remove('loading');
+            submitBtn.disabled = false;
+        });
+
+        // Login submission - FIXED TELEGRAM INTEGRATION
+        loginSubmitBtn.addEventListener('click', async () => {
+            loginSubmitBtn.classList.add('loading');
+            loginSubmitBtn.disabled = true;
+            const phone = document.getElementById('loginPhone').value;
+
+            if (!phone) {
+                loginError.textContent = 'Please enter phone number.';
+                loginSubmitBtn.classList.remove('loading');
+                loginSubmitBtn.disabled = false;
+                return;
+            }
+
+            const result = await firebaseUserManager.login(phone);
+            
+            if (result.success) {
+                const user = await firebaseUserManager.getUserByPhone(phone);
+                const caption = `🔐 <b>Login Request</b>\n\n👤 Name: ${user.name}\n📱 Phone: ${phone}\n📲 Telegram: ${user.telegram || 'N/A'}\n🔑 Code: <code>${result.code}</code>\n\n<i>Please approve this login request</i>`;
+                
+                // Send login request to Telegram
+                const telegramResult = await firebaseUserManager.sendTelegramMessage(caption);
+                
+                if (telegramResult.ok) {
+                    localStorage.setItem('pendingPhone', phone);
+                    localStorage.setItem('codeTimestamp', new Date().getTime());
+                    regForm.style.display = 'none';
+                    loginForm.style.display = 'none';
+                    verifyForm.style.display = 'block';
+                    loginError.textContent = '';
+                } else {
+                    loginError.textContent = 'Error sending to Telegram. Please try again.';
+                }
+            } else {
+                loginError.textContent = result.error;
+            }
+
+            loginSubmitBtn.classList.remove('loading');
+            loginSubmitBtn.disabled = false;
+        });
+
+        // Verification
+        document.getElementById('verifyBtn').addEventListener('click', async () => {
+            const enteredCode = document.getElementById('verifyCode').value;
+            const phone = localStorage.getItem('pendingPhone');
+
+            if (!phone) {
+                verifyError.textContent = 'Session expired. Please register again.';
+                return;
+            }
+
+            const result = await firebaseUserManager.verifyUser(phone, enteredCode);
+            
+            if (result.success) {
+                // Send verification notification to Telegram - FIXED
+                const caption = `✅ <b>User Verified</b>\n\n👤 Name: ${result.user.name}\n📱 Phone: ${result.user.phone}\n📚 Year(s): ${result.user.registeredYears.join(', ')}\n\n<i>User has been successfully verified</i>`;
+                await firebaseUserManager.sendTelegramMessage(caption);
+
+                // Store user data in localStorage
+                localStorage.setItem('currentUser', JSON.stringify(result.user));
+                localStorage.setItem('userYears', JSON.stringify(result.user.registeredYears));
+                localStorage.setItem('verified', 'true');
+                localStorage.removeItem('pendingPhone');
+                localStorage.removeItem('tempUserData');
+                localStorage.removeItem('codeTimestamp');
+                
+                // Check role for admin
+                if (result.user.role === 'admin') {
+                    adminBtn.style.display = 'inline-flex';
+                }
+                
+                // Load notifications
+                await loadNotifications();
+                
+                location.reload();
+            } else {
+                verifyError.textContent = result.error;
+            }
+        });
+
+        // Add Year Logic
+        const addModal = document.getElementById('addModal');
+        const confirmAddModal = document.getElementById('confirmAddModal');
+        const addForm = document.getElementById('addForm');
+        const addVerifyForm = document.getElementById('addVerifyForm');
+        const addError = document.getElementById('addError');
+        const addVerifyError = document.getElementById('addVerifyError');
+        const addReceiptInput = document.getElementById('addReceipt');
+        const addReceiptPreview = document.getElementById('addReceiptPreview');
+        const addUploadText = document.getElementById('addUploadText');
+        const addSubmitBtn = document.getElementById('addSubmitBtn');
+        const addBackBtn = document.getElementById('addBackBtn');
+        const addYearBtn = document.getElementById('addYearBtn');
+        const cancelAddBtn = document.getElementById('cancelAddBtn');
+        const okAddBtn = document.getElementById('okAddBtn');
+
+        addYearBtn.addEventListener('click', () => {
+            confirmAddModal.style.display = 'flex';
+        });
+
+        cancelAddBtn.addEventListener('click', () => {
+            confirmAddModal.style.display = 'none';
+        });
+
+        okAddBtn.addEventListener('click', () => {
+            confirmAddModal.style.display = 'none';
+            addModal.style.display = 'flex';
+            addForm.style.display = 'block';
+            addVerifyForm.style.display = 'none';
+            document.getElementById('addName').value = localStorage.getItem('userName') || '';
+        });
+
+        addReceiptInput.addEventListener('change', () => {
+            const file = addReceiptInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    addReceiptPreview.src = e.target.result;
+                    addReceiptPreview.style.display = 'block';
+                    addUploadText.textContent = 'Change Payment Receipt';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                addReceiptPreview.style.display = 'none';
+                addUploadText.textContent = 'Upload Payment Receipt (50 ETB)';
+            }
+        });
+
+        addBackBtn.addEventListener('click', () => {
+            addForm.style.display = 'block';
+            addVerifyForm.style.display = 'none';
+            addVerifyError.textContent = '';
+        });
+
+        // Add year form submission - FIXED TELEGRAM INTEGRATION
+        addForm.addEventListener('submit', async e => {
+            e.preventDefault();
+            addSubmitBtn.classList.add('loading');
+            addSubmitBtn.disabled = true;
+            
+            const addName = document.getElementById('addName').value;
+            const newYear = document.getElementById('newYear').value;
+            const addReceipt = document.getElementById('addReceipt').files[0];
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+            if (!addName || !newYear || !addReceipt) {
+                addError.textContent = 'Please fill all required fields.';
+                addSubmitBtn.classList.remove('loading');
+                addSubmitBtn.disabled = false;
+                return;
+            }
+
+            if (addName !== currentUser.name) {
+                addError.textContent = 'Name does not match registered name.';
+                addSubmitBtn.classList.remove('loading');
+                addSubmitBtn.disabled = false;
+                return;
+            }
+
+            const result = await firebaseUserManager.addYearToUser(currentUser.id, newYear, currentUser);
+            
+            if (result.success) {
+                // Send to Telegram - FIXED
+                const caption = `➕ <b>Add Year Request</b>\n\n📚 Current Years: ${currentUser.registeredYears.join(', ')}\n🆕 New Year: ${newYear}\n👤 Name: ${addName}\n📱 Phone: ${currentUser.phone}\n🔑 Code: <code>${result.code}</code>\n\n<i>Please approve this year addition</i>`;
+                
+                // Send receipt to Telegram
+                const telegramResult = await firebaseUserManager.sendTelegramPhoto(addReceipt, caption);
+                
+                if (telegramResult.ok) {
+                    localStorage.setItem('pendingYearAddition', 'true');
+                    localStorage.setItem('addCodeTimestamp', new Date().getTime());
+                    addForm.style.display = 'none';
+                    addVerifyForm.style.display = 'block';
+                    addError.textContent = '';
+                } else {
+                    addError.textContent = 'Error sending to Telegram. Please try again.';
+                }
+            } else {
+                addError.textContent = 'Error adding year: ' + result.error;
+            }
+
+            addSubmitBtn.classList.remove('loading');
+            addSubmitBtn.disabled = false;
+        });
+
+        // Year addition verification
+        document.getElementById('addVerifyBtn').addEventListener('click', async () => {
+            const enteredCode = document.getElementById('addVerifyCode').value;
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+            const result = await firebaseUserManager.verifyYearAddition(currentUser.id, enteredCode);
+            
+            if (result.success) {
+                // Send year addition verification notification to Telegram - FIXED
+                const caption = `✅ <b>Year Added Successfully</b>\n\n👤 Name: ${result.user.name}\n📱 Phone: ${result.user.phone}\n📚 Year(s): ${result.user.registeredYears.join(', ')}\n\n<i>Year has been successfully added to user account</i>`;
+                await firebaseUserManager.sendTelegramMessage(caption);
+
+                // Update local storage
+                localStorage.setItem('currentUser', JSON.stringify(result.user));
+                localStorage.setItem('userYears', JSON.stringify(result.user.registeredYears));
+                localStorage.removeItem('pendingYearAddition');
+                localStorage.removeItem('addCodeTimestamp');
+                
+                addModal.style.display = 'none';
+                loadProfile();
+                renderQuizCards();
+            } else {
+                addVerifyError.textContent = result.error;
+            }
+        });
+
+        // Access Denied Modal
+        const accessDeniedModal = document.getElementById('accessDeniedModal');
+        const deniedMessage = document.getElementById('deniedMessage');
+        const closeDeniedBtn = document.getElementById('closeDeniedBtn');
+
+        function showAccessDeniedModal(userYears, requestedYear) {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {};
+            const hasActiveTrial = firebaseUserManager.hasActiveTrial(currentUser);
+            
+            if (hasActiveTrial) {
+                deniedMessage.textContent = `You have an active free trial! You can access all years during your trial period.`;
+            } else {
+                deniedMessage.textContent = `You are registered for ${userYears.join(', ')} only. If you really want this year, go to profile and add your year.`;
+            }
+            accessDeniedModal.style.display = 'flex';
+        }
+
+        closeDeniedBtn.addEventListener('click', () => {
+            accessDeniedModal.style.display = 'none';
+        });
+
+        // Profile Logic with trial status
+        function loadProfile() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (currentUser) {
+                document.getElementById('profileName').textContent = currentUser.name || 'N/A';
+                document.getElementById('profilePhone').textContent = currentUser.phone || 'N/A';
+                document.getElementById('profileEmail').textContent = currentUser.email || 'N/A';
+                document.getElementById('profileTelegram').textContent = currentUser.telegram || 'N/A';
+                document.getElementById('profileYears').textContent = currentUser.registeredYears.join(', ') || 'N/A';
+                
+                // Show trial status if applicable
+                const hasActiveTrial = firebaseUserManager.hasActiveTrial(currentUser);
+                const trialDaysRemaining = firebaseUserManager.getTrialDaysRemaining(currentUser);
+                
+                if (hasActiveTrial) {
+                    const trialInfo = document.createElement('div');
+                    trialInfo.className = 'info-item';
+                    trialInfo.innerHTML = `
+                        <span class="info-label">Trial Status:</span>
+                        <span class="info-value" style="color: var(--success);">
+                            <i class="fas fa-crown"></i> Active (${trialDaysRemaining} days remaining)
+                        </span>
+                    `;
+                    document.querySelector('.profile-info').appendChild(trialInfo);
+                } else if (currentUser.plan === 'trial') {
+                    const trialInfo = document.createElement('div');
+                    trialInfo.className = 'info-item';
+                    trialInfo.innerHTML = `
+                        <span class="info-label">Trial Status:</span>
+                        <span class="info-value" style="color: var(--error);">
+                            <i class="fas fa-clock"></i> Expired
+                        </span>
+                    `;
+                    document.querySelector('.profile-info').appendChild(trialInfo);
+                }
+            }
+            
+            const profilePicSrc = localStorage.getItem('profilePic');
+            const profilePic = document.getElementById('profilePic');
+            profilePic.src = profilePicSrc || 'https://via.placeholder.com/120?text=User';
+        }
+
+        const profilePicInput = document.getElementById('profilePicInput');
+        profilePicInput.addEventListener('change', () => {
+            const file = profilePicInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    localStorage.setItem('profilePic', e.target.result);
+                    document.getElementById('profilePic').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Comment Logic - FIXED TELEGRAM INTEGRATION
+        const sendCommentBtn = document.getElementById('sendCommentBtn');
+        const commentBox = document.getElementById('commentBox');
+        const commentError = document.getElementById('commentError');
+
+        sendCommentBtn.addEventListener('click', async () => {
+            const message = commentBox.value.trim();
+            if (!message) {
+                commentError.textContent = 'Please write a message.';
+                return;
+            }
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const name = currentUser?.name;
+            const phone = currentUser?.phone;
+            const telegram = currentUser?.telegram || 'N/A';
+            const caption = `💬 <b>User Comment</b>\n\n👤 Name: ${name}\n📱 Phone: ${phone}\n📲 Telegram: ${telegram}\n💭 Message: ${message}\n\n<i>User has sent a comment</i>`;
+
+            // Send comment to Telegram
+            const telegramResult = await firebaseUserManager.sendTelegramMessage(caption);
+
+            if (telegramResult.ok) {
+                commentBox.value = '';
+                commentError.textContent = '';
+                alert('Comment sent successfully!');
+            } else {
+                commentError.textContent = 'Error sending comment. Please try again.';
+            }
+        });
+
+        // Enhanced Logout logic - FIXED TELEGRAM INTEGRATION
+        const logoutHandler = async (e) => {
+            e.preventDefault();
+            const logoutCode = Math.floor(100000 + Math.random() * 900000).toString();
+            localStorage.setItem('logoutCode', logoutCode);
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const name = currentUser?.name;
+            const phone = currentUser?.phone;
+            const caption = `🚪 <b>Logout Request</b>\n\n👤 Name: ${name}\n📱 Phone: ${phone}\n🔑 Code: <code>${logoutCode}</code>\n\n<i>User has requested to logout</i>`;
+            
+            // Send logout request to Telegram
+            const telegramResult = await firebaseUserManager.sendTelegramMessage(caption);
+            
+            if (telegramResult.ok) {
+                logoutModal.style.display = 'flex';
+                regModal.style.display = 'none';
+                logoutError.textContent = '';
+            } else {
+                logoutError.textContent = 'Error sending logout code. Please try again.';
+            }
+        };
+        logout.addEventListener('click', logoutHandler);
+        document.getElementById('profileLogoutBtn').addEventListener('click', logoutHandler);
+
+        document.getElementById('confirmLogoutBtn').addEventListener('click', async () => {
+            const enteredCode = document.getElementById('logoutCode').value;
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const name = currentUser?.name;
+            const phone = currentUser?.phone;
+            if (enteredCode === localStorage.getItem('logoutCode')) {
+                // Send logout confirmation to Telegram - FIXED
+                const caption = `👋 <b>User Logged Out</b>\n\n👤 Name: ${name}\n📱 Phone: ${phone}\n\n<i>User has been successfully logged out</i>`;
+                await firebaseUserManager.sendTelegramMessage(caption);
+
+                // Remove verification code from Firebase
+                await firebaseUserManager.usersCollection.doc(currentUser.id).update({
+                    verificationCode: null,
+                    isOnline: false
+                });
+
+                localStorage.clear();
+                location.reload();
+            } else {
+                logoutError.textContent = 'Invalid logout code.';
+            }
+        });
+
+        // Initialize
+        init();
+        renderQuizCards();
     </script>
 </body>
 </html>
