@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>MediLearn Pro | Enhanced Platform</title>
+    <title>ALIF | MED</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -21,13 +21,10 @@
             --error: #ef4444;
             --warning: #eab308;
             --info: #0ea5e9;
-            --purple: #8b5cf6;
-            --pink: #ec4899;
             --shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
             --radius: 12px;
             --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             --gradient: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
-            --gradient-premium: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
         }
         body.light-mode {
             --background: #f3f4f6;
@@ -69,6 +66,9 @@
             -ms-text-size-adjust: 100%;
             touch-action: pan-x pan-y;
         }
+        html {
+            touch-action: none;
+        }
         .header {
             position: fixed;
             top: 0;
@@ -97,9 +97,18 @@
             text-decoration: none;
             cursor: pointer;
         }
+
+        .logo img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
         .logo i {
             font-size: 1.5rem;
         }
+
         .nav-actions {
             display: flex;
             gap: 0.5rem;
@@ -118,6 +127,7 @@
             gap: 0.5rem;
             font-weight: 500;
             text-decoration: none;
+            position: relative;
         }
         .action-btn:hover {
             background: var(--primary-light);
@@ -132,6 +142,22 @@
         .action-btn.primary:hover {
             background: var(--primary-dark);
             border-color: var(--primary-dark);
+        }
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--error);
+            color: white;
+            border-radius: 50%;
+            padding: 0.2rem 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            min-width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .main-content {
             max-width: 1400px;
@@ -305,7 +331,7 @@
             background: rgba(239, 68, 68, 0.1);
             color: var(--error);
         }
-        #registrationModal, #addModal, #confirmAddModal, #accessDeniedModal, #tempPasswordModal, #notificationModal {
+        #registrationModal, #addModal, #confirmAddModal, #accessDeniedModal, #tempPasswordModal, #notificationsModal {
             position: fixed;
             top: 0;
             left: 0;
@@ -672,185 +698,6 @@
         #backToMainBtn:hover {
             background: var(--primary-dark);
         }
-        .account-section {
-            margin: 1.5rem 0;
-            padding: 1rem;
-            background: rgba(59, 130, 246, 0.05);
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-        }
-        .account-title {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .account-title i {
-            color: var(--primary);
-        }
-        .account-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-        .account-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem;
-            background: var(--surface);
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-        }
-        .account-info {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
-        .account-name {
-            font-weight: 500;
-            color: var(--text-primary);
-            font-size: 0.9rem;
-        }
-        .account-number {
-            font-family: monospace;
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-        }
-        .copy-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: var(--radius);
-            padding: 0.5rem 0.75rem;
-            cursor: pointer;
-            transition: var(--transition);
-            font-size: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-        .copy-btn:hover {
-            background: var(--primary-dark);
-        }
-        .copy-btn.copied {
-            background: var(--success);
-        }
-        .payment-note {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin-top: 0.5rem;
-            text-align: center;
-        }
-        .temp-login-section {
-            margin: 1.5rem 0;
-            padding: 1rem;
-            background: rgba(139, 92, 246, 0.05);
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-        }
-        .temp-login-title {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .temp-login-title i {
-            color: var(--purple);
-        }
-        .temp-login-btn {
-            background: var(--gradient-premium);
-            color: white;
-            border: none;
-            border-radius: var(--radius);
-            padding: 0.75rem 1rem;
-            cursor: pointer;
-            transition: var(--transition);
-            font-weight: 600;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-        .temp-login-btn:hover {
-            background: var(--purple);
-        }
-        /* Notification Styles */
-        .notification-bell {
-            position: relative;
-        }
-        .notification-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: var(--error);
-            color: white;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            font-size: 0.7rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-        .notification-item {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        .notification-item:hover {
-            background: var(--background);
-        }
-        .notification-item.unread {
-            background: rgba(59, 130, 246, 0.1);
-        }
-        .notification-title {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .notification-message {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-        .notification-time {
-            font-size: 0.8rem;
-            color: var(--text-tertiary);
-            margin-top: 0.5rem;
-        }
-        .notification-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-        .notification-action-btn {
-            padding: 0.25rem 0.75rem;
-            border-radius: var(--radius);
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        .notification-mark-read {
-            background: var(--primary);
-            color: white;
-            border: none;
-        }
-        .notification-delete {
-            background: var(--error);
-            color: white;
-            border: none;
-        }
         @media (max-width: 768px) {
             .header-container {
                 padding: 0.75rem;
@@ -891,233 +738,489 @@
                 height: 100px;
             }
         }
+    .account-section {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: rgba(59, 130, 246, 0.05);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+}
+
+.account-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.account-title i {
+    color: var(--primary);
+}
+
+.account-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.account-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+}
+
+.account-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.account-name {
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.account-number {
+    font-family: monospace;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.copy-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.copy-btn:hover {
+    background: var(--primary-dark);
+}
+
+.copy-btn.copied {
+    background: var(--success);
+}
+
+.payment-note {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
+    text-align: center;
+}
+
+/* New Temporary Password Login Styles */
+.temp-login-section {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: rgba(139, 92, 246, 0.05);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+}
+
+.temp-login-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.temp-login-title i {
+    color: var(--purple);
+}
+
+.temp-login-btn {
+    background: var(--gradient-premium);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: var(--transition);
+    font-weight: 600;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.temp-login-btn:hover {
+    background: var(--purple);
+}
+
+:root {
+    --purple: #8b5cf6;
+    --gradient-premium: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+}
+
+/* Notification Modal Styles */
+.notifications-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-height: 60vh;
+    overflow-y: auto;
+    padding: 1rem 0;
+}
+
+.notification-item {
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem;
+    position: relative;
+    transition: var(--transition);
+    animation: fadeIn 0.3s ease-in;
+}
+
+.notification-item.unread {
+    border-left: 4px solid var(--primary);
+    background: rgba(96, 165, 250, 0.05);
+}
+
+.notification-item.info {
+    border-left-color: var(--info);
+}
+
+.notification-item.success {
+    border-left-color: var(--success);
+}
+
+.notification-item.warning {
+    border-left-color: var(--warning);
+}
+
+.notification-item.error {
+    border-left-color: var(--error);
+}
+
+.notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.notification-title {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.notification-time {
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+}
+
+.notification-content {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Trial Badge Styles */
+.user-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.badge-trial {
+    background: rgba(234, 179, 8, 0.1);
+    color: var(--warning);
+}
+
+.badge-premium {
+    background: rgba(139, 92, 246, 0.1);
+    color: var(--purple);
+}
+
+/* Emergency Contact Styles */
+.emergency-contact {
+    margin: 1rem 0;
+    padding: 1rem;
+    background: rgba(239,68,68,0.1);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+}
+
+.emergency-contact h3 {
+    color: var(--error);
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.emergency-contact p {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+}
     </style>
 </head>
 <body class="dark-mode">
     <!-- Registration Modal -->
-    <div id="registrationModal">
-        <div class="modal-content">
-            <h2><i class="fas fa-user-plus"></i> Register</h2>
-            <div id="priceInfo" class="price-info">Select Year to View Price</div>
-            
-            <!-- Account Numbers Section -->
-            <div class="account-section">
-                <h3 class="account-title"><i class="fas fa-university"></i> Payment Accounts</h3>
-                <div class="account-list">
-                    <div class="account-item">
-                        <div class="account-info">
-                            <span class="account-name">CBE</span>
-                            <span class="account-number">1000544233185</span>
-                        </div>
-                        <button class="copy-btn" onclick="copyToClipboard('1000544233185', this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                    <div class="account-item">
-                        <div class="account-info">
-                            <span class="account-name">Awash Bank</span>
-                            <span class="account-number">014251165418600</span>
-                        </div>
-                        <button class="copy-btn" onclick="copyToClipboard('014251165418600', this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                    <div class="account-item">
-                        <div class="account-info">
-                            <span class="account-name">Tele birr</span>
-                            <span class="account-number">0912496441</span>
-                        </div>
-                        <button class="copy-btn" onclick="copyToClipboard('0912496441', this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                </div>
-                <p class="payment-note">Please use your name as payment reference</p>
-            </div>
-
-            <!-- Temporary Password Login Section -->
-            <div class="temp-login-section">
-                <h3 class="temp-login-title"><i class="fas fa-key"></i> Admin Password Login</h3>
-                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">
-                    Already registered? Login with temporary password from admin
-                </p>
-                <button class="temp-login-btn" id="tempPasswordLoginBtn">
-                    <i class="fas fa-sign-in-alt"></i> Login with Admin Password
-                </button>
-            </div>
-            
-            <form id="regForm">
-                <div class="input-group">
-                    <i class="fas fa-graduation-cap"></i>
-                    <select id="year" required>
-                        <option value="" disabled selected>Select Year of Study</option>
-                        <option value="1">Pre Med - 100 ETB</option>
-                        <option value="2">Intro Med - 100 ETB</option>
-                        <option value="3">Meta - 100 ETB</option>
-                        <option value="4">Hema - 100 ETB</option>
-                        <option value="5">CVS - 100 ETB</option>
-                        <option value="6">RESPA - 100 ETB</option>
-                        <option value="7">Musclo - 100 ETB</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <i class="fas fa-user"></i>
-                    <input id="name" placeholder="Full Name" required>
-                </div>
-                <div class="input-group">
-                    <i class="fas fa-phone"></i>
-                    <input id="phone" type="tel" placeholder="Phone Number" required>
-                </div>
-                <div class="input-group">
-                    <i class="fas fa-envelope"></i>
-                    <input id="email" type="email" placeholder="Email (optional)">
-                </div>
-                <div class="input-group">
-                    <i class="fab fa-telegram-plane"></i>
-                    <input id="telegram" placeholder="Telegram Username (required for fast auth.)">
-                </div>
-                <div class="file-upload">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                    <span id="uploadText">Upload Payment Receipt</span>
-                    <input id="receipt" type="file" accept="image/*" required>
-                </div>
-                <img id="receiptPreview" class="receipt-preview" alt="Receipt Preview">
-                <button type="submit" id="submitBtn"><i class="fas fa-paper-plane"></i>Submit</button>
-                <div id="regError" class="error"></div>
-            </form>
-            
-            <p id="loginLink" style="cursor:pointer; color:var(--primary);">Already registered? Login here</p>
-            <div id="loginForm" style="display:none">
-                <div class="input-group">
-                    <i class="fas fa-phone"></i>
-                    <input id="loginPhone" type="tel" placeholder="Phone Number" required>
-                </div>
-                <button id="loginSubmitBtn"><i class="fas fa-sign-in-alt"></i> Request Verification Code</button>
-                <div id="loginError" class="error"></div>
-            </div>
-            <p id="registerLink" style="display:none; cursor:pointer; color:var(--primary);">New user? Register here</p>
-            <div id="verifyForm" style="display:none">
-                <h2><i class="fas fa-lock"></i> Enter Verification Code</h2>
-                <div class="input-group">
-                    <i class="fas fa-key"></i>
-                    <input id="verifyCode" placeholder="6-digit code" maxlength="6" required>
-                </div>
-                <button id="verifyBtn"><i class="fas fa-check-circle"></i> Verify</button>
-                <button class="back-btn" id="backBtn"><i class="fas fa-arrow-left"></i> Back to Registration</button>
-                <div id="verifyError" class="error"></div>
+<div id="registrationModal">
+    <div class="modal-content">
+        <h2><i class="fas fa-user-plus"></i> Register</h2>
+        <div id="priceInfo" class="price-info">Select Year to View Price</div>
+        
+        <!-- Emergency Contact Section -->
+        <div class="emergency-contact">
+            <h3><i class="fas fa-exclamation-triangle"></i> Connection Issues?</h3>
+            <p>If registration fails, contact us directly:</p>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center;">
+                <a href="https://t.me/your_admin_username" class="action-btn" style="font-size: 0.8rem;">
+                    <i class="fab fa-telegram-plane"></i> Telegram
+                </a>
+                <a href="tel:+251912345678" class="action-btn" style="font-size: 0.8rem;">
+                    <i class="fas fa-phone"></i> Call
+                </a>
             </div>
         </div>
-    </div>
+        
+        <!-- Account Numbers Section -->
+        <div class="account-section">
+            <h3 class="account-title"><i class="fas fa-university"></i> Payment Accounts</h3>
+            <div class="account-list">
+                <div class="account-item">
+                    <div class="account-info">
+                        <span class="account-name">CBE</span>
+                        <span class="account-number">1000544233185</span>
+                    </div>
+                    <button class="copy-btn" onclick="copyToClipboard('1000544233185', this)">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                </div>
+                <div class="account-item">
+                    <div class="account-info">
+                        <span class="account-name">Awash Bank</span>
+                        <span class="account-number">014251165418600</span>
+                    </div>
+                    <button class="copy-btn" onclick="copyToClipboard('014251165418600', this)">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                </div>
+                <div class="account-item">
+                    <div class="account-info">
+                        <span class="account-name">Tele birr</span>
+                        <span class="account-number">0912496441</span>
+                    </div>
+                    <button class="copy-btn" onclick="copyToClipboard('0912496441', this)">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                </div>
+            </div>
+            <p class="payment-note">Please use your name as payment reference</p>
+        </div>
 
-    <!-- Temporary Password Login Modal -->
-    <div id="tempPasswordModal" style="display: none;">
-        <div class="modal-content">
-            <h2><i class="fas fa-key"></i> Admin Password Login</h2>
-            <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">
-                Enter your phone number and temporary password provided by admin
+        <!-- Temporary Password Login Section -->
+        <div class="temp-login-section">
+            <h3 class="temp-login-title"><i class="fas fa-key"></i> Admin Password Login</h3>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                Already registered? Login with temporary password from admin
             </p>
-            
-            <form id="tempPasswordForm">
-                <div class="input-group">
-                    <i class="fas fa-phone"></i>
-                    <input id="tempPhone" type="tel" placeholder="Your registered phone number" required>
-                </div>
-                <div class="input-group">
-                    <i class="fas fa-lock"></i>
-                    <input id="tempPassword" type="text" placeholder="Temporary password from admin" required>
-                </div>
-                <button type="submit" id="tempLoginBtn">
-                    <i class="fas fa-sign-in-alt"></i> Login
-                </button>
-                <div id="tempLoginError" class="error"></div>
-            </form>
-            
-            <button class="back-btn" id="backToRegBtn">
-                <i class="fas fa-arrow-left"></i> Back to Registration
+            <button class="temp-login-btn" id="tempPasswordLoginBtn">
+                <i class="fas fa-sign-in-alt"></i> Login with Admin Password
             </button>
         </div>
-    </div>
-
-    <!-- Add Year Modal -->
-    <div id="addModal" style="display: none;">
-        <div class="modal-content">
-            <h2><i class="fas fa-plus"></i> Add program </h2>
-            <div class="price-info">Additional Charge: 50 ETB</div>
-            
-            <!-- Account Numbers Section -->
-            <div class="account-section">
-                <h3 class="account-title"><i class="fas fa-university"></i> Payment Accounts</h3>
-                <div class="account-list">
-                    <div class="account-item">
-                        <div class="account-info">
-                            <span class="account-name">CBE</span>
-                            <span class="account-number">1000544233185</span>
-                        </div>
-                        <button class="copy-btn" onclick="copyToClipboard('1000544233185', this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                    <div class="account-item">
-                        <div class="account-info">
-                            <span class="account-name">Awash Bank</span>
-                            <span class="account-number">014251165418600</span>
-                        </div>
-                        <button class="copy-btn" onclick="copyToClipboard('014251165418600', this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                    <div class="account-item">
-                        <div class="account-info">
-                            <span class="account-name">Tele Birr</span>
-                            <span class="account-number">0912496441</span>
-                        </div>
-                        <button class="copy-btn" onclick="copyToClipboard('0912496441', this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                </div>
-                <p class="payment-note">Please use your name as payment reference</p>
+        
+        <form id="regForm">
+            <div class="input-group">
+                <i class="fas fa-graduation-cap"></i>
+                <select id="year" required>
+                    <option value="" disabled selected>Select Year of Study</option>
+                    <option value="1">Pre Med - 100 ETB</option>
+                    <option value="2">Intro Med - 100 ETB</option>
+                    <option value="3">Meta - 100 ETB</option>
+                    <option value="4">Hema - 100 ETB</option>
+                    <option value="5">CVS - 100 ETB</option>
+                    <option value="6">RESPA - 100 ETB</option>
+                    <option value="7">Musclo - 100 ETB</option>
+                </select>
             </div>
-            
-            <form id="addForm">
-                <div class="input-group">
-                    <i class="fas fa-user"></i>
-                    <input id="addName" placeholder="Full Name (for verification)" required>
-                </div>
-                <div class="input-group">
-                    <i class="fas fa-graduation-cap"></i>
-                    <select id="newYear" required>
-                        <option value="" disabled selected>Select New Year</option>
-                        <option value="1">Pre Med - 100 ETB</option>
-                        <option value="2">Intro Med - 100 ETB</option>
-                        <option value="3">Meta - 100 ETB</option>
-                        <option value="4">Hema - 100 ETB</option>
-                        <option value="5">CVS - 100 ETB</option>
-                        <option value="6">RESPA - 100 ETB</option>
-                        <option value="7">Musclo - 100 ETB</option>
-                    </select>
-                </div>
-                <div class="file-upload">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                    <span id="addUploadText">Upload Payment Receipt (50 ETB)</span>
-                    <input id="addReceipt" type="file" accept="image/*" required>
-                </div>
-                <img id="addReceiptPreview" class="receipt-preview" alt="Receipt Preview">
-                <button type="submit" id="addSubmitBtn"><i class="fas fa-paper-plane"></i> Submit </button>
-                <div id="addError" class="error"></div>
-            </form>
-            <div id="addVerifyForm" style="display:none">
-                <h2><i class="fas fa-lock"></i> Enter Verification Code</h2>
-                <div class="input-group">
-                    <i class="fas fa-key"></i>
-                    <input id="addVerifyCode" placeholder="6-digit code" maxlength="6" required>
-                </div>
-                <button id="addVerifyBtn"><i class="fas fa-check-circle"></i> Verify</button>
-                <button class="back-btn" id="addBackBtn"><i class="fas fa-arrow-left"></i> Back to Addition</button>
-                <div id="addVerifyError" class="error"></div>
+            <div class="input-group">
+                <i class="fas fa-user"></i>
+                <input id="name" placeholder="Full Name" required>
             </div>
+            <div class="input-group">
+                <i class="fas fa-phone"></i>
+                <input id="phone" type="tel" placeholder="Phone Number" required>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-envelope"></i>
+                <input id="email" type="email" placeholder="Email (optional)">
+            </div>
+            <div class="input-group">
+                <i class="fab fa-telegram-plane"></i>
+                <input id="telegram" placeholder="Telegram Username (required for fast auth.)">
+            </div>
+            <div class="file-upload">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <span id="uploadText">Upload Payment Receipt</span>
+                <input id="receipt" type="file" accept="image/*" required>
+            </div>
+            <img id="receiptPreview" class="receipt-preview" alt="Receipt Preview">
+            <button type="submit" id="submitBtn"><i class="fas fa-paper-plane"></i>Submit</button>
+            <div id="regError" class="error"></div>
+        </form>
+        
+        <p id="loginLink" style="cursor:pointer; color:var(--primary);">Already registered? Login here</p>
+        <div id="loginForm" style="display:none">
+            <div class="input-group">
+                <i class="fas fa-phone"></i>
+                <input id="loginPhone" type="tel" placeholder="Phone Number" required>
+            </div>
+            <button id="loginSubmitBtn"><i class="fas fa-sign-in-alt"></i> Request Verification Code</button>
+            <div id="loginError" class="error"></div>
+        </div>
+        <p id="registerLink" style="display:none; cursor:pointer; color:var(--primary);">New user? Register here</p>
+        <div id="verifyForm" style="display:none">
+            <h2><i class="fas fa-lock"></i> Enter Verification Code</h2>
+            <div class="input-group">
+                <i class="fas fa-key"></i>
+                <input id="verifyCode" placeholder="6-digit code" maxlength="6" required>
+            </div>
+            <button id="verifyBtn"><i class="fas fa-check-circle"></i> Verify</button>
+            <button class="back-btn" id="backBtn"><i class="fas fa-arrow-left"></i> Back to Registration</button>
+            <div id="verifyError" class="error"></div>
         </div>
     </div>
+</div>
+
+<!-- Temporary Password Login Modal -->
+<div id="tempPasswordModal" style="display: none;">
+    <div class="modal-content">
+        <h2><i class="fas fa-key"></i> Admin Password Login</h2>
+        <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">
+            Enter your phone number and temporary password provided by admin
+        </p>
+        
+        <form id="tempPasswordForm">
+            <div class="input-group">
+                <i class="fas fa-phone"></i>
+                <input id="tempPhone" type="tel" placeholder="Your registered phone number" required>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input id="tempPassword" type="text" placeholder="Temporary password from admin" required>
+            </div>
+            <button type="submit" id="tempLoginBtn">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+            <div id="tempLoginError" class="error"></div>
+        </form>
+        
+        <button class="back-btn" id="backToRegBtn">
+            <i class="fas fa-arrow-left"></i> Back to Registration
+        </button>
+    </div>
+</div>
+
+<!-- Add Year Modal -->
+<div id="addModal" style="display: none;">
+    <div class="modal-content">
+        <h2><i class="fas fa-plus"></i> Add program </h2>
+        <div class="price-info">Additional Charge: 50 ETB</div>
+        
+        <!-- Account Numbers Section -->
+        <div class="account-section">
+            <h3 class="account-title"><i class="fas fa-university"></i> Payment Accounts</h3>
+            <div class="account-list">
+                <div class="account-item">
+                    <div class="account-info">
+                        <span class="account-name">CBE</span>
+                        <span class="account-number">1000544233185</span>
+                    </div>
+                    <button class="copy-btn" onclick="copyToClipboard('1000544233185', this)">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                </div>
+                <div class="account-item">
+                    <div class="account-info">
+                        <span class="account-name">Awash Bank</span>
+                        <span class="account-number">014251165418600</span>
+                    </div>
+                    <button class="copy-btn" onclick="copyToClipboard('014251165418600', this)">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                </div>
+                <div class="account-item">
+                    <div class="account-info">
+                        <span class="account-name">Tele Birr</span>
+                        <span class="account-number">0912496441</span>
+                    </div>
+                    <button class="copy-btn" onclick="copyToClipboard('0912496441', this)">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                </div>
+            </div>
+            <p class="payment-note">Please use your name as payment reference</p>
+        </div>
+        
+        <form id="addForm">
+            <div class="input-group">
+                <i class="fas fa-user"></i>
+                <input id="addName" placeholder="Full Name (for verification)" required>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-graduation-cap"></i>
+                <select id="newYear" required>
+                    <option value="" disabled selected>Select New Year</option>
+                    <option value="1">Pre Med - 100 ETB</option>
+                    <option value="2">Intro Med - 100 ETB</option>
+                    <option value="3">Meta - 100 ETB</option>
+                    <option value="4">Hema - 100 ETB</option>
+                    <option value="5">CVS - 100 ETB</option>
+                    <option value="6">RESPA - 100 ETB</option>
+                    <option value="7">Musclo - 100 ETB</option>
+                </select>
+            </div>
+            <div class="file-upload">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <span id="addUploadText">Upload Payment Receipt (50 ETB)</span>
+                <input id="addReceipt" type="file" accept="image/*" required>
+            </div>
+            <img id="addReceiptPreview" class="receipt-preview" alt="Receipt Preview">
+            <button type="submit" id="addSubmitBtn"><i class="fas fa-paper-plane"></i> Submit </button>
+            <div id="addError" class="error"></div>
+        </form>
+        <div id="addVerifyForm" style="display:none">
+            <h2><i class="fas fa-lock"></i> Enter Verification Code</h2>
+            <div class="input-group">
+                <i class="fas fa-key"></i>
+                <input id="addVerifyCode" placeholder="6-digit code" maxlength="6" required>
+            </div>
+            <button id="addVerifyBtn"><i class="fas fa-check-circle"></i> Verify</button>
+            <button class="back-btn" id="addBackBtn"><i class="fas fa-arrow-left"></i> Back to Addition</button>
+            <div id="addVerifyError" class="error"></div>
+        </div>
+    </div>
+</div>
 
     <!-- Confirm Add Modal -->
     <div id="confirmAddModal" style="display: none;">
@@ -1130,7 +1233,6 @@
             </div>
         </div>
     </div>
-    
     <!-- Access Denied Modal -->
     <div id="accessDeniedModal" style="display: none;">
         <div class="modal-content">
@@ -1139,7 +1241,6 @@
             <button class="ok-btn" id="closeDeniedBtn">OK</button>
         </div>
     </div>
-    
     <!-- Logout Modal -->
     <div id="logoutModal" style="display: none;">
         <div class="modal-content">
@@ -1153,14 +1254,14 @@
         </div>
     </div>
 
-    <!-- Notification Modal -->
-    <div id="notificationModal" style="display: none;">
-        <div class="modal-content" style="max-width: 500px;">
+    <!-- Notifications Modal -->
+    <div id="notificationsModal" style="display: none;">
+        <div class="modal-content">
             <h2><i class="fas fa-bell"></i> Notifications</h2>
-            <div id="notificationsList" style="max-height: 400px; overflow-y: auto;">
+            <div class="notifications-list" id="notificationsList">
                 <!-- Notifications will be populated here -->
             </div>
-            <button class="ok-btn" id="closeNotificationBtn" style="margin-top: 1rem;">Close</button>
+            <button class="ok-btn" id="closeNotificationsBtn">Close</button>
         </div>
     </div>
 
@@ -1175,9 +1276,9 @@
                 <button class="action-btn" id="themeToggle">
                     <i class="fas fa-sun"></i>
                 </button>
-                <button class="action-btn notification-bell" id="notificationBtn">
+                <button class="action-btn" id="notificationsBtn">
                     <i class="fas fa-bell"></i>
-                    <span class="notification-badge" id="notificationCount" style="display: none;">0</span>
+                    <span class="notification-badge" id="unreadCount" style="display: none;">0</span>
                 </button>
                 <button id="profileBtn" class="action-btn primary">
                     <i class="fas fa-user"></i> Profile
@@ -1191,7 +1292,6 @@
             </div>
         </div>
     </header>
-    
     <!-- Quizzes Content -->
     <main id="mainContent" class="main-content">
         <div class="page-header">
@@ -1201,16 +1301,16 @@
         <div class="year-filter">
             <div class="year-filter-container">
                 <button class="year-btn active" data-year="all">All</button>
-                <button class="year-btn" data-year="1"><i class="fas fa-book-medical"></i> PRE-MED</button>
-                <button class="year-btn" data-year="2"><i class="fas fa-book-medical"></i> INTRODUCTION-MED</button>
-                <button class="year-btn" data-year="3"><i class="fas fa-book-medical"></i> METABOLISM</button>
-                <button class="year-btn" data-year="4"><i class="fas fa-book-medical"></i> HEMATOLOGY</button>
-                <button class="year-btn" data-year="5"><i class="fas fa-book-medical"></i> CVS</button>
-                <button class="year-btn" data-year="6"><i class="fas fa-book-medical"></i> RESPIRATORY</button>
-                <button class="year-btn" data-year="7"><i class="fas fa-book-medical"></i> MUSCULOSKELETAL</button>
+                <button class="year-btn" data-year="1"><i class="fas fa-book-medical"></i> PRE-MED</h2></button>
+                <button class="year-btn" data-year="2"><i class="fas fa-book-medical"></i> INTRODUCTION-MED</h2></button>
+                <button class="year-btn" data-year="3"><i class="fas fa-book-medical"></i> METABOLISM</h2></button>
+                <button class="year-btn" data-year="4"><i class="fas fa-book-medical"></i> HEMATOLOGY</h2></button>
+                <button class="year-btn" data-year="5"><i class="fas fa-book-medical"></i> CVS</h2></button>
+                <button class="year-btn" data-year="6"><i class="fas fa-book-medical"></i> RESPIRATORY</h2></button>
+                <button class="year-btn" data-year="7"><i class="fas fa-book-medical"></i> MUSCULOSKELETAL</h2></button>
             </div>
         </div>
-        <section class="year-section" data-year="1">
+                <section class="year-section" data-year="1">
             <h2 class="year-title"><i class="fas fa-book-medical"></i> PRE-MED</h2>
             <div class="cards-container"></div>
         </section>
@@ -1239,7 +1339,6 @@
             <div class="cards-container"></div>
         </section>
     </main>
-    
     <!-- Profile Content -->
     <main id="profileContent" class="main-content" style="display: none;">
         <div class="profile-card">
@@ -1271,6 +1370,7 @@
                     <span class="info-value" id="profileYears"></span>
                     <span id="addYearBtn" class="add-year-btn"><i class="fas fa-plus"></i> Add</span>
                 </div>
+                
             </div>
             <div class="contact-section">
                 <h3 class="contact-title">Contact Us</h3>
@@ -1291,1450 +1391,1664 @@
     </main>
 
     <script>
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyC4DSMVg4c98kQf5sSF8ueD631QgO4SXn0",
-            authDomain: "medical-quiz-40228.firebaseapp.com",
-            projectId: "medical-quiz-40228",
-            storageBucket: "medical-quiz-40228.firebasestorage.app",
-            messagingSenderId: "483043078873",
-            appId: "1:483043078873:web:4029dd83e53557f08b04c8"
-        };
+// Detect offline status and redirect to offline page
+window.addEventListener('offline', () => {
+    if (!window.location.pathname.includes('offline')) {
+        window.location.href = '/offline.html';
+    }
+});
 
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+window.addEventListener('load', () => {
+    if (!navigator.onLine && !window.location.pathname.includes('offline')) {
+        window.location.href = '/offline.html';
+    }
+});
 
-        // Enhanced Firebase User Manager with Telegram Integration
-        class FirebaseUserManager {
-            constructor() {
-                this.usersCollection = db.collection('users');
-                this.notificationsCollection = db.collection('notifications');
-                this.telegramBotToken = '8237566699:AAHICwsiqIrs-4_vUdrsORPlD8-WFSFYB2Y';
-                this.adminChatId = '7897840965';
-            }
+// set token & timestamp when visiting homepage
+sessionStorage.setItem('enteredFromHome_v2', 'yes');
+sessionStorage.setItem('enteredFromHome_time_v2', Math.floor(Date.now()/1000));
 
-            // Enhanced Telegram API call with error handling
-            async sendTelegramMessage(text, options = {}) {
-                try {
-                    const url = `https://api.telegram.org/bot${this.telegramBotToken}/sendMessage`;
-                    const payload = {
-                        chat_id: this.adminChatId,
-                        text: text,
-                        parse_mode: 'HTML',
-                        ...options
-                    };
-                    
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(payload)
-                    });
-                    
-                    const data = await response.json();
-                    
-                    if (!data.ok) {
-                        console.error('Telegram API Error:', data);
-                        throw new Error(data.description || 'Telegram API error');
-                    }
-                    
-                    return data;
-                } catch (error) {
-                    console.error('Failed to send Telegram message:', error);
-                    // Don't throw error to prevent blocking user flow
-                    return { ok: false, error: error.message };
-                }
-            }
+// Telegram Web App Integration
+const tg = window.Telegram?.WebApp;
 
-            // Enhanced Telegram photo upload with error handling
-            async sendTelegramPhoto(photoFile, caption = '') {
-                try {
-                    const formData = new FormData();
-                    formData.append('chat_id', this.adminChatId);
-                    formData.append('photo', photoFile);
-                    formData.append('caption', caption);
-                    formData.append('parse_mode', 'HTML');
-                    
-                    const response = await fetch(`https://api.telegram.org/bot${this.telegramBotToken}/sendPhoto`, {
-                        method: 'POST',
-                        body: formData
-                    });
-                    
-                    const data = await response.json();
-                    
-                    if (!data.ok) {
-                        console.error('Telegram Photo Upload Error:', data);
-                        throw new Error(data.description || 'Telegram photo upload failed');
-                    }
-                    
-                    return data;
-                } catch (error) {
-                    console.error('Failed to send Telegram photo:', error);
-                    // Don't throw error to prevent blocking user flow
-                    return { ok: false, error: error.message };
-                }
-            }
+if (tg) {
+    tg.ready();
+    tg.BackButton.show();
 
-            async checkPhoneExists(phone) {
-                const snapshot = await this.usersCollection.where('phone', '==', phone).get();
-                return !snapshot.empty;
-            }
+    tg.BackButton.onClick(() => {
+        console.log("Telegram back button pressed");
+        handleBackAction();
+    });
+}
 
-            isCodeExpired(timestamp) {
-                const now = new Date().getTime();
-                const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
-                return now - timestamp > twoDaysInMs;
-            }
+window.addEventListener('popstate', () => {
+    console.log("Browser back button pressed");
+    handleBackAction();
+});
 
-            // Enhanced temporary password login method
-            async loginWithTemporaryPassword(phone, password) {
-                try {
-                    const snapshot = await this.usersCollection.where('phone', '==', phone).get();
-                    if (snapshot.empty) {
-                        return { success: false, error: 'Phone number not found. Please register first.' };
-                    }
+function handleBackAction() {
+    if (document.referrer && window.history.length > 1) {
+        window.history.back();
+    } else {
+        window.location.href = '/';
+    }
+}
 
-                    const doc = snapshot.docs[0];
-                    const user = doc.data();
-                    
-                    if (!user.verificationCode) {
-                        return { success: false, error: 'No temporary password set. Please use regular login.' };
-                    }
+history.pushState(null, '', location.href);
 
-                    if (user.verificationCode !== password) {
-                        return { success: false, error: 'Invalid temporary password.' };
-                    }
+// Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyC4DSMVg4c98kQf5sSF8ueD631QgO4SXn0",
+    authDomain: "medical-quiz-40228.firebaseapp.com",
+    projectId: "medical-quiz-40228",
+    storageBucket: "medical-quiz-40228.firebasestorage.app",
+    messagingSenderId: "483043078873",
+    appId: "1:483043078873:web:4029dd83e53557f08b04c8"
+};
 
-                    // Check time-based expiration
-                    if (user.passwordExpiration && user.passwordExpiration < Date.now()) {
-                        return { success: false, error: 'Temporary password has expired (time limit).' };
-                    }
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-                    // Check usage-based expiration
-                    if (user.tempPasswordUsesAllowed) {
-                        const usesCount = user.tempPasswordUsesCount || 0;
-                        if (usesCount >= user.tempPasswordUsesAllowed) {
-                            return { success: false, error: 'Temporary password usage limit reached.' };
-                        }
-                    }
+// Security measures
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('keydown', e => {
+    if (e.keyCode === 123 ||
+        (e.ctrlKey && e.shiftKey && e.keyCode === 73) ||
+        (e.ctrlKey && e.shiftKey && e.keyCode === 74) ||
+        (e.ctrlKey && e.keyCode === 85) ||
+        (e.ctrlKey && e.keyCode === 83)) {
+        e.preventDefault();
+    }
+});
+document.addEventListener('visibilitychange', () => {
+    document.body.style.filter = document.visibilityState === 'hidden' ? 'blur(10px)' : 'none';
+});
+document.addEventListener('touchstart', e => {
+    if (e.touches.length > 1) e.preventDefault();
+}, { passive: false });
+document.addEventListener('gesturestart', e => e.preventDefault());
 
-                    // Check if user has active trial
-                    if (user.plan === 'trial' && user.trialStart && user.trialDuration) {
-                        const trialEnd = user.trialStart + (user.trialDuration * 24 * 60 * 60 * 1000);
-                        if (Date.now() > trialEnd) {
-                            return { success: false, error: 'Your free trial has expired. Please contact admin.' };
-                        }
-                    }
+// Enhanced Telegram API Handler with Fallbacks
+class TelegramAPI {
+    constructor() {
+        this.botToken = '8237566699:AAHICwsiqIrs-4_vUdrsORPlD8-WFSFYB2Y';
+        this.chatId = '7897840965';
+        this.backupChatId = '7897840965';
+    }
 
-                    // Increment usage count if applicable
-                    const updateData = {
-                        status: 'verified',
-                        lastLogin: new Date().getTime(),
-                        lastActive: new Date().getTime(),
-                        isOnline: true
-                    };
-
-                    if (user.tempPasswordUsesAllowed) {
-                        updateData.tempPasswordUsesCount = (user.tempPasswordUsesCount || 0) + 1;
-                    }
-
-                    await this.usersCollection.doc(doc.id).update(updateData);
-
-                    user.id = doc.id;
-                    user.status = 'verified';
-                    user.lastLogin = new Date().getTime();
-                    user.lastActive = new Date().getTime();
-                    if (user.tempPasswordUsesAllowed) {
-                        user.tempPasswordUsesCount = (user.tempPasswordUsesCount || 0) + 1;
-                    }
-
-                    return { success: true, user };
-                } catch (error) {
-                    console.error('Error logging in with temporary password:', error);
-                    return { success: false, error: 'Login failed. Please try again.' };
-                }
-            }
-
-            async createUser(userData) {
-                try {
-                    if (await this.checkPhoneExists(userData.phone)) {
-                        return { success: false, error: 'Phone already registered. Please login.' };
-                    }
-                    const code = Math.floor(100000 + Math.random() * 900000).toString();
-                    const userRecord = {
-                        ...userData,
-                        verificationCode: code,
-                        codeTimestamp: new Date().getTime(),
-                        registeredYears: [userData.year],
-                        createdAt: new Date().getTime(),
-                        lastLogin: null,
-                        lastActive: new Date().getTime(),
-                        isOnline: true,
-                        status: 'pending',
-                        role: 'user',
-                        plan: 'basic'
-                    };
-
-                    const docRef = await this.usersCollection.add(userRecord);
-                    return { success: true, userId: docRef.id, code };
-                } catch (error) {
-                    console.error('Error creating user:', error);
-                    return { success: false, error: error.message };
-                }
-            }
-
-            async login(phone) {
-                try {
-                    const snapshot = await this.usersCollection.where('phone', '==', phone).get();
-                    if (snapshot.empty) {
-                        return { success: false, error: 'Phone not registered. Please register.' };
-                    }
-                    const doc = snapshot.docs[0];
-                    const user = doc.data();
-                    
-                    // Check if user has active temporary password
-                    if (user.verificationCode) {
-                        // Check if temporary password is still valid
-                        if (user.passwordExpiration && user.passwordExpiration > Date.now()) {
-                            if (user.tempPasswordUsesAllowed) {
-                                const usesCount = user.tempPasswordUsesCount || 0;
-                                if (usesCount < user.tempPasswordUsesAllowed) {
-                                    return { 
-                                        success: false, 
-                                        error: 'You have an active temporary password. Please use it to login or contact admin.' 
-                                    };
-                                }
-                            } else {
-                                return { 
-                                    success: false, 
-                                    error: 'You have an active temporary password. Please use it to login or contact admin.' 
-                                };
-                            }
-                        }
-                    }
-                    
-                    if (user.verificationCode && !this.isCodeExpired(user.codeTimestamp)) {
-                        return { success: false, error: 'Account is currently active. Please logout first or contact admin.' };
-                    }
-                    
-                    const code = Math.floor(100000 + Math.random() * 900000).toString();
-                    await this.usersCollection.doc(doc.id).update({
-                        verificationCode: code,
-                        codeTimestamp: new Date().getTime(),
-                        status: 'pending'
-                    });
-                    return { success: true, code, userId: doc.id };
-                } catch (error) {
-                    console.error('Error logging in:', error);
-                    return { success: false, error: error.message };
-                }
-            }
-
-            async verifyUser(phone, code) {
-                try {
-                    const snapshot = await this.usersCollection.where('phone', '==', phone).get();
-                    if (snapshot.empty) {
-                        return { success: false, error: 'User not found' };
-                    }
-
-                    let user = null;
-                    let userDocId = null;
-                    
-                    snapshot.forEach(doc => {
-                        user = doc.data();
-                        userDocId = doc.id;
-                    });
-
-                    if (user.verificationCode !== code) {
-                        return { success: false, error: 'Invalid verification code' };
-                    }
-
-                    const codeTimestamp = user.codeTimestamp;
-                    const now = new Date().getTime();
-                    const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
-                    
-                    if (now - codeTimestamp > twoDaysInMs) {
-                        return { success: false, error: 'Verification code has expired' };
-                    }
-
-                    // Check if user has active trial
-                    if (user.plan === 'trial' && user.trialStart && user.trialDuration) {
-                        const trialEnd = user.trialStart + (user.trialDuration * 24 * 60 * 60 * 1000);
-                        if (Date.now() > trialEnd) {
-                            return { success: false, error: 'Your free trial has expired. Please contact admin.' };
-                        }
-                    }
-
-                    // Update with online tracking
-                    await this.usersCollection.doc(userDocId).update({
-                        status: 'verified',
-                        verifiedAt: new Date().getTime(),
-                        lastLogin: new Date().getTime(),
-                        lastActive: new Date().getTime(),
-                        isOnline: true
-                    });
-
-                    user.id = userDocId;
-                    user.status = 'verified';
-                    user.lastLogin = new Date().getTime();
-                    user.lastActive = new Date().getTime();
-
-                    return { success: true, user };
-                } catch (error) {
-                    console.error('Error verifying user:', error);
-                    return { success: false, error: 'Verification failed' };
-                }
-            }
-
-            async addYearToUser(userId, newYear, userData) {
-                try {
-                    const userDoc = await this.usersCollection.doc(userId).get();
-                    if (!userDoc.exists) {
-                        return { success: false, error: 'User not found' };
-                    }
-
-                    const user = userDoc.data();
-                    const currentYears = user.registeredYears || [];
-
-                    if (currentYears.includes(newYear)) {
-                        return { success: false, error: 'Year already registered' };
-                    }
-
-                    const code = Math.floor(100000 + Math.random() * 900000).toString();
-                    
-                    await this.usersCollection.doc(userId).update({
-                        registeredYears: [...currentYears, newYear],
-                        verificationCode: code,
-                        codeTimestamp: new Date().getTime(),
-                        status: 'pending_addition'
-                    });
-
-                    return { success: true, code };
-                } catch (error) {
-                    console.error('Error adding year to user:', error);
-                    return { success: false, error: error.message };
-                }
-            }
-
-            async verifyYearAddition(userId, code) {
-                try {
-                    const userDoc = await this.usersCollection.doc(userId).get();
-                    if (!userDoc.exists) {
-                        return { success: false, error: 'User not found' };
-                    }
-
-                    const user = userDoc.data();
-
-                    if (user.verificationCode !== code) {
-                        return { success: false, error: 'Invalid verification code' };
-                    }
-
-                    const codeTimestamp = user.codeTimestamp;
-                    const now = new Date().getTime();
-                    const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
-                    
-                    if (now - codeTimestamp > twoDaysInMs) {
-                        return { success: false, error: 'Verification code has expired' };
-                    }
-
-                    await this.usersCollection.doc(userId).update({
-                        status: 'verified',
-                        lastLogin: new Date().getTime(),
-                        lastActive: new Date().getTime()
-                    });
-
-                    return { success: true, user: { id: userId, ...user, status: 'verified', lastLogin: new Date().getTime() } };
-                } catch (error) {
-                    console.error('Error verifying year addition:', error);
-                    return { success: false, error: 'Verification failed' };
-                }
-            }
-
-            async getUserByPhone(phone) {
-                try {
-                    const snapshot = await this.usersCollection.where('phone', '==', phone).get();
-                    if (snapshot.empty) return null;
-                    
-                    let user = null;
-                    snapshot.forEach(doc => {
-                        user = { id: doc.id, ...doc.data() };
-                    });
-                    return user;
-                } catch (error) {
-                    console.error('Error getting user:', error);
-                    return null;
-                }
-            }
-
-            // Check if user has active trial
-            hasActiveTrial(user) {
-                if (!user || user.plan !== 'trial' || !user.trialStart || !user.trialDuration) {
-                    return false;
-                }
-                
-                const trialEnd = user.trialStart + (user.trialDuration * 24 * 60 * 60 * 1000);
-                return Date.now() < trialEnd;
-            }
-
-            // Get trial days remaining
-            getTrialDaysRemaining(user) {
-                if (!this.hasActiveTrial(user)) {
-                    return 0;
-                }
-                
-                const trialEnd = user.trialStart + (user.trialDuration * 24 * 60 * 60 * 1000);
-                const daysRemaining = Math.ceil((trialEnd - Date.now()) / (24 * 60 * 60 * 1000));
-                return Math.max(0, daysRemaining);
-            }
-
-            // Notification System
-            async getUserNotifications(userId) {
-                try {
-                    const snapshot = await this.notificationsCollection
-                        .where('userId', '==', userId)
-                        .orderBy('timestamp', 'desc')
-                        .limit(20)
-                        .get();
-                    
-                    return snapshot.docs.map(doc => ({
-                        id: doc.id,
-                        ...doc.data()
-                    }));
-                } catch (error) {
-                    console.error('Error getting notifications:', error);
-                    return [];
-                }
-            }
-
-            async markNotificationAsRead(notificationId) {
-                try {
-                    await this.notificationsCollection.doc(notificationId).update({
-                        read: true,
-                        readAt: new Date().getTime()
-                    });
-                    return true;
-                } catch (error) {
-                    console.error('Error marking notification as read:', error);
-                    return false;
-                }
-            }
-
-            async deleteNotification(notificationId) {
-                try {
-                    await this.notificationsCollection.doc(notificationId).delete();
-                    return true;
-                } catch (error) {
-                    console.error('Error deleting notification:', error);
-                    return false;
-                }
-            }
-
-            async createNotification(userId, title, message, type = 'info') {
-                try {
-                    await this.notificationsCollection.add({
-                        userId,
-                        title,
-                        message,
-                        type,
-                        read: false,
-                        timestamp: new Date().getTime()
-                    });
-                    return true;
-                } catch (error) {
-                    console.error('Error creating notification:', error);
-                    return false;
-                }
-            }
-
-            async getUnreadNotificationCount(userId) {
-                try {
-                    const snapshot = await this.notificationsCollection
-                        .where('userId', '==', userId)
-                        .where('read', '==', false)
-                        .get();
-                    
-                    return snapshot.size;
-                } catch (error) {
-                    console.error('Error getting unread count:', error);
-                    return 0;
-                }
-            }
+    async sendMessage(message, isPhoto = false, photoFile = null) {
+        let url, formData;
+        
+        if (isPhoto && photoFile) {
+            url = `https://api.telegram.org/bot${this.botToken}/sendPhoto`;
+            formData = new FormData();
+            formData.append('chat_id', this.chatId);
+            formData.append('photo', photoFile);
+            formData.append('caption', message);
+            formData.append('parse_mode', 'Markdown');
+        } else {
+            url = `https://api.telegram.org/bot${this.botToken}/sendMessage`;
+            formData = new FormData();
+            formData.append('chat_id', this.chatId);
+            formData.append('text', message);
+            formData.append('parse_mode', 'Markdown');
         }
 
-        const firebaseUserManager = new FirebaseUserManager();
-
-        // Quiz data
-        const quizData = {
-            1: [
-                { id: 6, title: "Organic Chemistry", icon: "fas fa-brain", questions: 30, time: 25, difficulty: "intermediate", rating: 4.6, page: "year2/human-anatomy.html" },
-                { id: 7, title: "ENTREPRENUERSHIP", icon: "fas fa-heartbeat", questions: 25, time: 20, difficulty: "intermediate", rating: 4.5, page: "year2/physiology-i.html" },
-                { id: 8, title: "ECONOMICS", icon: "fas fa-microscope", questions: 20, time: 15, difficulty: "intermediate", rating: 4.3, page: "year2/histology.html" },
-                { id: 9, title: "CIVIC", icon: "fas fa-flask", questions: 28, time: 22, difficulty: "intermediate", rating: 4.4, page: "year2/biochemistry-ii.html" }
-            ],
-            2: [
-                { id: 4, title: "Pathology", icon: "fas fa-flask", questions: 400, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/pt.html" },
-                { id: 5, title: "Pharmacology", icon: "fas fa-heartbeat", questions: 400, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/pc.html" },
-                { id: 6, title: "PCD", icon: "fas fa-heartbeat", questions: 150, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/pcd.html" },
-                { id: 7, title: "PARASITOLOGY", icon: "fas fa-heartbeat", questions: 180, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/pr.html" },
-                { id: 8, title: "immunology", icon: "fas fa-heartbeat", questions: 235, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/im.html" },
-                { id: 9, title: "Microbiology", icon: "fas fa-heartbeat", questions: 320, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/micro.html" },
-                { id: 1, title: "Anatomy", icon: "fas fa-brain", questions: 700, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/an.html" },
-                { id: 2, title: "Physiology", icon: "fas fa-microscope", questions: 600, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/ps.html" },
-                { id: 3, title: "Biochemistry", icon: "fas fa-book", questions: 800, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/bc.html" }
-            ],  
-            3: [
-                { id: 10, title: "Anatomy", icon: "fas fa-virus", questions: 35, time: 30, difficulty: "intermediate", page: "year3/pathology.html", rating: 4.7 },
-                { id: 11, title: "Physiology", icon: "fas fa-pills", questions: 30, time: 25, difficulty: "intermediate", rating: 4.6, page: "year3/pharmacology-i.html" },
-                { id: 12, title: "Pharma", icon: "fas fa-bacteria", questions: 25, time: 20, difficulty: "intermediate", rating: 4.5, page: "year3/microbiology.html" },
-                { id: 13, title: "Pathology", icon: "fas fa-shield-virus", questions: 28, time: 22, difficulty: "intermediate", rating: 4.4, page: "year3/immunology.html" }
-            ],
-            4: [
-                { id: 14, title: "Anatomy", icon: "fas fa-stethoscope", questions: 40, time: 35, difficulty: "advanced", rating: 4.8, page: "year4/clinical-medicine-i.html" },
-                { id: 15, title: "Physiology", icon: "fas fa-syringe", questions: 35, time: 30, difficulty: "advanced", rating: 4.7, page: "year4/surgery-basics.html" },
-                { id: 16, title: "Pharmacology", icon: "fas fa-pills", questions: 38, time: 32, difficulty: "advanced", rating: 4.6, page: "year4/pharmacology-ii.html" },
-                { id: 17, title: "Pathology", icon: "fas fa-virus", questions: 42, time: 35, difficulty: "advanced", rating: 4.7, page: "year4/pathology-ii.html" }
-            ],
-            5: [
-                { id: 18, title: "Anatomy", icon: "fas fa-stethoscope", questions: 45, time: 40, difficulty: "advanced", rating: 4.8, page: "year5/internal-medicine.html" },
-                { id: 19, title: "Physiology", icon: "fas fa-syringe", questions: 40, time: 35, difficulty: "advanced", rating: 4.7, page: "year5/surgery.html" },
-                { id: 20, title: "Pharma", icon: "fas fa-baby", questions: 38, time: 32, difficulty: "advanced", rating: 4.6, page: "year5/pediatrics.html" },
-                { id: 21, title: "Pathology", icon: "fas fa-female", questions: 42, time: 35, difficulty: "advanced", rating: 4.7, page: "year5/obstetrics-gynecology.html" }
-            ],
-            6: [
-                { id: 22, title: "Anatomy", icon: "fas fa-hospital-user", questions: 50, time: 45, difficulty: "advanced", rating: 4.9, page: "year6/clinical-rotations-i.html" },
-                { id: 23, title: "Physiology", icon: "fas fa-ambulance", questions: 45, time: 40, difficulty: "advanced", rating: 4.8, page: "year6/emergency-medicine.html" },
-                { id: 24, title: "Pharma", icon: "fas fa-brain", questions: 40, time: 35, difficulty: "advanced", rating: 4.7, page: "year6/psychiatry.html" },
-                { id: 25, title: "Patho", icon: "fas fa-x-ray", questions: 38, time: 32, difficulty: "advanced", rating: 4.6, page: "year6/radiology.html" }
-            ],
-            7: [
-                { id: 26, title: "Anatomy", icon: "fas fa-hospital-user", questions: 55, time: 50, difficulty: "advanced", rating: 4.9, page: "year7/clinical-rotations-ii.html" },
-                { id: 27, title: "Physiology", icon: "fas fa-stethoscope", questions: 50, time: 45, difficulty: "advanced", rating: 4.8, page: "year7/specialty-medicine.html" },
-                { id: 28, title: "Pharma", icon: "fas fa-balance-scale", questions: 35, time: 30, difficulty: "advanced", rating: 4.7, page: "year7/medical-ethics.html" },
-                { id: 29, title: "Patho", icon: "fas fa-graduation-cap", questions: 60, time: 55, difficulty: "advanced", rating: 4.9, page: "year7/board-exam-prep.html" }
-            ]
-        };
-
-        // Price data
-        const prices = {
-            1: 100,
-            2: 100,
-            3: 100,
-            4: 100,
-            5: 100,
-            6: 100,
-            7: 100
-        };
-
-        // DOM Elements
-        const themeToggle = document.getElementById('themeToggle');
-        const notificationBtn = document.getElementById('notificationBtn');
-        const notificationCount = document.getElementById('notificationCount');
-        const notificationModal = document.getElementById('notificationModal');
-        const notificationsList = document.getElementById('notificationsList');
-        const closeNotificationBtn = document.getElementById('closeNotificationBtn');
-        const mainContent = document.getElementById('mainContent');
-        const profileContent = document.getElementById('profileContent');
-        const profileBtn = document.getElementById('profileBtn');
-        const adminBtn = document.getElementById('adminBtn');
-        const logoBtn = document.getElementById('logoBtn');
-        const backToMainBtn = document.getElementById('backToMainBtn');
-        const regModal = document.getElementById('registrationModal');
-        const tempPasswordModal = document.getElementById('tempPasswordModal');
-        const regForm = document.getElementById('regForm');
-        const tempPasswordForm = document.getElementById('tempPasswordForm');
-        const loginForm = document.getElementById('loginForm');
-        const verifyForm = document.getElementById('verifyForm');
-        const logout = document.getElementById('logout');
-        const logoutModal = document.getElementById('logoutModal');
-        const regError = document.getElementById('regError');
-        const tempLoginError = document.getElementById('tempLoginError');
-        const loginError = document.getElementById('loginError');
-        const verifyError = document.getElementById('verifyError');
-        const logoutError = document.getElementById('logoutError');
-        const receiptInput = document.getElementById('receipt');
-        const receiptPreview = document.getElementById('receiptPreview');
-        const uploadText = document.getElementById('uploadText');
-        const yearSelect = document.getElementById('year');
-        const priceInfo = document.getElementById('priceInfo');
-        const submitBtn = document.getElementById('submitBtn');
-        const tempLoginBtn = document.getElementById('tempLoginBtn');
-        const loginSubmitBtn = document.getElementById('loginSubmitBtn');
-        const backBtn = document.getElementById('backBtn');
-        const backToRegBtn = document.getElementById('backToRegBtn');
-        const loginLink = document.getElementById('loginLink');
-        const registerLink = document.getElementById('registerLink');
-        const tempPasswordLoginBtn = document.getElementById('tempPasswordLoginBtn');
-
-        // Theme toggle
-        function toggleTheme() {
-            if (document.body.classList.contains('dark-mode')) {
-                document.body.classList.remove('dark-mode');
-                document.body.classList.add('light-mode');
-                themeToggle.querySelector('i').className = 'fas fa-moon';
-            } else {
-                document.body.classList.remove('light-mode');
-                document.body.classList.add('dark-mode');
-                themeToggle.querySelector('i').className = 'fas fa-sun';
-            }
-        }
-        themeToggle.addEventListener('click', toggleTheme);
-
-        // Notification system
-        async function loadNotifications() {
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            if (!currentUser) return;
-
-            const notifications = await firebaseUserManager.getUserNotifications(currentUser.id);
-            const unreadCount = await firebaseUserManager.getUnreadNotificationCount(currentUser.id);
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
             
-            // Update notification badge
-            if (unreadCount > 0) {
-                notificationCount.textContent = unreadCount;
-                notificationCount.style.display = 'flex';
-            } else {
-                notificationCount.style.display = 'none';
-            }
-            
-            // Store notifications for modal display
-            localStorage.setItem('userNotifications', JSON.stringify(notifications));
-        }
-
-        function displayNotifications() {
-            const notifications = JSON.parse(localStorage.getItem('userNotifications') || '[]');
-            
-            if (notifications.length === 0) {
-                notificationsList.innerHTML = `
-                    <div style="text-align: center; padding: 2rem; color: var(--text-tertiary);">
-                        <i class="fas fa-bell-slash" style="font-size: 2rem; margin-bottom: 1rem;"></i>
-                        <p>No notifications yet</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            notificationsList.innerHTML = notifications.map(notification => `
-                <div class="notification-item ${notification.read ? '' : 'unread'}" data-id="${notification.id}">
-                    <div class="notification-title">
-                        <i class="fas fa-${getNotificationIcon(notification.type)}"></i>
-                        ${notification.title}
-                    </div>
-                    <div class="notification-message">${notification.message}</div>
-                    <div class="notification-time">${formatTime(notification.timestamp)}</div>
-                    <div class="notification-actions">
-                        ${!notification.read ? `
-                            <button class="notification-action-btn notification-mark-read" onclick="markNotificationAsRead('${notification.id}')">
-                                <i class="fas fa-check"></i> Mark as Read
-                            </button>
-                        ` : ''}
-                        <button class="notification-action-btn notification-delete" onclick="deleteNotification('${notification.id}')">
-                            <i class="fas fa-trash"></i> Delete
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function getNotificationIcon(type) {
-            switch(type) {
-                case 'success': return 'check-circle';
-                case 'warning': return 'exclamation-triangle';
-                case 'error': return 'exclamation-circle';
-                default: return 'info-circle';
-            }
-        }
-
-        function formatTime(timestamp) {
-            const now = new Date().getTime();
-            const diff = now - timestamp;
-            const minutes = Math.floor(diff / (1000 * 60));
-            const hours = Math.floor(minutes / 60);
-            const days = Math.floor(hours / 24);
-            
-            if (minutes < 1) return 'Just now';
-            if (minutes < 60) return `${minutes}m ago`;
-            if (hours < 24) return `${hours}h ago`;
-            return `${days}d ago`;
-        }
-
-        async function markNotificationAsRead(notificationId) {
-            const success = await firebaseUserManager.markNotificationAsRead(notificationId);
-            if (success) {
-                await loadNotifications();
-                displayNotifications();
-            }
-        }
-
-        async function deleteNotification(notificationId) {
-            const success = await firebaseUserManager.deleteNotification(notificationId);
-            if (success) {
-                await loadNotifications();
-                displayNotifications();
-            }
-        }
-
-        // Notification button click
-        notificationBtn.addEventListener('click', async () => {
-            await loadNotifications();
-            displayNotifications();
-            notificationModal.style.display = 'flex';
-        });
-
-        // Close notification modal
-        closeNotificationBtn.addEventListener('click', () => {
-            notificationModal.style.display = 'none';
-        });
-
-        // Render quiz cards with trial status
-        function renderQuizCards() {
-            const userYears = JSON.parse(localStorage.getItem('userYears')) || [];
-            const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {};
-            
-            // Check trial status
-            const hasActiveTrial = firebaseUserManager.hasActiveTrial(currentUser);
-            const trialDaysRemaining = firebaseUserManager.getTrialDaysRemaining(currentUser);
-            
-            for (let year = 1; year <= 7; year++) {
-                const container = document.querySelector(`.year-section[data-year="${year}"] .cards-container`);
-                if (!container) continue;
-                container.innerHTML = '';
-                if (quizData[year]) {
-                    quizData[year].forEach(quiz => {
-                        const card = document.createElement('div');
-                        card.className = 'quiz-card';
-                        card.dataset.year = year.toString();
-                        
-                        // Add trial badge if user has active trial
-                        const trialBadge = hasActiveTrial ? 
-                            `<div class="difficulty beginner" style="margin-top: 0.5rem;">
-                                <i class="fas fa-crown"></i> Trial: ${trialDaysRemaining} days left
-                            </div>` : '';
-                        
-                        card.innerHTML = `
-                            <div class="quiz-icon"><i class="${quiz.icon}"></i></div>
-                            <h3 class="quiz-title">${quiz.title}</h3>
-                            <div class="quiz-meta">
-                                <span>${quiz.questions} Qs</span>
-                                <span>${quiz.time} min</span>
-                            </div>
-                            <div class="quiz-stats">
-                                <span class="difficulty ${quiz.difficulty}">${quiz.difficulty}</span>
-                                <div class="stat">
-                                    <i class="fas fa-star"></i>
-                                    <span>${quiz.rating}</span>
-                                </div>
-                            </div>
-                            ${trialBadge}
-                        `;
-                        
-                        if (!userYears.includes(year.toString()) && !hasActiveTrial) {
-                            card.classList.add('locked');
-                        }
-                        
-                        card.addEventListener('click', (e) => {
-                            const quizYear = e.currentTarget.dataset.year;
-                            
-                            // Allow access if user has active trial, regardless of registered years
-                            if (!userYears.includes(quizYear) && !hasActiveTrial) {
-                                showAccessDeniedModal(userYears, quizYear);
-                                return;
-                            }
-                            
-                            // Update activity before navigating to quiz
-                            window.location.href = quiz.page;
-                        });
-                        container.appendChild(card);
-                    });
-                }
-            }
-            
-            // Show trial status in header if active
-            if (hasActiveTrial) {
-                const pageTitle = document.querySelector('.page-title');
-                if (pageTitle && !pageTitle.querySelector('.trial-badge')) {
-                    const trialBadge = document.createElement('span');
-                    trialBadge.className = 'user-badge badge-trial';
-                    trialBadge.style.marginLeft = '10px';
-                    trialBadge.innerHTML = `<i class="fas fa-crown"></i> Trial: ${trialDaysRemaining} days left`;
-                    pageTitle.appendChild(trialBadge);
-                }
-            }
-        }
-
-        // Year filter
-        const yearButtons = document.querySelectorAll('.year-btn');
-        const yearSections = document.querySelectorAll('.year-section');
-        yearButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const year = button.dataset.year;
-                yearButtons.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-                if (year === 'all') {
-                    yearSections.forEach(section => section.style.display = 'block');
-                } else {
-                    yearSections.forEach(section => {
-                        section.style.display = section.dataset.year === year ? 'block' : 'none';
-                    });
-                }
+            const response = await fetch(url, {
+                method: 'POST',
+                body: formData,
+                signal: controller.signal
             });
-        });
-
-        // Navigation
-        logoBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            mainContent.style.display = 'block';
-            profileContent.style.display = 'none';
-        });
-
-        profileBtn.addEventListener('click', () => {
-            mainContent.style.display = 'none';
-            profileContent.style.display = 'block';
-            loadProfile();
-        });
-
-        backToMainBtn.addEventListener('click', () => {
-            mainContent.style.display = 'block';
-            profileContent.style.display = 'none';
-        });
-
-        // Temporary password login button
-        tempPasswordLoginBtn.addEventListener('click', () => {
-            regModal.style.display = 'none';
-            tempPasswordModal.style.display = 'flex';
-        });
-
-        // Back to registration from temp password modal
-        backToRegBtn.addEventListener('click', () => {
-            tempPasswordModal.style.display = 'none';
-            regModal.style.display = 'flex';
-        });
-
-        // Temporary password form submission
-        tempPasswordForm.addEventListener('submit', async e => {
-            e.preventDefault();
-            tempLoginBtn.classList.add('loading');
-            tempLoginBtn.disabled = true;
             
-            const phone = document.getElementById('tempPhone').value;
-            const password = document.getElementById('tempPassword').value;
-
-            if (!phone || !password) {
-                tempLoginError.textContent = 'Please enter both phone number and password.';
-                tempLoginBtn.classList.remove('loading');
-                tempLoginBtn.disabled = false;
-                return;
-            }
-
-            const result = await firebaseUserManager.loginWithTemporaryPassword(phone, password);
+            clearTimeout(timeoutId);
             
-            if (result.success) {
-                // Store user data in localStorage
-                localStorage.setItem('currentUser', JSON.stringify(result.user));
-                localStorage.setItem('userYears', JSON.stringify(result.user.registeredYears));
-                localStorage.setItem('verified', 'true');
-                
-                // Check role for admin
-                if (result.user.role === 'admin') {
-                    adminBtn.style.display = 'inline-flex';
-                }
-                
-                // Close modal and show main content
-                tempPasswordModal.style.display = 'none';
-                mainContent.style.display = 'block';
-                renderQuizCards();
-                
-                // Load notifications
-                await loadNotifications();
-                
-                // Show success message with trial info if applicable
-                let successMessage = 'Login successful! Welcome back ' + result.user.name;
-                if (firebaseUserManager.hasActiveTrial(result.user)) {
-                    const daysLeft = firebaseUserManager.getTrialDaysRemaining(result.user);
-                    successMessage += ` (Trial active: ${daysLeft} days remaining)`;
-                }
-                alert(successMessage);
-            } else {
-                tempLoginError.textContent = result.error;
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
-
-            tempLoginBtn.classList.remove('loading');
-            tempLoginBtn.disabled = false;
-        });
-
-        // Toggle between register and login
-        loginLink.addEventListener('click', () => {
-            regForm.style.display = 'none';
-            loginForm.style.display = 'block';
-            registerLink.style.display = 'block';
-            loginLink.style.display = 'none';
-            verifyForm.style.display = 'none';
-        });
-
-        registerLink.addEventListener('click', () => {
-            regForm.style.display = 'block';
-            loginForm.style.display = 'none';
-            registerLink.style.display = 'none';
-            loginLink.style.display = 'block';
-            verifyForm.style.display = 'none';
-        });
-
-        // Update price display on year selection
-        yearSelect.addEventListener('change', () => {
-            const year = yearSelect.value;
-            priceInfo.textContent = year ? `Price: ${prices[year]} ETB` : 'Select Year to View Price';
-        });
-
-        // Receipt preview
-        receiptInput.addEventListener('change', () => {
-            const file = receiptInput.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = e => {
-                    receiptPreview.src = e.target.result;
-                    receiptPreview.style.display = 'block';
-                    uploadText.textContent = 'Change Payment Receipt';
-                };
-                reader.readAsDataURL(file);
-            } else {
-                receiptPreview.style.display = 'none';
-                uploadText.textContent = 'Upload Payment Receipt';
+            
+            const data = await response.json();
+            return { success: true, data };
+            
+        } catch (error) {
+            console.error('Telegram API error:', error);
+            
+            // Try backup chat ID
+            if (!isPhoto) {
+                return await this.sendToBackup(message);
             }
-        });
+            
+            return { 
+                success: false, 
+                error: error.message,
+                fallback: true
+            };
+        }
+    }
 
-        function copyToClipboard(text, button) {
-            navigator.clipboard.writeText(text).then(() => {
-                const originalText = button.innerHTML;
-                button.innerHTML = '<i class="fas fa-check"></i> Copied!';
-                button.classList.add('copied');
-                
-                setTimeout(() => {
-                    button.innerHTML = originalText;
-                    button.classList.remove('copied');
-                }, 2000);
-                
-            }).catch(err => {
-                console.error('Failed to copy: ', err);
-                button.innerHTML = '<i class="fas fa-times"></i> Failed';
-                button.style.background = 'var(--error)';
-                
-                setTimeout(() => {
-                    button.innerHTML = '<i class="fas fa-copy"></i> Copy';
-                    button.style.background = 'var(--primary)';
-                }, 2000);
+    async sendToBackup(message) {
+        try {
+            const formData = new FormData();
+            formData.append('chat_id', this.backupChatId);
+            formData.append('text', 'BACKUP: ' + message);
+            formData.append('parse_mode', 'Markdown');
+
+            const response = await fetch(`https://api.telegram.org/bot${this.botToken}/sendMessage`, {
+                method: 'POST',
+                body: formData
             });
-        }
-
-        // Initialize modal state
-        async function init() {
-            console.log('Checking user authentication...');
             
-            const currentUser = localStorage.getItem('currentUser');
-            
-            if (currentUser) {
-                try {
-                    const user = JSON.parse(currentUser);
-                    console.log('Found cached user:', user.name);
-                    
-                    // Show main content immediately
-                    regModal.style.display = 'none';
-                    mainContent.style.display = 'block';
-                    renderQuizCards();
-
-                    // Load notifications
-                    await loadNotifications();
-
-                    // Add timeout for Firebase check
-                    const firebaseCheck = firebaseUserManager.getUserByPhone(user.phone);
-                    const timeoutPromise = new Promise((_, reject) => 
-                        setTimeout(() => reject(new Error('Timeout')), 5000)
-                    );
-
-                    const latestUser = await Promise.race([firebaseCheck, timeoutPromise]);
-                    
-                    if (latestUser && latestUser.status === 'verified') {
-                        console.log('User is verified in Firebase');
-                        localStorage.setItem('currentUser', JSON.stringify(latestUser));
-                        localStorage.setItem('userYears', JSON.stringify(latestUser.registeredYears));
-                        
-                        if (latestUser.role === 'admin') {
-                            adminBtn.style.display = 'inline-flex';
-                        }
-                        renderQuizCards();
-                    } else {
-                        console.log('User verification failed');
-                        if (latestUser) {
-                            localStorage.clear();
-                            showRegistrationModal();
-                        }
-                    }
-                } catch (error) {
-                    console.error('Error checking user status:', error);
-                    console.log('Using cached user data due to error');
-                }
-            } else {
-                console.log('No cached user found');
-                showRegistrationModal();
+            if (response.ok) {
+                return { success: true, data: await response.json(), usedBackup: true };
             }
+            throw new Error('Backup also failed');
+        } catch (error) {
+            console.error('Backup Telegram also failed:', error);
+            return { success: false, error: error.message };
         }
+    }
 
-        // Force status check on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check status every minute
-            setInterval(async () => {
-                const currentUser = localStorage.getItem('currentUser');
-                if (currentUser) {
-                    const user = JSON.parse(currentUser);
-                    const latestUser = await firebaseUserManager.getUserByPhone(user.phone);
-                    if (!latestUser || latestUser.status !== 'verified') {
-                        localStorage.clear();
-                        location.reload();
-                    }
-                }
-            }, 60000);
+    // Store pending messages when Telegram fails completely
+    storePendingMessage(type, data) {
+        try {
+            const pendingMessages = JSON.parse(localStorage.getItem('pendingMessages') || '[]');
+            pendingMessages.push({
+                type: type,
+                data: data,
+                timestamp: Date.now()
+            });
+            localStorage.setItem('pendingMessages', JSON.stringify(pendingMessages));
+            return true;
+        } catch (error) {
+            console.error('Error storing pending message:', error);
+            return false;
+        }
+    }
+}
+
+const telegramAPI = new TelegramAPI();
+
+// Enhanced Online User Tracking Class
+class OnlineUserTracker {
+    constructor() {
+        this.usersCollection = db.collection('users');
+        this.currentUser = null;
+        this.activityInterval = null;
+        this.lastActivityTime = Date.now();
+        this.isInitialized = false;
+    }
+
+    init(user) {
+        if (this.isInitialized) return;
+        
+        this.currentUser = user;
+        this.isInitialized = true;
+        
+        this.updateUserActivity();
+        
+        this.activityInterval = setInterval(() => {
+            this.updateUserActivity();
+        }, 2 * 60 * 1000);
+        
+        this.setupActivityListeners();
+        
+        console.log('Online tracking initialized for:', user.name);
+    }
+
+    async updateUserActivity() {
+        if (!this.currentUser || !this.currentUser.id) return;
+        
+        try {
+            const updateData = {
+                lastActive: Date.now(),
+                isOnline: true
+            };
+            
+            await this.usersCollection.doc(this.currentUser.id).update(updateData);
+            this.lastActivityTime = Date.now();
+            
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            currentUser.lastActive = Date.now();
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            
+        } catch (error) {
+            console.error('Error updating user activity:', error);
+        }
+    }
+
+    setupActivityListeners() {
+        const activityEvents = [
+            'mousedown', 'mousemove', 'keypress', 'scroll', 
+            'touchstart', 'touchmove', 'click', 'focus'
+        ];
+
+        const throttledUpdate = this.throttle(() => {
+            this.updateUserActivity();
+        }, 30000);
+
+        activityEvents.forEach(event => {
+            document.addEventListener(event, throttledUpdate, { passive: true });
         });
 
-        function showRegistrationModal() {
-            regModal.style.display = 'flex';
-            mainContent.style.display = 'none';
-            profileContent.style.display = 'none';
-        }
-
-        // Back button to return to registration form
-        backBtn.addEventListener('click', () => {
-            regForm.style.display = 'block';
-            loginForm.style.display = 'none';
-            registerLink.style.display = 'none';
-            loginLink.style.display = 'block';
-            verifyForm.style.display = 'none';
-            verifyError.textContent = '';
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                this.updateUserActivity();
+            }
         });
 
-        // Registration form submission - FIXED TELEGRAM INTEGRATION
-        regForm.addEventListener('submit', async e => {
-            e.preventDefault();
-            submitBtn.classList.add('loading');
-            submitBtn.disabled = true;
-            
-            const year = document.getElementById('year').value;
-            const name = document.getElementById('name').value;
-            const phone = document.getElementById('phone').value;
-            const email = document.getElementById('email').value || '';
-            const telegram = document.getElementById('telegram').value || 'N/A';
-            const receipt = document.getElementById('receipt').files[0];
+        window.addEventListener('focus', () => {
+            this.updateUserActivity();
+        });
+    }
 
-            if (!year || !name || !phone || !receipt) {
-                regError.textContent = 'Please fill all required fields.';
-                submitBtn.classList.remove('loading');
-                submitBtn.disabled = false;
-                return;
+    throttle(func, limit) {
+        let inThrottle;
+        return function() {
+            const args = arguments;
+            const context = this;
+            if (!inThrottle) {
+                func.apply(context, args);
+                inThrottle = true;
+                setTimeout(() => inThrottle = false, limit);
+            }
+        }
+    }
+
+    async setOffline() {
+        if (this.currentUser && this.currentUser.id) {
+            try {
+                await this.usersCollection.doc(this.currentUser.id).update({
+                    isOnline: false,
+                    lastActive: Date.now()
+                });
+            } catch (error) {
+                console.error('Error setting user offline:', error);
+            }
+        }
+    }
+
+    cleanup() {
+        if (this.activityInterval) {
+            clearInterval(this.activityInterval);
+        }
+        
+        this.setOffline();
+        this.currentUser = null;
+        this.isInitialized = false;
+        
+        console.log('Online tracking cleaned up');
+    }
+}
+
+const onlineTracker = new OnlineUserTracker();
+
+// Enhanced Firebase User Manager
+class FirebaseUserManager {
+    constructor() {
+        this.usersCollection = db.collection('users');
+    }
+
+    async checkPhoneExists(phone) {
+        const snapshot = await this.usersCollection.where('phone', '==', phone).get();
+        return !snapshot.empty;
+    }
+
+    isCodeExpired(timestamp) {
+        const now = new Date().getTime();
+        const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
+        return now - timestamp > twoDaysInMs;
+    }
+
+    async loginWithTemporaryPassword(phone, password) {
+        try {
+            const snapshot = await this.usersCollection.where('phone', '==', phone).get();
+            if (snapshot.empty) {
+                return { success: false, error: 'Phone number not found. Please register first.' };
             }
 
-            // Create user in Firebase
-            const userData = {
-                name: name,
-                phone: phone,
-                email: email,
-                telegram: telegram,
-                year: year,
-                price: prices[year]
+            const doc = snapshot.docs[0];
+            const user = doc.data();
+            
+            if (!user.verificationCode) {
+                return { success: false, error: 'No temporary password set. Please use regular login.' };
+            }
+
+            if (user.verificationCode !== password) {
+                return { success: false, error: 'Invalid temporary password.' };
+            }
+
+            if (user.passwordExpiration && user.passwordExpiration < Date.now()) {
+                return { success: false, error: 'Temporary password has expired (time limit).' };
+            }
+
+            if (user.tempPasswordUsesAllowed) {
+                const usesCount = user.tempPasswordUsesCount || 0;
+                if (usesCount >= user.tempPasswordUsesAllowed) {
+                    return { success: false, error: 'Temporary password usage limit reached.' };
+                }
+            }
+
+            if (user.plan === 'trial' && user.trialStart && user.trialDuration) {
+                const trialEnd = user.trialStart + (user.trialDuration * 24 * 60 * 60 * 1000);
+                if (Date.now() > trialEnd) {
+                    return { success: false, error: 'Your free trial has expired. Please contact admin.' };
+                }
+            }
+
+            const updateData = {
+                status: 'verified',
+                lastLogin: new Date().getTime(),
+                lastActive: new Date().getTime(),
+                isOnline: true
             };
 
-            const result = await firebaseUserManager.createUser(userData);
+            if (user.tempPasswordUsesAllowed) {
+                updateData.tempPasswordUsesCount = (user.tempPasswordUsesCount || 0) + 1;
+            }
+
+            await this.usersCollection.doc(doc.id).update(updateData);
+
+            user.id = doc.id;
+            user.status = 'verified';
+            user.lastLogin = new Date().getTime();
+            user.lastActive = new Date().getTime();
+            if (user.tempPasswordUsesAllowed) {
+                user.tempPasswordUsesCount = (user.tempPasswordUsesCount || 0) + 1;
+            }
+
+            return { success: true, user };
+        } catch (error) {
+            console.error('Error logging in with temporary password:', error);
+            return { success: false, error: 'Login failed. Please try again.' };
+        }
+    }
+
+    async createUser(userData) {
+        try {
+            if (await this.checkPhoneExists(userData.phone)) {
+                return { success: false, error: 'Phone already registered. Please login.' };
+            }
+            const code = Math.floor(100000 + Math.random() * 900000).toString();
+            const userRecord = {
+                ...userData,
+                verificationCode: code,
+                codeTimestamp: new Date().getTime(),
+                registeredYears: [userData.year],
+                createdAt: new Date().getTime(),
+                lastLogin: null,
+                lastActive: new Date().getTime(),
+                isOnline: true,
+                status: 'pending',
+                role: 'user',
+                plan: 'basic'
+            };
+
+            const docRef = await this.usersCollection.add(userRecord);
+            return { success: true, userId: docRef.id, code };
+        } catch (error) {
+            console.error('Error creating user:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    async login(phone) {
+        try {
+            const snapshot = await this.usersCollection.where('phone', '==', phone).get();
+            if (snapshot.empty) {
+                return { success: false, error: 'Phone not registered. Please register.' };
+            }
+            const doc = snapshot.docs[0];
+            const user = doc.data();
             
-            if (result.success) {
-                // Send to Telegram with the code - FIXED
-                const caption = `📋 <b>New Registration</b>\n\n📚 Year: ${year} (${prices[year]} ETB)\n👤 Name: ${name}\n📱 Phone: ${phone}\n📧 Email: ${email || 'N/A'}\n🔑 Code: <code>${result.code}</code>\n\n<i>Please verify this registration</i>`;
+            if (user.verificationCode) {
+                if (user.passwordExpiration && user.passwordExpiration > Date.now()) {
+                    if (user.tempPasswordUsesAllowed) {
+                        const usesCount = user.tempPasswordUsesCount || 0;
+                        if (usesCount < user.tempPasswordUsesAllowed) {
+                            return { 
+                                success: false, 
+                                error: 'You have an active temporary password. Please use it to login or contact admin.' 
+                            };
+                        }
+                    } else {
+                        return { 
+                            success: false, 
+                            error: 'You have an active temporary password. Please use it to login or contact admin.' 
+                        };
+                    }
+                }
+            }
+            
+            if (user.verificationCode && !this.isCodeExpired(user.codeTimestamp)) {
+                return { success: false, error: 'Account is currently active. Please logout first or contact admin.' };
+            }
+            
+            const code = Math.floor(100000 + Math.random() * 900000).toString();
+            await this.usersCollection.doc(doc.id).update({
+                verificationCode: code,
+                codeTimestamp: new Date().getTime(),
+                status: 'pending'
+            });
+            return { success: true, code, userId: doc.id };
+        } catch (error) {
+            console.error('Error logging in:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    async verifyUser(phone, code) {
+        try {
+            const snapshot = await this.usersCollection.where('phone', '==', phone).get();
+            if (snapshot.empty) {
+                return { success: false, error: 'User not found' };
+            }
+
+            let user = null;
+            let userDocId = null;
+            
+            snapshot.forEach(doc => {
+                user = doc.data();
+                userDocId = doc.id;
+            });
+
+            if (user.verificationCode !== code) {
+                return { success: false, error: 'Invalid verification code' };
+            }
+
+            const codeTimestamp = user.codeTimestamp;
+            const now = new Date().getTime();
+            const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
+            
+            if (now - codeTimestamp > twoDaysInMs) {
+                return { success: false, error: 'Verification code has expired' };
+            }
+
+            if (user.plan === 'trial' && user.trialStart && user.trialDuration) {
+                const trialEnd = user.trialStart + (user.trialDuration * 24 * 60 * 60 * 1000);
+                if (Date.now() > trialEnd) {
+                    return { success: false, error: 'Your free trial has expired. Please contact admin.' };
+                }
+            }
+
+            await this.usersCollection.doc(userDocId).update({
+                status: 'verified',
+                verifiedAt: new Date().getTime(),
+                lastLogin: new Date().getTime(),
+                lastActive: new Date().getTime(),
+                isOnline: true
+            });
+
+            user.id = userDocId;
+            user.status = 'verified';
+            user.lastLogin = new Date().getTime();
+            user.lastActive = new Date().getTime();
+
+            return { success: true, user };
+        } catch (error) {
+            console.error('Error verifying user:', error);
+            return { success: false, error: 'Verification failed' };
+        }
+    }
+
+    async addYearToUser(userId, newYear, userData) {
+        try {
+            const userDoc = await this.usersCollection.doc(userId).get();
+            if (!userDoc.exists) {
+                return { success: false, error: 'User not found' };
+            }
+
+            const user = userDoc.data();
+            const currentYears = user.registeredYears || [];
+
+            if (currentYears.includes(newYear)) {
+                return { success: false, error: 'Year already registered' };
+            }
+
+            const code = Math.floor(100000 + Math.random() * 900000).toString();
+            
+            await this.usersCollection.doc(userId).update({
+                registeredYears: [...currentYears, newYear],
+                verificationCode: code,
+                codeTimestamp: new Date().getTime(),
+                status: 'pending_addition'
+            });
+
+            return { success: true, code };
+        } catch (error) {
+            console.error('Error adding year to user:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    async verifyYearAddition(userId, code) {
+        try {
+            const userDoc = await this.usersCollection.doc(userId).get();
+            if (!userDoc.exists) {
+                return { success: false, error: 'User not found' };
+            }
+
+            const user = userDoc.data();
+
+            if (user.verificationCode !== code) {
+                return { success: false, error: 'Invalid verification code' };
+            }
+
+            const codeTimestamp = user.codeTimestamp;
+            const now = new Date().getTime();
+            const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
+            
+            if (now - codeTimestamp > twoDaysInMs) {
+                return { success: false, error: 'Verification code has expired' };
+            }
+
+            await this.usersCollection.doc(userId).update({
+                status: 'verified',
+                lastLogin: new Date().getTime(),
+                lastActive: new Date().getTime()
+            });
+
+            return { success: true, user: { id: userId, ...user, status: 'verified', lastLogin: new Date().getTime() } };
+        } catch (error) {
+            console.error('Error verifying year addition:', error);
+            return { success: false, error: 'Verification failed' };
+        }
+    }
+
+    async getUserByPhone(phone) {
+        try {
+            const snapshot = await this.usersCollection.where('phone', '==', phone).get();
+            if (snapshot.empty) return null;
+            
+            let user = null;
+            snapshot.forEach(doc => {
+                user = { id: doc.id, ...doc.data() };
+            });
+            return user;
+        } catch (error) {
+            console.error('Error getting user:', error);
+            return null;
+        }
+    }
+
+    hasActiveTrial(user) {
+        if (!user || user.plan !== 'trial' || !user.trialStart || !user.trialDuration) {
+            return false;
+        }
+        
+        const trialEnd = user.trialStart + (user.trialDuration * 24 * 60 * 60 * 1000);
+        return Date.now() < trialEnd;
+    }
+
+    getTrialDaysRemaining(user) {
+        if (!this.hasActiveTrial(user)) {
+            return 0;
+        }
+        
+        const trialEnd = user.trialStart + (user.trialDuration * 24 * 60 * 60 * 1000);
+        const daysRemaining = Math.ceil((trialEnd - Date.now()) / (24 * 60 * 60 * 1000));
+        return Math.max(0, daysRemaining);
+    }
+}
+
+const firebaseUserManager = new FirebaseUserManager();
+
+// Notification Manager
+class NotificationManager {
+    constructor() {
+        this.notificationsCollection = db.collection('notifications');
+        this.currentUser = null;
+        this.unreadCount = 0;
+        this.notifications = [];
+    }
+
+    init(user) {
+        this.currentUser = user;
+        this.setupNotificationListener();
+    }
+
+    setupNotificationListener() {
+        if (!this.currentUser || !this.currentUser.id) return;
+
+        // Listen for new notifications
+        this.notificationsCollection
+            .where('targetUsers', 'array-contains', this.currentUser.id)
+            .orderBy('timestamp', 'desc')
+            .limit(20)
+            .onSnapshot(snapshot => {
+                this.notifications = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
                 
-                // Send receipt photo to Telegram
-                const telegramResult = await firebaseUserManager.sendTelegramPhoto(receipt, caption);
+                this.updateUnreadCount();
+                this.updateBadge();
+            });
+
+        // Also listen for broadcast notifications
+        this.notificationsCollection
+            .where('type', '==', 'broadcast')
+            .where('timestamp', '>', Date.now() - (7 * 24 * 60 * 60 * 1000)) // Last 7 days
+            .orderBy('timestamp', 'desc')
+            .onSnapshot(snapshot => {
+                const broadcastNotifications = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
                 
-                if (telegramResult.ok) {
-                    // Store temporary data
-                    localStorage.setItem('pendingPhone', phone);
-                    localStorage.setItem('tempUserData', JSON.stringify(userData));
-                    localStorage.setItem('codeTimestamp', new Date().getTime());
+                // Merge with user-specific notifications
+                this.notifications = [...this.notifications, ...broadcastNotifications]
+                    .filter((v, i, a) => a.findIndex(t => t.id === v.id) === i)
+                    .sort((a, b) => b.timestamp - a.timestamp)
+                    .slice(0, 20);
+                
+                this.updateUnreadCount();
+                this.updateBadge();
+            });
+    }
+
+    updateUnreadCount() {
+        if (!this.currentUser) return;
+        
+        this.unreadCount = this.notifications.filter(notification => 
+            !notification.readBy || !notification.readBy.includes(this.currentUser.id)
+        ).length;
+    }
+
+    updateBadge() {
+        const unreadCountElement = document.getElementById('unreadCount');
+        if (unreadCountElement) {
+            if (this.unreadCount > 0) {
+                unreadCountElement.textContent = this.unreadCount;
+                unreadCountElement.style.display = 'flex';
+            } else {
+                unreadCountElement.style.display = 'none';
+            }
+        }
+    }
+
+    async markAsRead(notificationId) {
+        if (!this.currentUser || !this.currentUser.id) return;
+
+        try {
+            await this.notificationsCollection.doc(notificationId).update({
+                readBy: firebase.firestore.FieldValue.arrayUnion(this.currentUser.id)
+            });
+        } catch (error) {
+            console.error('Error marking notification as read:', error);
+        }
+    }
+
+    renderNotifications() {
+        const notificationsList = document.getElementById('notificationsList');
+        if (!notificationsList) return;
+
+        notificationsList.innerHTML = this.notifications.map(notification => {
+            const isUnread = !notification.readBy || !notification.readBy.includes(this.currentUser.id);
+            const formattedTime = new Date(notification.timestamp).toLocaleString();
+            
+            return `
+                <div class="notification-item ${notification.type} ${isUnread ? 'unread' : ''}" 
+                     data-id="${notification.id}">
+                    <div class="notification-header">
+                        <span class="notification-title">${this.getNotificationTitle(notification)}</span>
+                        <span class="notification-time">${formattedTime}</span>
+                    </div>
+                    <p class="notification-content">${notification.message}</p>
+                </div>
+            `;
+        }).join('');
+
+        // Add click listeners
+        document.querySelectorAll('.notification-item.unread').forEach(item => {
+            item.addEventListener('click', async () => {
+                const notificationId = item.dataset.id;
+                await this.markAsRead(notificationId);
+                item.classList.remove('unread');
+                this.unreadCount--;
+                this.updateBadge();
+            });
+        });
+    }
+
+    getNotificationTitle(notification) {
+        switch (notification.type) {
+            case 'registration':
+                return 'Registration Update';
+            case 'payment':
+                return 'Payment Status';
+            case 'system':
+                return 'System Announcement';
+            case 'broadcast':
+                return 'Broadcast Message';
+            default:
+                return 'Notification';
+        }
+    }
+}
+
+const notificationManager = new NotificationManager();
+
+// Quiz data
+const quizData = {
+    1: [
+        { id: 6, title: "Organic Chemistry", icon: "fas fa-brain", questions: 30, time: 25, difficulty: "intermediate", rating: 4.6, page: "year2/human-anatomy.html" },
+        { id: 7, title: "ENTREPRENUERSHIP", icon: "fas fa-heartbeat", questions: 25, time: 20, difficulty: "intermediate", rating: 4.5, page: "year2/physiology-i.html" },
+        { id: 8, title: "ECONOMICS", icon: "fas fa-microscope", questions: 20, time: 15, difficulty: "intermediate", rating: 4.3, page: "year2/histology.html" },
+        { id: 9, title: "CIVIC", icon: "fas fa-flask", questions: 28, time: 22, difficulty: "intermediate", rating: 4.4, page: "year2/biochemistry-ii.html" }
+    ],
+    2: [
+        { id: 4, title: "Pathology", icon: "fas fa-flask", questions: 400, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/pt.html" },
+        { id: 5, title: "Pharmacology", icon: "fas fa-heartbeat", questions: 400, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/pc.html" },
+        { id: 6, title: "PCD", icon: "fas fa-heartbeat", questions: 150, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/pcd.html" },
+        { id: 7, title: "PARASITOLOGY", icon: "fas fa-heartbeat", questions: 180, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/pr.html" },
+        { id: 8, title: "immunology", icon: "fas fa-heartbeat", questions: 235, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/im.html" },
+        { id: 9, title: "Microbiology", icon: "fas fa-heartbeat", questions: 320, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/micro.html" },
+        { id: 1, title: "Anatomy", icon: "fas fa-brain", questions: 700, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/an.html" },
+        { id: 2, title: "Physiology", icon: "fas fa-microscope", questions: 600, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/ps.html" },
+        { id: 3, title: "Biochemistry", icon: "fas fa-book", questions: 800, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/bc.html" }
+    ],  
+    3: [
+        { id: 10, title: "Anatomy", icon: "fas fa-virus", questions: 35, time: 30, difficulty: "intermediate", page: "year3/pathology.html", rating: 4.7 },
+        { id: 11, title: "Physiology", icon: "fas fa-pills", questions: 30, time: 25, difficulty: "intermediate", rating: 4.6, page: "year3/pharmacology-i.html" },
+        { id: 12, title: "Pharma", icon: "fas fa-bacteria", questions: 25, time: 20, difficulty: "intermediate", rating: 4.5, page: "year3/microbiology.html" },
+        { id: 13, title: "Pathology", icon: "fas fa-shield-virus", questions: 28, time: 22, difficulty: "intermediate", rating: 4.4, page: "year3/immunology.html" }
+    ],
+    4: [
+        { id: 14, title: "Anatomy", icon: "fas fa-stethoscope", questions: 40, time: 35, difficulty: "advanced", rating: 4.8, page: "year4/clinical-medicine-i.html" },
+        { id: 15, title: "Physiology", icon: "fas fa-syringe", questions: 35, time: 30, difficulty: "advanced", rating: 4.7, page: "year4/surgery-basics.html" },
+        { id: 16, title: "Pharmacology", icon: "fas fa-pills", questions: 38, time: 32, difficulty: "advanced", rating: 4.6, page: "year4/pharmacology-ii.html" },
+        { id: 17, title: "Pathology", icon: "fas fa-virus", questions: 42, time: 35, difficulty: "advanced", rating: 4.7, page: "year4/pathology-ii.html" }
+    ],
+    5: [
+        { id: 18, title: "Anatomy", icon: "fas fa-stethoscope", questions: 45, time: 40, difficulty: "advanced", rating: 4.8, page: "year5/internal-medicine.html" },
+        { id: 19, title: "Physiology", icon: "fas fa-syringe", questions: 40, time: 35, difficulty: "advanced", rating: 4.7, page: "year5/surgery.html" },
+        { id: 20, title: "Pharma", icon: "fas fa-baby", questions: 38, time: 32, difficulty: "advanced", rating: 4.6, page: "year5/pediatrics.html" },
+        { id: 21, title: "Pathology", icon: "fas fa-female", questions: 42, time: 35, difficulty: "advanced", rating: 4.7, page: "year5/obstetrics-gynecology.html" }
+    ],
+    6: [
+        { id: 22, title: "Anatomy", icon: "fas fa-hospital-user", questions: 50, time: 45, difficulty: "advanced", rating: 4.9, page: "year6/clinical-rotations-i.html" },
+        { id: 23, title: "Physiology", icon: "fas fa-ambulance", questions: 45, time: 40, difficulty: "advanced", rating: 4.8, page: "year6/emergency-medicine.html" },
+        { id: 24, title: "Pharma", icon: "fas fa-brain", questions: 40, time: 35, difficulty: "advanced", rating: 4.7, page: "year6/psychiatry.html" },
+        { id: 25, title: "Patho", icon: "fas fa-x-ray", questions: 38, time: 32, difficulty: "advanced", rating: 4.6, page: "year6/radiology.html" }
+    ],
+    7: [
+        { id: 26, title: "Anatomy", icon: "fas fa-hospital-user", questions: 55, time: 50, difficulty: "advanced", rating: 4.9, page: "year7/clinical-rotations-ii.html" },
+        { id: 27, title: "Physiology", icon: "fas fa-stethoscope", questions: 50, time: 45, difficulty: "advanced", rating: 4.8, page: "year7/specialty-medicine.html" },
+        { id: 28, title: "Pharma", icon: "fas fa-balance-scale", questions: 35, time: 30, difficulty: "advanced", rating: 4.7, page: "year7/medical-ethics.html" },
+        { id: 29, title: "Patho", icon: "fas fa-graduation-cap", questions: 60, time: 55, difficulty: "advanced", rating: 4.9, page: "year7/board-exam-prep.html" }
+    ]
+};
+
+// Price data
+const prices = {
+    1: 100,
+    2: 100,
+    3: 100,
+    4: 100,
+    5: 100,
+    6: 100,
+    7: 100
+};
+
+// DOM Elements
+const themeToggle = document.getElementById('themeToggle');
+const mainContent = document.getElementById('mainContent');
+const profileContent = document.getElementById('profileContent');
+const profileBtn = document.getElementById('profileBtn');
+const adminBtn = document.getElementById('adminBtn');
+const logoBtn = document.getElementById('logoBtn');
+const backToMainBtn = document.getElementById('backToMainBtn');
+const regModal = document.getElementById('registrationModal');
+const tempPasswordModal = document.getElementById('tempPasswordModal');
+const regForm = document.getElementById('regForm');
+const tempPasswordForm = document.getElementById('tempPasswordForm');
+const loginForm = document.getElementById('loginForm');
+const verifyForm = document.getElementById('verifyForm');
+const logout = document.getElementById('logout');
+const logoutModal = document.getElementById('logoutModal');
+const regError = document.getElementById('regError');
+const tempLoginError = document.getElementById('tempLoginError');
+const loginError = document.getElementById('loginError');
+const verifyError = document.getElementById('verifyError');
+const logoutError = document.getElementById('logoutError');
+const receiptInput = document.getElementById('receipt');
+const receiptPreview = document.getElementById('receiptPreview');
+const uploadText = document.getElementById('uploadText');
+const yearSelect = document.getElementById('year');
+const priceInfo = document.getElementById('priceInfo');
+const submitBtn = document.getElementById('submitBtn');
+const tempLoginBtn = document.getElementById('tempLoginBtn');
+const loginSubmitBtn = document.getElementById('loginSubmitBtn');
+const backBtn = document.getElementById('backBtn');
+const backToRegBtn = document.getElementById('backToRegBtn');
+const loginLink = document.getElementById('loginLink');
+const registerLink = document.getElementById('registerLink');
+const tempPasswordLoginBtn = document.getElementById('tempPasswordLoginBtn');
+const notificationsBtn = document.getElementById('notificationsBtn');
+const notificationsModal = document.getElementById('notificationsModal');
+const notificationsList = document.getElementById('notificationsList');
+const closeNotificationsBtn = document.getElementById('closeNotificationsBtn');
+const unreadCount = document.getElementById('unreadCount');
+
+// Theme toggle
+function toggleTheme() {
+    if (document.body.classList.contains('dark-mode')) {
+        document.body.classList.remove('dark-mode');
+        document.body.classList.add('light-mode');
+        themeToggle.querySelector('i').className = 'fas fa-moon';
+    } else {
+        document.body.classList.remove('light-mode');
+        document.body.classList.add('dark-mode');
+        themeToggle.querySelector('i').className = 'fas fa-sun';
+    }
+}
+themeToggle.addEventListener('click', toggleTheme);
+
+// Render quiz cards with trial status
+function renderQuizCards() {
+    const userYears = JSON.parse(localStorage.getItem('userYears')) || [];
+    const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {};
+    
+    const hasActiveTrial = firebaseUserManager.hasActiveTrial(currentUser);
+    const trialDaysRemaining = firebaseUserManager.getTrialDaysRemaining(currentUser);
+    
+    for (let year = 1; year <= 7; year++) {
+        const container = document.querySelector(`.year-section[data-year="${year}"] .cards-container`);
+        if (!container) continue;
+        container.innerHTML = '';
+        if (quizData[year]) {
+            quizData[year].forEach(quiz => {
+                const card = document.createElement('div');
+                card.className = 'quiz-card';
+                card.dataset.year = year.toString();
+                
+                const trialBadge = hasActiveTrial ? 
+                    `<div class="difficulty beginner" style="margin-top: 0.5rem;">
+                        <i class="fas fa-crown"></i> Trial: ${trialDaysRemaining} days left
+                    </div>` : '';
+                
+                card.innerHTML = `
+                    <div class="quiz-icon"><i class="${quiz.icon}"></i></div>
+                    <h3 class="quiz-title">${quiz.title}</h3>
+                    <div class="quiz-meta">
+                        <span>${quiz.questions} Qs</span>
+                        <span>${quiz.time} min</span>
+                    </div>
+                    <div class="quiz-stats">
+                        <span class="difficulty ${quiz.difficulty}">${quiz.difficulty}</span>
+                        <div class="stat">
+                            <i class="fas fa-star"></i>
+                            <span>${quiz.rating}</span>
+                        </div>
+                    </div>
+                    ${trialBadge}
+                `;
+                
+                if (!userYears.includes(year.toString()) && !hasActiveTrial) {
+                    card.classList.add('locked');
+                }
+                
+                card.addEventListener('click', (e) => {
+                    const quizYear = e.currentTarget.dataset.year;
                     
-                    regForm.style.display = 'none';
-                    loginForm.style.display = 'none';
-                    verifyForm.style.display = 'block';
-                    regError.textContent = '';
-                } else {
-                    regError.textContent = 'Error sending to Telegram. Please try again.';
-                }
-            } else {
-                regError.textContent = 'Error creating user: ' + result.error;
-            }
+                    if (!userYears.includes(quizYear) && !hasActiveTrial) {
+                        showAccessDeniedModal(userYears, quizYear);
+                        return;
+                    }
+                    
+                    onlineTracker.updateUserActivity();
+                    window.location.href = quiz.page;
+                });
+                container.appendChild(card);
+            });
+        }
+    }
+    
+    if (hasActiveTrial) {
+        const pageTitle = document.querySelector('.page-title');
+        if (pageTitle && !pageTitle.querySelector('.trial-badge')) {
+            const trialBadge = document.createElement('span');
+            trialBadge.className = 'user-badge badge-trial';
+            trialBadge.style.marginLeft = '10px';
+            trialBadge.innerHTML = `<i class="fas fa-crown"></i> Trial: ${trialDaysRemaining} days left`;
+            pageTitle.appendChild(trialBadge);
+        }
+    }
+}
 
-            submitBtn.classList.remove('loading');
-            submitBtn.disabled = false;
-        });
+// Year filter
+const yearButtons = document.querySelectorAll('.year-btn');
+const yearSections = document.querySelectorAll('.year-section');
+yearButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        const year = button.dataset.year;
+        yearButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        if (year === 'all') {
+            yearSections.forEach(section => section.style.display = 'block');
+        } else {
+            yearSections.forEach(section => {
+                section.style.display = section.dataset.year === year ? 'block' : 'none';
+            });
+        }
+    });
+});
 
-        // Login submission - FIXED TELEGRAM INTEGRATION
-        loginSubmitBtn.addEventListener('click', async () => {
-            loginSubmitBtn.classList.add('loading');
-            loginSubmitBtn.disabled = true;
-            const phone = document.getElementById('loginPhone').value;
+// Navigation
+logoBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    mainContent.style.display = 'block';
+    profileContent.style.display = 'none';
+    onlineTracker.updateUserActivity();
+});
 
-            if (!phone) {
-                loginError.textContent = 'Please enter phone number.';
-                loginSubmitBtn.classList.remove('loading');
-                loginSubmitBtn.disabled = false;
-                return;
-            }
+profileBtn.addEventListener('click', () => {
+    mainContent.style.display = 'none';
+    profileContent.style.display = 'block';
+    loadProfile();
+    onlineTracker.updateUserActivity();
+});
 
-            const result = await firebaseUserManager.login(phone);
+backToMainBtn.addEventListener('click', () => {
+    mainContent.style.display = 'block';
+    profileContent.style.display = 'none';
+    onlineTracker.updateUserActivity();
+});
+
+// Temporary password login button
+tempPasswordLoginBtn.addEventListener('click', () => {
+    regModal.style.display = 'none';
+    tempPasswordModal.style.display = 'flex';
+});
+
+// Back to registration from temp password modal
+backToRegBtn.addEventListener('click', () => {
+    tempPasswordModal.style.display = 'none';
+    regModal.style.display = 'flex';
+});
+
+// Temporary password form submission
+tempPasswordForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    tempLoginBtn.classList.add('loading');
+    tempLoginBtn.disabled = true;
+    
+    const phone = document.getElementById('tempPhone').value;
+    const password = document.getElementById('tempPassword').value;
+
+    if (!phone || !password) {
+        tempLoginError.textContent = 'Please enter both phone number and password.';
+        tempLoginBtn.classList.remove('loading');
+        tempLoginBtn.disabled = false;
+        return;
+    }
+
+    const result = await firebaseUserManager.loginWithTemporaryPassword(phone, password);
+    
+    if (result.success) {
+        localStorage.setItem('currentUser', JSON.stringify(result.user));
+        localStorage.setItem('userYears', JSON.stringify(result.user.registeredYears));
+        localStorage.setItem('verified', 'true');
+        
+        onlineTracker.init(result.user);
+        notificationManager.init(result.user);
+        
+        if (result.user.role === 'admin') {
+            adminBtn.style.display = 'inline-flex';
+        }
+        
+        tempPasswordModal.style.display = 'none';
+        mainContent.style.display = 'block';
+        renderQuizCards();
+        
+        let successMessage = 'Login successful! Welcome back ' + result.user.name;
+        if (firebaseUserManager.hasActiveTrial(result.user)) {
+            const daysLeft = firebaseUserManager.getTrialDaysRemaining(result.user);
+            successMessage += ` (Trial active: ${daysLeft} days remaining)`;
+        }
+        alert(successMessage);
+    } else {
+        tempLoginError.textContent = result.error;
+    }
+
+    tempLoginBtn.classList.remove('loading');
+    tempLoginBtn.disabled = false;
+});
+
+// Toggle between register and login
+loginLink.addEventListener('click', () => {
+    regForm.style.display = 'none';
+    loginForm.style.display = 'block';
+    registerLink.style.display = 'block';
+    loginLink.style.display = 'none';
+    verifyForm.style.display = 'none';
+});
+
+registerLink.addEventListener('click', () => {
+    regForm.style.display = 'block';
+    loginForm.style.display = 'none';
+    registerLink.style.display = 'none';
+    loginLink.style.display = 'block';
+    verifyForm.style.display = 'none';
+});
+
+// Update price display on year selection
+yearSelect.addEventListener('change', () => {
+    const year = yearSelect.value;
+    priceInfo.textContent = year ? `Price: ${prices[year]} ETB` : 'Select Year to View Price';
+});
+
+// Receipt preview
+receiptInput.addEventListener('change', () => {
+    const file = receiptInput.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = e => {
+            receiptPreview.src = e.target.result;
+            receiptPreview.style.display = 'block';
+            uploadText.textContent = 'Change Payment Receipt';
+        };
+        reader.readAsDataURL(file);
+    } else {
+        receiptPreview.style.display = 'none';
+        uploadText.textContent = 'Upload Payment Receipt';
+    }
+});
+
+function copyToClipboard(text, button) {
+    navigator.clipboard.writeText(text).then(() => {
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        button.classList.add('copied');
+        
+        setTimeout(() => {
+            button.innerHTML = originalText;
+            button.classList.remove('copied');
+        }, 2000);
+        
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+        button.innerHTML = '<i class="fas fa-times"></i> Failed';
+        button.style.background = 'var(--error)';
+        
+        setTimeout(() => {
+            button.innerHTML = '<i class="fas fa-copy"></i> Copy';
+            button.style.background = 'var(--primary)';
+        }, 2000);
+    });
+}
+
+// Check verification code expiry
+function isVerificationExpired(timestampKey) {
+    const codeTimestamp = localStorage.getItem(timestampKey);
+    if (!codeTimestamp) return true;
+    const now = new Date().getTime();
+    const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
+    return now - codeTimestamp > twoDaysInMs;
+}
+
+// Initialize modal state
+async function init() {
+    console.log('Checking user authentication...');
+    
+    const currentUser = localStorage.getItem('currentUser');
+    
+    if (currentUser) {
+        try {
+            const user = JSON.parse(currentUser);
+            console.log('Found cached user:', user.name);
             
-            if (result.success) {
-                const user = await firebaseUserManager.getUserByPhone(phone);
-                const caption = `🔐 <b>Login Request</b>\n\n👤 Name: ${user.name}\n📱 Phone: ${phone}\n📲 Telegram: ${user.telegram || 'N/A'}\n🔑 Code: <code>${result.code}</code>\n\n<i>Please approve this login request</i>`;
-                
-                // Send login request to Telegram
-                const telegramResult = await firebaseUserManager.sendTelegramMessage(caption);
-                
-                if (telegramResult.ok) {
-                    localStorage.setItem('pendingPhone', phone);
-                    localStorage.setItem('codeTimestamp', new Date().getTime());
-                    regForm.style.display = 'none';
-                    loginForm.style.display = 'none';
-                    verifyForm.style.display = 'block';
-                    loginError.textContent = '';
-                } else {
-                    loginError.textContent = 'Error sending to Telegram. Please try again.';
-                }
-            } else {
-                loginError.textContent = result.error;
-            }
+            regModal.style.display = 'none';
+            mainContent.style.display = 'block';
+            renderQuizCards();
 
-            loginSubmitBtn.classList.remove('loading');
-            loginSubmitBtn.disabled = false;
-        });
+            onlineTracker.init(user);
+            notificationManager.init(user);
 
-        // Verification
-        document.getElementById('verifyBtn').addEventListener('click', async () => {
-            const enteredCode = document.getElementById('verifyCode').value;
-            const phone = localStorage.getItem('pendingPhone');
+            const firebaseCheck = firebaseUserManager.getUserByPhone(user.phone);
+            const timeoutPromise = new Promise((_, reject) => 
+                setTimeout(() => reject(new Error('Timeout')), 5000)
+            );
 
-            if (!phone) {
-                verifyError.textContent = 'Session expired. Please register again.';
-                return;
-            }
-
-            const result = await firebaseUserManager.verifyUser(phone, enteredCode);
+            const latestUser = await Promise.race([firebaseCheck, timeoutPromise]);
             
-            if (result.success) {
-                // Send verification notification to Telegram - FIXED
-                const caption = `✅ <b>User Verified</b>\n\n👤 Name: ${result.user.name}\n📱 Phone: ${result.user.phone}\n📚 Year(s): ${result.user.registeredYears.join(', ')}\n\n<i>User has been successfully verified</i>`;
-                await firebaseUserManager.sendTelegramMessage(caption);
-
-                // Store user data in localStorage
-                localStorage.setItem('currentUser', JSON.stringify(result.user));
-                localStorage.setItem('userYears', JSON.stringify(result.user.registeredYears));
-                localStorage.setItem('verified', 'true');
-                localStorage.removeItem('pendingPhone');
-                localStorage.removeItem('tempUserData');
-                localStorage.removeItem('codeTimestamp');
+            if (latestUser && latestUser.status === 'verified') {
+                console.log('User is verified in Firebase');
+                localStorage.setItem('currentUser', JSON.stringify(latestUser));
+                localStorage.setItem('userYears', JSON.stringify(latestUser.registeredYears));
                 
-                // Check role for admin
-                if (result.user.role === 'admin') {
+                if (latestUser.role === 'admin') {
                     adminBtn.style.display = 'inline-flex';
                 }
-                
-                // Load notifications
-                await loadNotifications();
-                
-                location.reload();
-            } else {
-                verifyError.textContent = result.error;
-            }
-        });
-
-        // Add Year Logic
-        const addModal = document.getElementById('addModal');
-        const confirmAddModal = document.getElementById('confirmAddModal');
-        const addForm = document.getElementById('addForm');
-        const addVerifyForm = document.getElementById('addVerifyForm');
-        const addError = document.getElementById('addError');
-        const addVerifyError = document.getElementById('addVerifyError');
-        const addReceiptInput = document.getElementById('addReceipt');
-        const addReceiptPreview = document.getElementById('addReceiptPreview');
-        const addUploadText = document.getElementById('addUploadText');
-        const addSubmitBtn = document.getElementById('addSubmitBtn');
-        const addBackBtn = document.getElementById('addBackBtn');
-        const addYearBtn = document.getElementById('addYearBtn');
-        const cancelAddBtn = document.getElementById('cancelAddBtn');
-        const okAddBtn = document.getElementById('okAddBtn');
-
-        addYearBtn.addEventListener('click', () => {
-            confirmAddModal.style.display = 'flex';
-        });
-
-        cancelAddBtn.addEventListener('click', () => {
-            confirmAddModal.style.display = 'none';
-        });
-
-        okAddBtn.addEventListener('click', () => {
-            confirmAddModal.style.display = 'none';
-            addModal.style.display = 'flex';
-            addForm.style.display = 'block';
-            addVerifyForm.style.display = 'none';
-            document.getElementById('addName').value = localStorage.getItem('userName') || '';
-        });
-
-        addReceiptInput.addEventListener('change', () => {
-            const file = addReceiptInput.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = e => {
-                    addReceiptPreview.src = e.target.result;
-                    addReceiptPreview.style.display = 'block';
-                    addUploadText.textContent = 'Change Payment Receipt';
-                };
-                reader.readAsDataURL(file);
-            } else {
-                addReceiptPreview.style.display = 'none';
-                addUploadText.textContent = 'Upload Payment Receipt (50 ETB)';
-            }
-        });
-
-        addBackBtn.addEventListener('click', () => {
-            addForm.style.display = 'block';
-            addVerifyForm.style.display = 'none';
-            addVerifyError.textContent = '';
-        });
-
-        // Add year form submission - FIXED TELEGRAM INTEGRATION
-        addForm.addEventListener('submit', async e => {
-            e.preventDefault();
-            addSubmitBtn.classList.add('loading');
-            addSubmitBtn.disabled = true;
-            
-            const addName = document.getElementById('addName').value;
-            const newYear = document.getElementById('newYear').value;
-            const addReceipt = document.getElementById('addReceipt').files[0];
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-
-            if (!addName || !newYear || !addReceipt) {
-                addError.textContent = 'Please fill all required fields.';
-                addSubmitBtn.classList.remove('loading');
-                addSubmitBtn.disabled = false;
-                return;
-            }
-
-            if (addName !== currentUser.name) {
-                addError.textContent = 'Name does not match registered name.';
-                addSubmitBtn.classList.remove('loading');
-                addSubmitBtn.disabled = false;
-                return;
-            }
-
-            const result = await firebaseUserManager.addYearToUser(currentUser.id, newYear, currentUser);
-            
-            if (result.success) {
-                // Send to Telegram - FIXED
-                const caption = `➕ <b>Add Year Request</b>\n\n📚 Current Years: ${currentUser.registeredYears.join(', ')}\n🆕 New Year: ${newYear}\n👤 Name: ${addName}\n📱 Phone: ${currentUser.phone}\n🔑 Code: <code>${result.code}</code>\n\n<i>Please approve this year addition</i>`;
-                
-                // Send receipt to Telegram
-                const telegramResult = await firebaseUserManager.sendTelegramPhoto(addReceipt, caption);
-                
-                if (telegramResult.ok) {
-                    localStorage.setItem('pendingYearAddition', 'true');
-                    localStorage.setItem('addCodeTimestamp', new Date().getTime());
-                    addForm.style.display = 'none';
-                    addVerifyForm.style.display = 'block';
-                    addError.textContent = '';
-                } else {
-                    addError.textContent = 'Error sending to Telegram. Please try again.';
-                }
-            } else {
-                addError.textContent = 'Error adding year: ' + result.error;
-            }
-
-            addSubmitBtn.classList.remove('loading');
-            addSubmitBtn.disabled = false;
-        });
-
-        // Year addition verification
-        document.getElementById('addVerifyBtn').addEventListener('click', async () => {
-            const enteredCode = document.getElementById('addVerifyCode').value;
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-
-            const result = await firebaseUserManager.verifyYearAddition(currentUser.id, enteredCode);
-            
-            if (result.success) {
-                // Send year addition verification notification to Telegram - FIXED
-                const caption = `✅ <b>Year Added Successfully</b>\n\n👤 Name: ${result.user.name}\n📱 Phone: ${result.user.phone}\n📚 Year(s): ${result.user.registeredYears.join(', ')}\n\n<i>Year has been successfully added to user account</i>`;
-                await firebaseUserManager.sendTelegramMessage(caption);
-
-                // Update local storage
-                localStorage.setItem('currentUser', JSON.stringify(result.user));
-                localStorage.setItem('userYears', JSON.stringify(result.user.registeredYears));
-                localStorage.removeItem('pendingYearAddition');
-                localStorage.removeItem('addCodeTimestamp');
-                
-                addModal.style.display = 'none';
-                loadProfile();
                 renderQuizCards();
             } else {
-                addVerifyError.textContent = result.error;
-            }
-        });
-
-        // Access Denied Modal
-        const accessDeniedModal = document.getElementById('accessDeniedModal');
-        const deniedMessage = document.getElementById('deniedMessage');
-        const closeDeniedBtn = document.getElementById('closeDeniedBtn');
-
-        function showAccessDeniedModal(userYears, requestedYear) {
-            const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {};
-            const hasActiveTrial = firebaseUserManager.hasActiveTrial(currentUser);
-            
-            if (hasActiveTrial) {
-                deniedMessage.textContent = `You have an active free trial! You can access all years during your trial period.`;
-            } else {
-                deniedMessage.textContent = `You are registered for ${userYears.join(', ')} only. If you really want this year, go to profile and add your year.`;
-            }
-            accessDeniedModal.style.display = 'flex';
-        }
-
-        closeDeniedBtn.addEventListener('click', () => {
-            accessDeniedModal.style.display = 'none';
-        });
-
-        // Profile Logic with trial status
-        function loadProfile() {
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            if (currentUser) {
-                document.getElementById('profileName').textContent = currentUser.name || 'N/A';
-                document.getElementById('profilePhone').textContent = currentUser.phone || 'N/A';
-                document.getElementById('profileEmail').textContent = currentUser.email || 'N/A';
-                document.getElementById('profileTelegram').textContent = currentUser.telegram || 'N/A';
-                document.getElementById('profileYears').textContent = currentUser.registeredYears.join(', ') || 'N/A';
-                
-                // Show trial status if applicable
-                const hasActiveTrial = firebaseUserManager.hasActiveTrial(currentUser);
-                const trialDaysRemaining = firebaseUserManager.getTrialDaysRemaining(currentUser);
-                
-                if (hasActiveTrial) {
-                    const trialInfo = document.createElement('div');
-                    trialInfo.className = 'info-item';
-                    trialInfo.innerHTML = `
-                        <span class="info-label">Trial Status:</span>
-                        <span class="info-value" style="color: var(--success);">
-                            <i class="fas fa-crown"></i> Active (${trialDaysRemaining} days remaining)
-                        </span>
-                    `;
-                    document.querySelector('.profile-info').appendChild(trialInfo);
-                } else if (currentUser.plan === 'trial') {
-                    const trialInfo = document.createElement('div');
-                    trialInfo.className = 'info-item';
-                    trialInfo.innerHTML = `
-                        <span class="info-label">Trial Status:</span>
-                        <span class="info-value" style="color: var(--error);">
-                            <i class="fas fa-clock"></i> Expired
-                        </span>
-                    `;
-                    document.querySelector('.profile-info').appendChild(trialInfo);
+                console.log('User verification failed');
+                if (latestUser) {
+                    localStorage.clear();
+                    onlineTracker.cleanup();
+                    showRegistrationModal();
                 }
             }
-            
-            const profilePicSrc = localStorage.getItem('profilePic');
-            const profilePic = document.getElementById('profilePic');
-            profilePic.src = profilePicSrc || 'https://via.placeholder.com/120?text=User';
+        } catch (error) {
+            console.error('Error checking user status:', error);
+            console.log('Using cached user data due to error');
         }
+    } else {
+        console.log('No cached user found');
+        showRegistrationModal();
+    }
+}
 
-        const profilePicInput = document.getElementById('profilePicInput');
-        profilePicInput.addEventListener('change', () => {
-            const file = profilePicInput.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = e => {
-                    localStorage.setItem('profilePic', e.target.result);
-                    document.getElementById('profilePic').src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        // Comment Logic - FIXED TELEGRAM INTEGRATION
-        const sendCommentBtn = document.getElementById('sendCommentBtn');
-        const commentBox = document.getElementById('commentBox');
-        const commentError = document.getElementById('commentError');
-
-        sendCommentBtn.addEventListener('click', async () => {
-            const message = commentBox.value.trim();
-            if (!message) {
-                commentError.textContent = 'Please write a message.';
-                return;
-            }
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            const name = currentUser?.name;
-            const phone = currentUser?.phone;
-            const telegram = currentUser?.telegram || 'N/A';
-            const caption = `💬 <b>User Comment</b>\n\n👤 Name: ${name}\n📱 Phone: ${phone}\n📲 Telegram: ${telegram}\n💭 Message: ${message}\n\n<i>User has sent a comment</i>`;
-
-            // Send comment to Telegram
-            const telegramResult = await firebaseUserManager.sendTelegramMessage(caption);
-
-            if (telegramResult.ok) {
-                commentBox.value = '';
-                commentError.textContent = '';
-                alert('Comment sent successfully!');
-            } else {
-                commentError.textContent = 'Error sending comment. Please try again.';
-            }
-        });
-
-        // Enhanced Logout logic - FIXED TELEGRAM INTEGRATION
-        const logoutHandler = async (e) => {
-            e.preventDefault();
-            const logoutCode = Math.floor(100000 + Math.random() * 900000).toString();
-            localStorage.setItem('logoutCode', logoutCode);
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            const name = currentUser?.name;
-            const phone = currentUser?.phone;
-            const caption = `🚪 <b>Logout Request</b>\n\n👤 Name: ${name}\n📱 Phone: ${phone}\n🔑 Code: <code>${logoutCode}</code>\n\n<i>User has requested to logout</i>`;
-            
-            // Send logout request to Telegram
-            const telegramResult = await firebaseUserManager.sendTelegramMessage(caption);
-            
-            if (telegramResult.ok) {
-                logoutModal.style.display = 'flex';
-                regModal.style.display = 'none';
-                logoutError.textContent = '';
-            } else {
-                logoutError.textContent = 'Error sending logout code. Please try again.';
-            }
-        };
-        logout.addEventListener('click', logoutHandler);
-        document.getElementById('profileLogoutBtn').addEventListener('click', logoutHandler);
-
-        document.getElementById('confirmLogoutBtn').addEventListener('click', async () => {
-            const enteredCode = document.getElementById('logoutCode').value;
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            const name = currentUser?.name;
-            const phone = currentUser?.phone;
-            if (enteredCode === localStorage.getItem('logoutCode')) {
-                // Send logout confirmation to Telegram - FIXED
-                const caption = `👋 <b>User Logged Out</b>\n\n👤 Name: ${name}\n📱 Phone: ${phone}\n\n<i>User has been successfully logged out</i>`;
-                await firebaseUserManager.sendTelegramMessage(caption);
-
-                // Remove verification code from Firebase
-                await firebaseUserManager.usersCollection.doc(currentUser.id).update({
-                    verificationCode: null,
-                    isOnline: false
-                });
-
+// Force status check on page load
+document.addEventListener('DOMContentLoaded', function() {
+    setInterval(async () => {
+        const currentUser = localStorage.getItem('currentUser');
+        if (currentUser) {
+            const user = JSON.parse(currentUser);
+            const latestUser = await firebaseUserManager.getUserByPhone(user.phone);
+            if (!latestUser || latestUser.status !== 'verified') {
                 localStorage.clear();
+                onlineTracker.cleanup();
                 location.reload();
-            } else {
-                logoutError.textContent = 'Invalid logout code.';
             }
+        }
+    }, 60000);
+});
+
+function showRegistrationModal() {
+    regModal.style.display = 'flex';
+    mainContent.style.display = 'none';
+    profileContent.style.display = 'none';
+}
+
+// Back button to return to registration form
+backBtn.addEventListener('click', () => {
+    regForm.style.display = 'block';
+    loginForm.style.display = 'none';
+    registerLink.style.display = 'none';
+    loginLink.style.display = 'block';
+    verifyForm.style.display = 'none';
+    verifyError.textContent = '';
+});
+
+// Enhanced Registration form submission with better Telegram handling
+regForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    submitBtn.classList.add('loading');
+    submitBtn.disabled = true;
+    regError.textContent = '';
+    
+    const year = document.getElementById('year').value;
+    const name = document.getElementById('name').value;
+    const phone = document.getElementById('phone').value;
+    const email = document.getElementById('email').value || '';
+    const telegram = document.getElementById('telegram').value || 'N/A';
+    const receipt = document.getElementById('receipt').files[0];
+
+    if (!year || !name || !phone || !receipt) {
+        regError.textContent = 'Please fill all required fields.';
+        submitBtn.classList.remove('loading');
+        submitBtn.disabled = false;
+        return;
+    }
+
+    if (!/^09\d{8}$/.test(phone)) {
+        regError.textContent = 'Please enter a valid Ethiopian phone number (09xxxxxxxx)';
+        submitBtn.classList.remove('loading');
+        submitBtn.disabled = false;
+        return;
+    }
+
+    const userData = {
+        name: name,
+        phone: phone,
+        email: email,
+        telegram: telegram,
+        year: year,
+        price: prices[year]
+    };
+
+    const result = await firebaseUserManager.createUser(userData);
+    
+    if (result.success) {
+        const caption = `New Registration\nYear: ${year} (${prices[year]} ETB)\nName: ${name}\nPhone: ${phone}\nEmail: ${email}\nTelegram: ${telegram}\nCode: ${result.code}`;
+        
+        const telegramResult = await telegramAPI.sendMessage(caption, true, receipt);
+
+        if (telegramResult.success || telegramResult.fallback) {
+            localStorage.setItem('pendingPhone', phone);
+            localStorage.setItem('tempUserData', JSON.stringify(userData));
+            localStorage.setItem('codeTimestamp', new Date().getTime());
+            
+            regForm.style.display = 'none';
+            loginForm.style.display = 'none';
+            verifyForm.style.display = 'block';
+            regError.textContent = '';
+            
+            if (telegramResult.fallback) {
+                alert('Registration received! We will process it manually. You will receive a confirmation message soon.');
+            }
+        } else {
+            regError.textContent = 'Registration saved locally. We will contact you shortly.';
+            telegramAPI.storePendingMessage('registration', { userData, code: result.code });
+            localStorage.setItem('pendingPhone', phone);
+            localStorage.setItem('tempUserData', JSON.stringify(userData));
+            regForm.style.display = 'none';
+            loginForm.style.display = 'none';
+            verifyForm.style.display = 'block';
+        }
+    } else {
+        regError.textContent = 'Error creating user: ' + result.error;
+    }
+
+    submitBtn.classList.remove('loading');
+    submitBtn.disabled = false;
+});
+
+// Enhanced Login submission
+loginSubmitBtn.addEventListener('click', async () => {
+    loginSubmitBtn.classList.add('loading');
+    loginSubmitBtn.disabled = true;
+    loginError.textContent = '';
+    
+    const phone = document.getElementById('loginPhone').value;
+
+    if (!phone) {
+        loginError.textContent = 'Please enter phone number.';
+        loginSubmitBtn.classList.remove('loading');
+        loginSubmitBtn.disabled = false;
+        return;
+    }
+
+    const result = await firebaseUserManager.login(phone);
+    
+    if (result.success) {
+        const user = await firebaseUserManager.getUserByPhone(phone);
+        const caption = `Login Request\nName: ${user.name}\nPhone: ${phone}\nTelegram: ${user.telegram}\nCode: ${result.code}`;
+        
+        const telegramResult = await telegramAPI.sendMessage(caption);
+
+        if (telegramResult.success || telegramResult.fallback) {
+            localStorage.setItem('pendingPhone', phone);
+            localStorage.setItem('codeTimestamp', new Date().getTime());
+            regForm.style.display = 'none';
+            loginForm.style.display = 'none';
+            verifyForm.style.display = 'block';
+            loginError.textContent = '';
+            
+            if (telegramResult.fallback) {
+                alert('Login request received! We will contact you with verification code shortly.');
+            }
+        } else {
+            loginError.textContent = 'Login request saved. We will contact you shortly.';
+            telegramAPI.storePendingMessage('login', { phone, code: result.code });
+            localStorage.setItem('pendingPhone', phone);
+            regForm.style.display = 'none';
+            loginForm.style.display = 'none';
+            verifyForm.style.display = 'block';
+        }
+    } else {
+        loginError.textContent = result.error;
+    }
+
+    loginSubmitBtn.classList.remove('loading');
+    loginSubmitBtn.disabled = false;
+});
+
+// Verification
+document.getElementById('verifyBtn').addEventListener('click', async () => {
+    const enteredCode = document.getElementById('verifyCode').value;
+    const phone = localStorage.getItem('pendingPhone');
+
+    if (!phone) {
+        verifyError.textContent = 'Session expired. Please register again.';
+        return;
+    }
+
+    const result = await firebaseUserManager.verifyUser(phone, enteredCode);
+    
+    if (result.success) {
+        onlineTracker.init(result.user);
+        notificationManager.init(result.user);
+        
+        const caption = `User Verified\nName: ${result.user.name}\nPhone: ${result.user.phone}\nYear(s): ${result.user.registeredYears.join(', ')}`;
+        await telegramAPI.sendMessage(caption);
+
+        localStorage.setItem('currentUser', JSON.stringify(result.user));
+        localStorage.setItem('userYears', JSON.stringify(result.user.registeredYears));
+        localStorage.setItem('verified', 'true');
+        localStorage.removeItem('pendingPhone');
+        localStorage.removeItem('tempUserData');
+        localStorage.removeItem('codeTimestamp');
+        
+        if (result.user.role === 'admin') {
+            adminBtn.style.display = 'inline-flex';
+        }
+        
+        location.reload();
+    } else {
+        verifyError.textContent = result.error;
+    }
+});
+
+// Add Year Logic
+const addModal = document.getElementById('addModal');
+const confirmAddModal = document.getElementById('confirmAddModal');
+const addForm = document.getElementById('addForm');
+const addVerifyForm = document.getElementById('addVerifyForm');
+const addError = document.getElementById('addError');
+const addVerifyError = document.getElementById('addVerifyError');
+const addReceiptInput = document.getElementById('addReceipt');
+const addReceiptPreview = document.getElementById('addReceiptPreview');
+const addUploadText = document.getElementById('addUploadText');
+const addSubmitBtn = document.getElementById('addSubmitBtn');
+const addBackBtn = document.getElementById('addBackBtn');
+const addYearBtn = document.getElementById('addYearBtn');
+const cancelAddBtn = document.getElementById('cancelAddBtn');
+const okAddBtn = document.getElementById('okAddBtn');
+
+addYearBtn.addEventListener('click', () => {
+    confirmAddModal.style.display = 'flex';
+});
+
+cancelAddBtn.addEventListener('click', () => {
+    confirmAddModal.style.display = 'none';
+});
+
+okAddBtn.addEventListener('click', () => {
+    confirmAddModal.style.display = 'none';
+    addModal.style.display = 'flex';
+    addForm.style.display = 'block';
+    addVerifyForm.style.display = 'none';
+    document.getElementById('addName').value = localStorage.getItem('userName') || '';
+});
+
+addReceiptInput.addEventListener('change', () => {
+    const file = addReceiptInput.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = e => {
+            addReceiptPreview.src = e.target.result;
+            addReceiptPreview.style.display = 'block';
+            addUploadText.textContent = 'Change Payment Receipt';
+        };
+        reader.readAsDataURL(file);
+    } else {
+        addReceiptPreview.style.display = 'none';
+        addUploadText.textContent = 'Upload Payment Receipt (50 ETB)';
+    }
+});
+
+addBackBtn.addEventListener('click', () => {
+    addForm.style.display = 'block';
+    addVerifyForm.style.display = 'none';
+    addVerifyError.textContent = '';
+});
+
+// Enhanced Add year form submission
+addForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    addSubmitBtn.classList.add('loading');
+    addSubmitBtn.disabled = true;
+    
+    const addName = document.getElementById('addName').value;
+    const newYear = document.getElementById('newYear').value;
+    const addReceipt = document.getElementById('addReceipt').files[0];
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+    if (!addName || !newYear || !addReceipt) {
+        addError.textContent = 'Please fill all required fields.';
+        addSubmitBtn.classList.remove('loading');
+        addSubmitBtn.disabled = false;
+        return;
+    }
+
+    if (addName !== currentUser.name) {
+        addError.textContent = 'Name does not match registered name.';
+        addSubmitBtn.classList.remove('loading');
+        addSubmitBtn.disabled = false;
+        return;
+    }
+
+    const result = await firebaseUserManager.addYearToUser(currentUser.id, newYear, currentUser);
+    
+    if (result.success) {
+        const caption = `Add Year\nYears: ${currentUser.registeredYears.join(', ')}\nNew Year: ${newYear}\nName: ${addName}\nPhone: ${currentUser.phone}\nCode: ${result.code}`;
+        
+        const telegramResult = await telegramAPI.sendMessage(caption, true, addReceipt);
+
+        if (telegramResult.success || telegramResult.fallback) {
+            localStorage.setItem('pendingYearAddition', 'true');
+            localStorage.setItem('addCodeTimestamp', new Date().getTime());
+            addForm.style.display = 'none';
+            addVerifyForm.style.display = 'block';
+            addError.textContent = '';
+        } else {
+            addError.textContent = 'Year addition request saved. We will contact you shortly.';
+            telegramAPI.storePendingMessage('add_year', { currentUser, newYear, code: result.code });
+            localStorage.setItem('pendingYearAddition', 'true');
+            addForm.style.display = 'none';
+            addVerifyForm.style.display = 'block';
+        }
+    } else {
+        addError.textContent = 'Error adding year: ' + result.error;
+    }
+
+    addSubmitBtn.classList.remove('loading');
+    addSubmitBtn.disabled = false;
+});
+
+// Year addition verification
+document.getElementById('addVerifyBtn').addEventListener('click', async () => {
+    const enteredCode = document.getElementById('addVerifyCode').value;
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+    const result = await firebaseUserManager.verifyYearAddition(currentUser.id, enteredCode);
+    
+    if (result.success) {
+        onlineTracker.init(result.user);
+        notificationManager.init(result.user);
+        
+        const caption = `Year Added\nName: ${result.user.name}\nPhone: ${result.user.phone}\nYear(s): ${result.user.registeredYears.join(', ')}`;
+        await telegramAPI.sendMessage(caption);
+
+        localStorage.setItem('currentUser', JSON.stringify(result.user));
+        localStorage.setItem('userYears', JSON.stringify(result.user.registeredYears));
+        localStorage.removeItem('pendingYearAddition');
+        localStorage.removeItem('addCodeTimestamp');
+        
+        addModal.style.display = 'none';
+        loadProfile();
+        renderQuizCards();
+    } else {
+        addVerifyError.textContent = result.error;
+    }
+});
+
+// Access Denied Modal
+const accessDeniedModal = document.getElementById('accessDeniedModal');
+const deniedMessage = document.getElementById('deniedMessage');
+const closeDeniedBtn = document.getElementById('closeDeniedBtn');
+
+function showAccessDeniedModal(userYears, requestedYear) {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {};
+    const hasActiveTrial = firebaseUserManager.hasActiveTrial(currentUser);
+    
+    if (hasActiveTrial) {
+        deniedMessage.textContent = `You have an active free trial! You can access all years during your trial period.`;
+    } else {
+        deniedMessage.textContent = `You are registered for ${userYears.join(', ')} only. If you really want this year, go to profile and add your year.`;
+    }
+    accessDeniedModal.style.display = 'flex';
+}
+
+closeDeniedBtn.addEventListener('click', () => {
+    accessDeniedModal.style.display = 'none';
+});
+
+// Profile Logic with trial status
+function loadProfile() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (currentUser) {
+        document.getElementById('profileName').textContent = currentUser.name || 'N/A';
+        document.getElementById('profilePhone').textContent = currentUser.phone || 'N/A';
+        document.getElementById('profileEmail').textContent = currentUser.email || 'N/A';
+        document.getElementById('profileTelegram').textContent = currentUser.telegram || 'N/A';
+        document.getElementById('profileYears').textContent = currentUser.registeredYears.join(', ') || 'N/A';
+        
+        const hasActiveTrial = firebaseUserManager.hasActiveTrial(currentUser);
+        const trialDaysRemaining = firebaseUserManager.getTrialDaysRemaining(currentUser);
+        
+        if (hasActiveTrial) {
+            const trialInfo = document.createElement('div');
+            trialInfo.className = 'info-item';
+            trialInfo.innerHTML = `
+                <span class="info-label">Trial Status:</span>
+                <span class="info-value" style="color: var(--success);">
+                    <i class="fas fa-crown"></i> Active (${trialDaysRemaining} days remaining)
+                </span>
+            `;
+            document.querySelector('.profile-info').appendChild(trialInfo);
+        } else if (currentUser.plan === 'trial') {
+            const trialInfo = document.createElement('div');
+            trialInfo.className = 'info-item';
+            trialInfo.innerHTML = `
+                <span class="info-label">Trial Status:</span>
+                <span class="info-value" style="color: var(--error);">
+                    <i class="fas fa-clock"></i> Expired
+                </span>
+            `;
+            document.querySelector('.profile-info').appendChild(trialInfo);
+        }
+    }
+    
+    const profilePicSrc = localStorage.getItem('profilePic');
+    const profilePic = document.getElementById('profilePic');
+    profilePic.src = profilePicSrc || 'https://via.placeholder.com/120?text=User';
+}
+
+const profilePicInput = document.getElementById('profilePicInput');
+profilePicInput.addEventListener('change', () => {
+    const file = profilePicInput.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = e => {
+            localStorage.setItem('profilePic', e.target.result);
+            document.getElementById('profilePic').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// Comment Logic
+const sendCommentBtn = document.getElementById('sendCommentBtn');
+const commentBox = document.getElementById('commentBox');
+const commentError = document.getElementById('commentError');
+
+sendCommentBtn.addEventListener('click', async () => {
+    const message = commentBox.value.trim();
+    if (!message) {
+        commentError.textContent = 'Please write a message.';
+        return;
+    }
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const name = currentUser?.name;
+    const phone = currentUser?.phone;
+    const telegram = currentUser?.telegram || 'N/A';
+    const caption = `Comment\nName: ${name}\nPhone: ${phone}\nMessage: ${message}`;
+
+    try {
+        sendCommentBtn.classList.add('loading');
+        const result = await telegramAPI.sendMessage(caption);
+        
+        if (result.success) {
+            commentBox.value = '';
+            commentError.textContent = '';
+            alert('Comment sent successfully!');
+        } else {
+            commentError.textContent = 'Error sending comment. Please try again.';
+        }
+    } catch (err) {
+        commentError.textContent = 'Error: ' + err.message;
+    } finally {
+        sendCommentBtn.classList.remove('loading');
+    }
+});
+
+// Enhanced Logout logic
+const logoutHandler = async (e) => {
+    e.preventDefault();
+    const logoutCode = Math.floor(100000 + Math.random() * 900000).toString();
+    localStorage.setItem('logoutCode', logoutCode);
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const name = currentUser?.name;
+    const phone = currentUser?.phone;
+    const caption = `Logout Request\nName: ${name}\nPhone: ${phone}\nCode: ${logoutCode}`;
+    
+    try {
+        const result = await telegramAPI.sendMessage(caption);
+        if (result.success) {
+            logoutModal.style.display = 'flex';
+            regModal.style.display = 'none';
+            logoutError.textContent = '';
+        } else {
+            logoutError.textContent = 'Error sending logout code. Please try again.';
+        }
+    } catch (err) {
+        logoutError.textContent = 'Error: ' + err.message;
+    }
+};
+logout.addEventListener('click', logoutHandler);
+document.getElementById('profileLogoutBtn').addEventListener('click', logoutHandler);
+
+document.getElementById('confirmLogoutBtn').addEventListener('click', async () => {
+    const enteredCode = document.getElementById('logoutCode').value;
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const name = currentUser?.name;
+    const phone = currentUser?.phone;
+    if (enteredCode === localStorage.getItem('logoutCode')) {
+        onlineTracker.cleanup();
+        
+        const caption = `User Logged Out\nName: ${name}\nPhone: ${phone}`;
+        await telegramAPI.sendMessage(caption);
+
+        await firebaseUserManager.usersCollection.doc(currentUser.id).update({
+            verificationCode: null,
+            isOnline: false
         });
 
-        // Initialize
-        init();
-        renderQuizCards();
+        localStorage.clear();
+        location.reload();
+    } else {
+        logoutError.textContent = 'Invalid logout code.';
+    }
+});
+
+// Notifications functionality
+notificationsBtn.addEventListener('click', () => {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (currentUser) {
+        notificationManager.renderNotifications();
+        notificationsModal.style.display = 'flex';
+    }
+});
+
+closeNotificationsBtn.addEventListener('click', () => {
+    notificationsModal.style.display = 'none';
+});
+
+// Handle page unload to set user offline
+window.addEventListener('beforeunload', () => {
+    onlineTracker.setOffline();
+});
+
+// Initialize
+init();
+renderQuizCards();
     </script>
 </body>
 </html>
