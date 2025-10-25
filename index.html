@@ -169,6 +169,30 @@
             max-width: 600px;
             margin: 0 auto;
         }
+        .tab-container {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+        .tab-btn {
+            padding: 1rem 2rem;
+            background: var(--surface);
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            border-bottom: 2px solid transparent;
+        }
+        .tab-btn.active {
+            border-bottom: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
         .admin-panel {
             background: var(--surface);
             border-radius: var(--radius);
@@ -262,29 +286,32 @@
             font-size: 1rem;
             cursor: pointer;
         }
-        .users-table-container {
+        .users-table-container, .broadcasts-table-container {
             overflow-x: auto;
             max-height: 600px;
             overflow-y: auto;
         }
-        .users-table {
+        .users-table, .broadcasts-table {
             width: 100%;
             border-collapse: collapse;
         }
         .users-table th,
-        .users-table td {
+        .users-table td,
+        .broadcasts-table th,
+        .broadcasts-table td {
             padding: 1rem;
             text-align: left;
             border-bottom: 1px solid var(--border);
         }
-        .users-table th {
+        .users-table th, .broadcasts-table th {
             background: var(--background);
             font-weight: 600;
             color: var(--text-secondary);
             position: sticky;
             top: 0;
         }
-        .users-table tbody tr:hover {
+        .users-table tbody tr:hover,
+        .broadcasts-table tbody tr:hover {
             background: rgba(59, 130, 246, 0.05);
         }
         .user-status {
@@ -1087,6 +1114,44 @@
         </div>
     </div>
 
+    <!-- Edit Broadcast Modal -->
+    <div id="editBroadcastModal" class="modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-edit"></i> Edit Broadcast</h2>
+            <form id="editBroadcastForm">
+                <input type="hidden" id="editBroadcastId">
+                <div class="input-group">
+                    <i class="fas fa-comment-alt"></i>
+                    <textarea id="editBroadcastMessage" placeholder="Enter your announcement..." required style="min-height: 120px;"></textarea>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-users"></i>
+                    <select id="editBroadcastTarget" required>
+                        <option value="all">All Users</option>
+                        <option value="verified">Verified Only</option>
+                        <option value="premium">Premium Users</option>
+                        <option value="trial">Trial Users</option>
+                        <option value="online">Online Now</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-bell"></i>
+                    <select id="editBroadcastType">
+                        <option value="info">Info</option>
+                        <option value="success">Success</option>
+                        <option value="warning">Warning</option>
+                        <option value="error">Urgent</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Changes</button>
+                    <button type="button" class="btn btn-secondary" id="cancelEditBroadcastBtn"><i class="fas fa-times"></i> Cancel</button>
+                </div>
+                <div id="editBroadcastError" class="error"></div>
+            </form>
+        </div>
+    </div>
+
     <!-- Header -->
     <header class="header" id="header">
         <div class="header-container">
@@ -1114,174 +1179,265 @@
     <!-- Admin Content -->
     <main id="adminContent" class="main-content">
         <div class="page-header">
-            <h1 class="page-title">Enhanced User Management</h1>
-            <p class="page-subtitle">Advanced user management with real-time online tracking</p>
+            <h1 class="page-title">Enhanced Admin Panel</h1>
+            <p class="page-subtitle">User and Broadcast Management with Real-Time Tracking</p>
         </div>
         
-        <!-- Online Users Panel -->
-        <div class="online-users-panel">
-            <div class="online-users-header">
-                <h3><i class="fas fa-users"></i> Online Users <span id="onlineCount" class="user-badge badge-verified">0</span></h3>
-                <button class="quick-action-btn" onclick="userManager.refreshOnlineStatus()">
-                    <i class="fas fa-sync-alt"></i> Refresh
-                </button>
-            </div>
-            <div class="online-users-grid" id="onlineUsersGrid">
-                <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: var(--text-tertiary);">
-                    <i class="fas fa-users-slash" style="font-size: 2rem; margin-bottom: 1rem;"></i>
-                    <p>No users online at the moment</p>
-                </div>
-            </div>
+        <div class="tab-container">
+            <button class="tab-btn active" data-tab="users">Users</button>
+            <button class="tab-btn" data-tab="broadcasts">Broadcasts</button>
         </div>
         
-        <div class="admin-panel">
-            <div class="admin-header">
-                <h2><i class="fas fa-users-cog"></i> User Management Dashboard</h2>
-                <div id="currentTime"></div>
-            </div>
-            
-            <div class="admin-stats">
-                <div class="stat-card">
-                    <div class="stat-value" id="totalUsers">0</div>
-                    <div class="stat-label">Total Users</div>
+        <div class="tab-content active" id="usersTab">
+            <!-- Online Users Panel -->
+            <div class="online-users-panel">
+                <div class="online-users-header">
+                    <h3><i class="fas fa-users"></i> Online Users <span id="onlineCount" class="user-badge badge-verified">0</span></h3>
+                    <button class="quick-action-btn" onclick="userManager.refreshOnlineStatus()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="verifiedUsers">0</div>
-                    <div class="stat-label">Verified Users</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="adminUsers">0</div>
-                    <div class="stat-label">Admin Users</div>
-                </div>
-                <div class="stat-card premium">
-                    <div class="stat-value" id="moderatorUsers">0</div>
-                    <div class="stat-label">Moderators</div>
-                </div>
-                <div class="stat-card premium">
-                    <div class="stat-value" id="premiumUsers">0</div>
-                    <div class="stat-label">Premium Users</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="trialUsers">0</div>
-                    <div class="stat-label">Trial Users</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="onlineUsers">0</div>
-                    <div class="stat-label">Online Users</div>
-                </div>
-            </div>
-
-            <div class="quick-actions">
-                <button class="quick-action-btn" onclick="userManager.bulkVerify()">
-                    <i class="fas fa-check-circle"></i> Verify Selected
-                </button>
-                <button class="quick-action-btn" onclick="userManager.bulkReject()">
-                    <i class="fas fa-times-circle"></i> Reject Selected
-                </button>
-                <button class="quick-action-btn" onclick="userManager.bulkPromoteToModerator()">
-                    <i class="fas fa-user-shield"></i> Promote to Moderator
-                </button>
-                <button class="quick-action-btn" onclick="userManager.bulkGenerateCodes()">
-                    <i class="fas fa-key"></i> Generate Temp Passwords
-                </button>
-                <button class="quick-action-btn" onclick="userManager.bulkStartTrial()">
-                    <i class="fas fa-gift"></i> Start Free Trial
-                </button>
-                <button class="quick-action-btn danger" onclick="userManager.bulkDelete()">
-                    <i class="fas fa-trash"></i> Delete Selected
-                </button>
-                <button class="quick-action-btn" onclick="openBroadcastModal()">
-                    <i class="fas fa-bullhorn"></i> Broadcast Message
-                </button>
-            </div>
-            
-            <div class="admin-controls">
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="searchInput" placeholder="Search users by name, phone, email, or role...">
-                </div>
-                <div class="filter-group">
-                    <select id="statusFilter" class="filter-select">
-                        <option value="all">All Status</option>
-                        <option value="pending">Pending</option>
-                        <option value="verified">Verified</option>
-                        <option value="rejected">Rejected</option>
-                        <option value="premium">Premium</option>
-                    </select>
-                    <select id="roleFilter" class="filter-select">
-                        <option value="all">All Roles</option>
-                        <option value="user">User</option>
-                        <option value="moderator">Moderator</option>
-                        <option value="admin">Admin</option>
-                    </select>
-                    <select id="yearFilter" class="filter-select">
-                        <option value="all">All Years</option>
-                        <option value="1">1st Year</option>
-                        <option value="2">2nd Year</option>
-                        <option value="3">3rd Year</option>
-                        <option value="4">4th Year</option>
-                        <option value="5">5th Year</option>
-                        <option value="6">6th Year</option>
-                    </select>
-                    <select id="planFilter" class="filter-select">
-                        <option value="all">All Plans</option>
-                        <option value="basic">Basic</option>
-                        <option value="premium">Premium</option>
-                        <option value="trial">Trial</option>
-                    </select>
-                    <select id="sortBy" class="filter-select">
-                        <option value="newest">Newest First</option>
-                        <option value="oldest">Oldest First</option>
-                        <option value="name">Name A-Z</option>
-                        <option value="role">Role</option>
-                    </select>
+                <div class="online-users-grid" id="onlineUsersGrid">
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: var(--text-tertiary);">
+                        <i class="fas fa-users-slash" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                        <p>No users online at the moment</p>
+                    </div>
                 </div>
             </div>
             
-            <div class="users-table-container">
-                <table class="users-table">
-                    <thead>
-                        <tr>
-                            <th>
-                                <div class="select-all" id="selectAllCheckbox">
-                                    <div class="checkbox"></div>
-                                    <span>Select All</span>
-                                </div>
-                            </th>
-                            <th>User Info</th>
-                            <th>Contact</th>
-                            <th>Years & Role</th>
-                            <th>Status & Verification</th>
-                            <th>Registration</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="usersTableBody">
-                        <!-- Users will be populated here -->
-                    </tbody>
-                </table>
+            <div class="admin-panel">
+                <div class="admin-header">
+                    <h2><i class="fas fa-users-cog"></i> User Management Dashboard</h2>
+                    <div id="currentTime"></div>
+                </div>
                 
-                <div id="emptyState" class="empty-state" style="display: none;">
-                    <i class="fas fa-users"></i>
-                    <h3>No Users Found</h3>
-                    <p>Try adjusting your search or filter criteria</p>
+                <div class="admin-stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalUsers">0</div>
+                        <div class="stat-label">Total Users</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="verifiedUsers">0</div>
+                        <div class="stat-label">Verified Users</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="adminUsers">0</div>
+                        <div class="stat-label">Admin Users</div>
+                    </div>
+                    <div class="stat-card premium">
+                        <div class="stat-value" id="moderatorUsers">0</div>
+                        <div class="stat-label">Moderators</div>
+                    </div>
+                    <div class="stat-card premium">
+                        <div class="stat-value" id="premiumUsers">0</div>
+                        <div class="stat-label">Premium Users</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="trialUsers">0</div>
+                        <div class="stat-label">Trial Users</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="onlineUsers">0</div>
+                        <div class="stat-label">Online Users</div>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <button class="quick-action-btn" onclick="userManager.bulkVerify()">
+                        <i class="fas fa-check-circle"></i> Verify Selected
+                    </button>
+                    <button class="quick-action-btn" onclick="userManager.bulkReject()">
+                        <i class="fas fa-times-circle"></i> Reject Selected
+                    </button>
+                    <button class="quick-action-btn" onclick="userManager.bulkPromoteToModerator()">
+                        <i class="fas fa-user-shield"></i> Promote to Moderator
+                    </button>
+                    <button class="quick-action-btn" onclick="userManager.bulkGenerateCodes()">
+                        <i class="fas fa-key"></i> Generate Temp Passwords
+                    </button>
+                    <button class="quick-action-btn" onclick="userManager.bulkStartTrial()">
+                        <i class="fas fa-gift"></i> Start Free Trial
+                    </button>
+                    <button class="quick-action-btn danger" onclick="userManager.bulkDelete()">
+                        <i class="fas fa-trash"></i> Delete Selected
+                    </button>
+                </div>
+                
+                <div class="admin-controls">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search users by name, phone, email, or role...">
+                    </div>
+                    <div class="filter-group">
+                        <select id="statusFilter" class="filter-select">
+                            <option value="all">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="verified">Verified</option>
+                            <option value="rejected">Rejected</option>
+                            <option value="premium">Premium</option>
+                        </select>
+                        <select id="roleFilter" class="filter-select">
+                            <option value="all">All Roles</option>
+                            <option value="user">User</option>
+                            <option value="moderator">Moderator</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                        <select id="yearFilter" class="filter-select">
+                            <option value="all">All Years</option>
+                            <option value="1">1st Year</option>
+                            <option value="2">2nd Year</option>
+                            <option value="3">3rd Year</option>
+                            <option value="4">4th Year</option>
+                            <option value="5">5th Year</option>
+                            <option value="6">6th Year</option>
+                        </select>
+                        <select id="planFilter" class="filter-select">
+                            <option value="all">All Plans</option>
+                            <option value="basic">Basic</option>
+                            <option value="premium">Premium</option>
+                            <option value="trial">Trial</option>
+                        </select>
+                        <select id="sortBy" class="filter-select">
+                            <option value="newest">Newest First</option>
+                            <option value="oldest">Oldest First</option>
+                            <option value="name">Name A-Z</option>
+                            <option value="role">Role</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="users-table-container">
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <div class="select-all" id="selectAllCheckbox">
+                                        <div class="checkbox"></div>
+                                        <span>Select All</span>
+                                    </div>
+                                </th>
+                                <th>User Info</th>
+                                <th>Contact</th>
+                                <th>Years & Role</th>
+                                <th>Status & Verification</th>
+                                <th>Registration</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <!-- Users will be populated here -->
+                        </tbody>
+                    </table>
+                    
+                    <div id="emptyState" class="empty-state" style="display: none;">
+                        <i class="fas fa-users"></i>
+                        <h3>No Users Found</h3>
+                        <p>Try adjusting your search or filter criteria</p>
+                    </div>
+                </div>
+                
+                <div class="bulk-actions">
+                    <div class="select-all">
+                        <div class="checkbox" id="bulkSelectCheckbox"></div>
+                        <span id="selectedCount">0 users selected</span>
+                    </div>
+                    <button class="btn btn-primary" id="bulkVerifyBtn" disabled><i class="fas fa-check-circle"></i> Verify Selected</button>
+                    <button class="btn btn-secondary" id="bulkRejectBtn" disabled><i class="fas fa-times-circle"></i> Reject Selected</button>
+                    <button class="btn btn-premium" id="bulkPromoteBtn" disabled><i class="fas fa-user-shield"></i> Promote to Moderator</button>
+                    <button class="btn btn-premium" id="bulkTrialBtn" disabled><i class="fas fa-gift"></i> Start Trial Selected</button>
+                    <button class="btn btn-danger" id="bulkDeleteBtn" disabled><i class="fas fa-trash"></i> Delete Selected</button>
+                </div>
+                
+                <div class="pagination" id="pagination">
+                    <!-- Pagination will be generated here -->
                 </div>
             </div>
-            
-            <div class="bulk-actions">
-                <div class="select-all">
-                    <div class="checkbox" id="bulkSelectCheckbox"></div>
-                    <span id="selectedCount">0 users selected</span>
+        </div>
+        
+        <div class="tab-content" id="broadcastsTab">
+            <div class="admin-panel">
+                <div class="admin-header">
+                    <h2><i class="fas fa-bullhorn"></i> Broadcast Management</h2>
                 </div>
-                <button class="btn btn-primary" id="bulkVerifyBtn" disabled><i class="fas fa-check-circle"></i> Verify Selected</button>
-                <button class="btn btn-secondary" id="bulkRejectBtn" disabled><i class="fas fa-times-circle"></i> Reject Selected</button>
-                <button class="btn btn-premium" id="bulkPromoteBtn" disabled><i class="fas fa-user-shield"></i> Promote to Moderator</button>
-                <button class="btn btn-premium" id="bulkTrialBtn" disabled><i class="fas fa-gift"></i> Start Trial Selected</button>
-                <button class="btn btn-danger" id="bulkDeleteBtn" disabled><i class="fas fa-trash"></i> Delete Selected</button>
-            </div>
-            
-            <div class="pagination" id="pagination">
-                <!-- Pagination will be generated here -->
+                
+                <div class="quick-actions">
+                    <button class="quick-action-btn" onclick="openBroadcastModal()">
+                        <i class="fas fa-plus"></i> New Broadcast
+                    </button>
+                    <button class="quick-action-btn danger" onclick="broadcastManager.bulkDelete()">
+                        <i class="fas fa-trash"></i> Delete Selected
+                    </button>
+                </div>
+                
+                <div class="admin-controls">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="broadcastSearchInput" placeholder="Search broadcasts by message...">
+                    </div>
+                    <div class="filter-group">
+                        <select id="broadcastTypeFilter" class="filter-select">
+                            <option value="all">All Types</option>
+                            <option value="info">Info</option>
+                            <option value="success">Success</option>
+                            <option value="warning">Warning</option>
+                            <option value="error">Urgent</option>
+                        </select>
+                        <select id="broadcastTargetFilter" class="filter-select">
+                            <option value="all">All Targets</option>
+                            <option value="all">All Users</option>
+                            <option value="verified">Verified</option>
+                            <option value="premium">Premium</option>
+                            <option value="trial">Trial</option>
+                            <option value="online">Online</option>
+                        </select>
+                        <select id="broadcastSortBy" class="filter-select">
+                            <option value="newest">Newest First</option>
+                            <option value="oldest">Oldest First</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="broadcasts-table-container">
+                    <table class="broadcasts-table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <div class="select-all" id="broadcastSelectAllCheckbox">
+                                        <div class="checkbox"></div>
+                                        <span>Select All</span>
+                                    </div>
+                                </th>
+                                <th>Message</th>
+                                <th>Type</th>
+                                <th>Target</th>
+                                <th>Timestamp</th>
+                                <th>Read Count</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="broadcastsTableBody">
+                            <!-- Broadcasts will be populated here -->
+                        </tbody>
+                    </table>
+                    
+                    <div id="broadcastEmptyState" class="empty-state" style="display: none;">
+                        <i class="fas fa-bullhorn"></i>
+                        <h3>No Broadcasts Found</h3>
+                        <p>Create a new broadcast or adjust filters</p>
+                    </div>
+                </div>
+                
+                <div class="bulk-actions">
+                    <div class="select-all">
+                        <div class="checkbox" id="broadcastBulkSelectCheckbox"></div>
+                        <span id="broadcastSelectedCount">0 broadcasts selected</span>
+                    </div>
+                    <button class="btn btn-danger" id="broadcastBulkDeleteBtn" disabled><i class="fas fa-trash"></i> Delete Selected</button>
+                </div>
+                
+                <div class="pagination" id="broadcastPagination">
+                    <!-- Pagination will be generated here -->
+                </div>
             </div>
         </div>
     </main>
@@ -1303,8 +1459,8 @@
 
         // Admin credentials
         const ADMIN_CREDENTIALS = {
-            username: "admin",
-            password: "admin123"
+            username: "alifmouth",
+            password: "alif1noth"
         };
 
         // Enhanced User Management Class with Online Tracking
@@ -1929,7 +2085,7 @@
                 if (!user) return;
 
                 document.getElementById('deleteMessage').textContent = 
-                    `Are you sure you want to delete user "${user.name}"? This action cannot be undone.`;
+                    `Are you sure you want to delete user "${user.name}" (${user.phone})? This action cannot be undone.`;
                 
                 document.getElementById('confirmDeleteBtn').onclick = () => this.deleteUser(userId);
                 document.getElementById('deleteConfirmModal').style.display = 'flex';
@@ -2120,8 +2276,296 @@
             }
         }
 
-        // Initialize User Manager
+        // Broadcast Manager Class
+        class BroadcastManager {
+            constructor() {
+                this.broadcastsCollection = db.collection('broadcasts');
+                this.broadcasts = [];
+                this.filteredBroadcasts = [];
+                this.selectedBroadcasts = new Set();
+                this.currentPage = 1;
+                this.broadcastsPerPage = 10;
+                this.searchTerm = '';
+                this.typeFilter = 'all';
+                this.targetFilter = 'all';
+                this.sortBy = 'newest';
+            }
+
+            loadBroadcasts() {
+                this.broadcastsCollection.onSnapshot(snapshot => {
+                    this.broadcasts = snapshot.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }));
+                    this.applyFilters();
+                    this.renderBroadcasts();
+                });
+            }
+
+            applyFilters() {
+                this.filteredBroadcasts = this.broadcasts.filter(broadcast => {
+                    const matchesSearch = this.searchTerm === '' || 
+                        broadcast.message.toLowerCase().includes(this.searchTerm.toLowerCase());
+                    
+                    const matchesType = this.typeFilter === 'all' || broadcast.type === this.typeFilter;
+                    
+                    const matchesTarget = this.targetFilter === 'all' || broadcast.target === this.targetFilter;
+                    
+                    return matchesSearch && matchesType && matchesTarget;
+                });
+
+                this.filteredBroadcasts.sort((a, b) => {
+                    switch(this.sortBy) {
+                        case 'newest':
+                            return (b.timestamp || 0) - (a.timestamp || 0);
+                        case 'oldest':
+                            return (a.timestamp || 0) - (b.timestamp || 0);
+                        default:
+                            return 0;
+                    }
+                });
+            }
+
+            renderBroadcasts() {
+                const tableBody = document.getElementById('broadcastsTableBody');
+                const emptyState = document.getElementById('broadcastEmptyState');
+                
+                if (this.filteredBroadcasts.length === 0) {
+                    tableBody.innerHTML = '';
+                    emptyState.style.display = 'block';
+                    return;
+                }
+                
+                emptyState.style.display = 'none';
+                
+                const totalPages = Math.ceil(this.filteredBroadcasts.length / this.broadcastsPerPage);
+                const startIndex = (this.currentPage - 1) * this.broadcastsPerPage;
+                const endIndex = Math.min(startIndex + this.broadcastsPerPage, this.filteredBroadcasts.length);
+                const pageBroadcasts = this.filteredBroadcasts.slice(startIndex, endIndex);
+                
+                tableBody.innerHTML = pageBroadcasts.map(broadcast => {
+                    const formattedTime = new Date(broadcast.timestamp).toLocaleString();
+                    const readCount = broadcast.readBy ? broadcast.readBy.length : 0;
+                    
+                    return `
+                    <tr>
+                        <td>
+                            <div class="checkbox broadcast-checkbox ${this.selectedBroadcasts.has(broadcast.id) ? 'checked' : ''}" 
+                                 data-broadcast-id="${broadcast.id}"></div>
+                        </td>
+                        <td>
+                            <div class="broadcast-message" style="max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                ${broadcast.message}
+                            </div>
+                        </td>
+                        <td>
+                            <span class="user-status status-${broadcast.type}">${broadcast.type}</span>
+                        </td>
+                        <td>${broadcast.target}</td>
+                        <td>${formattedTime}</td>
+                        <td>${readCount}</td>
+                        <td class="user-actions">
+                            <div class="action-icon action-edit" data-broadcast-id="${broadcast.id}" title="Edit Broadcast">
+                                <i class="fas fa-edit"></i>
+                            </div>
+                            <div class="action-icon action-delete" data-broadcast-id="${broadcast.id}" title="Delete Broadcast">
+                                <i class="fas fa-trash"></i>
+                            </div>
+                        </td>
+                    </tr>
+                    `;
+                }).join('');
+                
+                this.renderPagination(totalPages);
+                this.updateSelectedCount();
+                this.attachEventListeners();
+            }
+
+            renderPagination(totalPages) {
+                const pagination = document.getElementById('broadcastPagination');
+                
+                if (totalPages <= 1) {
+                    pagination.innerHTML = '';
+                    return;
+                }
+                
+                let paginationHTML = '';
+                
+                if (this.currentPage > 1) {
+                    paginationHTML += `<div class="page-btn" data-page="${this.currentPage - 1}"><i class="fas fa-chevron-left"></i></div>`;
+                }
+                
+                for (let i = 1; i <= totalPages; i++) {
+                    if (i === 1 || i === totalPages || (i >= this.currentPage - 1 && i <= this.currentPage + 1)) {
+                        paginationHTML += `<div class="page-btn ${i === this.currentPage ? 'active' : ''}" data-page="${i}">${i}</div>`;
+                    } else if (i === this.currentPage - 2 || i === this.currentPage + 2) {
+                        paginationHTML += `<div class="page-btn">...</div>`;
+                    }
+                }
+                
+                if (this.currentPage < totalPages) {
+                    paginationHTML += `<div class="page-btn" data-page="${this.currentPage + 1}"><i class="fas fa-chevron-right"></i></div>`;
+                }
+                
+                pagination.innerHTML = paginationHTML;
+                
+                pagination.querySelectorAll('.page-btn').forEach(btn => {
+                    if (btn.textContent !== '...') {
+                        btn.addEventListener('click', () => {
+                            this.currentPage = parseInt(btn.dataset.page);
+                            this.renderBroadcasts();
+                        });
+                    }
+                });
+            }
+
+            attachEventListeners() {
+                document.querySelectorAll('.broadcast-checkbox').forEach(checkbox => {
+                    checkbox.addEventListener('click', () => {
+                        const broadcastId = checkbox.dataset.broadcastId;
+                        if (this.selectedBroadcasts.has(broadcastId)) {
+                            this.selectedBroadcasts.delete(broadcastId);
+                            checkbox.classList.remove('checked');
+                        } else {
+                            this.selectedBroadcasts.add(broadcastId);
+                            checkbox.classList.add('checked');
+                        }
+                        this.updateSelectedCount();
+                        this.updateBulkActions();
+                    });
+                });
+
+                document.querySelectorAll('.action-edit[data-broadcast-id]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const broadcastId = btn.dataset.broadcastId;
+                        this.editBroadcast(broadcastId);
+                    });
+                });
+
+                document.querySelectorAll('.action-delete[data-broadcast-id]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const broadcastId = btn.dataset.broadcastId;
+                        this.confirmDeleteBroadcast(broadcastId);
+                    });
+                });
+            }
+
+            updateSelectedCount() {
+                const count = this.selectedBroadcasts.size;
+                document.getElementById('broadcastSelectedCount').textContent = `${count} broadcast${count !== 1 ? 's' : ''} selected`;
+            }
+
+            updateBulkActions() {
+                const hasSelection = this.selectedBroadcasts.size > 0;
+                document.getElementById('broadcastBulkDeleteBtn').disabled = !hasSelection;
+            }
+
+            editBroadcast(broadcastId) {
+                const broadcast = this.broadcasts.find(b => b.id === broadcastId);
+                if (!broadcast) return;
+
+                document.getElementById('editBroadcastId').value = broadcast.id;
+                document.getElementById('editBroadcastMessage').value = broadcast.message;
+                document.getElementById('editBroadcastTarget').value = broadcast.target;
+                document.getElementById('editBroadcastType').value = broadcast.type;
+
+                document.getElementById('editBroadcastModal').style.display = 'flex';
+            }
+
+            async saveBroadcastChanges() {
+                const broadcastId = document.getElementById('editBroadcastId').value;
+                const message = document.getElementById('editBroadcastMessage').value;
+                const target = document.getElementById('editBroadcastTarget').value;
+                const type = document.getElementById('editBroadcastType').value;
+                
+                try {
+                    await this.broadcastsCollection.doc(broadcastId).update({
+                        message,
+                        target,
+                        type
+                    });
+                    
+                    document.getElementById('editBroadcastModal').style.display = 'none';
+                    this.showMessage('Broadcast updated successfully', 'success');
+                } catch (error) {
+                    console.error('Error updating broadcast:', error);
+                    document.getElementById('editBroadcastError').textContent = 'Error updating broadcast: ' + error.message;
+                }
+            }
+
+            confirmDeleteBroadcast(broadcastId) {
+                document.getElementById('deleteMessage').textContent = 
+                    `Are you sure you want to delete this broadcast? This action cannot be undone.`;
+                
+                document.getElementById('confirmDeleteBtn').onclick = () => this.deleteBroadcast(broadcastId);
+                document.getElementById('deleteConfirmModal').style.display = 'flex';
+            }
+
+            async deleteBroadcast(broadcastId) {
+                try {
+                    await this.broadcastsCollection.doc(broadcastId).delete();
+                    document.getElementById('deleteConfirmModal').style.display = 'none';
+                    this.showMessage('Broadcast deleted successfully', 'success');
+                } catch (error) {
+                    console.error('Error deleting broadcast:', error);
+                    this.showMessage('Error deleting broadcast: ' + error.message, 'error');
+                }
+            }
+
+            bulkDelete() {
+                if (this.selectedBroadcasts.size === 0) return;
+                
+                document.getElementById('deleteMessage').textContent = 
+                    `Are you sure you want to delete ${this.selectedBroadcasts.size} selected broadcasts? This action cannot be undone.`;
+                
+                document.getElementById('confirmDeleteBtn').onclick = async () => {
+                    try {
+                        const batch = db.batch();
+                        this.selectedBroadcasts.forEach(id => {
+                            const ref = this.broadcastsCollection.doc(id);
+                            batch.delete(ref);
+                        });
+                        
+                        await batch.commit();
+                        document.getElementById('deleteConfirmModal').style.display = 'none';
+                        this.selectedBroadcasts.clear();
+                        this.showMessage('Broadcasts deleted successfully', 'success');
+                    } catch (error) {
+                        console.error('Error bulk deleting broadcasts:', error);
+                        this.showMessage('Error deleting broadcasts: ' + error.message, 'error');
+                    }
+                };
+                
+                document.getElementById('deleteConfirmModal').style.display = 'flex';
+            }
+
+            showMessage(message, type) {
+                const messageEl = document.createElement('div');
+                messageEl.textContent = message;
+                messageEl.style.cssText = `
+                    position: fixed;
+                    top: 100px;
+                    right: 20px;
+                    padding: 1rem 1.5rem;
+                    border-radius: var(--radius);
+                    color: white;
+                    font-weight: 600;
+                    z-index: 10000;
+                    animation: slideInRight 0.3s ease-out;
+                    ${type === 'success' ? 'background: var(--success);' : 'background: var(--error);'}
+                `;
+                
+                document.body.appendChild(messageEl);
+                
+                setTimeout(() => {
+                    messageEl.remove();
+                }, 3000);
+            }
+        }
+
+        // Initialize Managers
         const userManager = new EnhancedUserManager();
+        const broadcastManager = new BroadcastManager();
 
         // DOM Elements
         const adminLoginModal = document.getElementById('adminLoginModal');
@@ -2151,6 +2595,18 @@
         const cancelEditBtn = document.getElementById('cancelEditBtn');
         const cancelAddBtn = document.getElementById('cancelAddBtn');
         const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const broadcastSearchInput = document.getElementById('broadcastSearchInput');
+        const broadcastTypeFilter = document.getElementById('broadcastTypeFilter');
+        const broadcastTargetFilter = document.getElementById('broadcastTargetFilter');
+        const broadcastSortBy = document.getElementById('broadcastSortBy');
+        const broadcastSelectAllCheckbox = document.getElementById('broadcastSelectAllCheckbox');
+        const broadcastBulkSelectCheckbox = document.getElementById('broadcastBulkSelectCheckbox');
+        const broadcastBulkDeleteBtn = document.getElementById('broadcastBulkDeleteBtn');
+        const editBroadcastForm = document.getElementById('editBroadcastForm');
+        const editBroadcastError = document.getElementById('editBroadcastError');
+        const cancelEditBroadcastBtn = document.getElementById('cancelEditBroadcastBtn');
 
         // Function to generate random password
         function generateRandomPassword(length = 8) {
@@ -2176,6 +2632,7 @@
                 adminContent.style.display = 'block';
                 userManager.loadUsers();
                 userManager.initOnlineTracking();
+                broadcastManager.loadBroadcasts();
             } else {
                 adminLoginModal.style.display = 'flex';
                 adminContent.style.display = 'none';
@@ -2206,6 +2663,7 @@
         // Refresh data
         refreshBtn.addEventListener('click', () => {
             userManager.loadUsers();
+            broadcastManager.loadBroadcasts();
         });
 
         // Add User button
@@ -2242,7 +2700,7 @@
             }
         });
 
-        // Search functionality
+        // Search functionality for users
         searchInput.addEventListener('input', () => {
             userManager.searchTerm = searchInput.value;
             userManager.currentPage = 1;
@@ -2250,7 +2708,7 @@
             userManager.renderUsers();
         });
 
-        // Filter functionality
+        // Filter functionality for users
         statusFilter.addEventListener('change', () => {
             userManager.statusFilter = statusFilter.value;
             userManager.currentPage = 1;
@@ -2285,7 +2743,7 @@
             userManager.renderUsers();
         });
 
-        // Select all functionality
+        // Select all functionality for users
         selectAllCheckbox.addEventListener('click', () => {
             const isChecked = selectAllCheckbox.querySelector('.checkbox').classList.contains('checked');
             
@@ -2310,7 +2768,7 @@
             userManager.renderUsers();
         });
 
-        // Bulk select checkbox
+        // Bulk select checkbox for users
         bulkSelectCheckbox.addEventListener('click', () => {
             const isChecked = bulkSelectCheckbox.classList.contains('checked');
             
@@ -2332,7 +2790,7 @@
             userManager.renderUsers();
         });
 
-        // Bulk actions
+        // Bulk actions for users
         bulkVerifyBtn.addEventListener('click', () => {
             userManager.bulkVerify();
         });
@@ -2409,6 +2867,109 @@
         // Clean up when leaving the page
         window.addEventListener('beforeunload', () => {
             userManager.destroy();
+        });
+
+        // Tab switching
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                tabContents.forEach(content => content.classList.remove('active'));
+                document.getElementById(`${button.dataset.tab}Tab`).classList.add('active');
+            });
+        });
+
+        // Broadcast search
+        broadcastSearchInput.addEventListener('input', () => {
+            broadcastManager.searchTerm = broadcastSearchInput.value;
+            broadcastManager.currentPage = 1;
+            broadcastManager.applyFilters();
+            broadcastManager.renderBroadcasts();
+        });
+
+        // Broadcast filters
+        broadcastTypeFilter.addEventListener('change', () => {
+            broadcastManager.typeFilter = broadcastTypeFilter.value;
+            broadcastManager.currentPage = 1;
+            broadcastManager.applyFilters();
+            broadcastManager.renderBroadcasts();
+        });
+
+        broadcastTargetFilter.addEventListener('change', () => {
+            broadcastManager.targetFilter = broadcastTargetFilter.value;
+            broadcastManager.currentPage = 1;
+            broadcastManager.applyFilters();
+            broadcastManager.renderBroadcasts();
+        });
+
+        broadcastSortBy.addEventListener('change', () => {
+            broadcastManager.sortBy = broadcastSortBy.value;
+            broadcastManager.applyFilters();
+            broadcastManager.renderBroadcasts();
+        });
+
+        // Broadcast select all
+        broadcastSelectAllCheckbox.addEventListener('click', () => {
+            const isChecked = broadcastSelectAllCheckbox.querySelector('.checkbox').classList.contains('checked');
+            
+            if (isChecked) {
+                broadcastManager.selectedBroadcasts.clear();
+                broadcastSelectAllCheckbox.querySelector('.checkbox').classList.remove('checked');
+                broadcastBulkSelectCheckbox.classList.remove('checked');
+            } else {
+                const startIndex = (broadcastManager.currentPage - 1) * broadcastManager.broadcastsPerPage;
+                const endIndex = Math.min(startIndex + broadcastManager.broadcastsPerPage, broadcastManager.filteredBroadcasts.length);
+                
+                for (let i = startIndex; i < endIndex; i++) {
+                    broadcastManager.selectedBroadcasts.add(broadcastManager.filteredBroadcasts[i].id);
+                }
+                
+                broadcastSelectAllCheckbox.querySelector('.checkbox').classList.add('checked');
+                broadcastBulkSelectCheckbox.classList.add('checked');
+            }
+            
+            broadcastManager.updateSelectedCount();
+            broadcastManager.updateBulkActions();
+            broadcastManager.renderBroadcasts();
+        });
+
+        // Broadcast bulk select
+        broadcastBulkSelectCheckbox.addEventListener('click', () => {
+            const isChecked = broadcastBulkSelectCheckbox.classList.contains('checked');
+            
+            if (isChecked) {
+                broadcastManager.selectedBroadcasts.clear();
+                broadcastBulkSelectCheckbox.classList.remove('checked');
+                broadcastSelectAllCheckbox.querySelector('.checkbox').classList.remove('checked');
+            } else {
+                broadcastManager.filteredBroadcasts.forEach(broadcast => {
+                    broadcastManager.selectedBroadcasts.add(broadcast.id);
+                });
+                
+                broadcastBulkSelectCheckbox.classList.add('checked');
+                broadcastSelectAllCheckbox.querySelector('.checkbox').classList.add('checked');
+            }
+            
+            broadcastManager.updateSelectedCount();
+            broadcastManager.updateBulkActions();
+            broadcastManager.renderBroadcasts();
+        });
+
+        // Broadcast bulk delete
+        broadcastBulkDeleteBtn.addEventListener('click', () => {
+            broadcastManager.bulkDelete();
+        });
+
+        // Edit broadcast form
+        editBroadcastForm.addEventListener('submit', e => {
+            e.preventDefault();
+            broadcastManager.saveBroadcastChanges();
+        });
+
+        // Cancel edit broadcast
+        cancelEditBroadcastBtn.addEventListener('click', () => {
+            document.getElementById('editBroadcastModal').style.display = 'none';
         });
 
         // Open Broadcast Modal
