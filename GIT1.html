@@ -1,4 +1,3211 @@
-        // ... (previous Firebase and user management code continues above)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ALIF | Advanced Medical Education</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="/protect.js"></script>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
+    <style type="text/css">
+        /* Import Inter font */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        :root {
+            --primary: #3b82f6; 
+            --primary-dark: #2563eb; 
+            --primary-light: #dbeafe; 
+            --secondary: #6b7280; 
+            --success: #22c55e; 
+            --error: #ef4444; 
+            --warning: #eab308; 
+            --info: #0ea5e9; 
+            --background: #ffffff; 
+            --surface: #f9fafb; 
+            --text-primary: #111827; 
+            --text-secondary: #4b5563; 
+            --text-tertiary: #9ca3af; 
+            --border: #e5e7eb; 
+            --shadow: 0 2px 4px rgba(0, 0, 0, 0.05); 
+            --shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 8px 16px rgba(0, 0, 0, 0.05);
+            --radius: 8px; 
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
+            --gradient: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+            --glass: rgba(255, 255, 255, 0.85); 
+            --glass-border: rgba(229, 231, 235, 0.3);
+        }
+
+        .dark-mode {
+            --primary: #60a5fa;
+            --primary-dark: #3b82f6;
+            --primary-light: #93c5fd;
+            --secondary: #94a3b8;
+            --background: #000000; 
+            --surface: #111827; 
+            --text-primary: #f9fafb; 
+            --text-secondary: #d1d5db; 
+            --text-tertiary: #6b7280; 
+            --border: #1f2937; 
+            --shadow: 0 2px 4px rgba(0, 0, 0, 0.6); 
+            --shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.6);
+            --shadow-xl: 0 8px 16px rgba(0, 0, 0, 0.6);
+            --glass: rgba(17, 24, 39, 0.85); 
+            --glass-border: rgba(31, 41, 55, 0.3);
+        }
+
+        .dark-mode .mode-btn,
+        .dark-mode .question-text,
+        .dark-mode .option-text {
+            color: var(--text-primary) !important;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-user-select: none; 
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-size: 16px;
+            transition: var(--transition);
+            min-height: 100vh;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-light);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* App Layout */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 24px 0;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            transform: translateX(-100%);
+        }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
+
+        .sidebar-header {
+            padding: 0 24px 16px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 24px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .logo i {
+            font-size: 24px;
+        }
+
+        .sidebar-subtitle {
+            font-size: 13px;
+            color: var(--text-tertiary);
+            font-weight: 400;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 24px;
+            margin-bottom: 24px;
+            background: var(--glass);
+            border-radius: var(--radius);
+            margin: 0 16px 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .user-info h3 {
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .user-info p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 24px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: var(--glass);
+            border-left-color: var(--primary);
+            box-shadow: var(--shadow);
+        }
+
+        .nav-item.active {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-left-color: var(--primary);
+        }
+
+        .nav-item.active .nav-icon {
+            color: var(--primary);
+        }
+
+        .nav-icon {
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+        }
+
+        .categories-section {
+            margin-top: 24px;
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .categories-grid {
+            padding: 0 16px;
+        }
+
+        .category-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+
+        .category-card:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-light);
+        }
+
+        .category-card.active {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .category-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: white;
+        }
+
+        .category-card.active .category-icon {
+            background: var(--primary);
+        }
+
+        .category-name {
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .category-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-right: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 2px;
+            transition: width 0.4s ease;
+        }
+
+        .progress-text {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            font-weight: 500;
+        }
+
+        .category-card.active .progress-text {
+            color: var(--primary);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 0;
+            transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .main-content.sidebar-open {
+            margin-left: 280px;
+        }
+
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 32px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: var(--text-primary);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: var(--radius);
+            transition: var(--transition);
+        }
+
+        .menu-toggle:hover {
+            background: var(--primary-light);
+        }
+
+        .page-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .mode-selector {
+            display: flex;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 4px;
+        }
+
+        .mode-btn {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .mode-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            padding: 24px 32px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .stat-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--text-primary);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Quiz Container */
+        .quiz-container {
+            padding: 0 32px 32px;
+        }
+
+        .question-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .question-card.fade-in {
+            opacity: 1;
+        }
+
+        .question-card:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
+        }
+
+        .question-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .question-number {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary);
+            background: var(--primary-light);
+            padding: 6px 12px;
+            border-radius: 16px;
+        }
+
+        .question-category {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            background: var(--glass);
+            padding: 6px 12px;
+            border-radius: 16px;
+        }
+
+        .question-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: var(--glass);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-secondary);
+        }
+
+        .action-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary-light);
+        }
+
+        .question-text {
+            font-size: 18px;
+            font-weight: 500;
+            line-height: 1.6;
+            margin-bottom: 24px;
+            color: var(--text-primary);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--glass);
+            min-height: 60px;
+        }
+
+        .option:hover {
+            border-color: var(--primary-light);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
+
+        .option.selected {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .option.correct {
+            border-color: var(--success);
+            background: rgba(34, 197, 94, 0.05);
+        }
+
+        .option.incorrect {
+            border-color: var(--error);
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        .option-letter {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--surface);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-secondary);
+            flex-shrink: 0;
+            transition: var(--transition);
+        }
+
+        .option.selected .option-letter {
+            background: var(--primary);
+            color: white;
+        }
+
+        .option.correct .option-letter {
+            background: var(--success);
+            color: white;
+        }
+
+        .option.incorrect .option-letter {
+            background: var(--error);
+            color: white;
+        }
+
+        .option-text {
+            flex: 1;
+            font-size: 15px;
+            font-weight: 400;
+        }
+
+        /* Explanation Section */
+        .explanation-section {
+            margin-top: 24px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 24px;
+        }
+
+        .explanation-section details {
+            margin-bottom: 16px;
+        }
+
+        .explanation-section summary {
+            padding: 12px 16px;
+            background: var(--surface);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 15px;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .explanation-section summary:hover {
+            background: var(--primary-light);
+        }
+
+        .explanation-section details[open] summary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .explanation-content {
+            padding: 16px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        .explanation-content strong {
+            color: var(--text-primary);
+        }
+
+        .correct-answer, .why-not-section, .related-questions {
+            margin-bottom: 16px;
+            padding: 16px;
+            border-radius: var(--radius);
+        }
+
+        .correct-answer {
+            background: rgba(34, 197, 94, 0.05);
+            border-left: 4px solid var(--success);
+        }
+
+        .why-not-section {
+            background: rgba(239, 68, 68, 0.05);
+            border-left: 4px solid var(--error);
+        }
+
+        .related-questions {
+            background: rgba(59, 130, 246, 0.05);
+            border-left: 4px solid var(--primary);
+        }
+
+        .related-questions-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .related-question-tag {
+            padding: 6px 12px;
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary);
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .related-question-tag:hover {
+            background: rgba(59, 130, 246, 0.2);
+            transform: translateY(-1px);
+        }
+
+        /* Quiz Controls */
+        .quiz-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .quiz-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--radius);
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+
+        .quiz-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .quiz-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .check-btn {
+            background: var(--primary);
+            color: white;
+        }
+
+        .check-btn:hover:not(:disabled) {
+            background: var(--primary-dark);
+        }
+
+        .next-btn {
+            background: var(--success);
+            color: white;
+        }
+
+        .next-btn:hover:not(:disabled) {
+            background: #16a34a;
+        }
+
+        .submit-btn {
+            background: var(--gradient);
+            color: white;
+            padding: 12px 32px;
+            font-size: 16px;
+        }
+
+        /* Results Screen */
+        .results-screen {
+            padding: 32px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .results-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 48px;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+        }
+
+        .results-header {
+            margin-bottom: 32px;
+        }
+
+        .results-title {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .score-display {
+            font-size: 64px;
+            font-weight: 700;
+            margin: 32px 0;
+            color: var(--text-primary);
+        }
+
+        .score-text {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        .results-details {
+            text-align: left;
+            margin: 48px 0;
+            background: var(--glass);
+            border-radius: var(--radius);
+            padding: 24px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-question {
+            flex: 1;
+            font-size: 14px;
+        }
+
+        .result-status {
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .result-correct {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+        }
+
+        .result-incorrect {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+
+        .restart-btn {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 16px 48px;
+            border-radius: var(--radius);
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 999;
+            display: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Enhanced Features */
+        .search-container {
+            padding: 16px 32px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 12px 16px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .search-box input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+        }
+
+        .search-box i {
+            color: var(--text-tertiary);
+            margin-right: 8px;
+        }
+
+        .export-section {
+            padding: 16px 32px;
+            text-align: center;
+        }
+
+        .export-btn {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: var(--radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .export-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Custom Quiz Modal */
+        .custom-quiz-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .custom-quiz-modal.active {
+            display: flex;
+        }
+
+        .custom-quiz-content {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-xl);
+            border: 1px solid var(--border);
+        }
+
+        .custom-quiz-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: var(--text-primary);
+        }
+
+        .custom-quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .custom-quiz-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--glass);
+        }
+
+        .custom-quiz-option:hover {
+            border-color: var(--primary-light);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
+
+        .custom-quiz-option.selected {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .custom-quiz-option .option-selector {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        .custom-quiz-option.selected .option-selector {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .custom-quiz-option.selected .option-selector::after {
+            content: '✓';
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .custom-quiz-option label {
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--text-primary);
+            flex: 1;
+            margin: 0;
+        }
+
+        .quiz-options-section {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .quiz-options-section label {
+            display: block;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .custom-quiz-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+
+        /* Modern Dropdown for Custom Quiz */
+        .custom-quiz-content .modern-dropdown {
+            position: relative;
+            margin-top: 8px;
+        }
+
+        .custom-quiz-content .modern-dropdown select {
+            width: 100%;
+            padding: 12px 48px 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--surface);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            background-size: 18px;
+        }
+
+        .custom-quiz-content .modern-dropdown select:hover {
+            border-color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .custom-quiz-content .modern-dropdown select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Glass effect for modal */
+        .custom-quiz-content.glass-effect {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .dark-mode .custom-quiz-content.glass-effect {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Registration Modal */
+        #registrationModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1001;
+        }
+
+        .modal-content {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: var(--radius);
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            animation: slideIn 0.3s ease-out;
+            overflow-y: auto;
+            max-height: 80vh;
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-content h2 {
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            font-size: 1.75rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .modal-content h2 i {
+            color: var(--primary);
+        }
+
+        .modal-content .price-info {
+            margin-bottom: 1.5rem;
+            color: var(--warning);
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .modal-content form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .input-group {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 1rem;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .modal-content select, .modal-content input {
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--background);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            width: 100%;
+        }
+
+        .modal-content select:focus, .modal-content input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .file-upload {
+            position: relative;
+            padding: 1rem;
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        .file-upload:hover {
+            border-color: var(--primary-light);
+        }
+
+        .file-upload i {
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-upload input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-upload span {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .receipt-preview {
+            margin-top: 1rem;
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            display: none;
+        }
+
+        .modal-content button {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            position: relative;
+        }
+
+        .modal-content button:hover {
+            background: var(--primary-dark);
+        }
+
+        .modal-content button.loading::after {
+            content: '';
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid white;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            margin-left: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .modal-content .error {
+            color: var(--error);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        .back-btn, .cancel-btn, .ok-btn {
+            background: var(--surface);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+            padding: 0.75rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .back-btn:hover, .cancel-btn:hover, .ok-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary-light);
+        }
+
+        .ok-btn {
+            background: var(--gradient);
+            color: white;
+            border: none;
+        }
+
+        .ok-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 66vw;
+            }
+
+            .main-content.sidebar-open {
+                margin-left: 100vw;
+            }
+
+            .top-nav {
+                padding: 12px 16px;
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            .nav-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .nav-right {
+                width: 100%;
+                justify-content: between;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                padding: 16px;
+            }
+
+            .quiz-container {
+                padding: 0 16px 16px;
+            }
+
+            .question-card {
+                padding: 24px;
+            }
+
+            .question-text {
+                font-size: 17px;
+            }
+
+            .option {
+                padding: 12px;
+                min-height: 70px;
+            }
+
+            .results-card {
+                padding: 32px 24px;
+            }
+
+            .score-display {
+                font-size: 48px;
+            }
+
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .search-container {
+                padding: 12px 16px;
+            }
+
+            .analytics-section {
+                margin: 16px;
+                padding: 16px;
+            }
+
+            .quiz-btn {
+                padding: 16px 20px;
+                font-size: 16px;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .quiz-container {
+                max-width: 1100px;
+                margin: 0 auto;
+                padding: 24px;
+            }
+
+            .question-card {
+                max-width: 1000px;
+                margin: 0 auto 24px;
+            }
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .pulse {
+            animation: pulse 1.5s infinite;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .glass {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow);
+        }
+
+        .text-gradient {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .question-difficulty {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .question-dropdown {
+            margin-top: 8px;
+            display: block;
+        }
+
+        .question-dropdown select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--surface);
+            color: var(--text-primary);
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .option.disabled {
+            pointer-events: none;
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .timer-warning {
+            color: var(--warning);
+        }
+
+        .timer-error {
+            color: var(--error);
+        }
+
+        .loading-spinner {
+            display: none;
+            border: 2px solid var(--border);
+            border-top: 2px solid var(--primary);
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-spinner.active {
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Ultra Modern Styles */
+        /* Glass Morphism Effects */
+        .glass-effect {
+            backdrop-filter: blur(20px);
+            -webkit-backflow-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .dark-mode .glass-effect {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Enhanced Hover Effects with Glow */
+        .nav-item:hover {
+            background: linear-gradient(135deg, var(--primary-light) 0%, rgba(59, 130, 246, 0.15) 100%) !important;
+            border-left-color: var(--primary) !important;
+            transform: translateX(8px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.25) !important;
+            backdrop-filter: blur(10px);
+        }
+
+        .category-card:hover {
+            background: linear-gradient(135deg, var(--glass) 0%, rgba(255, 255, 255, 0.95) 100%) !important;
+            transform: translateY(-5px) scale(1.03) !important;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 0 30px rgba(59, 130, 246, 0.1) !important;
+            border-color: var(--primary) !important;
+            backdrop-filter: blur(10px);
+        }
+
+        .option:hover {
+            background: linear-gradient(135deg, var(--primary-light) 0%, rgba(59, 130, 246, 0.12) 100%) !important;
+            transform: translateY(-3px) scale(1.03) !important;
+            box-shadow: 0 12px 30px rgba(59, 130, 246, 0.2) !important;
+            border-color: var(--primary) !important;
+        }
+
+        .quiz-btn:hover:not(:disabled) {
+            transform: translateY(-3px) scale(1.08) !important;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25) !important;
+            filter: brightness(1.1);
+        }
+
+        .action-btn:hover {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%) !important;
+            color: white !important;
+            transform: scale(1.15) rotate(8deg) !important;
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5) !important;
+        }
+
+        /* Ultra Modern Dropdown */
+        .modern-dropdown {
+            position: relative;
+            margin-top: 12px;
+        }
+
+        .modern-dropdown select {
+            width: 100%;
+            padding: 12px 48px 12px 16px;
+            border: 2px solid transparent;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--surface) 0%, var(--glass) 100%);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            background-size: 18px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            backdrop-filter: blur(10px);
+        }
+
+        .modern-dropdown select:hover {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, var(--primary-light) 0%, rgba(59, 130, 246, 0.08) 100%);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .modern-dropdown select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15), 0 8px 25px rgba(59, 130, 246, 0.25);
+            transform: translateY(-2px);
+        }
+
+        /* Enhanced Search with Blur Effect */
+        .search-container {
+            transition: all 0.4s ease;
+        }
+
+        .search-box {
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .search-box:focus-within {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.2);
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .search-blur-active .main-content > *:not(.search-container):not(.quiz-container) {
+            filter: blur(8px);
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        /* Beautiful Stats Cards */
+        .stat-card {
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .stat-card:hover::before {
+            left: 100%;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px) scale(1.05) !important;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2) !important;
+        }
+
+        /* Modern Progress Bars */
+        .progress-fill {
+            transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark), #8b5cf6) !important;
+            box-shadow: 0 2px 12px rgba(59, 130, 246, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        /* Beautiful Notification */
+        .notification {
+            border-radius: 20px !important;
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            font-weight: 600;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.15)) !important;
+        }
+
+        .dark-mode .notification {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.2)) !important;
+        }
+
+        /* Enhanced Question Cards */
+        .question-card {
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .question-card:hover {
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15) !important;
+            transform: translateY(-3px);
+            border-color: var(--primary-light);
+        }
+
+        /* Modern Settings Panel */
+        .settings-panel {
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+        }
+
+        .dark-mode .settings-panel {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Custom Question Creator */
+        .custom-question-creator {
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            padding: 32px;
+        }
+
+        .dark-mode .custom-question-creator {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fab:hover {
+            transform: scale(1.15) rotate(15deg);
+            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.6);
+        }
+
+        /* Dark mode adjustments */
+        .dark-mode .nav-item:hover {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.25) 0%, rgba(59, 130, 246, 0.1) 100%) !important;
+        }
+
+        .dark-mode .category-card:hover {
+            background: linear-gradient(135deg, var(--glass) 0%, rgba(17, 24, 39, 0.95) 100%) !important;
+        }
+
+        .dark-mode .option:hover {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(59, 130, 246, 0.08) 100%) !important;
+        }
+
+        /* Search Results Highlight */
+        .search-highlight {
+            background: linear-gradient(120deg, var(--primary-light) 0%, transparent 50%);
+            border-radius: 4px;
+            padding: 2px 4px;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+                padding: 12px 16px;
+            }
+
+            .stat-card {
+                padding: 16px 12px;
+                min-height: 80px;
+            }
+
+            .stat-header {
+                margin-bottom: 8px;
+                flex-wrap: wrap;
+            }
+
+            .stat-icon {
+                width: 28px;
+                height: 28px;
+                font-size: 14px;
+            }
+
+            .stat-value {
+                font-size: 20px;
+                margin-bottom: 2px;
+            }
+
+            .stat-label {
+                font-size: 11px;
+                line-height: 1.3;
+            }
+
+            .stat-trend {
+                font-size: 10px;
+            }
+
+            .stat-trend i {
+                font-size: 10px;
+            }
+        }
+
+        /* Extra small devices (phones under 400px) */
+        @media (max-width: 400px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+                padding: 10px 12px;
+            }
+
+            .stat-card {
+                padding: 14px 10px;
+                min-height: 70px;
+            }
+
+            .stat-value {
+                font-size: 18px;
+            }
+
+            .stat-label {
+                font-size: 10px;
+            }
+        }
+
+        .analytics-grid {
+            display: none;
+        }
+
+        /* OR hide individual cards */
+        .analytics-card {
+            display: none;
+        }
+
+        /* If you want to keep the section structure but hide content */
+        .analytics-section {
+            padding: 0;
+            margin: 0;
+            height: 0;
+            overflow: hidden;
+        }
+
+        @media (max-width: 768px) {
+            /* Your existing mobile styles... */
+            
+            .sidebar {
+                width: 66vw;
+            }
+
+            .main-content.sidebar-open {
+                margin-left: 100vw;
+            }
+
+            .top-nav {
+                padding: 12px 16px;
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            /* Hide all custom question and export buttons on mobile */
+            .fab {
+                display: none !important;
+            }
+            
+            #createCustomQuizBtn {
+                display: none !important;
+            }
+            
+            /* Hide both buttons in Settings section */
+            .settings-panel .quiz-btn:has(i.fa-download),
+            .settings-panel .quiz-btn:has(i.fa-plus) {
+                display: none !important;
+            }
+
+            /* Your stats grid and other mobile styles... */
+            .stats-grid {
+                display: flex;
+                overflow-x: auto;
+                gap: 6px;
+                padding: 6px 10px;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+                margin: 0 -4px;
+            }
+            /* ... rest of your mobile CSS */
+        }
+
+        @media (max-width: 768px) {
+            .fab {
+                display: none !important;
+            }
+            
+            /* Hide entire export section from Dashboard */
+            .export-section {
+                display: none !important;
+            }
+            
+            /* Hide both buttons in Settings section */
+            .settings-panel .quiz-btn:has(i.fa-download),
+            .settings-panel .quiz-btn:has(i.fa-plus) {
+                display: none !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            /* Hide all stat cards except Correct Answers */
+            .stat-card:not(:first-child) {
+                display: none !important;
+            }
+            
+            /* Optional: Make the Correct Answers card full width */
+            .stat-card:first-child {
+                width: 100% !important;
+                flex: 1 !important;
+            }
+
+            /* Your existing mobile styles for stats grid */
+            .stats-grid {
+                display: flex;
+                overflow-x: auto;
+                gap: 6px;
+                padding: 6px 10px;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+                margin: 0 -4px;
+            }
+        }
+
+        .user-avatar img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Primary action button */
+        .action-btn.primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .action-btn.primary:hover {
+            background: var(--primary-dark);
+            transform: scale(1.1);
+        }
+
+        /* Admin Panel Styles */
+        .admin-panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin: 16px 0;
+        }
+
+        .admin-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .online-users-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .online-user-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--glass);
+            border-radius: var(--radius);
+            border: 1px solid var(--glass-border);
+        }
+
+        .online-user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .online-user-info {
+            flex: 1;
+        }
+
+        .online-user-name {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .online-user-details {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .online-status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+        }
+
+        .offline-status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--error);
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <!-- Registration Modal -->
+    <div id="registrationModal" style="display: flex;">
+        <div class="modal-content">
+            <h2><i class="fas fa-user-plus"></i> Register for Practice</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Join ALIF Practice Platform to track your progress</p>
+            
+            <form id="regForm">
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input id="name" placeholder="Full Name" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-phone"></i>
+                    <input id="phone" type="tel" placeholder="Phone Number" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input id="email" type="email" placeholder="Email (optional)">
+                </div>
+                <div class="input-group">
+                    <i class="fab fa-telegram-plane"></i>
+                    <input id="telegram" placeholder="Telegram Username (optional)">
+                </div>
+                <button type="submit" id="submitBtn"><i class="fas fa-paper-plane"></i> Register & Start Practicing</button>
+                <div id="regError" class="error"></div>
+            </form>
+            
+            <div id="loginForm" style="display:none">
+                <div class="input-group">
+                    <i class="fas fa-phone"></i>
+                    <input id="loginPhone" type="tel" placeholder="Phone Number" required>
+                </div>
+                <button id="loginSubmitBtn"><i class="fas fa-sign-in-alt"></i> Request Verification Code</button>
+                <div id="loginError" class="error"></div>
+            </div>
+            
+            <div id="verifyForm" style="display:none">
+                <h2><i class="fas fa-lock"></i> Enter Verification Code</h2>
+                <div class="input-group">
+                    <i class="fas fa-key"></i>
+                    <input id="verifyCode" placeholder="6-digit code" maxlength="6" required>
+                </div>
+                <button id="verifyBtn"><i class="fas fa-check-circle"></i> Verify</button>
+                <div id="verifyError" class="error"></div>
+            </div>
+            
+            <p id="loginLink" style="cursor:pointer; color:var(--primary); margin-top: 1rem;">Already registered? Login here</p>
+            <p id="registerLink" style="display:none; cursor:pointer; color:var(--primary);">New user? Register here</p>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+    
+    <!-- Custom Quiz Modal -->
+    <div class="custom-quiz-modal" id="customQuizModal">
+        <div class="custom-quiz-content glass-effect">
+            <h3 class="custom-quiz-title">Create Custom Quiz</h3>
+            <div class="custom-quiz-options">
+                <div class="custom-quiz-option" data-category="all">
+                    <div class="option-selector"></div>
+                    <label>All Categories</label>
+                </div>
+                <div class="custom-quiz-option" data-category="easy">
+                    <div class="option-selector"></div>
+                    <label>Easy Questions Only</label>
+                </div>
+                <div class="custom-quiz-option" data-category="medium">
+                    <div class="option-selector"></div>
+                    <label>Medium Questions Only</label>
+                </div>
+                <div class="custom-quiz-option" data-category="hard">
+                    <div class="option-selector"></div>
+                    <label>Hard Questions Only</label>
+                </div>
+                <div class="custom-quiz-option" data-category="bookmarked">
+                    <div class="option-selector"></div>
+                    <label>Bookmarked Questions Only</label>
+                </div>
+                <div class="quiz-options-section">
+                    <label>Number of Questions</label>
+                    <div class="modern-dropdown">
+                        <select id="questionCount">
+                            <option value="5">5 Questions</option>
+                            <option value="10" selected>10 Questions</option>
+                            <option value="15">15 Questions</option>
+                            <option value="20">20 Questions</option>
+                            <option value="0">All Questions</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="custom-quiz-actions">
+                <button class="quiz-btn" id="cancelCustomQuiz">
+                    Cancel
+                </button>
+                <button class="quiz-btn check-btn" id="createCustomQuiz">
+                    Create Quiz
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main App Container -->
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-stethoscope"></i>
+                    <span>ALIF</span>
+                </div>
+                <div class="sidebar-subtitle">Advanced Medical Education Platform</div>
+            </div>
+            
+            <div class="user-profile">
+                <div class="user-avatar">
+                    <img src="logo.png" alt="User Avatar">
+                </div>
+                <div class="user-info">
+                    <h3 id="sidebarUserName">Guest</h3>
+                    <p id="sidebarUserRole">Medical Student</p>
+                </div>
+            </div>
+            
+            <div class="nav-item active">
+                <div class="nav-icon">
+                    <i class="fas fa-home"></i>
+                </div>
+                <span>Dashboard</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <span>My Courses</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <span>Progress Analytics</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">
+                    <i class="fas fa-bookmark"></i>
+                </div>
+                <span>Bookmarked Questions</span>
+            </div>
+            <div class="nav-item" id="adminNavItem" style="display: none;">
+                <div class="nav-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <span>Online Users</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">
+                    <i class="fas fa-cog"></i>
+                </div>
+                <span>Settings</span>
+            </div>
+            
+            <div class="categories-section">
+                <div class="section-title">
+                    <span>Medical Categories</span>
+                    <i class="fas fa-sliders-h"></i>
+                </div>
+                <div class="categories-grid" id="categoriesGrid"></div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content" id="mainContent" style="display: none;">
+            <!-- Top Navigation -->
+            <div class="top-nav">
+                <div class="nav-left">
+                    <button class="menu-toggle" id="menuToggle" aria-label="Toggle Sidebar">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    
+                    <!-- Add Back and Home buttons -->
+                    <a href="/" class="action-btn" id="backBtn">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    <a href="/" class="action-btn primary">
+                        <i class="fas fa-home"></i>
+                    </a>
+                    
+                    <h1 class="page-title" id="pageTitle">Dashboard</h1>
+                </div>
+                <div class="nav-right">
+                    <!-- Your existing mode selector and buttons -->
+                    <div class="mode-selector">
+                        <button class="mode-btn active" data-mode="exam" aria-label="Exam Mode">
+                            <i class="fas fa-file-alt"></i>
+                            Exam
+                        </button>
+                        <button class="mode-btn" data-mode="quiz" aria-label="Quiz Mode">
+                            <i class="fas fa-tasks"></i>
+                            Quiz
+                        </button>
+                        <button class="mode-btn" data-mode="learn" aria-label="Learn Mode">
+                            <i class="fas fa-brain"></i>
+                            Learn
+                        </button>
+                    </div>
+                    <div class="action-btn" id="themeToggle" aria-label="Toggle Theme">
+                        <i class="fas fa-sun"></i>
+                    </div>
+                    <div class="action-btn" aria-label="Notifications">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <button class="action-btn" id="logoutBtn" style="display: none;">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Search Section -->
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search questions or categories...">
+                </div>
+            </div>
+            
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card fade-in">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-trend">
+                            <i class="fas fa-arrow-up" style="color: var(--success);"></i>
+                            <span style="color: var(--success); font-size: 13px;">+12%</span>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="correctAnswers">0</div>
+                    <div class="stat-label">Correct Answers</div>
+                </div>
+                <div class="stat-card fade-in">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-trend">
+                            <i class="fas fa-arrow-down" style="color: var(--error);"></i>
+                            <span style="color: var(--error); font-size: 13px;">-5%</span>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="timeSpent">0h</div>
+                    <div class="stat-label">Time Spent</div>
+                </div>
+                <div class="stat-card fade-in">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="stat-trend">
+                            <i class="fas fa-arrow-up" style="color: var(--success);"></i>
+                            <span style="color: var(--success); font-size: 13px;">+8%</span>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="masteryLevel">0%</div>
+                    <div class="stat-label">Mastery Level</div>
+                </div>
+                <div class="stat-card fade-in">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <i class="fas fa-fire"></i>
+                        </div>
+                        <div class="stat-trend">
+                            <i class="fas fa-arrow-up" style="color: var(--warning);"></i>
+                            <span style="color: var(--warning); font-size: 13px;">+3</span>
+                        </div>
+                    </div>
+                    <div class="stat-value" id="streakCount">0</div>
+                    <div class="stat-label">Day Streak</div>
+                </div>
+            </div>
+            
+            <!-- Admin Panel (Visible only to admin users) -->
+            <div id="adminPanel" class="admin-panel" style="display: none;">
+                <h3 class="admin-title"><i class="fas fa-users"></i> Online Users</h3>
+                <div class="online-users-list" id="onlineUsersList">
+                    <!-- Online users will be populated here -->
+                </div>
+            </div>
+            
+            <!-- Analytics Section -->
+            <div class="analytics-section">
+                <h3 class="analytics-title">Learning Analytics</h3>
+                <div class="analytics-grid">
+                    <div class="analytics-card">
+                        <div class="analytics-value" id="weakAreasCount">0</div>
+                        <div class="analytics-label">Weak Areas Identified</div>
+                    </div>
+                    <div class="analytics-card">
+                        <div class="analytics-value" id="avgTimePerQuestion">0s</div>
+                        <div class="analytics-label">Avg Time Per Question</div>
+                    </div>
+                    <div class="analytics-card">
+                        <div class="analytics-value" id="improvementRate">0%</div>
+                        <div class="analytics-label">Weekly Improvement</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quiz Container -->
+            <div class="quiz-container" id="quizContainer"></div>
+            
+            <!-- Results Screen -->
+            <div class="results-screen hidden" id="resultsScreen"></div>
+            
+            <!-- Export Section -->
+            <div class="export-section">
+                <button class="export-btn" id="exportProgress">
+                    <i class="fas fa-download"></i>
+                    Export Progress
+                </button>
+                <button class="export-btn" id="createCustomQuizBtn" style="margin-left: 12px;">
+                    <i class="fas fa-plus"></i>
+                    Create Custom Quiz
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyC4DSMVg4c98kQf5sSF8ueD631QgO4SXn0",
+            authDomain: "medical-quiz-40228.firebaseapp.com",
+            projectId: "medical-quiz-40228",
+            storageBucket: "medical-quiz-40228.firebasestorage.app",
+            messagingSenderId: "483043078873",
+            appId: "1:483043078873:web:4029dd83e53557f08b04c8"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Online User Tracking Class
+        class OnlineUserTracker {
+            constructor() {
+                this.usersCollection = db.collection('practiceUsers');
+                this.currentUser = null;
+                this.activityInterval = null;
+                this.lastActivityTime = Date.now();
+                this.isInitialized = false;
+            }
+
+            // Initialize online tracking for current user
+            init(user) {
+                if (this.isInitialized) return;
+                
+                this.currentUser = user;
+                this.isInitialized = true;
+                
+                // Update lastActive timestamp immediately
+                this.updateUserActivity();
+                
+                // Set up periodic activity updates (every 2 minutes)
+                this.activityInterval = setInterval(() => {
+                    this.updateUserActivity();
+                }, 2 * 60 * 1000);
+                
+                // Track user interactions
+                this.setupActivityListeners();
+                
+                console.log('Online tracking initialized for:', user.name);
+            }
+
+            // Update user's last activity timestamp
+            async updateUserActivity() {
+                if (!this.currentUser || !this.currentUser.id) return;
+                
+                try {
+                    const updateData = {
+                        lastActive: Date.now(),
+                        isOnline: true,
+                        currentPage: currentPage,
+                        practiceStats: userStats
+                    };
+                    
+                    await this.usersCollection.doc(this.currentUser.id).update(updateData);
+                    this.lastActivityTime = Date.now();
+                    
+                } catch (error) {
+                    console.error('Error updating user activity:', error);
+                }
+            }
+
+            // Set up event listeners to track user activity
+            setupActivityListeners() {
+                const activityEvents = [
+                    'mousedown', 'mousemove', 'keypress', 'scroll', 
+                    'touchstart', 'touchmove', 'click', 'focus'
+                ];
+
+                const throttledUpdate = this.throttle(() => {
+                    this.updateUserActivity();
+                }, 30000); // Throttle to once every 30 seconds
+
+                activityEvents.forEach(event => {
+                    document.addEventListener(event, throttledUpdate, { passive: true });
+                });
+
+                // Track page visibility changes
+                document.addEventListener('visibilitychange', () => {
+                    if (!document.hidden) {
+                        this.updateUserActivity();
+                    }
+                });
+
+                // Track page focus
+                window.addEventListener('focus', () => {
+                    this.updateUserActivity();
+                });
+            }
+
+            // Throttle function to limit how often activity updates are sent
+            throttle(func, limit) {
+                let inThrottle;
+                return function() {
+                    const args = arguments;
+                    const context = this;
+                    if (!inThrottle) {
+                        func.apply(context, args);
+                        inThrottle = true;
+                        setTimeout(() => inThrottle = false, limit);
+                    }
+                }
+            }
+
+            // Set user as offline (for logout)
+            async setOffline() {
+                if (this.currentUser && this.currentUser.id) {
+                    try {
+                        await this.usersCollection.doc(this.currentUser.id).update({
+                            isOnline: false,
+                            lastActive: Date.now()
+                        });
+                    } catch (error) {
+                        console.error('Error setting user offline:', error);
+                    }
+                }
+            }
+
+            // Clean up when user logs out
+            cleanup() {
+                if (this.activityInterval) {
+                    clearInterval(this.activityInterval);
+                }
+                
+                this.setOffline();
+                this.currentUser = null;
+                this.isInitialized = false;
+                
+                console.log('Online tracking cleaned up');
+            }
+        }
+
+        // Initialize the tracker
+        const onlineTracker = new OnlineUserTracker();
+
+        // Enhanced Firebase User Manager with Online Tracking
+        class FirebaseUserManager {
+            constructor() {
+                this.usersCollection = db.collection('practiceUsers');
+            }
+
+            async checkPhoneExists(phone) {
+                const snapshot = await this.usersCollection.where('phone', '==', phone).get();
+                return !snapshot.empty;
+            }
+
+            isCodeExpired(timestamp) {
+                const now = new Date().getTime();
+                const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
+                return now - timestamp > twoDaysInMs;
+            }
+
+            async createUser(userData) {
+                try {
+                    if (await this.checkPhoneExists(userData.phone)) {
+                        return { success: false, error: 'Phone already registered. Please login.' };
+                    }
+                    const code = Math.floor(100000 + Math.random() * 900000).toString();
+                    const userRecord = {
+                        ...userData,
+                        verificationCode: code,
+                        codeTimestamp: new Date().getTime(),
+                        createdAt: new Date().getTime(),
+                        lastLogin: null,
+                        lastActive: new Date().getTime(),
+                        isOnline: true,
+                        status: 'pending',
+                        role: 'user',
+                        practiceStats: {
+                            totalQuestions: 0,
+                            correctAnswers: 0,
+                            timeSpent: 0,
+                            masteryLevel: 0,
+                            streak: 0
+                        }
+                    };
+
+                    const docRef = await this.usersCollection.add(userRecord);
+                    return { success: true, userId: docRef.id, code };
+                } catch (error) {
+                    console.error('Error creating user:', error);
+                    return { success: false, error: error.message };
+                }
+            }
+
+            async login(phone) {
+                try {
+                    const snapshot = await this.usersCollection.where('phone', '==', phone).get();
+                    if (snapshot.empty) {
+                        return { success: false, error: 'Phone not registered. Please register.' };
+                    }
+                    const doc = snapshot.docs[0];
+                    const user = doc.data();
+                    if (user.verificationCode && !this.isCodeExpired(user.codeTimestamp)) {
+                        return { success: false, error: 'Account is currently active. Please logout first or contact admin.' };
+                    }
+                    const code = Math.floor(100000 + Math.random() * 900000).toString();
+                    await this.usersCollection.doc(doc.id).update({
+                        verificationCode: code,
+                        codeTimestamp: new Date().getTime(),
+                        status: 'pending'
+                    });
+                    return { success: true, code, userId: doc.id };
+                } catch (error) {
+                    console.error('Error logging in:', error);
+                    return { success: false, error: error.message };
+                }
+            }
+
+            async verifyUser(phone, code) {
+                try {
+                    const snapshot = await this.usersCollection.where('phone', '==', phone).get();
+                    if (snapshot.empty) {
+                        return { success: false, error: 'User not found' };
+                    }
+
+                    let user = null;
+                    let userDocId = null;
+                    
+                    snapshot.forEach(doc => {
+                        user = doc.data();
+                        userDocId = doc.id;
+                    });
+
+                    if (user.verificationCode !== code) {
+                        return { success: false, error: 'Invalid verification code' };
+                    }
+
+                    const codeTimestamp = user.codeTimestamp;
+                    const now = new Date().getTime();
+                    const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
+                    
+                    if (now - codeTimestamp > twoDaysInMs) {
+                        return { success: false, error: 'Verification code has expired' };
+                    }
+
+                    // Update with online tracking
+                    await this.usersCollection.doc(userDocId).update({
+                        status: 'verified',
+                        verifiedAt: new Date().getTime(),
+                        lastLogin: new Date().getTime(),
+                        lastActive: new Date().getTime(),
+                        isOnline: true
+                    });
+
+                    user.id = userDocId;
+                    user.status = 'verified';
+                    user.lastLogin = new Date().getTime();
+                    user.lastActive = new Date().getTime();
+
+                    return { success: true, user };
+                } catch (error) {
+                    console.error('Error verifying user:', error);
+                    return { success: false, error: 'Verification failed' };
+                }
+            }
+
+            async getUserByPhone(phone) {
+                try {
+                    const snapshot = await this.usersCollection.where('phone', '==', phone).get();
+                    if (snapshot.empty) return null;
+                    
+                    let user = null;
+                    snapshot.forEach(doc => {
+                        user = { id: doc.id, ...doc.data() };
+                    });
+                    return user;
+                } catch (error) {
+                    console.error('Error getting user:', error);
+                    return null;
+                }
+            }
+
+            // Get all online users
+            async getOnlineUsers() {
+                try {
+                    const snapshot = await this.usersCollection
+                        .where('isOnline', '==', true)
+                        .orderBy('lastActive', 'desc')
+                        .get();
+                    
+                    return snapshot.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }));
+                } catch (error) {
+                    console.error('Error getting online users:', error);
+                    return [];
+                }
+            }
+
+            // Real-time listener for online users
+            setupOnlineUsersListener(callback) {
+                return this.usersCollection
+                    .where('isOnline', '==', true)
+                    .onSnapshot(snapshot => {
+                        const onlineUsers = snapshot.docs.map(doc => ({
+                            id: doc.id,
+                            ...doc.data()
+                        }));
+                        callback(onlineUsers);
+                    });
+            }
+        }
+
+        const firebaseUserManager = new FirebaseUserManager();
+
+        // Enhanced quiz data with more questions
+        const quizData = [
+            {
+                "id": 1,
+                "question": "Which of the following best describes pre-systemic metabolism?",
+                "options": [
+                    "Inactivation of a drug as a result of the gastric acids",
+                    "Absorption of a drug through the duodenum",
+                    "Drug given orally is metabolized by the liver before entering the circulation",
+                    "Drug given IV accumulates quickly in the central nervous system (CNS)"
+                ],
+                "answer": 2,
+                "correctAnswer": "Drug given orally is metabolized by the liver before entering the circulation",
+                "explanation": "Pre-systemic metabolism, also known as first-pass metabolism, occurs when a drug is metabolized by the liver or gut wall after oral administration, reducing its bioavailability before reaching systemic circulation. Reference: Katzung, Basic & Clinical Pharmacology, 14th ed., Chapter 3, p. 41.",
+                "whyNotOtherOptions": {
+                    "a": "Gastric acid inactivation is a form of chemical degradation, not pre-systemic metabolism.",
+                    "b": "Absorption through the duodenum is not metabolism.",
+                    "d": "IV drugs bypass first-pass metabolism and do not primarily accumulate in the CNS."
+                },
+                "relatedQuestions": [],
+                "category": "Pharmacokinetics",
+                "difficulty": "Medium"
+            },
+            {
+                "id": 2,
+                "question": "A laboratory experiment is being conducted in which a mammal is injected with a noncompetitive antagonist to the histamine receptor. Which of the following best describes this agent?",
+                "options": [
+                    "The drug binds to the histamine receptor and partially activates it",
+                    "The drug binds to the histamine receptor but does not activate it",
+                    "The drug binds to the receptor, but not where histamine binds, and prevents the receptor from being activated",
+                    "The drug irreversibly binds to the histamine receptor and renders it ineffective"
+                ],
+                "answer": 2,
+                "correctAnswer": "The drug binds to the receptor, but not where histamine binds, and prevents the receptor from being activated",
+                "explanation": "A noncompetitive antagonist binds to an allosteric site on the receptor, distinct from the agonist's binding site, inhibiting receptor activation regardless of agonist concentration. Reference: Goodman & Gilman, The Pharmacological Basis of Therapeutics, 13th ed., Chapter 2, p. 34.",
+                "whyNotOtherOptions": {
+                    "a": "Partial activation describes a partial agonist.",
+                    "b": "This describes a competitive antagonist binding to the active site.",
+                    "d": "Irreversible binding is not a defining feature of noncompetitive antagonism."
+                },
+                "relatedQuestions": [],
+                "category": "Pharmacodynamics",
+                "difficulty": "Medium"
+            },
+            {
+                "id": 3,
+                "question": "A drug M is injected IV into a laboratory subject. It is noted to have high serum protein binding. Which of the following is most likely to be increased as a result?",
+                "options": [
+                    "Drug interaction",
+                    "Distribution of the drug to tissue sites",
+                    "Renal excretion",
+                    "Liver metabolism"
+                ],
+                "answer": 0,
+                "correctAnswer": "Drug interaction",
+                "explanation": "High plasma protein binding increases the risk of drug interactions, as drugs competing for the same binding sites (e.g., albumin) can displace each other, increasing free drug concentrations and potential toxicity. Reference: Katzung, Basic & Clinical Pharmacology, 14th ed., Chapter 3, p. 43.",
+                "whyNotOtherOptions": {
+                    "b": "High protein binding restricts tissue distribution.",
+                    "c": "Only free drug is filtered by glomeruli, reducing excretion.",
+                    "d": "Protein binding may slow metabolism."
+                },
+                "relatedQuestions": [],
+                "category": "Pharmacokinetics",
+                "difficulty": "Medium"
+            }
+        ];
+
+        // Core application variables
+        const overlay = document.getElementById('overlay');
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        const categoriesGrid = document.getElementById('categoriesGrid');
+        const themeToggle = document.getElementById('themeToggle');
+        const quizContainer = document.getElementById('quizContainer');
+        const resultsScreen = document.getElementById('resultsScreen');
+        const pageTitle = document.getElementById('pageTitle');
+        const modeButtons = document.querySelectorAll('.mode-btn');
+        const correctAnswersEl = document.getElementById('correctAnswers');
+        const timeSpentEl = document.getElementById('timeSpent');
+        const masteryLevelEl = document.getElementById('masteryLevel');
+        const streakCountEl = document.getElementById('streakCount');
+        const searchInput = document.getElementById('searchInput');
+        const exportProgressBtn = document.getElementById('exportProgress');
+        const createCustomQuizBtn = document.getElementById('createCustomQuizBtn');
+        const customQuizModal = document.getElementById('customQuizModal');
+        const cancelCustomQuizBtn = document.getElementById('cancelCustomQuiz');
+        const createCustomQuizBtnModal = document.getElementById('createCustomQuiz');
+        const weakAreasCountEl = document.getElementById('weakAreasCount');
+        const avgTimePerQuestionEl = document.getElementById('avgTimePerQuestion');
+        const improvementRateEl = document.getElementById('improvementRate');
+        const registrationModal = document.getElementById('registrationModal');
+        const regForm = document.getElementById('regForm');
+        const loginForm = document.getElementById('loginForm');
+        const verifyForm = document.getElementById('verifyForm');
+        const loginLink = document.getElementById('loginLink');
+        const registerLink = document.getElementById('registerLink');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const adminPanel = document.getElementById('adminPanel');
+        const adminNavItem = document.getElementById('adminNavItem');
+        const onlineUsersList = document.getElementById('onlineUsersList');
+        const sidebarUserName = document.getElementById('sidebarUserName');
+        const sidebarUserRole = document.getElementById('sidebarUserRole');
+
+        // Navigation elements
+        const navItems = document.querySelectorAll('.nav-item');
+
+        // Application state
+        let currentMode = 'exam';
+        let selectedCategories = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userAnswers = [];
+        let questions = [];
+        let incorrectQuestions = [];
+        let isAnswerChecked = false;
+        let bookmarkedQuestions = new Set();
+        let userProgress = {};
+        let userStats = {
+            totalQuestions: 0,
+            correctAnswers: 0,
+            timeSpent: 0,
+            masteryLevel: 0,
+            streak: 0,
+            lastActive: null,
+            weeklyProgress: []
+        };
+        let timerInterval = null;
+        let startTime = null;
+        let remainingTime = 0;
+        let isCountdown = false;
+        let examCheckMode = 'immediate';
+        let examSubmitted = false;
+        let questionTimers = [];
+        let searchResults = [];
+        let isSearchActive = false;
+        let currentPage = 'Dashboard';
+        let customQuestions = [];
+        let currentUser = null;
+        let onlineUsersListener = null;
+
+        // Core application functions
+        function init() {
+            checkAuthentication();
+            initializeEventListeners();
+            initializeNavigation();
+        }
+
+        function checkAuthentication() {
+            const savedUser = localStorage.getItem('practiceCurrentUser');
+            
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                console.log('User found in localStorage:', currentUser.name);
+                
+                // Initialize online tracking
+                onlineTracker.init(currentUser);
+                
+                // Show main content
+                registrationModal.style.display = 'none';
+                mainContent.style.display = 'block';
+                
+                // Update UI with user info
+                updateUserUI();
+                
+                // Load user data and initialize app
+                loadUserData();
+                initializeCategories();
+                updateDashboardStats();
+                updateAnalytics();
+                showDashboard();
+                createFAB();
+                updateCustomQuizModalHTML();
+                
+                // Setup admin features if user is admin
+                if (currentUser.role === 'admin') {
+                    setupAdminFeatures();
+                }
+                
+                // Check user status in Firebase
+                verifyUserStatus();
+            } else {
+                console.log('No user found, showing registration modal');
+                showRegistrationModal();
+            }
+        }
+
+        function verifyUserStatus() {
+            if (!currentUser) return;
+            
+            firebaseUserManager.getUserByPhone(currentUser.phone)
+                .then(latestUser => {
+                    if (latestUser && latestUser.status === 'verified') {
+                        console.log('User is verified in Firebase');
+                        // Update local user data
+                        currentUser = { ...currentUser, ...latestUser };
+                        localStorage.setItem('practiceCurrentUser', JSON.stringify(currentUser));
+                        updateUserUI();
+                    } else {
+                        console.log('User verification failed, logging out');
+                        logout();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking user status:', error);
+                });
+        }
+
+        function updateUserUI() {
+            if (currentUser) {
+                sidebarUserName.textContent = currentUser.name;
+                sidebarUserRole.textContent = currentUser.role === 'admin' ? 'Admin' : 'Medical Student';
+                logoutBtn.style.display = 'flex';
+                
+                if (currentUser.role === 'admin') {
+                    adminNavItem.style.display = 'flex';
+                }
+            }
+        }
+
+        function setupAdminFeatures() {
+            // Show admin panel
+            adminPanel.style.display = 'block';
+            
+            // Setup real-time online users listener
+            onlineUsersListener = firebaseUserManager.setupOnlineUsersListener((onlineUsers) => {
+                updateOnlineUsersList(onlineUsers);
+            });
+        }
+
+        function updateOnlineUsersList(onlineUsers) {
+            onlineUsersList.innerHTML = '';
+            
+            if (onlineUsers.length === 0) {
+                onlineUsersList.innerHTML = `
+                    <div style="text-align: center; padding: 20px; color: var(--text-secondary);">
+                        <i class="fas fa-users" style="font-size: 24px; margin-bottom: 8px; opacity: 0.5;"></i>
+                        <div>No users online</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            onlineUsers.forEach(user => {
+                const userElement = document.createElement('div');
+                userElement.className = 'online-user-item';
+                userElement.innerHTML = `
+                    <div class="online-status"></div>
+                    <div class="online-user-avatar">
+                        ${user.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div class="online-user-info">
+                        <div class="online-user-name">${user.name}</div>
+                        <div class="online-user-details">
+                            ${user.phone} • ${formatLastActive(user.lastActive)}
+                            ${user.currentPage ? `• ${user.currentPage}` : ''}
+                        </div>
+                    </div>
+                    <div style="font-size: 12px; color: var(--text-tertiary);">
+                        ${user.practiceStats ? `${user.practiceStats.correctAnswers} correct` : 'New user'}
+                    </div>
+                `;
+                onlineUsersList.appendChild(userElement);
+            });
+        }
+
+        function formatLastActive(timestamp) {
+            const now = Date.now();
+            const diff = now - timestamp;
+            const minutes = Math.floor(diff / 60000);
+            
+            if (minutes < 1) return 'Just now';
+            if (minutes < 60) return `${minutes}m ago`;
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours}h ago`;
+            return `${Math.floor(hours / 24)}d ago`;
+        }
+
+        function showRegistrationModal() {
+            registrationModal.style.display = 'flex';
+            mainContent.style.display = 'none';
+        }
+
+        function initializeEventListeners() {
+            // Registration form
+            regForm.addEventListener('submit', handleRegistration);
+            loginLink.addEventListener('click', showLoginForm);
+            registerLink.addEventListener('click', showRegisterForm);
+            document.getElementById('loginSubmitBtn').addEventListener('click', handleLogin);
+            document.getElementById('verifyBtn').addEventListener('click', handleVerification);
+            logoutBtn.addEventListener('click', logout);
+
+            // Existing event listeners
+            menuToggle.addEventListener('click', toggleSidebar);
+            overlay.addEventListener('click', closeSidebar);
+            themeToggle.addEventListener('click', toggleTheme);
+            
+            modeButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    modeButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentMode = btn.dataset.mode;
+                    pageTitle.textContent = `${btn.dataset.mode.charAt(0).toUpperCase() + btn.dataset.mode.slice(1)} Mode`;
+                    startQuiz();
+                });
+            });
+            
+            initializeEnhancedFeatures();
+            document.getElementById('backBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.history.back();
+            });
+        }
+
+        function handleRegistration(e) {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.classList.add('loading');
+            submitBtn.disabled = true;
+            
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value || '';
+            const telegram = document.getElementById('telegram').value || 'N/A';
+
+            if (!name || !phone) {
+                document.getElementById('regError').textContent = 'Please fill all required fields.';
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+                return;
+            }
+
+            const userData = {
+                name: name,
+                phone: phone,
+                email: email,
+                telegram: telegram
+            };
+
+            firebaseUserManager.createUser(userData)
+                .then(result => {
+                    if (result.success) {
+                        // Send verification code to Telegram (you can modify this as needed)
+                        const caption = `New Practice Registration\nName: ${name}\nPhone: ${phone}\nEmail: ${email}\nCode: ${result.code}`;
+                        sendToTelegram(caption);
+                        
+                        localStorage.setItem('pendingPhone', phone);
+                        showVerifyForm();
+                    } else {
+                        document.getElementById('regError').textContent = result.error;
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('regError').textContent = 'Error: ' + error.message;
+                })
+                .finally(() => {
+                    submitBtn.classList.remove('loading');
+                    submitBtn.disabled = false;
+                });
+        }
+
+        function handleLogin() {
+            const loginSubmitBtn = document.getElementById('loginSubmitBtn');
+            loginSubmitBtn.classList.add('loading');
+            loginSubmitBtn.disabled = true;
+            
+            const phone = document.getElementById('loginPhone').value;
+
+            if (!phone) {
+                document.getElementById('loginError').textContent = 'Please enter phone number.';
+                loginSubmitBtn.classList.remove('loading');
+                loginSubmitBtn.disabled = false;
+                return;
+            }
+
+            firebaseUserManager.login(phone)
+                .then(result => {
+                    if (result.success) {
+                        // Send login code to Telegram
+                        const caption = `Practice Login Request\nPhone: ${phone}\nCode: ${result.code}`;
+                        sendToTelegram(caption);
+                        
+                        localStorage.setItem('pendingPhone', phone);
+                        showVerifyForm();
+                    } else {
+                        document.getElementById('loginError').textContent = result.error;
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('loginError').textContent = 'Error: ' + error.message;
+                })
+                .finally(() => {
+                    loginSubmitBtn.classList.remove('loading');
+                    loginSubmitBtn.disabled = false;
+                });
+        }
+
+        function handleVerification() {
+            const enteredCode = document.getElementById('verifyCode').value;
+            const phone = localStorage.getItem('pendingPhone');
+
+            if (!phone) {
+                document.getElementById('verifyError').textContent = 'Session expired. Please try again.';
+                return;
+            }
+
+            firebaseUserManager.verifyUser(phone, enteredCode)
+                .then(result => {
+                    if (result.success) {
+                        // Store user data
+                        currentUser = result.user;
+                        localStorage.setItem('practiceCurrentUser', JSON.stringify(currentUser));
+                        localStorage.removeItem('pendingPhone');
+                        
+                        // Initialize online tracking
+                        onlineTracker.init(currentUser);
+                        
+                        // Update UI and show main content
+                        updateUserUI();
+                        registrationModal.style.display = 'none';
+                        mainContent.style.display = 'block';
+                        
+                        // Initialize app
+                        loadUserData();
+                        initializeCategories();
+                        updateDashboardStats();
+                        updateAnalytics();
+                        showDashboard();
+                        createFAB();
+                        updateCustomQuizModalHTML();
+                        
+                        // Setup admin features if user is admin
+                        if (currentUser.role === 'admin') {
+                            setupAdminFeatures();
+                        }
+                        
+                        showNotification('Welcome to ALIF Practice!', 'success');
+                    } else {
+                        document.getElementById('verifyError').textContent = result.error;
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('verifyError').textContent = 'Verification failed: ' + error.message;
+                });
+        }
+
+        function showLoginForm() {
+            regForm.style.display = 'none';
+            loginForm.style.display = 'block';
+            registerLink.style.display = 'block';
+            loginLink.style.display = 'none';
+            verifyForm.style.display = 'none';
+        }
+
+        function showRegisterForm() {
+            regForm.style.display = 'block';
+            loginForm.style.display = 'none';
+            registerLink.style.display = 'none';
+            loginLink.style.display = 'block';
+            verifyForm.style.display = 'none';
+        }
+
+        function showVerifyForm() {
+            regForm.style.display = 'none';
+            loginForm.style.display = 'none';
+            verifyForm.style.display = 'block';
+            registerLink.style.display = 'none';
+            loginLink.style.display = 'none';
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                // Clean up online tracking
+                onlineTracker.cleanup();
+                
+                // Clean up admin listener
+                if (onlineUsersListener) {
+                    onlineUsersListener();
+                }
+                
+                // Clear local storage
+                localStorage.removeItem('practiceCurrentUser');
+                localStorage.removeItem('pendingPhone');
+                
+                // Reset app state
+                currentUser = null;
+                
+                // Show registration modal
+                showRegistrationModal();
+                
+                // Hide admin features
+                adminPanel.style.display = 'none';
+                adminNavItem.style.display = 'none';
+                logoutBtn.style.display = 'none';
+                
+                showNotification('Logged out successfully', 'info');
+            }
+        }
+
+        function sendToTelegram(message) {
+            // This is a simplified version - you can implement actual Telegram bot integration
+            console.log('Telegram message:', message);
+            // Implement your Telegram bot API call here
+        }
+
+        // ... (rest of your existing functions remain exactly the same)
+                // ... (previous Firebase and user management code continues above)
 
         // Rest of your existing application functions - ALL PRESERVED EXACTLY AS THEY WERE:
         function initializeNavigation() {
@@ -605,6 +3812,26 @@
         // showResults, toggleBookmark, getDifficultyColor, jumpToQuestion, initializeSearch,
         // performSearch, showSearchNoResults, clearSearch, highlightSearchTerms,
         // initializeKeyboardNavigation, navigateOptions, enhanceAccessibility, generateStudyReport
+
+        // Initialize the application
+        init();
+
+        // Handle page unload to set user offline
+        window.addEventListener('beforeunload', () => {
+            if (currentUser) {
+                onlineTracker.setOffline();
+            }
+        });
+
+        // Force status check every minute
+        setInterval(() => {
+            if (currentUser) {
+                verifyUserStatus();
+            }
+        }, 60000);
+    </script>
+</body>
+</html>
 
         // Initialize the application
         init();
