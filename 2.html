@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1334,8 +1335,6 @@
             <button id="backToMainBtn"><i class="fas fa-arrow-left"></i> Back to Quizzes</button>
         </div>
     </main>
-
-    <script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
   // Check if running inside Telegram
@@ -1373,6 +1372,8 @@
   // This ensures pressing back doesn't immediately close the app
   history.pushState(null, '', location.href);
 </script>
+    <script>
+
 // Detect offline status and redirect to offline page
 window.addEventListener('offline', () => {
     if (!window.location.pathname.includes('offline')) {
