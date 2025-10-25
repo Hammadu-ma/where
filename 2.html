@@ -11,6 +11,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
     <style>
         :root {
             --primary: #60a5fa;
@@ -1338,18 +1339,19 @@
     <script>
 // Detect offline status and redirect to offline page
 window.addEventListener('offline', () => {
+    // Only redirect if not already on offline page
     if (!window.location.pathname.includes('offline')) {
         window.location.href = '/offline.html';
     }
 });
 
+// Optional: Prevent browser's default offline page
 window.addEventListener('load', () => {
     if (!navigator.onLine && !window.location.pathname.includes('offline')) {
         window.location.href = '/offline.html';
     }
 });
-    </script>
-
+</script>
     <script>
   // set token & timestamp when visiting homepage
   sessionStorage.setItem('enteredFromHome_v2', 'yes');
@@ -1361,8 +1363,9 @@ window.addEventListener('load', () => {
   // Check if running inside Telegram
   const tg = window.Telegram?.WebApp;
 
+  // --- 1️⃣ Handle Telegram Mini App Back Button ---
   if (tg) {
-    tg.ready();
+    tg.ready(); // Initialize Telegram SDK
     tg.BackButton.show();
 
     tg.BackButton.onClick(() => {
@@ -1371,19 +1374,25 @@ window.addEventListener('load', () => {
     });
   }
 
+  // --- 2️⃣ Handle Browser/Phone Back Button ---
   window.addEventListener('popstate', () => {
     console.log("Browser back button pressed");
     handleBackAction();
   });
 
+  // --- 3️⃣ Function to handle back action globally ---
   function handleBackAction() {
+    // Example actions (customize as you wish):
+    // Go back if possible, otherwise go to home page
     if (document.referrer && window.history.length > 1) {
       window.history.back();
     } else {
-      window.location.href = '/';
+      window.location.href = '/'; // or your home page route
     }
   }
 
+  // --- 4️⃣ Optional: Prevent unwanted exits ---
+  // This ensures pressing back doesn't immediately close the app
   history.pushState(null, '', location.href);
 </script>
 <script>
