@@ -1348,39 +1348,45 @@ window.addEventListener('load', () => {
         window.location.href = '/offline.html';
     }
 });
+    </script>
 
-// set token & timestamp when visiting homepage
-sessionStorage.setItem('enteredFromHome_v2', 'yes');
-sessionStorage.setItem('enteredFromHome_time_v2', Math.floor(Date.now()/1000));
+    <script>
+  // set token & timestamp when visiting homepage
+  sessionStorage.setItem('enteredFromHome_v2', 'yes');
+  sessionStorage.setItem('enteredFromHome_time_v2', Math.floor(Date.now()/1000));
+    </script>
 
-// Telegram Web App Integration
-const tg = window.Telegram?.WebApp;
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script>
+  // Check if running inside Telegram
+  const tg = window.Telegram?.WebApp;
 
-if (tg) {
+  if (tg) {
     tg.ready();
     tg.BackButton.show();
 
     tg.BackButton.onClick(() => {
-        console.log("Telegram back button pressed");
-        handleBackAction();
+      console.log("Telegram back button pressed");
+      handleBackAction();
     });
-}
+  }
 
-window.addEventListener('popstate', () => {
+  window.addEventListener('popstate', () => {
     console.log("Browser back button pressed");
     handleBackAction();
-});
+  });
 
-function handleBackAction() {
+  function handleBackAction() {
     if (document.referrer && window.history.length > 1) {
-        window.history.back();
+      window.history.back();
     } else {
-        window.location.href = '/';
+      window.location.href = '/';
     }
-}
+  }
 
-history.pushState(null, '', location.href);
-
+  history.pushState(null, '', location.href);
+</script>
+<script>
 // Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyC4DSMVg4c98kQf5sSF8ueD631QgO4SXn0",
