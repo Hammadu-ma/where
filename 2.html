@@ -11,7 +11,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.0.0/marked.min.js"></script> <!-- Added for Markdown parsing -->
     <style>
         :root {
             --primary: #60a5fa;
@@ -332,7 +332,7 @@
             background: rgba(239, 68, 68, 0.1);
             color: var(--error);
         }
-        #registrationModal, #addModal, #confirmAddModal, #accessDeniedModal, #tempPasswordModal, #notificationsModal {
+        #registrationModal, #addModal, #confirmAddModal, #accessDeniedModal, #tempPasswordModal, #notificationsModal, #notificationSettingsModal {
             position: fixed;
             top: 0;
             left: 0;
@@ -872,29 +872,124 @@
     --gradient-premium: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
 }
 
-/* Notification Modal Styles */
+/* Updated Notification Modal Styles - More Modern */
+.notifications-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Softer backdrop */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+    backdrop-filter: blur(8px); /* Modern blur effect */
+}
+
+.notifications-modal .modal-content {
+    background: var(--surface);
+    padding: 0;
+    border-radius: 16px; /* Larger radius for modern look */
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); /* Deeper shadow */
+    overflow: hidden; /* For clean edges */
+    animation: fadeInScale 0.3s ease-out;
+}
+
+@keyframes fadeInScale {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.notifications-header {
+    padding: 1.5rem 2rem;
+    background: var(--gradient); /* Gradient header */
+    color: white;
+    text-align: left;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.notifications-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.notifications-header i {
+    font-size: 1.25rem;
+}
+
+.notifications-header .tools {
+    display: flex;
+    gap: 1rem;
+}
+
+.notifications-header .tool-btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: none;
+    padding: 0.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.notifications-header .tool-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.notifications-search {
+    padding: 1rem 2rem;
+    background: var(--background);
+    border-bottom: 1px solid var(--border);
+}
+
+.notifications-search input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--text-primary);
+}
+
 .notifications-list {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    max-height: 60vh;
+    max-height: 50vh;
     overflow-y: auto;
-    padding: 1rem 0;
+    padding: 1.5rem 2rem;
+    background: var(--background);
 }
 
 .notification-item {
-    background: var(--background);
+    background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1rem;
+    border-radius: 12px; /* Rounded corners */
+    padding: 1.25rem;
     position: relative;
     transition: var(--transition);
     animation: fadeIn 0.3s ease-in;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Subtle neumorphism */
+}
+
+.notification-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
 .notification-item.unread {
-    border-left: 4px solid var(--primary);
-    background: rgba(96, 165, 250, 0.05);
+    border-left: 6px solid var(--primary);
+    background: linear-gradient(to right, rgba(96, 165, 250, 0.05), var(--surface));
 }
 
 .notification-item.info {
@@ -917,27 +1012,187 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.notification-icon {
+    font-size: 1.25rem;
+    margin-right: 1rem;
+    color: var(--text-secondary);
 }
 
 .notification-title {
-    font-weight: 600;
+    font-weight: 700;
+    font-size: 1.1rem;
     color: var(--text-primary);
+    flex: 1;
 }
 
 .notification-time {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     color: var(--text-tertiary);
+    white-space: nowrap;
 }
 
 .notification-content {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     color: var(--text-secondary);
+    line-height: 1.5;
+    text-align: left;
+}
+
+/* Support for modern text formats (e.g., bold, italic, links, code, lists) */
+.notification-content a {
+    color: var(--primary);
+    text-decoration: underline;
+    transition: var(--transition);
+}
+
+.notification-content a:hover {
+    color: var(--primary-dark);
+}
+
+.notification-content strong {
+    font-weight: 700;
+}
+
+.notification-content em {
+    font-style: italic;
+}
+
+.notification-content code {
+    background: var(--border);
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-family: monospace;
+}
+
+.notification-content ul, .notification-content ol {
+    margin-left: 1.5rem;
+    margin-top: 0.5rem;
+}
+
+.notification-content blockquote {
+    border-left: 4px solid var(--border);
+    padding-left: 1rem;
+    margin: 1rem 0;
+    color: var(--text-tertiary);
+    font-style: italic;
+}
+
+.notification-content img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin: 1rem 0;
+}
+
+.notification-content pre {
+    background: var(--border);
+    padding: 1rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-family: monospace;
+}
+
+.notifications-footer {
+    padding: 1rem 2rem;
+    border-top: 1px solid var(--border);
+    text-align: right;
+    display: flex;
+    justify-content: space-between;
+}
+
+.notifications-footer .ok-btn {
+    margin: 0;
+}
+
+.notifications-footer .mark-all-read {
+    background: transparent;
+    color: var(--primary);
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.notifications-footer .mark-all-read:hover {
+    color: var(--primary-dark);
 }
 
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+/* Notification Settings Modal */
+#notificationSettingsModal .modal-content {
+    max-width: 400px;
+}
+
+.settings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem 0;
+}
+
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: var(--background);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+}
+
+.setting-label {
+    font-weight: 500;
+}
+
+/* Toggle Switch */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--border);
+    transition: .4s;
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--primary);
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
 }
     </style>
 </head>
@@ -1201,13 +1456,56 @@
     </div>
 
     <!-- Notifications Modal -->
-    <div id="notificationsModal" style="display: none;">
+    <div id="notificationsModal" class="notifications-modal" style="display: none;">
         <div class="modal-content">
-            <h2><i class="fas fa-bell"></i> Notifications</h2>
+            <div class="notifications-header">
+                <h2><i class="fas fa-bell"></i> Notifications</h2>
+                <div class="tools">
+                    <button class="tool-btn" id="notificationSettingsBtn" title="Settings"><i class="fas fa-cog"></i></button>
+                    <button class="tool-btn" id="markAllReadBtn" title="Mark All as Read"><i class="fas fa-check-double"></i></button>
+                </div>
+            </div>
+            <div class="notifications-search">
+                <input type="text" id="notificationsSearchInput" placeholder="Search notifications...">
+            </div>
             <div class="notifications-list" id="notificationsList">
                 <!-- Notifications will be populated here -->
             </div>
-            <button class="ok-btn" id="closeNotificationsBtn">Close</button>
+            <div class="notifications-footer">
+                <button class="mark-all-read" id="footerMarkAllRead">Mark all as read</button>
+                <button class="ok-btn" id="closeNotificationsBtn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Settings Modal -->
+    <div id="notificationSettingsModal" style="display: none;">
+        <div class="modal-content">
+            <h2><i class="fas fa-cog"></i> Notification Settings</h2>
+            <div class="settings-list">
+                <div class="setting-item">
+                    <span class="setting-label">Enable Sound Notifications</span>
+                    <label class="switch">
+                        <input type="checkbox" id="soundToggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <span class="setting-label">Show Notification Previews</span>
+                    <label class="switch">
+                        <input type="checkbox" id="previewToggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <span class="setting-label">Email Notifications</span>
+                    <label class="switch">
+                        <input type="checkbox" id="emailToggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+            <button class="ok-btn" id="saveSettingsBtn">Save Settings</button>
         </div>
     </div>
 
@@ -1339,19 +1637,18 @@
     <script>
 // Detect offline status and redirect to offline page
 window.addEventListener('offline', () => {
-    // Only redirect if not already on offline page
     if (!window.location.pathname.includes('offline')) {
         window.location.href = '/offline.html';
     }
 });
 
-// Optional: Prevent browser's default offline page
 window.addEventListener('load', () => {
     if (!navigator.onLine && !window.location.pathname.includes('offline')) {
         window.location.href = '/offline.html';
     }
 });
-</script>
+    </script>
+
     <script>
   // set token & timestamp when visiting homepage
   sessionStorage.setItem('enteredFromHome_v2', 'yes');
@@ -1363,9 +1660,8 @@ window.addEventListener('load', () => {
   // Check if running inside Telegram
   const tg = window.Telegram?.WebApp;
 
-  // --- 1️⃣ Handle Telegram Mini App Back Button ---
   if (tg) {
-    tg.ready(); // Initialize Telegram SDK
+    tg.ready();
     tg.BackButton.show();
 
     tg.BackButton.onClick(() => {
@@ -1374,25 +1670,19 @@ window.addEventListener('load', () => {
     });
   }
 
-  // --- 2️⃣ Handle Browser/Phone Back Button ---
   window.addEventListener('popstate', () => {
     console.log("Browser back button pressed");
     handleBackAction();
   });
 
-  // --- 3️⃣ Function to handle back action globally ---
   function handleBackAction() {
-    // Example actions (customize as you wish):
-    // Go back if possible, otherwise go to home page
     if (document.referrer && window.history.length > 1) {
       window.history.back();
     } else {
-      window.location.href = '/'; // or your home page route
+      window.location.href = '/';
     }
   }
 
-  // --- 4️⃣ Optional: Prevent unwanted exits ---
-  // This ensures pressing back doesn't immediately close the app
   history.pushState(null, '', location.href);
 </script>
 <script>
@@ -1904,6 +2194,12 @@ const notificationsModal = document.getElementById('notificationsModal');
 const notificationsList = document.getElementById('notificationsList');
 const closeNotificationsBtn = document.getElementById('closeNotificationsBtn');
 const unreadCount = document.getElementById('unreadCount');
+const notificationSettingsModal = document.getElementById('notificationSettingsModal');
+const notificationSettingsBtn = document.getElementById('notificationSettingsBtn');
+const markAllReadBtn = document.getElementById('markAllReadBtn');
+const footerMarkAllRead = document.getElementById('footerMarkAllRead');
+const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+const notificationsSearchInput = document.getElementById('notificationsSearchInput');
 
 // Theme toggle
 function toggleTheme() {
@@ -2191,6 +2487,11 @@ async function init() {
         console.log('No cached user found');
         showRegistrationModal();
     }
+
+    // Load notification settings from localStorage
+    document.getElementById('soundToggle').checked = localStorage.getItem('notifySound') === 'true';
+    document.getElementById('previewToggle').checked = localStorage.getItem('notifyPreview') !== 'false'; // Default true
+    document.getElementById('emailToggle').checked = localStorage.getItem('notifyEmail') === 'true';
 }
 
 // Force status check on page load
@@ -2419,9 +2720,6 @@ cancelAddBtn.addEventListener('click', () => {
 okAddBtn.addEventListener('click', () => {
     confirmAddModal.style.display = 'none';
     addModal.style.display = 'flex';
-    addForm.style.display = 'block';
-    addVerifyForm.style.display = 'none';
-    document.getElementById('addName').value = localStorage.getItem('userName') || '';
 });
 
 addReceiptInput.addEventListener('change', () => {
@@ -2706,6 +3004,7 @@ window.addEventListener('beforeunload', () => {
 // Notifications Logic
 let broadcasts = [];
 let unreadBroadcasts = 0;
+let notificationSound = new Audio('https://freesound.org/data/previews/612/612095_5674468-lq.mp3'); // Example notification sound
 
 function initNotifications(user) {
     if (!user || !user.id) return;
@@ -2741,6 +3040,9 @@ function updateNotifications(user) {
     if (unreadBroadcasts > 0) {
         unreadCount.textContent = unreadBroadcasts;
         unreadCount.style.display = 'flex';
+        if (localStorage.getItem('notifySound') === 'true') {
+            notificationSound.play();
+        }
     } else {
         unreadCount.style.display = 'none';
     }
@@ -2753,17 +3055,52 @@ async function markBroadcastAsRead(broadcastId, userId) {
     });
 }
 
-function renderNotifications(user) {
-    notificationsList.innerHTML = broadcasts.map(broadcast => {
+async function markAllAsRead(userId) {
+    for (const broadcast of broadcasts) {
+        if (!broadcast.readBy.includes(userId)) {
+            await markBroadcastAsRead(broadcast.id, userId);
+        }
+    }
+}
+
+function getNotificationIcon(type) {
+    switch (type.toLowerCase()) {
+        case 'info':
+            return '<i class="fas fa-info-circle notification-icon" style="color: var(--info);"></i>';
+        case 'success':
+            return '<i class="fas fa-check-circle notification-icon" style="color: var(--success);"></i>';
+        case 'warning':
+            return '<i class="fas fa-exclamation-triangle notification-icon" style="color: var(--warning);"></i>';
+        case 'error':
+            return '<i class="fas fa-times-circle notification-icon" style="color: var(--error);"></i>';
+        default:
+            return '<i class="fas fa-bell notification-icon"></i>';
+    }
+}
+
+function renderNotifications(user, searchQuery = '') {
+    let filteredBroadcasts = broadcasts;
+    if (searchQuery) {
+        const lowerQuery = searchQuery.toLowerCase();
+        filteredBroadcasts = broadcasts.filter(broadcast => 
+            broadcast.message.toLowerCase().includes(lowerQuery) || 
+            broadcast.type.toLowerCase().includes(lowerQuery)
+        );
+    }
+
+    notificationsList.innerHTML = filteredBroadcasts.map(broadcast => {
         const isUnread = !broadcast.readBy.includes(user.id);
         const formattedTime = new Date(broadcast.timestamp).toLocaleString();
+        const icon = getNotificationIcon(broadcast.type);
+        const parsedMessage = marked.parse(broadcast.message); // Parse Markdown to HTML
         return `
             <div class="notification-item ${broadcast.type} ${isUnread ? 'unread' : ''}" data-id="${broadcast.id}">
                 <div class="notification-header">
+                    ${icon}
                     <span class="notification-title">${broadcast.type.toUpperCase()} Announcement</span>
                     <span class="notification-time">${formattedTime}</span>
                 </div>
-                <p class="notification-content">${broadcast.message}</p>
+                <div class="notification-content">${parsedMessage}</div>
             </div>
         `;
     }).join('');
@@ -2802,9 +3139,46 @@ closeNotificationsBtn.addEventListener('click', () => {
     notificationsModal.style.display = 'none';
 });
 
+// Notification Settings
+notificationSettingsBtn.addEventListener('click', () => {
+    notificationsModal.style.display = 'none';
+    notificationSettingsModal.style.display = 'flex';
+});
+
+saveSettingsBtn.addEventListener('click', () => {
+    localStorage.setItem('notifySound', document.getElementById('soundToggle').checked);
+    localStorage.setItem('notifyPreview', document.getElementById('previewToggle').checked);
+    localStorage.setItem('notifyEmail', document.getElementById('emailToggle').checked);
+    notificationSettingsModal.style.display = 'none';
+    notificationsModal.style.display = 'flex';
+});
+
+// Mark All as Read
+markAllReadBtn.addEventListener('click', async () => {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    await markAllAsRead(currentUser.id);
+    renderNotifications(currentUser);
+    unreadBroadcasts = 0;
+    updateUnreadBadge();
+});
+
+footerMarkAllRead.addEventListener('click', async () => {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    await markAllAsRead(currentUser.id);
+    renderNotifications(currentUser);
+    unreadBroadcasts = 0;
+    updateUnreadBadge();
+});
+
+// Search Notifications
+notificationsSearchInput.addEventListener('input', () => {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    renderNotifications(currentUser, notificationsSearchInput.value);
+});
+
 // Initialize
 init();
 renderQuizCards();
 </script>
 </body>
-</html> 
+</html>
