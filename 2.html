@@ -12,6 +12,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked@4.0.0/marked.min.js"></script> <!-- Added for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script> <!-- For swipeable notifications -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <style>
         :root {
             --primary: #60a5fa;
@@ -26,6 +28,8 @@
             --radius: 12px;
             --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             --gradient: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
         }
         body.light-mode {
             --background: #f3f4f6;
@@ -34,6 +38,8 @@
             --text-secondary: #4b5563;
             --text-tertiary: #9ca3af;
             --border: #d1d5db;
+            --glass: rgba(0, 0, 0, 0.05);
+            --glass-border: rgba(0, 0, 0, 0.1);
         }
         body.dark-mode {
             --background: #0f172a;
@@ -69,6 +75,8 @@
         }
         html {
             touch-action: none;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
         }
         .header {
             position: fixed;
@@ -79,6 +87,7 @@
             background: var(--background);
             border-bottom: 1px solid var(--border);
             box-shadow: var(--shadow);
+            width: 100%;
         }
         .header-container {
             display: flex;
@@ -87,6 +96,8 @@
             padding: 1rem;
             max-width: 1400px;
             margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
         }
         .logo {
             display: flex;
@@ -97,6 +108,7 @@
             color: var(--primary);
             text-decoration: none;
             cursor: pointer;
+            flex-shrink: 0;
         }
 
         .logo img {
@@ -114,6 +126,7 @@
             display: flex;
             gap: 0.5rem;
             align-items: center;
+            flex-wrap: wrap;
         }
         .action-btn {
             background: var(--surface);
@@ -129,6 +142,8 @@
             font-weight: 500;
             text-decoration: none;
             position: relative;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
         .action-btn:hover {
             background: var(--primary-light);
@@ -159,10 +174,26 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
         .main-content {
             max-width: 1400px;
             margin: 0 auto;
+            padding: 80px 1rem 2rem;
+            display: none;
+            width: 100%;
+            box-sizing: border-box;
+            overflow-y: auto;
+            height: calc(100vh - 80px);
+        }
+        #profileContent, #adminContent {
+            overflow-y: auto;
+            height: calc(100vh - 80px);
             padding: 80px 1rem 2rem;
             display: none;
         }
@@ -171,7 +202,7 @@
             margin-bottom: 2rem;
         }
         .page-title {
-            font-size: 2rem;
+            font-size: clamp(1.5rem, 4vw, 2rem);
             font-weight: 800;
             margin-bottom: 0.5rem;
             color: var(--primary);
@@ -186,11 +217,13 @@
             margin-bottom: 2rem;
             overflow-x: auto;
             padding-bottom: 0.5rem;
+            -webkit-overflow-scrolling: touch;
         }
         .year-filter-container {
             display: flex;
             gap: 0.5rem;
             padding: 0.5rem 0;
+            min-width: max-content;
         }
         .year-btn {
             padding: 0.5rem 1rem;
@@ -202,6 +235,7 @@
             transition: var(--transition);
             white-space: nowrap;
             font-weight: 500;
+            flex-shrink: 0;
         }
         .year-btn.active {
             background: var(--primary);
@@ -212,7 +246,7 @@
             margin-bottom: 2rem;
         }
         .year-title {
-            font-size: 1.5rem;
+            font-size: clamp(1.25rem, 3vw, 1.5rem);
             font-weight: 700;
             margin-bottom: 1rem;
             color: var(--text-primary);
@@ -230,6 +264,7 @@
             padding-bottom: 1rem;
             scrollbar-width: thin;
             scrollbar-color: var(--primary-light) transparent;
+            -webkit-overflow-scrolling: touch;
         }
         .cards-container::-webkit-scrollbar {
             height: 6px;
@@ -332,7 +367,7 @@
             background: rgba(239, 68, 68, 0.1);
             color: var(--error);
         }
-        #registrationModal, #addModal, #confirmAddModal, #accessDeniedModal, #tempPasswordModal, #notificationsModal, #notificationSettingsModal {
+        #registrationModal, #addModal, #confirmAddModal, #accessDeniedModal, #tempPasswordModal, #notificationsModal, #notificationSettingsModal, #adminModal {
             position: fixed;
             top: 0;
             left: 0;
@@ -343,6 +378,9 @@
             align-items: center;
             justify-content: center;
             z-index: 1001;
+            backdrop-filter: blur(10px);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
         .modal-content {
             background: var(--surface);
@@ -350,12 +388,12 @@
             border-radius: var(--radius);
             max-width: 450px;
             width: 90%;
+            max-height: 90vh;
             text-align: center;
             position: relative;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             animation: slideIn 0.3s ease-out;
             overflow-y: auto;
-            max-height: 80vh;
             -webkit-overflow-scrolling: touch;
             scroll-behavior: smooth;
         }
@@ -366,7 +404,7 @@
         .modal-content h2 {
             margin-bottom: 0.5rem;
             color: var(--text-primary);
-            font-size: 1.75rem;
+            font-size: clamp(1.5rem, 4vw, 1.75rem);
             font-weight: 700;
             display: flex;
             align-items: center;
@@ -407,6 +445,7 @@
             font-size: 1rem;
             transition: border-color 0.3s;
             width: 100%;
+            box-sizing: border-box;
         }
         .modal-content select:focus, .modal-content input:focus {
             outline: none;
@@ -449,6 +488,7 @@
             border-radius: var(--radius);
             border: 1px solid var(--border);
             display: none;
+            object-fit: cover;
         }
         .modal-content button {
             background: var(--gradient);
@@ -465,6 +505,7 @@
             justify-content: center;
             gap: 0.5rem;
             position: relative;
+            width: 100%;
         }
         .modal-content button:hover {
             background: var(--primary-dark);
@@ -503,6 +544,7 @@
             justify-content: center;
             gap: 0.5rem;
             margin-top: 1rem;
+            width: 100%;
         }
         .back-btn:hover, .cancel-btn:hover, .ok-btn:hover {
             background: var(--primary-light);
@@ -522,6 +564,7 @@
             gap: 1rem;
             justify-content: center;
             margin-top: 1rem;
+            flex-wrap: wrap;
         }
         #logoutModal {
             position: fixed;
@@ -534,18 +577,10 @@
             align-items: center;
             justify-content: center;
             z-index: 1001;
-        }
-        /* Profile Styles */
-        #profileContent {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 80px 1rem 2rem;
-            background: linear-gradient(to bottom, var(--background), var(--surface));
-            min-height: calc(100vh - 80px);
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
         }
+        /* Profile Styles */
         .profile-card {
             background: var(--surface);
             border: 1px solid var(--border);
@@ -555,6 +590,8 @@
             width: 100%;
             box-shadow: var(--shadow);
             text-align: center;
+            overflow-y: auto;
+            max-height: 80vh;
         }
         .profile-header {
             display: flex;
@@ -563,8 +600,8 @@
             margin-bottom: 2rem;
         }
         .profile-pic {
-            width: 120px;
-            height: 120px;
+            width: min(120px, 30vw);
+            height: min(120px, 30vw);
             border-radius: 50%;
             object-fit: cover;
             border: 3px solid var(--primary);
@@ -591,6 +628,8 @@
             justify-content: space-between;
             padding: 0.5rem 0;
             border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
         .info-label {
             font-weight: 600;
@@ -616,6 +655,7 @@
             display: flex;
             justify-content: center;
             gap: 1rem;
+            flex-wrap: wrap;
         }
         .contact-link {
             background: var(--gradient);
@@ -649,6 +689,7 @@
             background: var(--background);
             color: var(--text-primary);
             resize: vertical;
+            box-sizing: border-box;
         }
         #sendCommentBtn {
             background: var(--gradient);
@@ -660,6 +701,7 @@
             transition: var(--transition);
             font-weight: 600;
             margin-top: 1rem;
+            width: 100%;
         }
         #sendCommentBtn:hover {
             background: var(--primary-dark);
@@ -872,46 +914,53 @@
     --gradient-premium: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
 }
 
-/* Updated Notification Modal Styles - More Modern */
+/* Enhanced Modern Notification Modal Styles */
 .notifications-modal {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5); /* Softer backdrop */
+    background: rgba(0, 0, 0, 0.6);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1001;
-    backdrop-filter: blur(8px); /* Modern blur effect */
+    backdrop-filter: blur(20px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .notifications-modal .modal-content {
     background: var(--surface);
     padding: 0;
-    border-radius: 16px; /* Larger radius for modern look */
-    max-width: 500px;
-    width: 90%;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); /* Deeper shadow */
-    overflow: hidden; /* For clean edges */
-    animation: fadeInScale 0.3s ease-out;
+    border-radius: 24px;
+    max-width: 600px;
+    max-height: 90vh;
+    width: 95%;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    animation: modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    flex-direction: column;
 }
 
-@keyframes fadeInScale {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
+@keyframes modalSlideIn {
+    from { opacity: 0; transform: translateY(50px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .notifications-header {
     padding: 1.5rem 2rem;
-    background: var(--gradient); /* Gradient header */
+    background: var(--gradient);
     color: white;
-    text-align: left;
-    position: relative;
+    position: sticky;
+    top: 0;
+    z-index: 10;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    backdrop-filter: blur(10px);
 }
 
 .notifications-header h2 {
@@ -923,102 +972,122 @@
     gap: 0.75rem;
 }
 
-.notifications-header i {
-    font-size: 1.25rem;
-}
-
 .notifications-header .tools {
     display: flex;
-    gap: 1rem;
+    gap: 0.5rem;
 }
 
 .notifications-header .tool-btn {
     background: rgba(255, 255, 255, 0.2);
     color: white;
     border: none;
-    padding: 0.5rem;
-    border-radius: 8px;
+    padding: 0.75rem;
+    border-radius: 12px;
     cursor: pointer;
     transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
 }
 
 .notifications-header .tool-btn:hover {
     background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
 }
 
 .notifications-search {
     padding: 1rem 2rem;
     background: var(--background);
     border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 5;
 }
 
 .notifications-search input {
     width: 100%;
     padding: 0.75rem 1rem;
     border: 1px solid var(--border);
-    border-radius: var(--radius);
+    border-radius: 12px;
     background: var(--surface);
     color: var(--text-primary);
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.notifications-swiper {
+    flex: 1;
+    overflow: hidden;
+    height: calc(100% - 140px);
+}
+
+.swiper-slide {
+    padding: 0 1rem 1rem;
+    height: auto;
+    display: flex;
+    align-items: stretch;
 }
 
 .notifications-list {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    max-height: 50vh;
-    overflow-y: auto;
-    padding: 1.5rem 2rem;
-    background: var(--background);
+    padding: 1.5rem 0;
+    width: 100%;
 }
 
 .notification-item {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px; /* Rounded corners */
-    padding: 1.25rem;
+    background: var(--glass);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 1.5rem;
     position: relative;
     transition: var(--transition);
-    animation: fadeIn 0.3s ease-in;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Subtle neumorphism */
+    animation: fadeInUp 0.5s ease-out;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    flex: 1;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .notification-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
 }
 
 .notification-item.unread {
-    border-left: 6px solid var(--primary);
-    background: linear-gradient(to right, rgba(96, 165, 250, 0.05), var(--surface));
+    border-left: 4px solid var(--primary);
+    background: linear-gradient(135deg, rgba(96, 165, 250, 0.1), var(--glass));
 }
 
-.notification-item.info {
-    border-left-color: var(--info);
-}
-
-.notification-item.success {
-    border-left-color: var(--success);
-}
-
-.notification-item.warning {
-    border-left-color: var(--warning);
-}
-
-.notification-item.error {
-    border-left-color: var(--error);
-}
+.notification-item.info { border-left-color: var(--info); }
+.notification-item.success { border-left-color: var(--success); }
+.notification-item.warning { border-left-color: var(--warning); }
+.notification-item.error { border-left-color: var(--error); }
 
 .notification-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.75rem;
+    margin-bottom: 1rem;
 }
 
 .notification-icon {
     font-size: 1.25rem;
     margin-right: 1rem;
     color: var(--text-secondary);
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .notification-title {
@@ -1032,78 +1101,162 @@
     font-size: 0.85rem;
     color: var(--text-tertiary);
     white-space: nowrap;
+    font-weight: 500;
 }
 
 .notification-content {
     font-size: 0.95rem;
     color: var(--text-secondary);
-    line-height: 1.5;
+    line-height: 1.6;
     text-align: left;
+    margin-bottom: 1rem;
+    overflow-y: auto;
+    max-height: 200px;
 }
 
-/* Support for modern text formats (e.g., bold, italic, links, code, lists) */
+/* Enhanced Modern Text Formats */
 .notification-content a {
     color: var(--primary);
-    text-decoration: underline;
-    transition: var(--transition);
+    text-decoration: none;
+    font-weight: 600;
+    position: relative;
 }
 
-.notification-content a:hover {
-    color: var(--primary-dark);
+.notification-content a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--primary);
+    transition: width 0.3s ease;
+}
+
+.notification-content a:hover::after {
+    width: 100%;
 }
 
 .notification-content strong {
     font-weight: 700;
+    color: var(--text-primary);
 }
 
 .notification-content em {
     font-style: italic;
+    color: var(--text-tertiary);
 }
 
 .notification-content code {
     background: var(--border);
-    padding: 0.2rem 0.4rem;
-    border-radius: 4px;
-    font-family: monospace;
-}
-
-.notification-content ul, .notification-content ol {
-    margin-left: 1.5rem;
-    margin-top: 0.5rem;
-}
-
-.notification-content blockquote {
-    border-left: 4px solid var(--border);
-    padding-left: 1rem;
-    margin: 1rem 0;
-    color: var(--text-tertiary);
-    font-style: italic;
-}
-
-.notification-content img {
-    max-width: 100%;
-    border-radius: 8px;
-    margin: 1rem 0;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-family: 'Monaco', monospace;
+    font-size: 0.9rem;
+    color: var(--primary);
 }
 
 .notification-content pre {
     background: var(--border);
     padding: 1rem;
-    border-radius: 8px;
+    border-radius: 12px;
     overflow-x: auto;
-    font-family: monospace;
+    font-family: 'Monaco', monospace;
+    margin: 1rem 0;
+}
+
+.notification-content ul, .notification-content ol {
+    margin-left: 1.5rem;
+    margin-top: 0.5rem;
+    padding-left: 0;
+}
+
+.notification-content li {
+    margin-bottom: 0.25rem;
+}
+
+.notification-content blockquote {
+    border-left: 4px solid var(--primary);
+    padding-left: 1rem;
+    margin: 1rem 0;
+    color: var(--text-tertiary);
+    font-style: italic;
+    background: var(--glass);
+    padding: 1rem;
+    border-radius: 0 12px 12px 0;
+}
+
+.notification-content img {
+    max-width: 100%;
+    border-radius: 12px;
+    margin: 1rem 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Post Type Functions - Reactions and Comments */
+.notification-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.notification-item:hover .notification-actions {
+    opacity: 1;
+}
+
+.action-btn-small {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    color: var(--text-secondary);
+    padding: 0.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.8rem;
+}
+
+.action-btn-small:hover {
+    background: var(--primary-light);
+    color: var(--primary);
+    border-color: var(--primary);
+}
+
+.notification-reactions {
+    display: flex;
+    gap: 0.25rem;
+    margin-top: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.reaction {
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    background: var(--glass);
+    color: var(--text-tertiary);
+    border: 1px solid var(--glass-border);
 }
 
 .notifications-footer {
     padding: 1rem 2rem;
     border-top: 1px solid var(--border);
-    text-align: right;
+    background: var(--background);
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
 .notifications-footer .ok-btn {
     margin: 0;
+    padding: 0.75rem 1.5rem;
+    flex-shrink: 0;
 }
 
 .notifications-footer .mark-all-read {
@@ -1112,27 +1265,27 @@
     border: none;
     cursor: pointer;
     font-weight: 600;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    transition: var(--transition);
 }
 
 .notifications-footer .mark-all-read:hover {
+    background: var(--primary-light);
     color: var(--primary-dark);
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* Notification Settings Modal */
+/* Notification Settings Modal - Modern */
 #notificationSettingsModal .modal-content {
-    max-width: 400px;
+    max-width: 450px;
+    border-radius: 20px;
 }
 
 .settings-list {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    padding: 1rem 0;
+    gap: 1.5rem;
+    padding: 1.5rem;
 }
 
 .setting-item {
@@ -1140,21 +1293,25 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
-    background: var(--background);
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
+    background: var(--glass);
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
 .setting-label {
     font-weight: 500;
+    color: var(--text-primary);
 }
 
-/* Toggle Switch */
+/* Enhanced Toggle Switch */
 .switch {
     position: relative;
     display: inline-block;
-    width: 50px;
-    height: 24px;
+    width: 60px;
+    height: 28px;
 }
 
 .switch input {
@@ -1172,19 +1329,21 @@
     bottom: 0;
     background-color: var(--border);
     transition: .4s;
-    border-radius: 24px;
+    border-radius: 28px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .slider:before {
     position: absolute;
     content: "";
-    height: 20px;
-    width: 20px;
+    height: 24px;
+    width: 24px;
     left: 2px;
     bottom: 2px;
     background-color: white;
     transition: .4s;
     border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 input:checked + .slider {
@@ -1192,8 +1351,132 @@ input:checked + .slider {
 }
 
 input:checked + .slider:before {
-    transform: translateX(26px);
+    transform: translateX(32px);
 }
+
+/* Swipeable Cards for Mobile */
+@media (max-width: 768px) {
+    .notification-item {
+        margin: 0 0.5rem;
+    }
+    .swiper-pagination-bullet {
+        background: var(--primary-light);
+    }
+    .swiper-pagination-bullet-active {
+        background: var(--primary);
+    }
+    .notifications-header {
+        padding: 1rem 1rem;
+    }
+    .notifications-search {
+        padding: 0.75rem 1rem;
+    }
+    .notifications-footer {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+
+        /* Admin Panel Styles */
+        #adminContent {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 80px 1rem 2rem;
+            background: linear-gradient(to bottom, var(--background), var(--surface));
+            min-height: calc(100vh - 80px);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .admin-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2rem;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: var(--shadow);
+            text-align: left;
+            overflow-y: auto;
+            max-height: 80vh;
+        }
+        .admin-section {
+            margin-bottom: 2rem;
+        }
+        .admin-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        #createNotificationForm {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        #notificationMessage {
+            height: 200px;
+            resize: vertical;
+        }
+        #notificationPreview {
+            border: 1px solid var(--border);
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: var(--radius);
+            background: var(--background);
+            overflow-y: auto;
+            max-height: 300px;
+        }
+        .notification-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .notification-admin-item {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1rem;
+            position: relative;
+        }
+        .stats {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        .readers-list {
+            margin-top: 1rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .admin-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        .admin-btn {
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+        .edit-btn {
+            background: var(--warning);
+            color: white;
+        }
+        .delete-btn {
+            background: var(--error);
+            color: white;
+        }
+        .view-readers-btn {
+            background: var(--info);
+            color: white;
+        }
+        .admin-btn:hover {
+            opacity: 0.9;
+        }
     </style>
 </head>
 <body class="dark-mode">
@@ -1455,7 +1738,7 @@ input:checked + .slider:before {
         </div>
     </div>
 
-    <!-- Notifications Modal -->
+    <!-- Enhanced Notifications Modal -->
     <div id="notificationsModal" class="notifications-modal" style="display: none;">
         <div class="modal-content">
             <div class="notifications-header">
@@ -1468,8 +1751,13 @@ input:checked + .slider:before {
             <div class="notifications-search">
                 <input type="text" id="notificationsSearchInput" placeholder="Search notifications...">
             </div>
-            <div class="notifications-list" id="notificationsList">
-                <!-- Notifications will be populated here -->
+            <div class="notifications-swiper">
+                <div class="swiper notifications-swiper-container">
+                    <div class="swiper-wrapper notifications-list" id="notificationsList">
+                        <!-- Notifications will be populated here -->
+                    </div>
+                    <div class="swiper-pagination"></div>
+                </div>
             </div>
             <div class="notifications-footer">
                 <button class="mark-all-read" id="footerMarkAllRead">Mark all as read</button>
@@ -1504,8 +1792,68 @@ input:checked + .slider:before {
                         <span class="slider"></span>
                     </label>
                 </div>
+                <div class="setting-item">
+                    <span class="setting-label">Notification Theme</span>
+                    <select style="background: var(--glass); border: 1px solid var(--glass-border); padding: 0.5rem; border-radius: 8px; color: var(--text-primary);">
+                        <option>Default</option>
+                        <option>Dark</option>
+                        <option>Light</option>
+                        <option>Custom</option>
+                    </select>
+                </div>
             </div>
             <button class="ok-btn" id="saveSettingsBtn">Save Settings</button>
+        </div>
+    </div>
+
+    <!-- Admin Modal -->
+    <div id="adminModal" style="display: none;">
+        <div class="modal-content">
+            <h2><i class="fas fa-cog"></i> Admin Panel</h2>
+            <div class="admin-section">
+                <h3 class="admin-title">Create New Notification</h3>
+                <form id="createNotificationForm">
+                    <div class="input-group">
+                        <i class="fas fa-bell"></i>
+                        <select id="notificationType" required>
+                            <option value="" disabled selected>Select Type</option>
+                            <option value="info">Info</option>
+                            <option value="success">Success</option>
+                            <option value="warning">Warning</option>
+                            <option value="error">Error</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-users"></i>
+                        <select id="notificationTarget" required>
+                            <option value="" disabled selected>Select Target</option>
+                            <option value="all">All Users</option>
+                            <option value="verified">Verified Users</option>
+                            <option value="premium">Premium Users</option>
+                            <option value="trial">Trial Users</option>
+                            <option value="online">Online Users</option>
+                            <option value="specific">Specific Users</option>
+                        </select>
+                    </div>
+                    <div id="specificUsersGroup" style="display: none;">
+                        <div class="input-group">
+                            <i class="fas fa-user"></i>
+                            <input id="specificUsers" placeholder="Comma-separated phone numbers">
+                        </div>
+                    </div>
+                    <textarea id="notificationMessage" placeholder="Message (Markdown supported)" required></textarea>
+                    <div class="button-group">
+                        <button type="button" id="previewNotificationBtn" class="admin-btn preview-btn">Preview</button>
+                        <button type="submit" id="sendNotificationBtn" class="admin-btn send-btn">Send</button>
+                    </div>
+                </form>
+                <div id="notificationPreview" style="display: none;"></div>
+            </div>
+            <div class="admin-section">
+                <h3 class="admin-title">Existing Notifications</h3>
+                <div id="notificationList" class="notification-list"></div>
+            </div>
+            <button id="closeAdminBtn" class="ok-btn">Close Admin Panel</button>
         </div>
     </div>
 
@@ -1545,13 +1893,13 @@ input:checked + .slider:before {
         <div class="year-filter">
             <div class="year-filter-container">
                 <button class="year-btn active" data-year="all">All</button>
-                <button class="year-btn" data-year="1"><i class="fas fa-book-medical"></i> PRE-MED</h2></button>
-                <button class="year-btn" data-year="2"><i class="fas fa-book-medical"></i> INTRODUCTION-MED</h2></button>
-                <button class="year-btn" data-year="3"><i class="fas fa-book-medical"></i> METABOLISM</h2></button>
-                <button class="year-btn" data-year="4"><i class="fas fa-book-medical"></i> HEMATOLOGY</h2></button>
-                <button class="year-btn" data-year="5"><i class="fas fa-book-medical"></i> CVS</h2></button>
-                <button class="year-btn" data-year="6"><i class="fas fa-book-medical"></i> RESPIRATORY</h2></button>
-                <button class="year-btn" data-year="7"><i class="fas fa-book-medical"></i> MUSCULOSKELETAL</h2></button>
+                <button class="year-btn" data-year="1"><i class="fas fa-book-medical"></i> PRE-MED</button>
+                <button class="year-btn" data-year="2"><i class="fas fa-book-medical"></i> INTRODUCTION-MED</button>
+                <button class="year-btn" data-year="3"><i class="fas fa-book-medical"></i> METABOLISM</button>
+                <button class="year-btn" data-year="4"><i class="fas fa-book-medical"></i> HEMATOLOGY</button>
+                <button class="year-btn" data-year="5"><i class="fas fa-book-medical"></i> CVS</button>
+                <button class="year-btn" data-year="6"><i class="fas fa-book-medical"></i> RESPIRATORY</button>
+                <button class="year-btn" data-year="7"><i class="fas fa-book-medical"></i> MUSCULOSKELETAL</button>
             </div>
         </div>
                 <section class="year-section" data-year="1">
@@ -1926,7 +2274,13 @@ class FirebaseUserManager {
                 lastActive: new Date().getTime(),
                 isOnline: true,
                 status: 'pending',
-                role: 'user'
+                role: 'user',
+                notifications: {
+                    sound: true,
+                    preview: true,
+                    email: false,
+                    theme: 'default'
+                }
             };
 
             const docRef = await this.usersCollection.add(userRecord);
@@ -2088,6 +2442,15 @@ class FirebaseUserManager {
             return null;
         }
     }
+    async getAllUsers() {
+        try {
+            const snapshot = await this.usersCollection.get();
+            return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        } catch (error) {
+            console.error('Error getting all users:', error);
+            return [];
+        }
+    }
 }
 
 const firebaseUserManager = new FirebaseUserManager();
@@ -2159,6 +2522,7 @@ const prices = {
 const themeToggle = document.getElementById('themeToggle');
 const mainContent = document.getElementById('mainContent');
 const profileContent = document.getElementById('profileContent');
+const adminContent = document.getElementById('adminContent');
 const profileBtn = document.getElementById('profileBtn');
 const adminBtn = document.getElementById('adminBtn');
 const logoBtn = document.getElementById('logoBtn');
@@ -2200,6 +2564,18 @@ const markAllReadBtn = document.getElementById('markAllReadBtn');
 const footerMarkAllRead = document.getElementById('footerMarkAllRead');
 const saveSettingsBtn = document.getElementById('saveSettingsBtn');
 const notificationsSearchInput = document.getElementById('notificationsSearchInput');
+const adminModal = document.getElementById('adminModal');
+const closeAdminBtn = document.getElementById('closeAdminBtn');
+const createNotificationForm = document.getElementById('createNotificationForm');
+const notificationType = document.getElementById('notificationType');
+const notificationTarget = document.getElementById('notificationTarget');
+const specificUsersGroup = document.getElementById('specificUsersGroup');
+const specificUsers = document.getElementById('specificUsers');
+const notificationMessage = document.getElementById('notificationMessage');
+const previewNotificationBtn = document.getElementById('previewNotificationBtn');
+const sendNotificationBtn = document.getElementById('sendNotificationBtn');
+const notificationPreview = document.getElementById('notificationPreview');
+const notificationList = document.getElementById('notificationList');
 
 // Theme toggle
 function toggleTheme() {
@@ -2284,12 +2660,14 @@ logoBtn.addEventListener('click', (e) => {
     e.preventDefault();
     mainContent.style.display = 'block';
     profileContent.style.display = 'none';
+    adminModal.style.display = 'none';
     onlineTracker.updateUserActivity();
 });
 
 profileBtn.addEventListener('click', () => {
     mainContent.style.display = 'none';
     profileContent.style.display = 'block';
+    adminModal.style.display = 'none';
     loadProfile();
     onlineTracker.updateUserActivity();
 });
@@ -2298,6 +2676,19 @@ backToMainBtn.addEventListener('click', () => {
     mainContent.style.display = 'block';
     profileContent.style.display = 'none';
     onlineTracker.updateUserActivity();
+});
+
+adminBtn.addEventListener('click', () => {
+    mainContent.style.display = 'none';
+    profileContent.style.display = 'none';
+    adminModal.style.display = 'flex';
+    loadAdminPanel();
+    onlineTracker.updateUserActivity();
+});
+
+closeAdminBtn.addEventListener('click', () => {
+    adminModal.style.display = 'none';
+    mainContent.style.display = 'block';
 });
 
 // Temporary password login button
@@ -2492,6 +2883,9 @@ async function init() {
     document.getElementById('soundToggle').checked = localStorage.getItem('notifySound') === 'true';
     document.getElementById('previewToggle').checked = localStorage.getItem('notifyPreview') !== 'false'; // Default true
     document.getElementById('emailToggle').checked = localStorage.getItem('notifyEmail') === 'true';
+
+    // Initialize Swiper
+    initSwiper();
 }
 
 // Force status check on page load
@@ -3001,10 +3395,10 @@ window.addEventListener('beforeunload', () => {
     onlineTracker.setOffline();
 });
 
-// Notifications Logic
+// Enhanced Notifications Logic with Post Type Functions
 let broadcasts = [];
 let unreadBroadcasts = 0;
-let notificationSound = new Audio('https://freesound.org/data/previews/612/612095_5674468-lq.mp3'); // Example notification sound
+let notificationSound = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmQUAvmWv/N1P'); // Base64 encoded simple beep sound
 
 function initNotifications(user) {
     if (!user || !user.id) return;
@@ -3041,7 +3435,7 @@ function updateNotifications(user) {
         unreadCount.textContent = unreadBroadcasts;
         unreadCount.style.display = 'flex';
         if (localStorage.getItem('notifySound') === 'true') {
-            notificationSound.play();
+            notificationSound.play().catch(() => {}); // Ignore play errors
         }
     } else {
         unreadCount.style.display = 'none';
@@ -3088,33 +3482,49 @@ function renderNotifications(user, searchQuery = '') {
         );
     }
 
-    notificationsList.innerHTML = filteredBroadcasts.map(broadcast => {
+    const wrapper = document.querySelector('.swiper-wrapper');
+    wrapper.innerHTML = filteredBroadcasts.map((broadcast, index) => {
         const isUnread = !broadcast.readBy.includes(user.id);
         const formattedTime = new Date(broadcast.timestamp).toLocaleString();
         const icon = getNotificationIcon(broadcast.type);
         const parsedMessage = marked.parse(broadcast.message); // Parse Markdown to HTML
+        const reactions = broadcast.reactions || {};
+        const reactionList = Object.entries(reactions).map(([emoji, count]) => `<span class="reaction">${emoji} ${count}</span>`).join('');
         return `
-            <div class="notification-item ${broadcast.type} ${isUnread ? 'unread' : ''}" data-id="${broadcast.id}">
-                <div class="notification-header">
-                    ${icon}
-                    <span class="notification-title">${broadcast.type.toUpperCase()} Announcement</span>
-                    <span class="notification-time">${formattedTime}</span>
+            <div class="swiper-slide">
+                <div class="notification-item ${broadcast.type} ${isUnread ? 'unread' : ''}" data-id="${broadcast.id}">
+                    <div class="notification-header">
+                        ${icon}
+                        <span class="notification-title">${broadcast.type.toUpperCase()} Announcement</span>
+                        <span class="notification-time">${formattedTime}</span>
+                    </div>
+                    <div class="notification-content" style="user-select: text;">${parsedMessage}</div>
+                    <div class="notification-reactions">${reactionList}</div>
+                    <div class="notification-actions">
+                        <button class="action-btn-small" onclick="reactToNotification('${broadcast.id}', '👍')"><i class="fas fa-thumbs-up"></i> Like</button>
+                        <button class="action-btn-small" onclick="commentOnNotification('${broadcast.id}')"><i class="fas fa-comment"></i> Comment</button>
+                    </div>
                 </div>
-                <div class="notification-content">${parsedMessage}</div>
             </div>
         `;
     }).join('');
 
     // Add click listeners to mark as read
     document.querySelectorAll('.notification-item.unread').forEach(item => {
-        item.addEventListener('click', async () => {
-            const broadcastId = item.dataset.id;
-            await markBroadcastAsRead(broadcastId, user.id);
-            item.classList.remove('unread');
-            unreadBroadcasts--;
-            updateUnreadBadge();
+        item.addEventListener('click', async (e) => {
+            if (!e.target.closest('.notification-actions')) {
+                const broadcastId = item.dataset.id;
+                await markBroadcastAsRead(broadcastId, user.id);
+                item.classList.remove('unread');
+                unreadBroadcasts--;
+                updateUnreadBadge();
+            }
         });
     });
+
+    // Reinitialize Swiper after rendering
+    if (swiper) swiper.destroy(true, true);
+    initSwiper();
 }
 
 function updateUnreadBadge() {
@@ -3123,6 +3533,37 @@ function updateUnreadBadge() {
         unreadCount.style.display = 'flex';
     } else {
         unreadCount.style.display = 'none';
+    }
+}
+
+// Post Type Functions - Reactions and Comments
+async function reactToNotification(broadcastId, emoji) {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const broadcastRef = db.collection('broadcasts').doc(broadcastId);
+    await broadcastRef.update({
+        [`reactions.${emoji}`]: firebase.firestore.FieldValue.increment(1)
+    });
+    // Refresh notifications
+    renderNotifications(currentUser);
+}
+
+async function commentOnNotification(broadcastId) {
+    const comment = prompt('Enter your comment:');
+    if (comment) {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        const commentsRef = db.collection('comments').doc(broadcastId).collection('comments');
+        await commentsRef.add({
+            userId: currentUser.id,
+            userName: currentUser.name,
+            comment: comment,
+            timestamp: Date.now()
+        });
+        // Optionally, update broadcast with comment count
+        const broadcastRef = db.collection('broadcasts').doc(broadcastId);
+        await broadcastRef.update({
+            commentCount: firebase.firestore.FieldValue.increment(1)
+        });
+        alert('Comment added!');
     }
 }
 
@@ -3146,9 +3587,20 @@ notificationSettingsBtn.addEventListener('click', () => {
 });
 
 saveSettingsBtn.addEventListener('click', () => {
-    localStorage.setItem('notifySound', document.getElementById('soundToggle').checked);
-    localStorage.setItem('notifyPreview', document.getElementById('previewToggle').checked);
-    localStorage.setItem('notifyEmail', document.getElementById('emailToggle').checked);
+    const settings = {
+        sound: document.getElementById('soundToggle').checked,
+        preview: document.getElementById('previewToggle').checked,
+        email: document.getElementById('emailToggle').checked,
+        theme: document.querySelector('#notificationSettingsModal select').value
+    };
+    localStorage.setItem('notifySound', settings.sound);
+    localStorage.setItem('notifyPreview', settings.preview);
+    localStorage.setItem('notifyEmail', settings.email);
+    localStorage.setItem('notifyTheme', settings.theme);
+
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    firebaseUserManager.updateNotificationSettings(currentUser.id, settings);
+
     notificationSettingsModal.style.display = 'none';
     notificationsModal.style.display = 'flex';
 });
@@ -3174,6 +3626,130 @@ footerMarkAllRead.addEventListener('click', async () => {
 notificationsSearchInput.addEventListener('input', () => {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     renderNotifications(currentUser, notificationsSearchInput.value);
+});
+
+// Admin Panel Logic
+async function loadAdminPanel() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (currentUser.role !== 'admin') return;
+
+    // Load existing notifications
+    const broadcastsCollection = db.collection('broadcasts');
+    const snapshot = await broadcastsCollection.orderBy('timestamp', 'desc').get();
+    const broadcasts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    notificationList.innerHTML = '';
+    for (const broadcast of broadcasts) {
+        const item = document.createElement('div');
+        item.className = 'notification-admin-item';
+        item.innerHTML = `
+            <h4>${broadcast.type.toUpperCase()} - ${new Date(broadcast.timestamp).toLocaleString()}</h4>
+            <p>${broadcast.message}</p>
+            <div class="stats">
+                Reads: ${broadcast.readBy.length}
+            </div>
+            <div class="admin-actions">
+                <button class="admin-btn edit-btn" data-id="${broadcast.id}">Edit</button>
+                <button class="admin-btn delete-btn" data-id="${broadcast.id}">Delete</button>
+                <button class="admin-btn view-readers-btn" data-id="${broadcast.id}">View Readers</button>
+            </div>
+            <div class="readers-list" id="readers-${broadcast.id}" style="display: none;"></div>
+        `;
+        notificationList.appendChild(item);
+    }
+
+    // Add event listeners for admin actions
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const id = btn.dataset.id;
+            const broadcast = broadcasts.find(b => b.id === id);
+            notificationType.value = broadcast.type;
+            notificationTarget.value = broadcast.target;
+            notificationMessage.value = broadcast.message;
+            // Handle edit
+            sendNotificationBtn.textContent = 'Update';
+            sendNotificationBtn.onclick = async () => {
+                await db.collection('broadcasts').doc(id).update({
+                    type: notificationType.value,
+                    target: notificationTarget.value,
+                    message: notificationMessage.value
+                });
+                loadAdminPanel();
+            };
+        });
+    });
+
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            if (confirm('Are you sure?')) {
+                const id = btn.dataset.id;
+                await db.collection('broadcasts').doc(id).delete();
+                loadAdminPanel();
+            }
+        });
+    });
+
+    document.querySelectorAll('.view-readers-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const id = btn.dataset.id;
+            const list = document.getElementById(`readers-${id}`);
+            list.style.display = list.style.display === 'none' ? 'block' : 'none';
+            if (list.innerHTML === '') {
+                const broadcast = broadcasts.find(b => b.id === id);
+                const users = await firebaseUserManager.getAllUsers();
+                const readers = users.filter(u => broadcast.readBy.includes(u.id)).map(u => u.name || u.phone).join(', ');
+                list.innerHTML = readers || 'No readers yet';
+            }
+        });
+    });
+}
+
+notificationTarget.addEventListener('change', () => {
+    specificUsersGroup.style.display = notificationTarget.value === 'specific' ? 'block' : 'none';
+});
+
+previewNotificationBtn.addEventListener('click', () => {
+    const type = notificationType.value;
+    const message = notificationMessage.value;
+    const parsed = marked.parse(message);
+    notificationPreview.innerHTML = `
+        <div class="notification-item ${type}">
+            <div class="notification-header">
+                ${getNotificationIcon(type)}
+                <span class="notification-title">${type.toUpperCase()} Preview</span>
+                <span class="notification-time">Now</span>
+            </div>
+            <div class="notification-content">${parsed}</div>
+        </div>
+    `;
+    notificationPreview.style.display = 'block';
+});
+
+createNotificationForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    const type = notificationType.value;
+    const target = notificationTarget.value;
+    const message = notificationMessage.value;
+    const specific = specificUsers.value.split(',').map(s => s.trim()).filter(s => s);
+
+    if (!type || !target || !message) return;
+
+    const data = {
+        type,
+        target,
+        message,
+        timestamp: Date.now(),
+        readBy: []
+    };
+    if (target === 'specific') data.specificUsers = specific;
+
+    await db.collection('broadcasts').add(data);
+    notificationType.value = '';
+    notificationTarget.value = '';
+    notificationMessage.value = '';
+    specificUsers.value = '';
+    notificationPreview.style.display = 'none';
+    loadAdminPanel();
 });
 
 // Initialize
