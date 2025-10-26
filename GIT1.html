@@ -2,18 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title> | MediLearn Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Notification Panel - MediLearn Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked@4.0.0/marked.min.js"></script> <!-- Added for Markdown parsing -->
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script> <!-- For swipeable notifications -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <style>
         :root {
             --primary: #60a5fa;
@@ -24,3396 +18,1004 @@
             --error: #ef4444;
             --warning: #eab308;
             --info: #0ea5e9;
-            --shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
-            --radius: 12px;
-            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            --gradient: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
-            --glass: rgba(255, 255, 255, 0.1);
-            --glass-border: rgba(255, 255, 255, 0.2);
-        }
-        body.light-mode {
-            --background: #f3f4f6;
-            --surface: #ffffff;
-            --text-primary: #111827;
-            --text-secondary: #4b5563;
-            --text-tertiary: #9ca3af;
-            --border: #d1d5db;
-            --glass: rgba(0, 0, 0, 0.05);
-            --glass-border: rgba(0, 0, 0, 0.1);
-        }
-        body.dark-mode {
+            --purple: #8b5cf6;
+            --pink: #ec4899;
             --background: #0f172a;
             --surface: #1e293b;
             --text-primary: #f9fafb;
             --text-secondary: #d1d5db;
             --text-tertiary: #6b7280;
             --border: #334155;
+            --radius: 12px;
+            --shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --gradient: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+            --gradient-premium: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
         }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            -webkit-touch-callout: none;
-            touch-action: manipulation;
         }
+
         body {
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background-color: var(--background);
+            background: var(--background);
             color: var(--text-primary);
             line-height: 1.6;
-            font-size: 16px;
-            transition: var(--transition);
             min-height: 100vh;
-            overflow-x: hidden;
-            -webkit-text-size-adjust: 100%;
-            -ms-text-size-adjust: 100%;
-            touch-action: pan-x pan-y;
+            padding: 20px;
         }
-        html {
-            touch-action: none;
-        }
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            background: var(--background);
-            border-bottom: 1px solid var(--border);
-            box-shadow: var(--shadow);
-        }
-        .header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem;
+
+        .admin-container {
             max-width: 1400px;
             margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+            height: calc(100vh - 40px);
         }
-        .logo {
+
+        @media (max-width: 1200px) {
+            .admin-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr;
+            }
+        }
+
+        /* Header */
+        .admin-header {
+            grid-column: 1 / -1;
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        .admin-header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .admin-header p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        /* Main Panel */
+        .notification-panel {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 30px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .panel-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 1.25rem;
-            font-weight: 800;
+        }
+
+        .panel-header h2 i {
             color: var(--primary);
-            text-decoration: none;
-            cursor: pointer;
         }
 
-        .logo img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
+        .form-group {
+            margin-bottom: 24px;
         }
 
-        .logo i {
-            font-size: 1.5rem;
-        }
-
-        .nav-actions {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-        }
-        .action-btn {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 0.5rem;
-            cursor: pointer;
-            transition: var(--transition);
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 500;
-            text-decoration: none;
-            position: relative;
-        }
-        .action-btn:hover {
-            background: var(--primary-light);
-            color: var(--primary);
-            border-color: var(--primary-light);
-        }
-        .action-btn.primary {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-        .action-btn.primary:hover {
-            background: var(--primary-dark);
-            border-color: var(--primary-dark);
-        }
-        .notification-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: var(--error);
-            color: white;
-            border-radius: 50%;
-            padding: 0.2rem 0.5rem;
-            font-size: 0.7rem;
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
             font-weight: 600;
-            min-width: 18px;
-            height: 18px;
+            color: var(--text-secondary);
             display: flex;
             align-items: center;
-            justify-content: center;
-            animation: pulse 2s infinite;
+            gap: 8px;
         }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-        .main-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 80px 1rem 2rem;
-            display: none;
-        }
-        .page-header {
+
+        .form-group label i {
+            width: 16px;
             text-align: center;
-            margin-bottom: 2rem;
         }
-        .page-title {
-            font-size: 2rem;
-            font-weight: 800;
-            margin-bottom: 0.5rem;
-            color: var(--primary);
-        }
-        .page-subtitle {
-            font-size: 1rem;
-            color: var(--text-secondary);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        .year-filter {
-            margin-bottom: 2rem;
-            overflow-x: auto;
-            padding-bottom: 0.5rem;
-        }
-        .year-filter-container {
-            display: flex;
-            gap: 0.5rem;
-            padding: 0.5rem 0;
-        }
-        .year-btn {
-            padding: 0.5rem 1rem;
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            background: var(--surface);
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: var(--transition);
-            white-space: nowrap;
-            font-weight: 500;
-        }
-        .year-btn.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-        .year-section {
-            margin-bottom: 2rem;
-        }
-        .year-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .year-title i {
-            color: var(--primary);
-        }
-        .cards-container {
-            display: flex;
-            gap: 1rem;
-            overflow-x: auto;
-            padding-bottom: 1rem;
-            scrollbar-width: thin;
-            scrollbar-color: var(--primary-light) transparent;
-        }
-        .cards-container::-webkit-scrollbar {
-            height: 6px;
-        }
-        .cards-container::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .cards-container::-webkit-scrollbar-thumb {
-            background: var(--primary-light);
-            border-radius: 3px;
-        }
-        .cards-container::-webkit-scrollbar-thumb:hover {
-            background: var(--primary);
-        }
-        .quiz-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 1rem;
-            min-width: 200px;
-            max-width: 200px;
-            transition: var(--transition);
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-            flex-shrink: 0;
-            position: relative;
-        }
-        .quiz-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow);
-            border-color: var(--primary-light);
-        }
-        .quiz-card.locked {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-        .quiz-card.locked::after {
-            content: '\f023';
-            font-family: 'Font Awesome 6 Free';
-            font-weight: 900;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 2rem;
-            color: var(--error);
-            opacity: 0.8;
-        }
-        .quiz-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--gradient);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.25rem;
-        }
-        .quiz-title {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-        .quiz-meta {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-        }
-        .quiz-stats {
-            display: flex;
-            gap: 0.5rem;
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-        }
-        .stat {
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-        .difficulty {
-            display: inline-block;
-            padding: 0.25rem 0.5rem;
-            border-radius: 1rem;
-            font-size: 0.7rem;
-            font-weight: 600;
-        }
-        .difficulty.beginner {
-            background: rgba(34, 197, 94, 0.1);
-            color: var(--success);
-        }
-        .difficulty.intermediate {
-            background: rgba(234, 179, 8, 0.1);
-            color: var(--warning);
-        }
-        .difficulty.advanced {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--error);
-        }
-        #registrationModal, #addModal, #confirmAddModal, #accessDeniedModal, #tempPasswordModal, #notificationsModal, #notificationSettingsModal {
-            position: fixed;
-            top: 0;
-            left: 0;
+
+        select, input, textarea {
             width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1001;
-            backdrop-filter: blur(10px);
-        }
-        .modal-content {
-            background: var(--surface);
-            padding: 2rem;
-            border-radius: var(--radius);
-            max-width: 450px;
-            width: 90%;
-            text-align: center;
-            position: relative;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            animation: slideIn 0.3s ease-out;
-            overflow-y: auto;
-            max-height: 80vh;
-            -webkit-overflow-scrolling: touch;
-            scroll-behavior: smooth;
-        }
-        @keyframes slideIn {
-            from { transform: translateY(-50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        .modal-content h2 {
-            margin-bottom: 0.5rem;
-            color: var(--text-primary);
-            font-size: 1.75rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-        .modal-content h2 i {
-            color: var(--primary);
-        }
-        .modal-content .price-info {
-            margin-bottom: 1.5rem;
-            color: var(--warning);
-            font-size: 1.1rem;
-            font-weight: 600;
-        }
-        .modal-content form {
-            display: flex;
-            flex-direction: column;
-            gap: 1.2rem;
-        }
-        .input-group {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-        .input-group i {
-            position: absolute;
-            left: 1rem;
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-        }
-        .modal-content select, .modal-content input {
-            padding: 0.75rem 1rem 0.75rem 2.5rem;
-            border: 1px solid var(--border);
+            padding: 14px 16px;
+            border: 2px solid var(--border);
             border-radius: var(--radius);
             background: var(--background);
             color: var(--text-primary);
-            font-size: 1rem;
-            transition: border-color 0.3s;
-            width: 100%;
+            font-size: 16px;
+            transition: var(--transition);
+            font-family: inherit;
         }
-        .modal-content select:focus, .modal-content input:focus {
+
+        select:focus, input:focus, textarea:focus {
             outline: none;
             border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
-        .file-upload {
+
+        textarea {
+            min-height: 200px;
+            resize: vertical;
+            line-height: 1.5;
+        }
+
+        .target-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .target-option {
             position: relative;
-            padding: 1rem;
-            border: 2px dashed var(--border);
-            border-radius: var(--radius);
-            text-align: center;
-            cursor: pointer;
-            transition: border-color 0.3s;
         }
-        .file-upload:hover {
+
+        .target-option input {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .target-option label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: var(--background);
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            margin: 0;
+        }
+
+        .target-option input:checked + label {
+            border-color: var(--primary);
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary);
+        }
+
+        .target-option label i {
+            font-size: 1.1rem;
+        }
+
+        .formatting-toolbar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .format-btn {
+            padding: 8px 12px;
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .format-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .preview-section {
+            margin-top: 30px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .preview-section h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .notification-preview {
+            background: var(--background);
+            border-radius: var(--radius);
+            padding: 20px;
+            border-left: 4px solid var(--primary);
+            min-height: 120px;
+        }
+
+        .notification-preview.info { border-left-color: var(--info); }
+        .notification-preview.success { border-left-color: var(--success); }
+        .notification-preview.warning { border-left-color: var(--warning); }
+        .notification-preview.error { border-left-color: var(--error); }
+        .notification-preview.premium { border-left-color: var(--purple); }
+
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .preview-title {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .type-badge {
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .type-badge.info { background: rgba(14, 165, 233, 0.2); color: var(--info); }
+        .type-badge.success { background: rgba(34, 197, 94, 0.2); color: var(--success); }
+        .type-badge.warning { background: rgba(234, 179, 8, 0.2); color: var(--warning); }
+        .type-badge.error { background: rgba(239, 68, 68, 0.2); color: var(--error); }
+        .type-badge.premium { background: rgba(139, 92, 246, 0.2); color: var(--purple); }
+
+        .preview-time {
+            font-size: 0.8rem;
+            color: var(--text-tertiary);
+        }
+
+        .preview-content {
+            line-height: 1.6;
+            font-size: 0.9rem;
+        }
+
+        .preview-content strong { font-weight: 600; color: var(--text-primary); }
+        .preview-content em { font-style: italic; color: var(--text-secondary); }
+        .preview-content code { background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; font-family: monospace; }
+        .preview-content a { color: var(--primary); text-decoration: none; }
+        .preview-content a:hover { text-decoration: underline; }
+        .preview-content ul, .preview-content ol { margin: 8px 0; padding-left: 20px; }
+        .preview-content li { margin-bottom: 4px; }
+        .preview-content blockquote { border-left: 3px solid var(--primary); padding-left: 12px; margin: 8px 0; font-style: italic; }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 14px 24px;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--background);
+            color: var(--text-primary);
+            border: 2px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-light);
+            color: var(--primary);
             border-color: var(--primary-light);
         }
-        .file-upload i {
-            color: var(--primary);
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
         }
-        .file-upload input {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
+
+        /* Stats Panel */
+        .stats-panel {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 24px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
             height: 100%;
-            opacity: 0;
-            cursor: pointer;
         }
-        .file-upload span {
+
+        .stats-grid {
+            display: grid;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--background);
+            border-radius: var(--radius);
+            padding: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
             color: var(--text-secondary);
             font-size: 0.9rem;
         }
-        .receipt-preview {
-            margin-top: 1rem;
-            max-width: 100%;
-            max-height: 200px;
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-            display: none;
-        }
-        .modal-content button {
-            background: var(--gradient);
-            color: white;
-            border: none;
-            padding: 0.75rem;
-            border-radius: var(--radius);
-            cursor: pointer;
-            transition: var(--transition);
-            font-weight: 600;
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            position: relative;
-        }
-        .modal-content button:hover {
-            background: var(--primary-dark);
-        }
-        .modal-content button.loading::after {
-            content: '';
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid white;
-            border-radius: 50%;
-            border-top-color: transparent;
-            animation: spin 1s linear infinite;
-            margin-left: 8px;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        .modal-content .error {
-            color: var(--error);
-            font-size: 0.85rem;
-            margin-top: 0.5rem;
-        }
-        .back-btn, .cancel-btn, .ok-btn {
-            background: var(--surface);
-            color: var(--text-primary);
-            border: 1px solid var(--border);
-            padding: 0.75rem;
-            border-radius: var(--radius);
-            cursor: pointer;
-            transition: var(--transition);
-            font-weight: 600;
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-        .back-btn:hover, .cancel-btn:hover, .ok-btn:hover {
-            background: var(--primary-light);
-            color: var(--primary);
-            border-color: var(--primary-light);
-        }
-        .ok-btn {
-            background: var(--gradient);
-            color: white;
-            border: none;
-        }
-        .ok-btn:hover {
-            background: var(--primary-dark);
-        }
-        .button-group {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            margin-top: 1rem;
-        }
-        #logoutModal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1001;
-        }
-        /* Profile Styles */
-        #profileContent {
+
+        .stat-card.total .stat-value { color: var(--primary); }
+        .stat-card.sent .stat-value { color: var(--success); }
+        .stat-card.failed .stat-value { color: var(--error); }
+
+        .recent-activity {
+            flex: 1;
             display: flex;
             flex-direction: column;
+        }
+
+        .recent-activity h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
             align-items: center;
-            padding: 80px 1rem 2rem;
-            background: linear-gradient(to bottom, var(--background), var(--surface));
-            min-height: calc(100vh - 80px);
+            gap: 8px;
+        }
+
+        .activity-list {
+            flex: 1;
             overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
         }
-        .profile-card {
+
+        .activity-item {
+            padding: 16px;
+            border-left: 3px solid var(--primary);
+            background: var(--background);
+            margin-bottom: 12px;
+            border-radius: 0 var(--radius) var(--radius) 0;
+        }
+
+        .activity-item.success { border-left-color: var(--success); }
+        .activity-item.error { border-left-color: var(--error); }
+
+        .activity-message {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .activity-time {
+            font-size: 0.8rem;
+            color: var(--text-tertiary);
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .toast {
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            padding: 2rem;
-            max-width: 600px;
-            width: 100%;
+            padding: 16px;
+            margin-bottom: 10px;
             box-shadow: var(--shadow);
-            text-align: center;
-        }
-        .profile-header {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            margin-bottom: 2rem;
+            gap: 12px;
+            min-width: 300px;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
         }
-        .profile-pic {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid var(--primary);
-            margin-bottom: 1rem;
+
+        .toast.show {
+            transform: translateX(0);
         }
-        .change-pic-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: var(--radius);
-            cursor: pointer;
-            transition: var(--transition);
-            font-weight: 500;
+
+        .toast.success { border-left: 4px solid var(--success); }
+        .toast.error { border-left: 4px solid var(--error); }
+        .toast.info { border-left: 4px solid var(--info); }
+
+        .toast i {
+            font-size: 1.2rem;
         }
-        .change-pic-btn:hover {
-            background: var(--primary-dark);
+
+        .toast.success i { color: var(--success); }
+        .toast.error i { color: var(--error); }
+        .toast.info i { color: var(--info); }
+
+        .toast-content {
+            flex: 1;
         }
-        .profile-info {
-            margin-bottom: 2rem;
-        }
-        .info-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid var(--border);
-        }
-        .info-label {
+
+        .toast-title {
             font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .toast-message {
+            font-size: 0.9rem;
             color: var(--text-secondary);
         }
-        .info-value {
-            color: var(--text-primary);
-        }
-        .add-year-btn {
-            color: var(--primary);
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: var(--text-tertiary);
             cursor: pointer;
-            margin-left: 0.5rem;
+            padding: 4px;
         }
-        .contact-section {
-            margin-bottom: 2rem;
+
+        /* Loading States */
+        .loading {
+            position: relative;
+            pointer-events: none;
         }
-        .contact-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-        .contact-links {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-        }
-        .contact-link {
-            background: var(--gradient);
-            color: white;
-            width: 50px;
-            height: 50px;
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: 16px;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            transition: var(--transition);
+            animation: spin 1s linear infinite;
         }
-        .contact-link:hover {
-            transform: scale(1.1);
+
+        @keyframes spin {
+            to { transform: translateY(-50%) rotate(360deg); }
         }
-        .comment-section {
-            margin-bottom: 2rem;
-        }
-        .comment-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-        #commentBox {
-            width: 100%;
-            min-height: 100px;
-            padding: 1rem;
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            background: var(--background);
-            color: var(--text-primary);
-            resize: vertical;
-        }
-        #sendCommentBtn {
-            background: var(--gradient);
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: var(--radius);
-            cursor: pointer;
-            transition: var(--transition);
-            font-weight: 600;
-            margin-top: 1rem;
-        }
-        #sendCommentBtn:hover {
-            background: var(--primary-dark);
-        }
-        #commentError {
-            color: var(--error);
-            font-size: 0.85rem;
-            margin-top: 0.5rem;
-        }
-        #profileLogoutBtn {
-            background: var(--error);
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: var(--radius);
-            cursor: pointer;
-            transition: var(--transition);
-            font-weight: 600;
-            margin-top: 2rem;
-            width: 100%;
-        }
-        #profileLogoutBtn:hover {
-            background: #dc2626;
-        }
-        #backToMainBtn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: var(--radius);
-            cursor: pointer;
-            transition: var(--transition);
-            font-weight: 600;
-            margin-top: 1rem;
-            width: 100%;
-        }
-        #backToMainBtn:hover {
-            background: var(--primary-dark);
-        }
+
+        /* Responsive */
         @media (max-width: 768px) {
-            .header-container {
-                padding: 0.75rem;
+            .admin-container {
+                padding: 10px;
             }
-            .main-content {
-                padding: 70px 0.75rem 1rem;
+            
+            .target-selection {
+                grid-template-columns: 1fr;
             }
-            .page-title {
-                font-size: 1.75rem;
-            }
-            .year-title {
-                font-size: 1.25rem;
-            }
-            .modal-content {
-                padding: 1.5rem;
-                width: 95%;
-            }
-            .profile-card {
-                padding: 1.5rem;
+            
+            .action-buttons {
+                flex-direction: column;
             }
         }
-        @media (max-width: 480px) {
-            .page-title {
-                font-size: 1.5rem;
-            }
-            .quiz-card {
-                min-width: 180px;
-                max-width: 180px;
-            }
-            .year-title {
-                font-size: 1.25rem;
-            }
-            .modal-content h2 {
-                font-size: 1.5rem;
-            }
-            .profile-pic {
-                width: 100px;
-                height: 100px;
-            }
-        }
-    .account-section {
-    margin: 1.5rem 0;
-    padding: 1rem;
-    background: rgba(59, 130, 246, 0.05);
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-}
-
-.account-title {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 0.75rem;
-    color: var(--text-primary);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.account-title i {
-    color: var(--primary);
-}
-
-.account-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.account-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.75rem;
-    background: var(--surface);
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-}
-
-.account-info {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-}
-
-.account-name {
-    font-weight: 500;
-    color: var(--text-primary);
-    font-size: 0.9rem;
-}
-
-.account-number {
-    font-family: monospace;
-    color: var(--text-secondary);
-    font-size: 0.85rem;
-}
-
-.copy-btn {
-    background: var(--primary);
-    color: white;
-    border: none;
-    border-radius: var(--radius);
-    padding: 0.5rem 0.75rem;
-    cursor: pointer;
-    transition: var(--transition);
-    font-size: 0.8rem;
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-}
-
-.copy-btn:hover {
-    background: var(--primary-dark);
-}
-
-.copy-btn.copied {
-    background: var(--success);
-}
-
-.payment-note {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    margin-top: 0.5rem;
-    text-align: center;
-}
-
-/* New Temporary Password Login Styles */
-.temp-login-section {
-    margin: 1.5rem 0;
-    padding: 1rem;
-    background: rgba(139, 92, 246, 0.05);
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-}
-
-.temp-login-title {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 0.75rem;
-    color: var(--text-primary);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.temp-login-title i {
-    color: var(--purple);
-}
-
-.temp-login-btn {
-    background: var(--gradient-premium);
-    color: white;
-    border: none;
-    border-radius: var(--radius);
-    padding: 0.75rem 1rem;
-    cursor: pointer;
-    transition: var(--transition);
-    font-weight: 600;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-}
-
-.temp-login-btn:hover {
-    background: var(--purple);
-}
-
-:root {
-    --purple: #8b5cf6;
-    --gradient-premium: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
-}
-
-/* Enhanced Modern Notification Modal Styles */
-.notifications-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1001;
-    backdrop-filter: blur(20px);
-}
-
-.notifications-modal .modal-content {
-    background: var(--surface);
-    padding: 0;
-    border-radius: 24px;
-    max-width: 600px;
-    max-height: 90vh;
-    width: 95%;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
-    overflow: hidden;
-    animation: modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    display: flex;
-    flex-direction: column;
-}
-
-@keyframes modalSlideIn {
-    from { opacity: 0; transform: translateY(50px) scale(0.95); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-.notifications-header {
-    padding: 1.5rem 2rem;
-    background: var(--gradient);
-    color: white;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    backdrop-filter: blur(10px);
-}
-
-.notifications-header h2 {
-    margin: 0;
-    font-size: 1.5rem;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.notifications-header .tools {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.notifications-header .tool-btn {
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    border: none;
-    padding: 0.75rem;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: var(--transition);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-}
-
-.notifications-header .tool-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: scale(1.05);
-}
-
-.notifications-search {
-    padding: 1rem 2rem;
-    background: var(--background);
-    border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: 0;
-    z-index: 5;
-}
-
-.notifications-search input {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    background: var(--surface);
-    color: var(--text-primary);
-    font-size: 1rem;
-}
-
-.notifications-swiper {
-    flex: 1;
-    overflow: hidden;
-}
-
-.swiper-slide {
-    padding: 0 1rem 1rem;
-    height: auto;
-}
-
-.notifications-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding: 1.5rem 0;
-}
-
-.notification-item {
-    background: var(--glass);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--glass-border);
-    border-radius: 16px;
-    padding: 1.5rem;
-    position: relative;
-    transition: var(--transition);
-    animation: fadeInUp 0.5s ease-out;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-}
-
-@keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.notification-item:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-}
-
-.notification-item.unread {
-    border-left: 4px solid var(--primary);
-    background: linear-gradient(135deg, rgba(96, 165, 250, 0.1), var(--glass));
-}
-
-.notification-item.info { border-left-color: var(--info); }
-.notification-item.success { border-left-color: var(--success); }
-.notification-item.warning { border-left-color: var(--warning); }
-.notification-item.error { border-left-color: var(--error); }
-
-.notification-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-}
-
-.notification-icon {
-    font-size: 1.25rem;
-    margin-right: 1rem;
-    color: var(--text-secondary);
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.notification-title {
-    font-weight: 700;
-    font-size: 1.1rem;
-    color: var(--text-primary);
-    flex: 1;
-}
-
-.notification-time {
-    font-size: 0.85rem;
-    color: var(--text-tertiary);
-    white-space: nowrap;
-    font-weight: 500;
-}
-
-.notification-content {
-    font-size: 0.95rem;
-    color: var(--text-secondary);
-    line-height: 1.6;
-    text-align: left;
-    margin-bottom: 1rem;
-}
-
-/* Enhanced Modern Text Formats */
-.notification-content a {
-    color: var(--primary);
-    text-decoration: none;
-    font-weight: 600;
-    position: relative;
-}
-
-.notification-content a::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: var(--primary);
-    transition: width 0.3s ease;
-}
-
-.notification-content a:hover::after {
-    width: 100%;
-}
-
-.notification-content strong {
-    font-weight: 700;
-    color: var(--text-primary);
-}
-
-.notification-content em {
-    font-style: italic;
-    color: var(--text-tertiary);
-}
-
-.notification-content code {
-    background: var(--border);
-    padding: 0.25rem 0.5rem;
-    border-radius: 6px;
-    font-family: 'Monaco', monospace;
-    font-size: 0.9rem;
-    color: var(--primary);
-}
-
-.notification-content pre {
-    background: var(--border);
-    padding: 1rem;
-    border-radius: 12px;
-    overflow-x: auto;
-    font-family: 'Monaco', monospace;
-    margin: 1rem 0;
-}
-
-.notification-content ul, .notification-content ol {
-    margin-left: 1.5rem;
-    margin-top: 0.5rem;
-    padding-left: 0;
-}
-
-.notification-content li {
-    margin-bottom: 0.25rem;
-}
-
-.notification-content blockquote {
-    border-left: 4px solid var(--primary);
-    padding-left: 1rem;
-    margin: 1rem 0;
-    color: var(--text-tertiary);
-    font-style: italic;
-    background: var(--glass);
-    padding: 1rem;
-    border-radius: 0 12px 12px 0;
-}
-
-.notification-content img {
-    max-width: 100%;
-    border-radius: 12px;
-    margin: 1rem 0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-/* Post Type Functions - Reactions and Comments */
-.notification-actions {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.notification-item:hover .notification-actions {
-    opacity: 1;
-}
-
-.action-btn-small {
-    background: var(--glass);
-    border: 1px solid var(--glass-border);
-    color: var(--text-secondary);
-    padding: 0.5rem;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: var(--transition);
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    font-size: 0.8rem;
-}
-
-.action-btn-small:hover {
-    background: var(--primary-light);
-    color: var(--primary);
-    border-color: var(--primary);
-}
-
-.notification-reactions {
-    display: flex;
-    gap: 0.25rem;
-    margin-top: 0.5rem;
-}
-
-.reaction {
-    padding: 0.25rem 0.5rem;
-    border-radius: 12px;
-    font-size: 0.75rem;
-    background: var(--glass);
-    color: var(--text-tertiary);
-    border: 1px solid var(--glass-border);
-}
-
-.notifications-footer {
-    padding: 1rem 2rem;
-    border-top: 1px solid var(--border);
-    background: var(--background);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.notifications-footer .ok-btn {
-    margin: 0;
-    padding: 0.75rem 1.5rem;
-}
-
-.notifications-footer .mark-all-read {
-    background: transparent;
-    color: var(--primary);
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-    padding: 0.75rem 1rem;
-    border-radius: 8px;
-    transition: var(--transition);
-}
-
-.notifications-footer .mark-all-read:hover {
-    background: var(--primary-light);
-    color: var(--primary-dark);
-}
-
-/* Notification Settings Modal - Modern */
-#notificationSettingsModal .modal-content {
-    max-width: 450px;
-    border-radius: 20px;
-}
-
-.settings-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    padding: 1.5rem;
-}
-
-.setting-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    background: var(--glass);
-    border-radius: 12px;
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(10px);
-}
-
-.setting-label {
-    font-weight: 500;
-    color: var(--text-primary);
-}
-
-/* Enhanced Toggle Switch */
-.switch {
-    position: relative;
-    display: inline-block;
-    width: 60px;
-    height: 28px;
-}
-
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: var(--border);
-    transition: .4s;
-    border-radius: 28px;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 24px;
-    width: 24px;
-    left: 2px;
-    bottom: 2px;
-    background-color: white;
-    transition: .4s;
-    border-radius: 50%;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-input:checked + .slider {
-    background-color: var(--primary);
-}
-
-input:checked + .slider:before {
-    transform: translateX(32px);
-}
-
-/* Swipeable Cards for Mobile */
-@media (max-width: 768px) {
-    .notification-item {
-        margin: 0 0.5rem;
-    }
-    .swiper-pagination-bullet {
-        background: var(--primary-light);
-    }
-    .swiper-pagination-bullet-active {
-        background: var(--primary);
-    }
-}
     </style>
 </head>
-<body class="dark-mode">
-    <!-- Registration Modal -->
-<div id="registrationModal">
-    <div class="modal-content">
-        <h2><i class="fas fa-user-plus"></i> Register</h2>
-        <div id="priceInfo" class="price-info">Select Year to View Price</div>
-        
-        <!-- Add this Account Numbers Section -->
-        <div class="account-section">
-            <h3 class="account-title"><i class="fas fa-university"></i> Payment Accounts</h3>
-            <div class="account-list">
-                <div class="account-item">
-                    <div class="account-info">
-                        <span class="account-name">CBE</span>
-                        <span class="account-number">1000544233185</span>
-                    </div>
-                    <button class="copy-btn" onclick="copyToClipboard('1000544233185', this)">
-                        <i class="fas fa-copy"></i> Copy
-                    </button>
-                </div>
-                <div class="account-item">
-                    <div class="account-info">
-                        <span class="account-name">Awash Bank</span>
-                        <span class="account-number">014251165418600</span>
-                    </div>
-                    <button class="copy-btn" onclick="copyToClipboard('014251165418600', this)">
-                        <i class="fas fa-copy"></i> Copy
-                    </button>
-                </div>
-                <div class="account-item">
-                    <div class="account-info">
-                        <span class="account-name">Tele birr</span>
-                        <span class="account-number">0912496441</span>
-                    </div>
-                    <button class="copy-btn" onclick="copyToClipboard('0912496441', this)">
-                        <i class="fas fa-copy"></i> Copy
-                    </button>
-                </div>
-            </div>
-            <p class="payment-note">Please use your name as payment reference</p>
+<body>
+    <div class="admin-container">
+        <!-- Header -->
+        <div class="admin-header">
+            <h1><i class="fas fa-broadcast-tower"></i> Notification Center</h1>
+            <p>Send announcements and updates to your users</p>
         </div>
 
-        <!-- New Temporary Password Login Section -->
-        <div class="temp-login-section">
-            <h3 class="temp-login-title"><i class="fas fa-key"></i> Admin Password Login</h3>
-            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">
-                Already registered? Login with temporary password from admin
-            </p>
-            <button class="temp-login-btn" id="tempPasswordLoginBtn">
-                <i class="fas fa-sign-in-alt"></i> Login with Admin Password
-            </button>
-        </div>
-        
-        <form id="regForm">
-            <div class="input-group">
-                <i class="fas fa-graduation-cap"></i>
-                <select id="year" required>
-                    <option value="1" disabled selected>Select Year of Study</option>
-                        <option value="2">Pre Med - 100 ETB</option>
-                        <option value="3">Intro Med - 100 ETB</option>
-                        <option value="4">Meta - 100 ETB</option>
-                        <option value="5">Hema - 100 ETB</option>
-                        <option value="6">CVS - 100 ETB</option>
-                        <option value="7">RESPA - 100 ETB</option>
-                        <option value="8">Musclo - 100 ETB</option>
-                </select>
+        <!-- Main Notification Panel -->
+        <div class="notification-panel">
+            <div class="panel-header">
+                <h2><i class="fas fa-paper-plane"></i> Compose Notification</h2>
             </div>
-            <div class="input-group">
-                <i class="fas fa-user"></i>
-                <input id="name" placeholder="Full Name" required>
-            </div>
-            <div class="input-group">
-                <i class="fas fa-phone"></i>
-                <input id="phone" type="tel" placeholder="Phone Number" required>
-            </div>
-            <div class="input-group">
-                <i class="fas fa-envelope"></i>
-                <input id="email" type="email" placeholder="Email (optional)">
-            </div>
-            <div class="input-group">
-                <i class="fab fa-telegram-plane"></i>
-                <input id="telegram" placeholder="Telegram Username (required for fast auth.)">
-            </div>
-            <div class="file-upload">
-                <i class="fas fa-cloud-upload-alt"></i>
-                <span id="uploadText">Upload Payment Receipt</span>
-                <input id="receipt" type="file" accept="image/*" required>
-            </div>
-            <img id="receiptPreview" class="receipt-preview" alt="Receipt Preview">
-            <button type="submit" id="submitBtn"><i class="fas fa-paper-plane"></i>Submit</button>
-            <div id="regError" class="error"></div>
-        </form>
-        
-        <p id="loginLink" style="cursor:pointer; color:var(--primary);">Already registered? Login here</p>
-        <div id="loginForm" style="display:none">
-            <div class="input-group">
-                <i class="fas fa-phone"></i>
-                <input id="loginPhone" type="tel" placeholder="Phone Number" required>
-            </div>
-            <button id="loginSubmitBtn"><i class="fas fa-sign-in-alt"></i> Request Verification Code</button>
-            <div id="loginError" class="error"></div>
-        </div>
-        <p id="registerLink" style="display:none; cursor:pointer; color:var(--primary);">New user? Register here</p>
-        <div id="verifyForm" style="display:none">
-            <h2><i class="fas fa-lock"></i> Enter Verification Code</h2>
-            <div class="input-group">
-                <i class="fas fa-key"></i>
-                <input id="verifyCode" placeholder="6-digit code" maxlength="6" required>
-            </div>
-            <button id="verifyBtn"><i class="fas fa-check-circle"></i> Verify</button>
-            <button class="back-btn" id="backBtn"><i class="fas fa-arrow-left"></i> Back to Registration</button>
-            <div id="verifyError" class="error"></div>
-        </div>
-    </div>
-</div>
 
-<!-- Temporary Password Login Modal -->
-<div id="tempPasswordModal" style="display: none;">
-    <div class="modal-content">
-        <h2><i class="fas fa-key"></i> Admin Password Login</h2>
-        <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">
-            Enter your phone number and temporary password provided by admin
-        </p>
-        
-        <form id="tempPasswordForm">
-            <div class="input-group">
-                <i class="fas fa-phone"></i>
-                <input id="tempPhone" type="tel" placeholder="Your registered phone number" required>
-            </div>
-            <div class="input-group">
-                <i class="fas fa-lock"></i>
-                <input id="tempPassword" type="text" placeholder="Temporary password from admin" required>
-            </div>
-            <button type="submit" id="tempLoginBtn">
-                <i class="fas fa-sign-in-alt"></i> Login
-            </button>
-            <div id="tempLoginError" class="error"></div>
-        </form>
-        
-        <button class="back-btn" id="backToRegBtn">
-            <i class="fas fa-arrow-left"></i> Back to Registration
-        </button>
-    </div>
-</div>
-
-<!-- Add Year Modal -->
-<div id="addModal" style="display: none;">
-    <div class="modal-content">
-        <h2><i class="fas fa-plus"></i> Add program </h2>
-        <div class="price-info">Additional Charge: 50 ETB</div>
-        
-        <!-- Add this Account Numbers Section -->
-        <div class="account-section">
-            <h3 class="account-title"><i class="fas fa-university"></i> Payment Accounts</h3>
-            <div class="account-list">
-                <div class="account-item">
-                    <div class="account-info">
-                        <span class="account-name">CBE</span>
-                        <span class="account-number">1000544233185</span>
-                    </div>
-                    <button class="copy-btn" onclick="copyToClipboard('1000544233185', this)">
-                        <i class="fas fa-copy"></i> Copy
-                    </button>
-                </div>
-                <div class="account-item">
-                    <div class="account-info">
-                        <span class="account-name">Awash Bank</span>
-                        <span class="account-number">014251165418600</span>
-                    </div>
-                    <button class="copy-btn" onclick="copyToClipboard('014251165418600', this)">
-                        <i class="fas fa-copy"></i> Copy
-                    </button>
-                </div>
-                <div class="account-item">
-                    <div class="account-info">
-                        <span class="account-name">Tele Birr</span>
-                        <span class="account-number">0912496441</span>
-                    </div>
-                    <button class="copy-btn" onclick="copyToClipboard('0912496441', this)">
-                        <i class="fas fa-copy"></i> Copy
-                    </button>
-                </div>
-            </div>
-            <p class="payment-note">Please use your name as payment reference</p>
-        </div>
-        
-        <form id="addForm">
-            <div class="input-group">
-                <i class="fas fa-user"></i>
-                <input id="addName" placeholder="Full Name (for verification)" required>
-            </div>
-            <div class="input-group">
-                <i class="fas fa-graduation-cap"></i>
-                <select id="newYear" required>
-                    <option value="" disabled selected>Select New Year</option>
-                    <option value="" disabled selected>Select Year of Study</option>
-                        <option value="1">Pre Med - 100 ETB</option>
-                        <option value="2">Intro Med - 100 ETB</option>
-                        <option value="3">Meta - 100 ETB</option>
-                        <option value="4">Hema - 100 ETB</option>
-                        <option value="5">CVS - 100 ETB</option>
-                        <option value="6">RESPA - 100 ETB</option>
-                        <option value="7">Musclo - 100 ETB</option>
-                </select>
-            </div>
-            <div class="file-upload">
-                <i class="fas fa-cloud-upload-alt"></i>
-                <span id="addUploadText">Upload Payment Receipt (50 ETB)</span>
-                <input id="addReceipt" type="file" accept="image/*" required>
-            </div>
-            <img id="addReceiptPreview" class="receipt-preview" alt="Receipt Preview">
-            <button type="submit" id="addSubmitBtn"><i class="fas fa-paper-plane"></i> Submit </button>
-            <div id="addError" class="error"></div>
-        </form>
-        <div id="addVerifyForm" style="display:none">
-            <h2><i class="fas fa-lock"></i> Enter Verification Code</h2>
-            <div class="input-group">
-                <i class="fas fa-key"></i>
-                <input id="addVerifyCode" placeholder="6-digit code" maxlength="6" required>
-            </div>
-            <button id="addVerifyBtn"><i class="fas fa-check-circle"></i> Verify</button>
-            <button class="back-btn" id="addBackBtn"><i class="fas fa-arrow-left"></i> Back to Addition</button>
-            <div id="addVerifyError" class="error"></div>
-        </div>
-    </div>
-</div>
-
-    <!-- Confirm Add Modal -->
-    <div id="confirmAddModal" style="display: none;">
-        <div class="modal-content">
-            <h2><i class="fas fa-exclamation-triangle"></i> Confirm Add</h2>
-            <p>Additional Program charges additional 50 ETB. Do you want to continue?</p>
-            <div class="button-group">
-                <button class="cancel-btn" id="cancelAddBtn">no</button>
-                <button class="ok-btn" id="okAddBtn">yes</button>
-            </div>
-        </div>
-    </div>
-    <!-- Access Denied Modal -->
-    <div id="accessDeniedModal" style="display: none;">
-        <div class="modal-content">
-            <h2><i class="fas fa-lock"></i> Access Denied</h2>
-            <p id="deniedMessage"></p>
-            <button class="ok-btn" id="closeDeniedBtn">OK</button>
-        </div>
-    </div>
-    <!-- Logout Modal -->
-    <div id="logoutModal" style="display: none;">
-        <div class="modal-content">
-            <h2><i class="fas fa-sign-out-alt"></i> Confirm Logout</h2>
-            <div class="input-group">
-                <i class="fas fa-key"></i>
-                <input id="logoutCode" placeholder="6-digit logout code" maxlength="6" required>
-            </div>
-            <button id="confirmLogoutBtn"><i class="fas fa-check-circle"></i> Confirm Logout</button>
-            <div id="logoutError" class="error"></div>
-        </div>
-    </div>
-
-    <!-- Enhanced Notifications Modal -->
-    <div id="notificationsModal" class="notifications-modal" style="display: none;">
-        <div class="modal-content">
-            <div class="notifications-header">
-                <h2><i class="fas fa-bell"></i> Notifications</h2>
-                <div class="tools">
-                    <button class="tool-btn" id="notificationSettingsBtn" title="Settings"><i class="fas fa-cog"></i></button>
-                    <button class="tool-btn" id="markAllReadBtn" title="Mark All as Read"><i class="fas fa-check-double"></i></button>
-                </div>
-            </div>
-            <div class="notifications-search">
-                <input type="text" id="notificationsSearchInput" placeholder="Search notifications...">
-            </div>
-            <div class="notifications-swiper">
-                <div class="swiper notifications-swiper-container">
-                    <div class="swiper-wrapper notifications-list" id="notificationsList">
-                        <!-- Notifications will be populated here -->
-                    </div>
-                    <div class="swiper-pagination"></div>
-                </div>
-            </div>
-            <div class="notifications-footer">
-                <button class="mark-all-read" id="footerMarkAllRead">Mark all as read</button>
-                <button class="ok-btn" id="closeNotificationsBtn">Close</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Notification Settings Modal -->
-    <div id="notificationSettingsModal" style="display: none;">
-        <div class="modal-content">
-            <h2><i class="fas fa-cog"></i> Notification Settings</h2>
-            <div class="settings-list">
-                <div class="setting-item">
-                    <span class="setting-label">Enable Sound Notifications</span>
-                    <label class="switch">
-                        <input type="checkbox" id="soundToggle">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-                <div class="setting-item">
-                    <span class="setting-label">Show Notification Previews</span>
-                    <label class="switch">
-                        <input type="checkbox" id="previewToggle" checked>
-                        <span class="slider"></span>
-                    </label>
-                </div>
-                <div class="setting-item">
-                    <span class="setting-label">Email Notifications</span>
-                    <label class="switch">
-                        <input type="checkbox" id="emailToggle">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-                <div class="setting-item">
-                    <span class="setting-label">Notification Theme</span>
-                    <select style="background: var(--glass); border: 1px solid var(--glass-border); padding: 0.5rem; border-radius: 8px; color: var(--text-primary);">
-                        <option>Default</option>
-                        <option>Dark</option>
-                        <option>Light</option>
-                        <option>Custom</option>
+            <form id="notificationForm">
+                <div class="form-group">
+                    <label for="notificationType"><i class="fas fa-tag"></i> Notification Type</label>
+                    <select id="notificationType" required>
+                        <option value="info">ℹ️ Information</option>
+                        <option value="success">✅ Success Update</option>
+                        <option value="warning">⚠️ Important Notice</option>
+                        <option value="error">❌ Critical Alert</option>
+                        <option value="premium">💎 Premium Announcement</option>
                     </select>
                 </div>
+
+                <div class="form-group">
+                    <label for="notificationTitle"><i class="fas fa-heading"></i> Title</label>
+                    <input type="text" id="notificationTitle" placeholder="Enter notification title..." required>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-users"></i> Target Audience</label>
+                    <div class="target-selection">
+                        <div class="target-option">
+                            <input type="radio" id="targetAll" name="target" value="all" checked>
+                            <label for="targetAll"><i class="fas fa-globe"></i> All Users</label>
+                        </div>
+                        <div class="target-option">
+                            <input type="radio" id="targetVerified" name="target" value="verified">
+                            <label for="targetVerified"><i class="fas fa-check-circle"></i> Verified Only</label>
+                        </div>
+                        <div class="target-option">
+                            <input type="radio" id="targetOnline" name="target" value="online">
+                            <label for="targetOnline"><i class="fas fa-wifi"></i> Online Users</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-edit"></i> Message Content</label>
+                    <div class="formatting-toolbar">
+                        <button type="button" class="format-btn" data-format="**Bold**"><i class="fas fa-bold"></i></button>
+                        <button type="button" class="format-btn" data-format="*Italic*"><i class="fas fa-italic"></i></button>
+                        <button type="button" class="format-btn" data-format="`Code`"><i class="fas fa-code"></i></button>
+                        <button type="button" class="format-btn" data-format="[Link](https://)"><i class="fas fa-link"></i></button>
+                        <button type="button" class="format-btn" data-format="## Heading"><i class="fas fa-heading"></i></button>
+                        <button type="button" class="format-btn" data-format="- List item"><i class="fas fa-list"></i></button>
+                        <button type="button" class="format-btn" data-format="1. Numbered"><i class="fas fa-list-ol"></i></button>
+                        <button type="button" class="format-btn" data-format="> Quote"><i class="fas fa-quote-right"></i></button>
+                    </div>
+                    <textarea id="notificationContent" placeholder="Enter your notification message... Use the formatting buttons above for rich text." required>**Important Announcement!**
+
+We're excited to announce *new features* coming to the platform:
+
+## What's New:
+- Enhanced quiz system with `real-time` scoring
+- Improved performance and stability
+- New study materials for all years
+
+## Key Benefits:
+1. **Faster loading times**
+2. *Better user experience*
+3. More interactive content
+
+> "Education is the most powerful weapon which you can use to change the world." - Nelson Mandela
+
+For more details, visit our [website](https://medilearnpro.com) or contact support.
+
+`Version 2.1.0` - Released today!</textarea>
+                </div>
+
+                <!-- Preview Section -->
+                <div class="preview-section">
+                    <h3><i class="fas fa-eye"></i> Live Preview</h3>
+                    <div id="notificationPreview" class="notification-preview info">
+                        <div class="preview-header">
+                            <div class="preview-title">
+                                <span class="type-badge info">info</span>
+                                <span id="previewTitle">Information Announcement</span>
+                            </div>
+                            <div class="preview-time">Just now</div>
+                        </div>
+                        <div id="previewContent" class="preview-content">
+                            Your notification preview will appear here...
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button type="button" id="previewBtn" class="btn btn-secondary">
+                        <i class="fas fa-sync"></i> Update Preview
+                    </button>
+                    <button type="submit" id="sendBtn" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Send Notification
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Stats Panel -->
+        <div class="stats-panel">
+            <div class="stats-grid">
+                <div class="stat-card total">
+                    <div class="stat-value" id="totalUsers">0</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+                <div class="stat-card sent">
+                    <div class="stat-value" id="sentNotifications">0</div>
+                    <div class="stat-label">Notifications Sent</div>
+                </div>
+                <div class="stat-card failed">
+                    <div class="stat-value" id="failedNotifications">0</div>
+                    <div class="stat-label">Delivery Failed</div>
+                </div>
             </div>
-            <button class="ok-btn" id="saveSettingsBtn">Save Settings</button>
+
+            <div class="recent-activity">
+                <h3><i class="fas fa-history"></i> Recent Activity</h3>
+                <div class="activity-list" id="activityList">
+                    <!-- Activity items will be populated here -->
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Header -->
-    <header class="header" id="header">
-        <div class="header-container">
-            <div class="logo" id="logoBtn">
-                <i class="fas fa-stethoscope"></i>
-                <span>ALIF | MED</span>
-            </div>
-            <div class="nav-actions">
-                <button class="action-btn" id="themeToggle">
-                    <i class="fas fa-sun"></i>
-                </button>
-                <button class="action-btn" id="notificationsBtn">
-                    <i class="fas fa-bell"></i>
-                    <span class="notification-badge" id="unreadCount" style="display: none;">0</span>
-                </button>
-                <button id="profileBtn" class="action-btn primary">
-                    <i class="fas fa-user"></i> Profile
-                </button>
-                <button id="adminBtn" class="action-btn primary" style="display: none;">
-                    <i class="fas fa-cog"></i> Admin
-                </button>
-                <a href="#" id="logout" class="action-btn">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </a>
-            </div>
-        </div>
-    </header>
-    <!-- Quizzes Content -->
-    <main id="mainContent" class="main-content">
-        <div class="page-header">
-            <h1 class="page-title">Medical Quiz Platform</h1>
-            <p class="page-subtitle">Test your medical knowledge with our comprehensive quiz collection</p>
-        </div>
-        <div class="year-filter">
-            <div class="year-filter-container">
-                <button class="year-btn active" data-year="all">All</button>
-                <button class="year-btn" data-year="1"><i class="fas fa-book-medical"></i> PRE-MED</button>
-                <button class="year-btn" data-year="2"><i class="fas fa-book-medical"></i> INTRODUCTION-MED</button>
-                <button class="year-btn" data-year="3"><i class="fas fa-book-medical"></i> METABOLISM</button>
-                <button class="year-btn" data-year="4"><i class="fas fa-book-medical"></i> HEMATOLOGY</button>
-                <button class="year-btn" data-year="5"><i class="fas fa-book-medical"></i> CVS</button>
-                <button class="year-btn" data-year="6"><i class="fas fa-book-medical"></i> RESPIRATORY</button>
-                <button class="year-btn" data-year="7"><i class="fas fa-book-medical"></i> MUSCULOSKELETAL</button>
-            </div>
-        </div>
-                <section class="year-section" data-year="1">
-            <h2 class="year-title"><i class="fas fa-book-medical"></i> PRE-MED</h2>
-            <div class="cards-container"></div>
-        </section>
-        <section class="year-section" data-year="2">
-            <h2 class="year-title"><i class="fas fa-book-medical"></i> INTRODUCTION-MED</h2>
-            <div class="cards-container"></div>
-        </section>
-        <section class="year-section" data-year="3">
-            <h2 class="year-title"><i class="fas fa-book-medical"></i> METABOLISM</h2>
-            <div class="cards-container"></div>
-        </section>
-        <section class="year-section" data-year="4">
-            <h2 class="year-title"><i class="fas fa-book-medical"></i> HEMATOLOGY</h2>
-            <div class="cards-container"></div>
-        </section>
-        <section class="year-section" data-year="5">
-            <h2 class="year-title"><i class="fas fa-book-medical"></i> CVS</h2>
-            <div class="cards-container"></div>
-        </section>
-        <section class="year-section" data-year="6">
-            <h2 class="year-title"><i class="fas fa-book-medical"></i> RESPIRATORY</h2>
-            <div class="cards-container"></div>
-        </section>
-        <section class="year-section" data-year="7">
-            <h2 class="year-title"><i class="fas fa-book-medical"></i> MUSCULOSKELETAL</h2>
-            <div class="cards-container"></div>
-        </section>
-    </main>
-    <!-- Profile Content -->
-    <main id="profileContent" class="main-content" style="display: none;">
-        <div class="profile-card">
-            <div class="profile-header">
-                <img id="profilePic" class="profile-pic" src="" alt="Profile Picture">
-                <label for="profilePicInput" class="change-pic-btn"><i class="fas fa-camera"></i> Change Picture</label>
-                <input id="profilePicInput" type="file" accept="image/*" style="display: none;">
-            </div>
-            <div class="profile-info">
-                <h2 class="page-title">Your Profile</h2>
-                <div class="info-item">
-                    <span class="info-label">Name:</span>
-                    <span class="info-value" id="profileName"></span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Phone:</span>
-                    <span class="info-value" id="profilePhone"></span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Email:</span>
-                    <span class="info-value" id="profileEmail"></span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Telegram:</span>
-                    <span class="info-value" id="profileTelegram"></span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Year(s):</span>
-                    <span class="info-value" id="profileYears"></span>
-                    <span id="addYearBtn" class="add-year-btn"><i class="fas fa-plus"></i> Add</span>
-                </div>
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyC4DSMVg4c98kQf5sSF8ueD631QgO4SXn0",
+            authDomain: "medical-quiz-40228.firebaseapp.com",
+            projectId: "medical-quiz-40228",
+            storageBucket: "medical-quiz-40228.firebasestorage.app",
+            messagingSenderId: "483043078873",
+            appId: "1:483043078873:web:4029dd83e53557f08b04c8"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Notification Manager Class
+        class NotificationManager {
+            constructor() {
+                this.broadcastsCollection = db.collection('broadcasts');
+                this.usersCollection = db.collection('users');
+                this.stats = {
+                    totalUsers: 0,
+                    sentNotifications: 0,
+                    failedNotifications: 0
+                };
+                this.activityLog = [];
+            }
+
+            // Format notification content with rich text
+            formatContent(text) {
+                if (!text) return '';
                 
-            </div>
-            <div class="contact-section">
-                <h3 class="contact-title">Contact Us</h3>
-                <div class="contact-links">
-                    <a href="https://t.me/yourchannel" class="contact-link" target="_blank"><i class="fab fa-telegram-plane"></i></a>
-                    <a href="mailto:support@medilearnpro.com" class="contact-link"><i class="fas fa-envelope"></i></a>
-                </div>
-            </div>
-            <div class="comment-section">
-                <h3 class="comment-title">Send Us Your Comment</h3>
-                <textarea id="commentBox" placeholder="Write your message here..."></textarea>
-                <button id="sendCommentBtn"><i class="fas fa-paper-plane"></i> Send</button>
-                <div id="commentError" class="error"></div>
-            </div>
-            <button id="profileLogoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
-            <button id="backToMainBtn"><i class="fas fa-arrow-left"></i> Back to Quizzes</button>
-        </div>
-    </main>
-
-    <script>
-// Detect offline status and redirect to offline page
-window.addEventListener('offline', () => {
-    if (!window.location.pathname.includes('offline')) {
-        window.location.href = '/offline.html';
-    }
-});
-
-window.addEventListener('load', () => {
-    if (!navigator.onLine && !window.location.pathname.includes('offline')) {
-        window.location.href = '/offline.html';
-    }
-});
-    </script>
-
-    <script>
-  // set token & timestamp when visiting homepage
-  sessionStorage.setItem('enteredFromHome_v2', 'yes');
-  sessionStorage.setItem('enteredFromHome_time_v2', Math.floor(Date.now()/1000));
-    </script>
-
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script>
-  // Check if running inside Telegram
-  const tg = window.Telegram?.WebApp;
-
-  if (tg) {
-    tg.ready();
-    tg.BackButton.show();
-
-    tg.BackButton.onClick(() => {
-      console.log("Telegram back button pressed");
-      handleBackAction();
-    });
-  }
-
-  window.addEventListener('popstate', () => {
-    console.log("Browser back button pressed");
-    handleBackAction();
-  });
-
-  function handleBackAction() {
-    if (document.referrer && window.history.length > 1) {
-      window.history.back();
-    } else {
-      window.location.href = '/';
-    }
-  }
-
-  history.pushState(null, '', location.href);
-</script>
-<script>
-// Firebase configuration
-const firebaseConfig = {
-    apiKey: "AIzaSyC4DSMVg4c98kQf5sSF8ueD631QgO4SXn0",
-    authDomain: "medical-quiz-40228.firebaseapp.com",
-    projectId: "medical-quiz-40228",
-    storageBucket: "medical-quiz-40228.firebasestorage.app",
-    messagingSenderId: "483043078873",
-    appId: "1:483043078873:web:4029dd83e53557f08b04c8"
-};
-
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-// Security measures
-document.addEventListener('contextmenu', e => e.preventDefault());
-document.addEventListener('keydown', e => {
-    if (e.keyCode === 123 ||
-        (e.ctrlKey && e.shiftKey && e.keyCode === 73) ||
-        (e.ctrlKey && e.shiftKey && e.keyCode === 74) ||
-        (e.ctrlKey && e.keyCode === 85) ||
-        (e.ctrlKey && e.keyCode === 83)) {
-        e.preventDefault();
-    }
-});
-document.addEventListener('visibilitychange', () => {
-    document.body.style.filter = document.visibilityState === 'hidden' ? 'blur(10px)' : 'none';
-});
-document.addEventListener('touchstart', e => {
-    if (e.touches.length > 1) e.preventDefault();
-}, { passive: false });
-document.addEventListener('gesturestart', e => e.preventDefault());
-
-// Online User Tracking Class
-class OnlineUserTracker {
-    constructor() {
-        this.usersCollection = db.collection('users');
-        this.currentUser = null;
-        this.activityInterval = null;
-        this.lastActivityTime = Date.now();
-        this.isInitialized = false;
-    }
-
-    // Initialize online tracking for current user
-    init(user) {
-        if (this.isInitialized) return;
-        
-        this.currentUser = user;
-        this.isInitialized = true;
-        
-        // Update lastActive timestamp immediately
-        this.updateUserActivity();
-        
-        // Set up periodic activity updates (every 2 minutes)
-        this.activityInterval = setInterval(() => {
-            this.updateUserActivity();
-        }, 2 * 60 * 1000);
-        
-        // Track user interactions
-        this.setupActivityListeners();
-        
-        console.log('Online tracking initialized for:', user.name);
-    }
-
-    // Update user's last activity timestamp
-    async updateUserActivity() {
-        if (!this.currentUser || !this.currentUser.id) return;
-        
-        try {
-            const updateData = {
-                lastActive: Date.now(),
-                isOnline: true
-            };
-            
-            await this.usersCollection.doc(this.currentUser.id).update(updateData);
-            this.lastActivityTime = Date.now();
-            
-            // Also update local storage with latest activity
-            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-            currentUser.lastActive = Date.now();
-            localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            
-        } catch (error) {
-            console.error('Error updating user activity:', error);
-        }
-    }
-
-    // Set up event listeners to track user activity
-    setupActivityListeners() {
-        const activityEvents = [
-            'mousedown', 'mousemove', 'keypress', 'scroll', 
-            'touchstart', 'touchmove', 'click', 'focus'
-        ];
-
-        const throttledUpdate = this.throttle(() => {
-            this.updateUserActivity();
-        }, 30000); // Throttle to once every 30 seconds
-
-        activityEvents.forEach(event => {
-            document.addEventListener(event, throttledUpdate, { passive: true });
-        });
-
-        // Track page visibility changes
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden) {
-                this.updateUserActivity();
-            }
-        });
-
-        // Track page focus
-        window.addEventListener('focus', () => {
-            this.updateUserActivity();
-        });
-    }
-
-    // Throttle function to limit how often activity updates are sent
-    throttle(func, limit) {
-        let inThrottle;
-        return function() {
-            const args = arguments;
-            const context = this;
-            if (!inThrottle) {
-                func.apply(context, args);
-                inThrottle = true;
-                setTimeout(() => inThrottle = false, limit);
-            }
-        }
-    }
-
-    // Set user as offline (for logout)
-    async setOffline() {
-        if (this.currentUser && this.currentUser.id) {
-            try {
-                await this.usersCollection.doc(this.currentUser.id).update({
-                    isOnline: false,
-                    lastActive: Date.now()
-                });
-            } catch (error) {
-                console.error('Error setting user offline:', error);
-            }
-        }
-    }
-
-    // Clean up when user logs out
-    cleanup() {
-        if (this.activityInterval) {
-            clearInterval(this.activityInterval);
-        }
-        
-        this.setOffline();
-        this.currentUser = null;
-        this.isInitialized = false;
-        
-        console.log('Online tracking cleaned up');
-    }
-}
-
-// Initialize the tracker
-const onlineTracker = new OnlineUserTracker();
-
-// Enhanced Firebase User Manager with Online Tracking
-class FirebaseUserManager {
-    constructor() {
-        this.usersCollection = db.collection('users');
-    }
-
-    async checkPhoneExists(phone) {
-        const snapshot = await this.usersCollection.where('phone', '==', phone).get();
-        return !snapshot.empty;
-    }
-
-    isCodeExpired(timestamp) {
-        const now = new Date().getTime();
-        const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
-        return now - timestamp > twoDaysInMs;
-    }
-
-    // Temporary password login method
-    async loginWithTemporaryPassword(phone, password) {
-        try {
-            const snapshot = await this.usersCollection.where('phone', '==', phone).get();
-            if (snapshot.empty) {
-                return { success: false, error: 'Phone number not found. Please register first.' };
-            }
-
-            const doc = snapshot.docs[0];
-            const user = doc.data();
-            
-            if (!user.verificationCode) {
-                return { success: false, error: 'No temporary password set. Please use regular login.' };
-            }
-
-            if (user.verificationCode !== password) {
-                return { success: false, error: 'Invalid temporary password.' };
-            }
-
-            if (user.passwordExpiration && user.passwordExpiration < Date.now()) {
-                return { success: false, error: 'Temporary password has expired. Please contact admin.' };
-            }
-
-            if (user.codeTimestamp && this.isCodeExpired(user.codeTimestamp)) {
-                return { success: false, error: 'Temporary password has expired. Please contact admin.' };
-            }
-
-            // Update user status with online tracking
-            await this.usersCollection.doc(doc.id).update({
-                status: 'verified',
-                lastLogin: new Date().getTime(),
-                lastActive: new Date().getTime(),
-                isOnline: true
-            });
-
-            user.id = doc.id;
-            user.status = 'verified';
-            user.lastLogin = new Date().getTime();
-            user.lastActive = new Date().getTime();
-
-            return { success: true, user };
-        } catch (error) {
-            console.error('Error logging in with temporary password:', error);
-            return { success: false, error: 'Login failed. Please try again.' };
-        }
-    }
-
-    async createUser(userData) {
-        try {
-            if (await this.checkPhoneExists(userData.phone)) {
-                return { success: false, error: 'Phone already registered. Please login.' };
-            }
-            const code = Math.floor(100000 + Math.random() * 900000).toString();
-            const userRecord = {
-                ...userData,
-                verificationCode: code,
-                codeTimestamp: new Date().getTime(),
-                registeredYears: [userData.year],
-                createdAt: new Date().getTime(),
-                lastLogin: null,
-                lastActive: new Date().getTime(),
-                isOnline: true,
-                status: 'pending',
-                role: 'user',
-                notifications: {
-                    sound: true,
-                    preview: true,
-                    email: false,
-                    theme: 'default'
-                }
-            };
-
-            const docRef = await this.usersCollection.add(userRecord);
-            return { success: true, userId: docRef.id, code };
-        } catch (error) {
-            console.error('Error creating user:', error);
-            return { success: false, error: error.message };
-        }
-    }
-
-    async login(phone) {
-        try {
-            const snapshot = await this.usersCollection.where('phone', '==', phone).get();
-            if (snapshot.empty) {
-                return { success: false, error: 'Phone not registered. Please register.' };
-            }
-            const doc = snapshot.docs[0];
-            const user = doc.data();
-            if (user.verificationCode && !this.isCodeExpired(user.codeTimestamp)) {
-                return { success: false, error: 'Account is currently active. Please logout first or contact admin.' };
-            }
-            const code = Math.floor(100000 + Math.random() * 900000).toString();
-            await this.usersCollection.doc(doc.id).update({
-                verificationCode: code,
-                codeTimestamp: new Date().getTime(),
-                status: 'pending'
-            });
-            return { success: true, code, userId: doc.id };
-        } catch (error) {
-            console.error('Error logging in:', error);
-            return { success: false, error: error.message };
-        }
-    }
-
-    async verifyUser(phone, code) {
-        try {
-            const snapshot = await this.usersCollection.where('phone', '==', phone).get();
-            if (snapshot.empty) {
-                return { success: false, error: 'User not found' };
-            }
-
-            let user = null;
-            let userDocId = null;
-            
-            snapshot.forEach(doc => {
-                user = doc.data();
-                userDocId = doc.id;
-            });
-
-            if (user.verificationCode !== code) {
-                return { success: false, error: 'Invalid verification code' };
-            }
-
-            const codeTimestamp = user.codeTimestamp;
-            const now = new Date().getTime();
-            const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
-            
-            if (now - codeTimestamp > twoDaysInMs) {
-                return { success: false, error: 'Verification code has expired' };
-            }
-
-            // Update with online tracking
-            await this.usersCollection.doc(userDocId).update({
-                status: 'verified',
-                verifiedAt: new Date().getTime(),
-                lastLogin: new Date().getTime(),
-                lastActive: new Date().getTime(),
-                isOnline: true
-            });
-
-            user.id = userDocId;
-            user.status = 'verified';
-            user.lastLogin = new Date().getTime();
-            user.lastActive = new Date().getTime();
-
-            return { success: true, user };
-        } catch (error) {
-            console.error('Error verifying user:', error);
-            return { success: false, error: 'Verification failed' };
-        }
-    }
-
-    async addYearToUser(userId, newYear, userData) {
-        try {
-            const userDoc = await this.usersCollection.doc(userId).get();
-            if (!userDoc.exists) {
-                return { success: false, error: 'User not found' };
-            }
-
-            const user = userDoc.data();
-            const currentYears = user.registeredYears || [];
-
-            if (currentYears.includes(newYear)) {
-                return { success: false, error: 'Year already registered' };
-            }
-
-            const code = Math.floor(100000 + Math.random() * 900000).toString();
-            
-            await this.usersCollection.doc(userId).update({
-                registeredYears: [...currentYears, newYear],
-                verificationCode: code,
-                codeTimestamp: new Date().getTime(),
-                status: 'pending_addition'
-            });
-
-            return { success: true, code };
-        } catch (error) {
-            console.error('Error adding year to user:', error);
-            return { success: false, error: error.message };
-        }
-    }
-
-    async verifyYearAddition(userId, code) {
-        try {
-            const userDoc = await this.usersCollection.doc(userId).get();
-            if (!userDoc.exists) {
-                return { success: false, error: 'User not found' };
-            }
-
-            const user = userDoc.data();
-
-            if (user.verificationCode !== code) {
-                return { success: false, error: 'Invalid verification code' };
-            }
-
-            const codeTimestamp = user.codeTimestamp;
-            const now = new Date().getTime();
-            const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
-            
-            if (now - codeTimestamp > twoDaysInMs) {
-                return { success: false, error: 'Verification code has expired' };
-            }
-
-            await this.usersCollection.doc(userId).update({
-                status: 'verified',
-                lastLogin: new Date().getTime(),
-                lastActive: new Date().getTime()
-            });
-
-            return { success: true, user: { id: userId, ...user, status: 'verified', lastLogin: new Date().getTime() } };
-        } catch (error) {
-            console.error('Error verifying year addition:', error);
-            return { success: false, error: 'Verification failed' };
-        }
-    }
-
-    async getUserByPhone(phone) {
-        try {
-            const snapshot = await this.usersCollection.where('phone', '==', phone).get();
-            if (snapshot.empty) return null;
-            
-            let user = null;
-            snapshot.forEach(doc => {
-                user = { id: doc.id, ...doc.data() };
-            });
-            return user;
-        } catch (error) {
-            console.error('Error getting user:', error);
-            return null;
-        }
-    }
-
-    async updateNotificationSettings(userId, settings) {
-        try {
-            await this.usersCollection.doc(userId).update({
-                notifications: settings
-            });
-        } catch (error) {
-            console.error('Error updating notification settings:', error);
-        }
-    }
-}
-
-const firebaseUserManager = new FirebaseUserManager();
-
-// Quiz data
-const quizData = {
-    1: [
-        { id: 6, title: "Organic Chemistry", icon: "fas fa-brain", questions: 30, time: 25, difficulty: "intermediate", rating: 4.6, page: "year2/human-anatomy.html" },
-        { id: 7, title: "ENTREPRENUERSHIP", icon: "fas fa-heartbeat", questions: 25, time: 20, difficulty: "intermediate", rating: 4.5, page: "year2/physiology-i.html" },
-        { id: 8, title: "ECONOMICS", icon: "fas fa-microscope", questions: 20, time: 15, difficulty: "intermediate", rating: 4.3, page: "year2/histology.html" },
-        { id: 9, title: "CIVIC", icon: "fas fa-flask", questions: 28, time: 22, difficulty: "intermediate", rating: 4.4, page: "year2/biochemistry-ii.html" }
-    ],
-    2: [
-        { id: 4, title: "Pathology", icon: "fas fa-flask", questions: 400, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/pt.html" },
-        { id: 5, title: "Pharmacology", icon: "fas fa-heartbeat", questions: 400, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/pc.html" },
-        { id: 6, title: "PCD", icon: "fas fa-heartbeat", questions: 150, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/pcd.html" },
-        { id: 7, title: "PARASITOLOGY", icon: "fas fa-heartbeat", questions: 180, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/pr.html" },
-        { id: 8, title: "immunology", icon: "fas fa-heartbeat", questions: 235, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/im.html" },
-        { id: 9, title: "Microbiology", icon: "fas fa-heartbeat", questions: 320, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/micro.html" },
-        { id: 1, title: "Anatomy", icon: "fas fa-brain", questions: 700, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/an.html" },
-        { id: 2, title: "Physiology", icon: "fas fa-microscope", questions: 600, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/ps.html" },
-        { id: 3, title: "Biochemistry", icon: "fas fa-book", questions: 800, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/bc.html" }
-    ],  
-    3: [
-        { id: 10, title: "Anatomy", icon: "fas fa-virus", questions: 35, time: 30, difficulty: "intermediate", page: "year3/pathology.html", rating: 4.7 },
-        { id: 11, title: "Physiology", icon: "fas fa-pills", questions: 30, time: 25, difficulty: "intermediate", rating: 4.6, page: "year3/pharmacology-i.html" },
-        { id: 12, title: "Pharma", icon: "fas fa-bacteria", questions: 25, time: 20, difficulty: "intermediate", rating: 4.5, page: "year3/microbiology.html" },
-        { id: 13, title: "Pathology", icon: "fas fa-shield-virus", questions: 28, time: 22, difficulty: "intermediate", rating: 4.4, page: "year3/immunology.html" }
-    ],
-    4: [
-        { id: 14, title: "Anatomy", icon: "fas fa-stethoscope", questions: 40, time: 35, difficulty: "advanced", rating: 4.8, page: "year4/clinical-medicine-i.html" },
-        { id: 15, title: "Physiology", icon: "fas fa-syringe", questions: 35, time: 30, difficulty: "advanced", rating: 4.7, page: "year4/surgery-basics.html" },
-        { id: 16, title: "Pharmacology", icon: "fas fa-pills", questions: 38, time: 32, difficulty: "advanced", rating: 4.6, page: "year4/pharmacology-ii.html" },
-        { id: 17, title: "Pathology", icon: "fas fa-virus", questions: 42, time: 35, difficulty: "advanced", rating: 4.7, page: "year4/pathology-ii.html" }
-    ],
-    5: [
-        { id: 18, title: "Anatomy", icon: "fas fa-stethoscope", questions: 45, time: 40, difficulty: "advanced", rating: 4.8, page: "year5/internal-medicine.html" },
-        { id: 19, title: "Physiology", icon: "fas fa-syringe", questions: 40, time: 35, difficulty: "advanced", rating: 4.7, page: "year5/surgery.html" },
-        { id: 20, title: "Pharma", icon: "fas fa-baby", questions: 38, time: 32, difficulty: "advanced", rating: 4.6, page: "year5/pediatrics.html" },
-        { id: 21, title: "Pathology", icon: "fas fa-female", questions: 42, time: 35, difficulty: "advanced", rating: 4.7, page: "year5/obstetrics-gynecology.html" }
-    ],
-    6: [
-        { id: 22, title: "Anatomy", icon: "fas fa-hospital-user", questions: 50, time: 45, difficulty: "advanced", rating: 4.9, page: "year6/clinical-rotations-i.html" },
-        { id: 23, title: "Physiology", icon: "fas fa-ambulance", questions: 45, time: 40, difficulty: "advanced", rating: 4.8, page: "year6/emergency-medicine.html" },
-        { id: 24, title: "Pharma", icon: "fas fa-brain", questions: 40, time: 35, difficulty: "advanced", rating: 4.7, page: "year6/psychiatry.html" },
-        { id: 25, title: "Patho", icon: "fas fa-x-ray", questions: 38, time: 32, difficulty: "advanced", rating: 4.6, page: "year6/radiology.html" }
-    ],
-    7: [
-        { id: 26, title: "Anatomy", icon: "fas fa-hospital-user", questions: 55, time: 50, difficulty: "advanced", rating: 4.9, page: "year7/clinical-rotations-ii.html" },
-        { id: 27, title: "Physiology", icon: "fas fa-stethoscope", questions: 50, time: 45, difficulty: "advanced", rating: 4.8, page: "year7/specialty-medicine.html" },
-        { id: 28, title: "Pharma", icon: "fas fa-balance-scale", questions: 35, time: 30, difficulty: "advanced", rating: 4.7, page: "year7/medical-ethics.html" },
-        { id: 29, title: "Patho", icon: "fas fa-graduation-cap", questions: 60, time: 55, difficulty: "advanced", rating: 4.9, page: "year7/board-exam-prep.html" }
-    ]
-};
-
-// Price data
-const prices = {
-    1: 100,
-    2: 100,
-    3: 100,
-    4: 100,
-    5: 100,
-    6: 100,
-    7: 100,
-    8: 100
-};
-
-// DOM Elements
-const themeToggle = document.getElementById('themeToggle');
-const mainContent = document.getElementById('mainContent');
-const profileContent = document.getElementById('profileContent');
-const profileBtn = document.getElementById('profileBtn');
-const adminBtn = document.getElementById('adminBtn');
-const logoBtn = document.getElementById('logoBtn');
-const backToMainBtn = document.getElementById('backToMainBtn');
-const regModal = document.getElementById('registrationModal');
-const tempPasswordModal = document.getElementById('tempPasswordModal');
-const regForm = document.getElementById('regForm');
-const tempPasswordForm = document.getElementById('tempPasswordForm');
-const loginForm = document.getElementById('loginForm');
-const verifyForm = document.getElementById('verifyForm');
-const logout = document.getElementById('logout');
-const logoutModal = document.getElementById('logoutModal');
-const regError = document.getElementById('regError');
-const tempLoginError = document.getElementById('tempLoginError');
-const loginError = document.getElementById('loginError');
-const verifyError = document.getElementById('verifyError');
-const logoutError = document.getElementById('logoutError');
-const receiptInput = document.getElementById('receipt');
-const receiptPreview = document.getElementById('receiptPreview');
-const uploadText = document.getElementById('uploadText');
-const yearSelect = document.getElementById('year');
-const priceInfo = document.getElementById('priceInfo');
-const submitBtn = document.getElementById('submitBtn');
-const tempLoginBtn = document.getElementById('tempLoginBtn');
-const loginSubmitBtn = document.getElementById('loginSubmitBtn');
-const backBtn = document.getElementById('backBtn');
-const backToRegBtn = document.getElementById('backToRegBtn');
-const loginLink = document.getElementById('loginLink');
-const registerLink = document.getElementById('registerLink');
-const tempPasswordLoginBtn = document.getElementById('tempPasswordLoginBtn');
-const notificationsBtn = document.getElementById('notificationsBtn');
-const notificationsModal = document.getElementById('notificationsModal');
-const notificationsList = document.getElementById('notificationsList');
-const closeNotificationsBtn = document.getElementById('closeNotificationsBtn');
-const unreadCount = document.getElementById('unreadCount');
-const notificationSettingsModal = document.getElementById('notificationSettingsModal');
-const notificationSettingsBtn = document.getElementById('notificationSettingsBtn');
-const markAllReadBtn = document.getElementById('markAllReadBtn');
-const footerMarkAllRead = document.getElementById('footerMarkAllRead');
-const saveSettingsBtn = document.getElementById('saveSettingsBtn');
-const notificationsSearchInput = document.getElementById('notificationsSearchInput');
-const notificationsSwiperContainer = document.querySelector('.notifications-swiper-container');
-
-// Initialize Swiper for swipeable notifications
-let swiper;
-function initSwiper() {
-    swiper = new Swiper('.notifications-swiper-container', {
-        direction: 'vertical',
-        slidesPerView: 'auto',
-        spaceBetween: 10,
-        pagination: {
-            el: '.swiper-pagination',
-            clickable: true,
-        },
-        mousewheel: true,
-        keyboard: true,
-    });
-}
-
-// Theme toggle
-function toggleTheme() {
-    if (document.body.classList.contains('dark-mode')) {
-        document.body.classList.remove('dark-mode');
-        document.body.classList.add('light-mode');
-        themeToggle.querySelector('i').className = 'fas fa-moon';
-    } else {
-        document.body.classList.remove('light-mode');
-        document.body.classList.add('dark-mode');
-        themeToggle.querySelector('i').className = 'fas fa-sun';
-    }
-}
-themeToggle.addEventListener('click', toggleTheme);
-
-// Render quiz cards
-function renderQuizCards() {
-    const userYears = JSON.parse(localStorage.getItem('userYears')) || [];
-    for (let year = 1; year <= 7; year++) {
-        const container = document.querySelector(`.year-section[data-year="${year}"] .cards-container`);
-        if (!container) continue;
-        container.innerHTML = '';
-        if (quizData[year]) {
-            quizData[year].forEach(quiz => {
-                const card = document.createElement('div');
-                card.className = 'quiz-card';
-                card.dataset.year = year.toString();
-                card.innerHTML = `
-                    <div class="quiz-icon"><i class="${quiz.icon}"></i></div>
-                    <h3 class="quiz-title">${quiz.title}</h3>
-                    <div class="quiz-meta">
-                        <span>${quiz.questions} Qs</span>
-                        <span>${quiz.time} min</span>
-                    </div>
-                    <div class="quiz-stats">
-                        <span class="difficulty ${quiz.difficulty}">${quiz.difficulty}</span>
-                        <div class="stat">
-                            <i class="fas fa-star"></i>
-                            <span>${quiz.rating}</span>
-                        </div>
-                    </div>
-                `;
-                if (!userYears.includes(year.toString())) {
-                    card.classList.add('locked');
-                }
-                card.addEventListener('click', (e) => {
-                    const quizYear = e.currentTarget.dataset.year;
-                    if (!userYears.includes(quizYear)) {
-                        showAccessDeniedModal(userYears, quizYear);
-                        return;
+                let formatted = text;
+                
+                // Convert headers
+                formatted = formatted.replace(/### (.*?)(?=\n|$)/g, '<h3>$1</h3>');
+                formatted = formatted.replace(/## (.*?)(?=\n|$)/g, '<h2>$1</h2>');
+                formatted = formatted.replace(/# (.*?)(?=\n|$)/g, '<h1>$1</h1>');
+                
+                // Convert bold and italic
+                formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                formatted = formatted.replace(/\*(.*?)\*/g, '<em>$1</em>');
+                
+                // Convert inline code
+                formatted = formatted.replace(/`(.*?)`/g, '<code>$1</code>');
+                
+                // Convert links
+                formatted = formatted.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>');
+                
+                // Convert line breaks to paragraphs
+                let paragraphs = formatted.split('\n\n');
+                formatted = paragraphs.map(para => {
+                    if (para.trim() === '') return '';
+                    if (para.startsWith('<h') || para.startsWith('<ul>') || para.startsWith('<ol>') || para.startsWith('<blockquote>')) {
+                        return para;
                     }
-                    // Update activity before navigating to quiz
-                    onlineTracker.updateUserActivity();
-                    window.location.href = quiz.page;
+                    return `<p>${para}</p>`;
+                }).join('');
+                
+                // Convert lists
+                formatted = formatted.replace(/(\d+)\.\s(.*?)(?=\n|$)/g, '<li>$2</li>');
+                if (formatted.includes('<li>')) {
+                    formatted = formatted.replace(/(<li>.*?<\/li>)/gs, '<ol>$1</ol>');
+                }
+                
+                formatted = formatted.replace(/-\s(.*?)(?=\n|$)/g, '<li>$1</li>');
+                if (formatted.includes('<li>') && !formatted.includes('<ol>')) {
+                    formatted = formatted.replace(/(<li>.*?<\/li>)/gs, '<ul>$1</ul>');
+                }
+                
+                // Convert blockquotes
+                formatted = formatted.replace(/&gt;\s(.*?)(?=\n|$)/g, '<blockquote>$1</blockquote>');
+                formatted = formatted.replace(/>\s(.*?)(?=\n|$)/g, '<blockquote>$1</blockquote>');
+                
+                return formatted;
+            }
+
+            // Send notification to all targeted users
+            async sendNotification(notificationData) {
+                const { type, title, content, target } = notificationData;
+                
+                try {
+                    // Create broadcast document
+                    const broadcastData = {
+                        type,
+                        title,
+                        message: content,
+                        formattedMessage: this.formatContent(content),
+                        target,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                        readBy: [],
+                        status: 'sent'
+                    };
+
+                    const docRef = await this.broadcastsCollection.add(broadcastData);
+                    
+                    // Update stats
+                    this.stats.sentNotifications++;
+                    this.updateStatsDisplay();
+                    
+                    // Log activity
+                    this.logActivity(`Notification sent to ${target} users`, 'success');
+                    
+                    // Show success toast
+                    this.showToast('Notification Sent!', 'Notification has been successfully sent to all targeted users.', 'success');
+                    
+                    return { success: true, id: docRef.id };
+                    
+                } catch (error) {
+                    console.error('Error sending notification:', error);
+                    
+                    // Update stats
+                    this.stats.failedNotifications++;
+                    this.updateStatsDisplay();
+                    
+                    // Log activity
+                    this.logActivity(`Failed to send notification: ${error.message}`, 'error');
+                    
+                    // Show error toast
+                    this.showToast('Sending Failed', 'Failed to send notification. Please try again.', 'error');
+                    
+                    return { success: false, error: error.message };
+                }
+            }
+
+            // Load initial stats
+            async loadStats() {
+                try {
+                    // Get total users count
+                    const usersSnapshot = await this.usersCollection.get();
+                    this.stats.totalUsers = usersSnapshot.size;
+                    
+                    // Get notification stats (you might want to store these in a separate collection)
+                    const broadcastsSnapshot = await this.broadcastsCollection.get();
+                    this.stats.sentNotifications = broadcastsSnapshot.size;
+                    
+                    this.updateStatsDisplay();
+                    
+                } catch (error) {
+                    console.error('Error loading stats:', error);
+                }
+            }
+
+            // Update stats display
+            updateStatsDisplay() {
+                document.getElementById('totalUsers').textContent = this.stats.totalUsers.toLocaleString();
+                document.getElementById('sentNotifications').textContent = this.stats.sentNotifications.toLocaleString();
+                document.getElementById('failedNotifications').textContent = this.stats.failedNotifications.toLocaleString();
+            }
+
+            // Log activity
+            logActivity(message, type = 'info') {
+                const activity = {
+                    message,
+                    type,
+                    timestamp: new Date().toLocaleString()
+                };
+                
+                this.activityLog.unshift(activity);
+                
+                // Keep only last 10 activities
+                if (this.activityLog.length > 10) {
+                    this.activityLog = this.activityLog.slice(0, 10);
+                }
+                
+                this.updateActivityDisplay();
+            }
+
+            // Update activity display
+            updateActivityDisplay() {
+                const activityList = document.getElementById('activityList');
+                activityList.innerHTML = '';
+                
+                this.activityLog.forEach(activity => {
+                    const activityItem = document.createElement('div');
+                    activityItem.className = `activity-item ${activity.type}`;
+                    activityItem.innerHTML = `
+                        <div class="activity-message">${activity.message}</div>
+                        <div class="activity-time">${activity.timestamp}</div>
+                    `;
+                    activityList.appendChild(activityItem);
                 });
-                container.appendChild(card);
-            });
-        }
-    }
-}
+            }
 
-// Year filter
-const yearButtons = document.querySelectorAll('.year-btn');
-const yearSections = document.querySelectorAll('.year-section');
-yearButtons.forEach(button => {
-    button.addEventListener('click', () => {
-        const year = button.dataset.year;
-        yearButtons.forEach(btn => btn.classList.remove('active'));
-        button.classList.add('active');
-        if (year === 'all') {
-            yearSections.forEach(section => section.style.display = 'block');
-        } else {
-            yearSections.forEach(section => {
-                section.style.display = section.dataset.year === year ? 'block' : 'none';
-            });
-        }
-    });
-});
-
-// Navigation
-logoBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    mainContent.style.display = 'block';
-    profileContent.style.display = 'none';
-    onlineTracker.updateUserActivity();
-});
-
-profileBtn.addEventListener('click', () => {
-    mainContent.style.display = 'none';
-    profileContent.style.display = 'block';
-    loadProfile();
-    onlineTracker.updateUserActivity();
-});
-
-backToMainBtn.addEventListener('click', () => {
-    mainContent.style.display = 'block';
-    profileContent.style.display = 'none';
-    onlineTracker.updateUserActivity();
-});
-
-// Temporary password login button
-tempPasswordLoginBtn.addEventListener('click', () => {
-    regModal.style.display = 'none';
-    tempPasswordModal.style.display = 'flex';
-});
-
-// Back to registration from temp password modal
-backToRegBtn.addEventListener('click', () => {
-    tempPasswordModal.style.display = 'none';
-    regModal.style.display = 'flex';
-});
-
-// Temporary password form submission
-tempPasswordForm.addEventListener('submit', async e => {
-    e.preventDefault();
-    tempLoginBtn.classList.add('loading');
-    tempLoginBtn.disabled = true;
-    
-    const phone = document.getElementById('tempPhone').value;
-    const password = document.getElementById('tempPassword').value;
-
-    if (!phone || !password) {
-        tempLoginError.textContent = 'Please enter both phone number and password.';
-        tempLoginBtn.classList.remove('loading');
-        tempLoginBtn.disabled = false;
-        return;
-    }
-
-    const result = await firebaseUserManager.loginWithTemporaryPassword(phone, password);
-    
-    if (result.success) {
-        // Store user data in localStorage
-        localStorage.setItem('currentUser', JSON.stringify(result.user));
-        localStorage.setItem('userYears', JSON.stringify(result.user.registeredYears));
-        localStorage.setItem('verified', 'true');
-        
-        // Initialize online tracking
-        onlineTracker.init(result.user);
-        
-        // Check role for admin
-        if (result.user.role === 'admin') {
-            adminBtn.style.display = 'inline-flex';
-        }
-        
-        // Close modal and show main content
-        tempPasswordModal.style.display = 'none';
-        mainContent.style.display = 'block';
-        renderQuizCards();
-        
-        // Show success message
-        tempLoginError.textContent = '';
-        alert('Login successful! Welcome back ' + result.user.name);
-    } else {
-        tempLoginError.textContent = result.error;
-    }
-
-    tempLoginBtn.classList.remove('loading');
-    tempLoginBtn.disabled = false;
-});
-
-// Toggle between register and login
-loginLink.addEventListener('click', () => {
-    regForm.style.display = 'none';
-    loginForm.style.display = 'block';
-    registerLink.style.display = 'block';
-    loginLink.style.display = 'none';
-    verifyForm.style.display = 'none';
-});
-
-registerLink.addEventListener('click', () => {
-    regForm.style.display = 'block';
-    loginForm.style.display = 'none';
-    registerLink.style.display = 'none';
-    loginLink.style.display = 'block';
-    verifyForm.style.display = 'none';
-});
-
-// Update price display on year selection
-yearSelect.addEventListener('change', () => {
-    const year = yearSelect.value;
-    priceInfo.textContent = year ? `Price: ${prices[year]} ETB` : 'Select Year to View Price';
-});
-
-// Receipt preview
-receiptInput.addEventListener('change', () => {
-    const file = receiptInput.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = e => {
-            receiptPreview.src = e.target.result;
-            receiptPreview.style.display = 'block';
-            uploadText.textContent = 'Change Payment Receipt';
-        };
-        reader.readAsDataURL(file);
-    } else {
-        receiptPreview.style.display = 'none';
-        uploadText.textContent = 'Upload Payment Receipt';
-    }
-});
-
-function copyToClipboard(text, button) {
-    navigator.clipboard.writeText(text).then(() => {
-        const originalText = button.innerHTML;
-        button.innerHTML = '<i class="fas fa-check"></i> Copied!';
-        button.classList.add('copied');
-        
-        setTimeout(() => {
-            button.innerHTML = originalText;
-            button.classList.remove('copied');
-        }, 2000);
-        
-    }).catch(err => {
-        console.error('Failed to copy: ', err);
-        button.innerHTML = '<i class="fas fa-times"></i> Failed';
-        button.style.background = 'var(--error)';
-        
-        setTimeout(() => {
-            button.innerHTML = '<i class="fas fa-copy"></i> Copy';
-            button.style.background = 'var(--primary)';
-        }, 2000);
-    });
-}
-
-// Check verification code expiry
-function isVerificationExpired(timestampKey) {
-    const codeTimestamp = localStorage.getItem(timestampKey);
-    if (!codeTimestamp) return true;
-    const now = new Date().getTime();
-    const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
-    return now - codeTimestamp > twoDaysInMs;
-}
-
-// Initialize modal state
-async function init() {
-    console.log('Checking user authentication...');
-    
-    const currentUser = localStorage.getItem('currentUser');
-    
-    if (currentUser) {
-        try {
-            const user = JSON.parse(currentUser);
-            console.log('Found cached user:', user.name);
-            
-            // Show main content immediately
-            regModal.style.display = 'none';
-            mainContent.style.display = 'block';
-            renderQuizCards();
-
-            // Initialize online tracking
-            onlineTracker.init(user);
-
-            // Initialize notifications
-            initNotifications(user);
-
-            // Add timeout for Firebase check
-            const firebaseCheck = firebaseUserManager.getUserByPhone(user.phone);
-            const timeoutPromise = new Promise((_, reject) => 
-                setTimeout(() => reject(new Error('Timeout')), 5000)
-            );
-
-            const latestUser = await Promise.race([firebaseCheck, timeoutPromise]);
-            
-            if (latestUser && latestUser.status === 'verified') {
-                console.log('User is verified in Firebase');
-                localStorage.setItem('currentUser', JSON.stringify(latestUser));
-                localStorage.setItem('userYears', JSON.stringify(latestUser.registeredYears));
+            // Show toast notification
+            showToast(title, message, type = 'info') {
+                const toastContainer = document.getElementById('toastContainer');
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.innerHTML = `
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                    <div class="toast-content">
+                        <div class="toast-title">${title}</div>
+                        <div class="toast-message">${message}</div>
+                    </div>
+                    <button class="toast-close" onclick="this.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
                 
-                if (latestUser.role === 'admin') {
-                    adminBtn.style.display = 'inline-flex';
+                toastContainer.appendChild(toast);
+                
+                // Show animation
+                setTimeout(() => toast.classList.add('show'), 100);
+                
+                // Auto remove after 5 seconds
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    setTimeout(() => toast.remove(), 300);
+                }, 5000);
+            }
+        }
+
+        // Initialize Notification Manager
+        const notificationManager = new NotificationManager();
+
+        // DOM Elements
+        const notificationForm = document.getElementById('notificationForm');
+        const previewBtn = document.getElementById('previewBtn');
+        const sendBtn = document.getElementById('sendBtn');
+        const notificationType = document.getElementById('notificationType');
+        const notificationTitle = document.getElementById('notificationTitle');
+        const notificationContent = document.getElementById('notificationContent');
+        const notificationPreview = document.getElementById('notificationPreview');
+        const previewTitle = document.getElementById('previewTitle');
+        const previewContent = document.getElementById('previewContent');
+
+        // Formatting buttons
+        document.querySelectorAll('.format-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const format = btn.getAttribute('data-format');
+                const textarea = notificationContent;
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                const selectedText = textarea.value.substring(start, end);
+                
+                let newText = format;
+                if (selectedText) {
+                    if (format === '**Bold**') newText = `**${selectedText}**`;
+                    else if (format === '*Italic*') newText = `*${selectedText}*`;
+                    else if (format === '`Code`') newText = `\`${selectedText}\``;
+                    else if (format === '[Link](https://)') newText = `[${selectedText}](https://)`;
+                    else if (format === '## Heading') newText = `## ${selectedText}`;
+                    else if (format === '- List item') newText = `- ${selectedText}`;
+                    else if (format === '1. Numbered') newText = `1. ${selectedText}`;
+                    else if (format === '> Quote') newText = `> ${selectedText}`;
                 }
-                renderQuizCards();
-            } else {
-                console.log('User verification failed');
-                if (latestUser) {
-                    localStorage.clear();
-                    onlineTracker.cleanup();
-                    showRegistrationModal();
+                
+                textarea.value = textarea.value.substring(0, start) + newText + textarea.value.substring(end);
+                textarea.focus();
+                updatePreview();
+            });
+        });
+
+        // Update preview function
+        function updatePreview() {
+            const type = notificationType.value;
+            const title = notificationTitle.value || 'Notification Title';
+            const content = notificationContent.value;
+            
+            // Update preview styling
+            notificationPreview.className = `notification-preview ${type}`;
+            
+            // Update title
+            previewTitle.textContent = title;
+            
+            // Update content with formatting
+            previewContent.innerHTML = notificationManager.formatContent(content) || '<em>Start typing to see preview...</em>';
+            
+            // Update type badge
+            const typeBadge = previewTitle.querySelector('.type-badge');
+            typeBadge.textContent = type;
+            typeBadge.className = `type-badge ${type}`;
+        }
+
+        // Form submission
+        notificationForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                type: notificationType.value,
+                title: notificationTitle.value,
+                content: notificationContent.value,
+                target: document.querySelector('input[name="target"]:checked').value
+            };
+            
+            // Disable send button and show loading
+            sendBtn.disabled = true;
+            sendBtn.classList.add('loading');
+            sendBtn.innerHTML = '<i class="fas fa-spinner"></i> Sending...';
+            
+            try {
+                const result = await notificationManager.sendNotification(formData);
+                
+                if (result.success) {
+                    // Reset form
+                    notificationForm.reset();
+                    updatePreview();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            } finally {
+                // Re-enable send button
+                sendBtn.disabled = false;
+                sendBtn.classList.remove('loading');
+                sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Notification';
+            }
+        });
+
+        // Event listeners for real-time preview updates
+        notificationType.addEventListener('change', updatePreview);
+        notificationTitle.addEventListener('input', updatePreview);
+        notificationContent.addEventListener('input', updatePreview);
+        previewBtn.addEventListener('click', updatePreview);
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            notificationManager.loadStats();
+            updatePreview();
+            
+            // Add some sample activity
+            notificationManager.logActivity('Notification panel initialized', 'success');
+            notificationManager.logActivity('Ready to send notifications', 'info');
+        });
+
+        // Add keyboard shortcut for preview (Ctrl/Cmd + Enter)
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                if (e.target === notificationContent) {
+                    notificationForm.dispatchEvent(new Event('submit'));
                 }
             }
-        } catch (error) {
-            console.error('Error checking user status:', error);
-            console.log('Using cached user data due to error');
-        }
-    } else {
-        console.log('No cached user found');
-        showRegistrationModal();
-    }
-
-    // Load notification settings from localStorage
-    document.getElementById('soundToggle').checked = localStorage.getItem('notifySound') === 'true';
-    document.getElementById('previewToggle').checked = localStorage.getItem('notifyPreview') !== 'false'; // Default true
-    document.getElementById('emailToggle').checked = localStorage.getItem('notifyEmail') === 'true';
-
-    // Initialize Swiper
-    initSwiper();
-}
-
-// Force status check on page load
-document.addEventListener('DOMContentLoaded', function() {
-    // Check status every minute
-    setInterval(async () => {
-        const currentUser = localStorage.getItem('currentUser');
-        if (currentUser) {
-            const user = JSON.parse(currentUser);
-            const latestUser = await firebaseUserManager.getUserByPhone(user.phone);
-            if (!latestUser || latestUser.status !== 'verified') {
-                localStorage.clear();
-                onlineTracker.cleanup();
-                location.reload();
-            }
-        }
-    }, 60000);
-});
-
-function showRegistrationModal() {
-    regModal.style.display = 'flex';
-    mainContent.style.display = 'none';
-    profileContent.style.display = 'none';
-}
-
-// Back button to return to registration form
-backBtn.addEventListener('click', () => {
-    regForm.style.display = 'block';
-    loginForm.style.display = 'none';
-    registerLink.style.display = 'none';
-    loginLink.style.display = 'block';
-    verifyForm.style.display = 'none';
-    verifyError.textContent = '';
-});
-
-// Registration form submission
-regForm.addEventListener('submit', async e => {
-    e.preventDefault();
-    submitBtn.classList.add('loading');
-    submitBtn.disabled = true;
-    
-    const year = document.getElementById('year').value;
-    const name = document.getElementById('name').value;
-    const phone = document.getElementById('phone').value;
-    const email = document.getElementById('email').value || '';
-    const telegram = document.getElementById('telegram').value || 'N/A';
-    const receipt = document.getElementById('receipt').files[0];
-
-    if (!year || !name || !phone || !receipt) {
-        regError.textContent = 'Please fill all required fields.';
-        submitBtn.classList.remove('loading');
-        submitBtn.disabled = false;
-        return;
-    }
-
-    // Create user in Firebase
-    const userData = {
-        name: name,
-        phone: phone,
-        email: email,
-        telegram: telegram,
-        year: year,
-        price: prices[year]
-    };
-
-    const result = await firebaseUserManager.createUser(userData);
-    
-    if (result.success) {
-        // Send to Telegram with the code
-        const caption = `New Registration\nYear: ${year} (${prices[year]} ETB)\nName: ${name}\nPhone: ${phone}\nEmail: ${email}\nCode: ${result.code}`;
-        const formData = new FormData();
-        formData.append('chat_id', '7897840965');
-        formData.append('photo', receipt);
-        formData.append('caption', caption);
-        formData.append('parse_mode', 'Markdown');
-
-        try {
-            const response = await fetch('https://api.telegram.org/bot8237566699:AAHICwsiqIrs-4_vUdrsORPlD8-WFSFYB2Y/sendPhoto', {
-                method: 'POST',
-                body: formData
-            });
-            const data = await response.json();
-            if (data.ok) {
-                localStorage.setItem('pendingPhone', phone);
-                localStorage.setItem('tempUserData', JSON.stringify(userData));
-                localStorage.setItem('codeTimestamp', new Date().getTime());
-                
-                regForm.style.display = 'none';
-                loginForm.style.display = 'none';
-                verifyForm.style.display = 'block';
-                regError.textContent = '';
-            } else {
-                regError.textContent = 'Error sending to Telegram: ' + data.description;
-            }
-        } catch (err) {
-            regError.textContent = 'Error: ' + err.message;
-        }
-    } else {
-        regError.textContent = 'Error creating user: ' + result.error;
-    }
-
-    submitBtn.classList.remove('loading');
-    submitBtn.disabled = false;
-});
-
-// Login submission
-loginSubmitBtn.addEventListener('click', async () => {
-    loginSubmitBtn.classList.add('loading');
-    loginSubmitBtn.disabled = true;
-    const phone = document.getElementById('loginPhone').value;
-
-    if (!phone) {
-        loginError.textContent = 'Please enter phone number.';
-        loginSubmitBtn.classList.remove('loading');
-        loginSubmitBtn.disabled = false;
-        return;
-    }
-
-    const result = await firebaseUserManager.login(phone);
-    
-    if (result.success) {
-        const user = await firebaseUserManager.getUserByPhone(phone);
-        const caption = `Login Request\nName: ${user.name}\nPhone: ${phone}\nTelegram: ${user.telegram}\nCode: ${result.code}`;
-        const formData = new FormData();
-        formData.append('chat_id', '7897840965');
-        formData.append('text', caption);
-        formData.append('parse_mode', 'Markdown');
-
-        try {
-            const response = await fetch('https://api.telegram.org/bot8237566699:AAHICwsiqIrs-4_vUdrsORPlD8-WFSFYB2Y/sendMessage', {
-                method: 'POST',
-                body: formData
-            });
-            const data = await response.json();
-            if (data.ok) {
-                localStorage.setItem('pendingPhone', phone);
-                localStorage.setItem('codeTimestamp', new Date().getTime());
-                regForm.style.display = 'none';
-                loginForm.style.display = 'none';
-                verifyForm.style.display = 'block';
-                loginError.textContent = '';
-            } else {
-                loginError.textContent = 'Error sending to Telegram: ' + data.description;
-            }
-        } catch (err) {
-            loginError.textContent = 'Error: ' + err.message;
-        }
-    } else {
-        loginError.textContent = result.error;
-    }
-
-    loginSubmitBtn.classList.remove('loading');
-    loginSubmitBtn.disabled = false;
-});
-
-// Verification
-document.getElementById('verifyBtn').addEventListener('click', async () => {
-    const enteredCode = document.getElementById('verifyCode').value;
-    const phone = localStorage.getItem('pendingPhone');
-
-    if (!phone) {
-        verifyError.textContent = 'Session expired. Please register again.';
-        return;
-    }
-
-    const result = await firebaseUserManager.verifyUser(phone, enteredCode);
-    
-    if (result.success) {
-        // Initialize online tracking
-        onlineTracker.init(result.user);
-        
-        // Send verification notification to Telegram
-        const caption = `User Verified\nName: ${result.user.name}\nPhone: ${result.user.phone}\nYear(s): ${result.user.registeredYears.join(', ')}`;
-        const formData = new FormData();
-        formData.append('chat_id', '7897840965');
-        formData.append('text', caption);
-        formData.append('parse_mode', 'Markdown');
-        await fetch('https://api.telegram.org/bot8237566699:AAHICwsiqIrs-4_vUdrsORPlD8-WFSFYB2Y/sendMessage', {
-            method: 'POST',
-            body: formData
         });
-
-        // Store user data in localStorage
-        localStorage.setItem('currentUser', JSON.stringify(result.user));
-        localStorage.setItem('userYears', JSON.stringify(result.user.registeredYears));
-        localStorage.setItem('verified', 'true');
-        localStorage.removeItem('pendingPhone');
-        localStorage.removeItem('tempUserData');
-        localStorage.removeItem('codeTimestamp');
-        
-        // Check role for admin
-        if (result.user.role === 'admin') {
-            adminBtn.style.display = 'inline-flex';
-        }
-        
-        location.reload();
-    } else {
-        verifyError.textContent = result.error;
-    }
-});
-
-// Add Year Logic
-const addModal = document.getElementById('addModal');
-const confirmAddModal = document.getElementById('confirmAddModal');
-const addForm = document.getElementById('addForm');
-const addVerifyForm = document.getElementById('addVerifyForm');
-const addError = document.getElementById('addError');
-const addVerifyError = document.getElementById('addVerifyError');
-const addReceiptInput = document.getElementById('addReceipt');
-const addReceiptPreview = document.getElementById('addReceiptPreview');
-const addUploadText = document.getElementById('addUploadText');
-const addSubmitBtn = document.getElementById('addSubmitBtn');
-const addBackBtn = document.getElementById('addBackBtn');
-const addYearBtn = document.getElementById('addYearBtn');
-const cancelAddBtn = document.getElementById('cancelAddBtn');
-const okAddBtn = document.getElementById('okAddBtn');
-
-addYearBtn.addEventListener('click', () => {
-    confirmAddModal.style.display = 'flex';
-});
-
-cancelAddBtn.addEventListener('click', () => {
-    confirmAddModal.style.display = 'none';
-});
-
-okAddBtn.addEventListener('click', () => {
-    confirmAddModal.style.display = 'none';
-    addModal.style.display = 'flex';
-});
-
-addReceiptInput.addEventListener('change', () => {
-    const file = addReceiptInput.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = e => {
-            addReceiptPreview.src = e.target.result;
-            addReceiptPreview.style.display = 'block';
-            addUploadText.textContent = 'Change Payment Receipt';
-        };
-        reader.readAsDataURL(file);
-    } else {
-        addReceiptPreview.style.display = 'none';
-        addUploadText.textContent = 'Upload Payment Receipt (50 ETB)';
-    }
-});
-
-addBackBtn.addEventListener('click', () => {
-    addForm.style.display = 'block';
-    addVerifyForm.style.display = 'none';
-    addVerifyError.textContent = '';
-});
-
-// Add year form submission
-addForm.addEventListener('submit', async e => {
-    e.preventDefault();
-    addSubmitBtn.classList.add('loading');
-    addSubmitBtn.disabled = true;
-    
-    const addName = document.getElementById('addName').value;
-    const newYear = document.getElementById('newYear').value;
-    const addReceipt = document.getElementById('addReceipt').files[0];
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-
-    if (!addName || !newYear || !addReceipt) {
-        addError.textContent = 'Please fill all required fields.';
-        addSubmitBtn.classList.remove('loading');
-        addSubmitBtn.disabled = false;
-        return;
-    }
-
-    if (addName !== currentUser.name) {
-        addError.textContent = 'Name does not match registered name.';
-        addSubmitBtn.classList.remove('loading');
-        addSubmitBtn.disabled = false;
-        return;
-    }
-
-    const result = await firebaseUserManager.addYearToUser(currentUser.id, newYear, currentUser);
-    
-    if (result.success) {
-        // Send to Telegram
-        const caption = `Add Year\nYears: ${currentUser.registeredYears.join(', ')}\nNew Year: ${newYear}\nName: ${addName}\nPhone: ${currentUser.phone}\nCode: ${result.code}`;
-        const formData = new FormData();
-        formData.append('chat_id', '7897840965');
-        formData.append('photo', addReceipt);
-        formData.append('caption', caption);
-        formData.append('parse_mode', 'Markdown');
-
-        try {
-            const response = await fetch('https://api.telegram.org/bot8237566699:AAHICwsiqIrs-4_vUdrsORPlD8-WFSFYB2Y/sendPhoto', {
-                method: 'POST',
-                body: formData
-            });
-            const data = await response.json();
-            if (data.ok) {
-                localStorage.setItem('pendingYearAddition', 'true');
-                localStorage.setItem('addCodeTimestamp', new Date().getTime());
-                addForm.style.display = 'none';
-                addVerifyForm.style.display = 'block';
-                addError.textContent = '';
-            } else {
-                addError.textContent = 'Error sending to Telegram: ' + data.description;
-            }
-        } catch (err) {
-            addError.textContent = 'Error: ' + err.message;
-        }
-    } else {
-        addError.textContent = 'Error adding year: ' + result.error;
-    }
-
-    addSubmitBtn.classList.remove('loading');
-    addSubmitBtn.disabled = false;
-});
-
-// Year addition verification
-document.getElementById('addVerifyBtn').addEventListener('click', async () => {
-    const enteredCode = document.getElementById('addVerifyCode').value;
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-
-    const result = await firebaseUserManager.verifyYearAddition(currentUser.id, enteredCode);
-    
-    if (result.success) {
-        // Update online tracking with new user data
-        onlineTracker.init(result.user);
-        
-        // Send year addition verification notification to Telegram
-        const caption = `Year Added\nName: ${result.user.name}\nPhone: ${result.user.phone}\nYear(s): ${result.user.registeredYears.join(', ')}`;
-        const formData = new FormData();
-        formData.append('chat_id', '7897840965');
-        formData.append('text', caption);
-        formData.append('parse_mode', 'Markdown');
-        await fetch('https://api.telegram.org/bot8237566699:AAHICwsiqIrs-4_vUdrsORPlD8-WFSFYB2Y/sendMessage', {
-            method: 'POST',
-            body: formData
-        });
-
-        // Update local storage
-        localStorage.setItem('currentUser', JSON.stringify(result.user));
-        localStorage.setItem('userYears', JSON.stringify(result.user.registeredYears));
-        localStorage.removeItem('pendingYearAddition');
-        localStorage.removeItem('addCodeTimestamp');
-        
-        addModal.style.display = 'none';
-        loadProfile();
-        renderQuizCards();
-    } else {
-        addVerifyError.textContent = result.error;
-    }
-});
-
-// Access Denied Modal
-const accessDeniedModal = document.getElementById('accessDeniedModal');
-const deniedMessage = document.getElementById('deniedMessage');
-const closeDeniedBtn = document.getElementById('closeDeniedBtn');
-
-function showAccessDeniedModal(userYears, requestedYear) {
-    deniedMessage.textContent = `You are registered for ${userYears.join(', ')} only. If you really want this year, go to profile and add your year.`;
-    accessDeniedModal.style.display = 'flex';
-}
-
-closeDeniedBtn.addEventListener('click', () => {
-    accessDeniedModal.style.display = 'none';
-});
-
-// Profile Logic
-function loadProfile() {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    if (currentUser) {
-        document.getElementById('profileName').textContent = currentUser.name || 'N/A';
-        document.getElementById('profilePhone').textContent = currentUser.phone || 'N/A';
-        document.getElementById('profileEmail').textContent = currentUser.email || 'N/A';
-        document.getElementById('profileTelegram').textContent = currentUser.telegram || 'N/A';
-        document.getElementById('profileYears').textContent = currentUser.registeredYears.join(', ') || 'N/A';
-    }
-    
-    const profilePicSrc = localStorage.getItem('profilePic');
-    const profilePic = document.getElementById('profilePic');
-    profilePic.src = profilePicSrc || 'https://via.placeholder.com/120?text=User';
-}
-
-const profilePicInput = document.getElementById('profilePicInput');
-profilePicInput.addEventListener('change', () => {
-    const file = profilePicInput.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = e => {
-            localStorage.setItem('profilePic', e.target.result);
-            document.getElementById('profilePic').src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-    }
-});
-
-// Comment Logic
-const sendCommentBtn = document.getElementById('sendCommentBtn');
-const commentBox = document.getElementById('commentBox');
-const commentError = document.getElementById('commentError');
-
-sendCommentBtn.addEventListener('click', async () => {
-    const message = commentBox.value.trim();
-    if (!message) {
-        commentError.textContent = 'Please write a message.';
-        return;
-    }
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    const name = currentUser?.name;
-    const phone = currentUser?.phone;
-    const telegram = currentUser?.telegram || 'N/A';
-    const caption = `Comment\nName: ${name}\nPhone: ${phone}\nMessage: ${message}`;
-
-    const formData = new FormData();
-    formData.append('chat_id', '7897840965');
-    formData.append('text', caption);
-    formData.append('parse_mode', 'Markdown');
-
-    try {
-        sendCommentBtn.classList.add('loading');
-        const response = await fetch('https://api.telegram.org/bot8237566699:AAHICwsiqIrs-4_vUdrsORPlD8-WFSFYB2Y/sendMessage', {
-            method: 'POST',
-            body: formData
-        });
-        const data = await response.json();
-        if (data.ok) {
-            commentBox.value = '';
-            commentError.textContent = '';
-            alert('Comment sent successfully!');
-        } else {
-            commentError.textContent = 'Error sending comment: ' + data.description;
-        }
-    } catch (err) {
-        commentError.textContent = 'Error: ' + err.message;
-    } finally {
-        sendCommentBtn.classList.remove('loading');
-    }
-});
-
-// Enhanced Logout logic with online tracking
-const logoutHandler = async (e) => {
-    e.preventDefault();
-    const logoutCode = Math.floor(100000 + Math.random() * 900000).toString();
-    localStorage.setItem('logoutCode', logoutCode);
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    const userYears = currentUser?.registeredYears || [];
-    const name = currentUser?.name;
-    const phone = currentUser?.phone;
-    const telegram = currentUser?.telegram;
-    const caption = `Logout Request\nName: ${name}\nPhone: ${phone}\nCode: ${logoutCode}`;
-    const formData = new FormData();
-    formData.append('chat_id', '7897840965');
-    formData.append('text', caption);
-    formData.append('parse_mode', 'Markdown');
-    try {
-        const response = await fetch('https://api.telegram.org/bot8237566699:AAHICwsiqIrs-4_vUdrsORPlD8-WFSFYB2Y/sendMessage', {
-            method: 'POST',
-            body: formData
-        });
-        const data = await response.json();
-        if (data.ok) {
-            logoutModal.style.display = 'flex';
-            regModal.style.display = 'none';
-            logoutError.textContent = '';
-        } else {
-            logoutError.textContent = 'Error sending logout code: ' + data.description;
-        }
-    } catch (err) {
-        logoutError.textContent = 'Error: ' + err.message;
-    }
-};
-logout.addEventListener('click', logoutHandler);
-document.getElementById('profileLogoutBtn').addEventListener('click', logoutHandler);
-
-document.getElementById('confirmLogoutBtn').addEventListener('click', async () => {
-    const enteredCode = document.getElementById('logoutCode').value;
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    const name = currentUser?.name;
-    const phone = currentUser?.phone;
-    if (enteredCode === localStorage.getItem('logoutCode')) {
-        // Clean up online tracking first
-        onlineTracker.cleanup();
-        
-        // Send logout confirmation to Telegram
-        const caption = `User Logged Out\nName: ${name}\nPhone: ${phone}`;
-        const formData = new FormData();
-        formData.append('chat_id', '7986574047');
-        formData.append('text', caption);
-        formData.append('parse_mode', 'Markdown');
-        await fetch('https://api.telegram.org/bot8237566699:AAHICwsiqIrs-4_vUdrsORPlD8-WFSFYB2Y/sendMessage', {
-            method: 'POST',
-            body: formData
-        });
-
-        // Remove verification code from Firebase
-        await firebaseUserManager.usersCollection.doc(currentUser.id).update({
-            verificationCode: null,
-            isOnline: false
-        });
-
-        localStorage.clear();
-        location.reload();
-    } else {
-        logoutError.textContent = 'Invalid logout code.';
-    }
-});
-
-// Handle page unload to set user offline
-window.addEventListener('beforeunload', () => {
-    onlineTracker.setOffline();
-});
-
-// Enhanced Notifications Logic with Post Type Functions
-let broadcasts = [];
-let unreadBroadcasts = 0;
-let notificationSound = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmQUAvmWv/N1P'); // Base64 encoded simple beep sound
-
-function initNotifications(user) {
-    if (!user || !user.id) return;
-
-    const broadcastsCollection = db.collection('broadcasts');
-
-    broadcastsCollection.orderBy('timestamp', 'desc').onSnapshot(snapshot => {
-        broadcasts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        updateNotifications(user);
-    });
-}
-
-function updateNotifications(user) {
-    const matchingBroadcasts = broadcasts.filter(broadcast => {
-        switch (broadcast.target) {
-            case 'all':
-                return true;
-            case 'verified':
-                return user.status === 'verified';
-            case 'premium':
-                return user.status === 'premium' || user.plan === 'premium';
-            case 'trial':
-                return user.plan === 'trial';
-            case 'online':
-                return user.isOnline;
-            default:
-                return false;
-        }
-    });
-
-    unreadBroadcasts = matchingBroadcasts.filter(broadcast => !broadcast.readBy.includes(user.id)).length;
-
-    if (unreadBroadcasts > 0) {
-        unreadCount.textContent = unreadBroadcasts;
-        unreadCount.style.display = 'flex';
-        if (localStorage.getItem('notifySound') === 'true') {
-            notificationSound.play().catch(() => {}); // Ignore play errors
-        }
-    } else {
-        unreadCount.style.display = 'none';
-    }
-}
-
-async function markBroadcastAsRead(broadcastId, userId) {
-    const broadcastRef = db.collection('broadcasts').doc(broadcastId);
-    await broadcastRef.update({
-        readBy: firebase.firestore.FieldValue.arrayUnion(userId)
-    });
-}
-
-async function markAllAsRead(userId) {
-    for (const broadcast of broadcasts) {
-        if (!broadcast.readBy.includes(userId)) {
-            await markBroadcastAsRead(broadcast.id, userId);
-        }
-    }
-}
-
-function getNotificationIcon(type) {
-    switch (type.toLowerCase()) {
-        case 'info':
-            return '<i class="fas fa-info-circle notification-icon" style="color: var(--info);"></i>';
-        case 'success':
-            return '<i class="fas fa-check-circle notification-icon" style="color: var(--success);"></i>';
-        case 'warning':
-            return '<i class="fas fa-exclamation-triangle notification-icon" style="color: var(--warning);"></i>';
-        case 'error':
-            return '<i class="fas fa-times-circle notification-icon" style="color: var(--error);"></i>';
-        default:
-            return '<i class="fas fa-bell notification-icon"></i>';
-    }
-}
-
-function renderNotifications(user, searchQuery = '') {
-    let filteredBroadcasts = broadcasts;
-    if (searchQuery) {
-        const lowerQuery = searchQuery.toLowerCase();
-        filteredBroadcasts = broadcasts.filter(broadcast => 
-            broadcast.message.toLowerCase().includes(lowerQuery) || 
-            broadcast.type.toLowerCase().includes(lowerQuery)
-        );
-    }
-
-    const wrapper = document.querySelector('.swiper-wrapper');
-    wrapper.innerHTML = filteredBroadcasts.map((broadcast, index) => {
-        const isUnread = !broadcast.readBy.includes(user.id);
-        const formattedTime = new Date(broadcast.timestamp).toLocaleString();
-        const icon = getNotificationIcon(broadcast.type);
-        const parsedMessage = marked.parse(broadcast.message); // Parse Markdown to HTML
-        const reactions = broadcast.reactions || {};
-        const reactionList = Object.entries(reactions).map(([emoji, count]) => `<span class="reaction">${emoji} ${count}</span>`).join('');
-        return `
-            <div class="swiper-slide">
-                <div class="notification-item ${broadcast.type} ${isUnread ? 'unread' : ''}" data-id="${broadcast.id}">
-                    <div class="notification-header">
-                        ${icon}
-                        <span class="notification-title">${broadcast.type.toUpperCase()} Announcement</span>
-                        <span class="notification-time">${formattedTime}</span>
-                    </div>
-                    <div class="notification-content" style="user-select: text;">${parsedMessage}</div>
-                    <div class="notification-reactions">${reactionList}</div>
-                    <div class="notification-actions">
-                        <button class="action-btn-small" onclick="reactToNotification('${broadcast.id}', '👍')"><i class="fas fa-thumbs-up"></i> Like</button>
-                        <button class="action-btn-small" onclick="commentOnNotification('${broadcast.id}')"><i class="fas fa-comment"></i> Comment</button>
-                    </div>
-                </div>
-            </div>
-        `;
-    }).join('');
-
-    // Add click listeners to mark as read
-    document.querySelectorAll('.notification-item.unread').forEach(item => {
-        item.addEventListener('click', async (e) => {
-            if (!e.target.closest('.notification-actions')) {
-                const broadcastId = item.dataset.id;
-                await markBroadcastAsRead(broadcastId, user.id);
-                item.classList.remove('unread');
-                unreadBroadcasts--;
-                updateUnreadBadge();
-            }
-        });
-    });
-
-    // Reinitialize Swiper after rendering
-    if (swiper) swiper.destroy(true, true);
-    initSwiper();
-}
-
-function updateUnreadBadge() {
-    if (unreadBroadcasts > 0) {
-        unreadCount.textContent = unreadBroadcasts;
-        unreadCount.style.display = 'flex';
-    } else {
-        unreadCount.style.display = 'none';
-    }
-}
-
-// Post Type Functions - Reactions and Comments
-async function reactToNotification(broadcastId, emoji) {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    const broadcastRef = db.collection('broadcasts').doc(broadcastId);
-    await broadcastRef.update({
-        [`reactions.${emoji}`]: firebase.firestore.FieldValue.increment(1)
-    });
-    // Refresh notifications
-    renderNotifications(currentUser);
-}
-
-async function commentOnNotification(broadcastId) {
-    const comment = prompt('Enter your comment:');
-    if (comment) {
-        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        const commentsRef = db.collection('comments').doc(broadcastId).collection('comments');
-        await commentsRef.add({
-            userId: currentUser.id,
-            userName: currentUser.name,
-            comment: comment,
-            timestamp: Date.now()
-        });
-        // Optionally, update broadcast with comment count
-        const broadcastRef = db.collection('broadcasts').doc(broadcastId);
-        await broadcastRef.update({
-            commentCount: firebase.firestore.FieldValue.increment(1)
-        });
-        alert('Comment added!');
-    }
-}
-
-// Notifications button
-notificationsBtn.addEventListener('click', () => {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    if (currentUser) {
-        renderNotifications(currentUser);
-        notificationsModal.style.display = 'flex';
-    }
-});
-
-closeNotificationsBtn.addEventListener('click', () => {
-    notificationsModal.style.display = 'none';
-});
-
-// Notification Settings
-notificationSettingsBtn.addEventListener('click', () => {
-    notificationsModal.style.display = 'none';
-    notificationSettingsModal.style.display = 'flex';
-});
-
-saveSettingsBtn.addEventListener('click', () => {
-    const settings = {
-        sound: document.getElementById('soundToggle').checked,
-        preview: document.getElementById('previewToggle').checked,
-        email: document.getElementById('emailToggle').checked,
-        theme: document.querySelector('#notificationSettingsModal select').value
-    };
-    localStorage.setItem('notifySound', settings.sound);
-    localStorage.setItem('notifyPreview', settings.preview);
-    localStorage.setItem('notifyEmail', settings.email);
-    localStorage.setItem('notifyTheme', settings.theme);
-
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    firebaseUserManager.updateNotificationSettings(currentUser.id, settings);
-
-    notificationSettingsModal.style.display = 'none';
-    notificationsModal.style.display = 'flex';
-});
-
-// Mark All as Read
-markAllReadBtn.addEventListener('click', async () => {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    await markAllAsRead(currentUser.id);
-    renderNotifications(currentUser);
-    unreadBroadcasts = 0;
-    updateUnreadBadge();
-});
-
-footerMarkAllRead.addEventListener('click', async () => {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    await markAllAsRead(currentUser.id);
-    renderNotifications(currentUser);
-    unreadBroadcasts = 0;
-    updateUnreadBadge();
-});
-
-// Search Notifications
-notificationsSearchInput.addEventListener('input', () => {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    renderNotifications(currentUser, notificationsSearchInput.value);
-});
-
-// Initialize
-init();
-renderQuizCards();
-</script>
+    </script>
 </body>
-</html>	
+</html>
