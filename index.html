@@ -353,6 +353,11 @@
             background: rgba(16, 185, 129, 0.1);
             color: var(--trial-color);
         }
+        .status-banned {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--error);
+            border: 1px solid var(--error);
+        }
         .role-badge {
             display: inline-block;
             padding: 0.25rem 0.5rem;
@@ -454,6 +459,14 @@
         }
         .action-trial:hover {
             background: var(--trial-color);
+            color: white;
+        }
+        .action-restore {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+        }
+        .action-restore:hover {
+            background: var(--success);
             color: white;
         }
         .bulk-actions {
@@ -617,6 +630,20 @@
         .btn-danger:hover {
             background: #dc2626;
         }
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+        .btn-warning:hover {
+            background: #ca8a04;
+        }
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        .btn-success:hover {
+            background: #16a34a;
+        }
         .btn-premium {
             background: var(--gradient-premium);
             color: white;
@@ -719,6 +746,14 @@
         .quick-action-btn.trial:hover {
             background: var(--trial-dark);
         }
+        .quick-action-btn.warning {
+            background: var(--warning);
+            color: white;
+            border: none;
+        }
+        .quick-action-btn.warning:hover {
+            background: #ca8a04;
+        }
         .verification-code {
             font-family: monospace;
             background: rgba(59, 130, 246, 0.1);
@@ -748,6 +783,10 @@
         }
         .badge-trial {
             background: var(--trial-gradient);
+            color: white;
+        }
+        .badge-banned {
+            background: var(--error);
             color: white;
         }
         
@@ -826,6 +865,36 @@
             color: var(--trial-color);
         }
 
+        /* Deleted users archive */
+        .archive-header {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%) !important;
+        }
+
+        .deleted-user-row {
+            opacity: 0.7;
+            background: rgba(107, 114, 128, 0.05);
+        }
+
+        .deleted-user-row:hover {
+            opacity: 0.9;
+        }
+
+        /* Enhanced deletion styles */
+        .ban-option {
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid var(--error);
+        }
+
+        .soft-delete-option {
+            background: rgba(234, 179, 8, 0.1);
+            border-left: 4px solid var(--warning);
+        }
+
+        .hard-delete-option {
+            background: rgba(107, 114, 128, 0.1);
+            border-left: 4px solid var(--text-tertiary);
+        }
+
         @media (max-width: 768px) {
             .header-container {
                 padding: 0.75rem;
@@ -864,6 +933,274 @@
                 grid-template-columns: 1fr;
             }
         }
+    .btn-sm {
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+    }
+    
+    .mobile-menu-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border);
+    }
+    
+    .mobile-menu-items {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .mobile-menu-item {
+        padding: 1rem;
+        background: var(--background);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        cursor: pointer;
+        transition: var(--transition);
+        text-align: left;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1rem;
+    }
+    
+    .mobile-menu-item:hover {
+        background: var(--primary-light);
+        border-color: var(--primary-light);
+    }
+    
+    @media (max-width: 768px) {
+        #mobileMenuBtn {
+            display: flex;
+        }
+        
+        .bulk-actions {
+            flex-direction: column;
+        }
+        
+        .quick-actions {
+            flex-wrap: wrap;
+        }
+        
+        .quick-action-btn {
+            flex: 1;
+            min-width: 120px;
+        }
+    }
+    /* Quick Action Button Styles */
+.quick-action-btn {
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+}
+
+.quick-action-btn:hover {
+    background: var(--primary-light);
+    border-color: var(--primary-light);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+.quick-action-btn:active {
+    transform: translateY(0);
+}
+
+/* Warning Button (Logout Selected) */
+.quick-action-btn.warning {
+    background: var(--warning);
+    color: white;
+    border-color: var(--warning);
+}
+
+.quick-action-btn.warning:hover {
+    background: #ca8a04;
+    border-color: #ca8a04;
+    color: white;
+}
+
+.quick-action-btn.warning:active {
+    background: #a16207;
+}
+
+/* Danger Button (Logout All Active) */
+.quick-action-btn.danger {
+    background: var(--error);
+    color: white;
+    border-color: var(--error);
+}
+
+.quick-action-btn.danger:hover {
+    background: #dc2626;
+    border-color: #dc2626;
+    color: white;
+}
+
+.quick-action-btn.danger:active {
+    background: #b91c1c;
+}
+
+/* Button States */
+.quick-action-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.quick-action-btn:disabled:hover {
+    background: var(--surface);
+    border-color: var(--border);
+    transform: none;
+    box-shadow: none;
+}
+
+/* Loading state for buttons */
+.quick-action-btn.loading {
+    position: relative;
+    color: transparent;
+}
+
+.quick-action-btn.loading::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.quick-action-btn.warning.loading::after {
+    border-top-color: white;
+}
+
+.quick-action-btn.danger.loading::after {
+    border-top-color: white;
+}
+
+/* Button icons */
+.quick-action-btn i {
+    font-size: 0.8rem;
+    transition: var(--transition);
+}
+
+.quick-action-btn:hover i {
+    transform: scale(1.1);
+}
+
+.quick-action-btn.warning:hover i {
+    animation: shake 0.5s ease-in-out;
+}
+
+.quick-action-btn.danger:hover i {
+    animation: pulse 0.5s ease-in-out;
+}
+
+/* Animations */
+@keyframes shake {
+    0%, 100% { transform: translateX(0) scale(1.1); }
+    25% { transform: translateX(-2px) scale(1.1); }
+    75% { transform: translateX(2px) scale(1.1); }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1.1); }
+    50% { transform: scale(1.3); }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .quick-action-btn {
+        padding: 0.75rem 1rem;
+        font-size: 0.8rem;
+        flex: 1;
+        min-width: 140px;
+        justify-content: center;
+    }
+    
+    .quick-action-btn i {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .quick-actions {
+        gap: 0.5rem;
+    }
+    
+    .quick-action-btn {
+        min-width: 120px;
+        padding: 0.6rem 0.8rem;
+        font-size: 0.75rem;
+    }
+    
+    .quick-action-btn i {
+        font-size: 0.8rem;
+    }
+}
+
+/* Button group styling for the quick actions section */
+.quick-actions {
+    display: flex;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+    background: var(--background);
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+}
+
+/* Focus states for accessibility */
+.quick-action-btn:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+.quick-action-btn.warning:focus {
+    outline-color: var(--warning);
+}
+
+.quick-action-btn.danger:focus {
+    outline-color: var(--error);
+}
+
+/* Dark mode adjustments */
+body.dark-mode .quick-action-btn:not(.warning):not(.danger) {
+    background: var(--surface);
+    color: var(--text-primary);
+    border-color: var(--border);
+}
+
+body.dark-mode .quick-action-btn:not(.warning):not(.danger):hover {
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+/* Light mode adjustments */
+body.light-mode .quick-action-btn:not(.warning):not(.danger) {
+    background: white;
+    color: var(--text-primary);
+    border-color: var(--border);
+}
+
+body.light-mode .quick-action-btn:not(.warning):not(.danger):hover {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+}
     </style>
 </head>
 <body class="dark-mode">
@@ -934,6 +1271,7 @@
                             <option value="verified">Verified</option>
                             <option value="rejected">Rejected</option>
                             <option value="premium">Premium</option>
+                            <option value="banned">Banned</option>
                         </select>
                     </div>
                     <div class="input-group">
@@ -1059,6 +1397,7 @@
                             <option value="verified">Verified</option>
                             <option value="rejected">Rejected</option>
                             <option value="premium">Premium</option>
+                            <option value="banned">Banned</option>
                         </select>
                     </div>
                     <div class="input-group">
@@ -1129,18 +1468,175 @@
         </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
-    <div id="deleteConfirmModal" class="modal">
+    <!-- Enhanced Delete Confirmation Modal -->
+    <div id="enhancedDeleteModal" class="modal">
         <div class="modal-content">
-            <h2><i class="fas fa-exclamation-triangle"></i> Confirm Deletion</h2>
-            <p id="deleteMessage">Are you sure you want to delete this user?</p>
+            <h2><i class="fas fa-exclamation-triangle"></i> Enhanced User Deletion</h2>
+            <div id="deleteUserDetails" style="text-align: left; margin: 1rem 0; padding: 1rem; background: rgba(239, 68, 68, 0.1); border-radius: var(--radius);">
+                <!-- User details will be populated here -->
+            </div>
+            
+            <div class="input-group">
+                <i class="fas fa-comment"></i>
+                <textarea id="deleteReason" placeholder="Reason for deletion (optional but recommended)" style="min-height: 80px;"></textarea>
+            </div>
+            
+            <div class="input-group">
+                <i class="fas fa-ban"></i>
+                <select id="banOption">
+                    <option value="soft">Soft Delete (Can be restored)</option>
+                    <option value="hard">Permanent Delete (Cannot be restored)</option>
+                    <option value="ban">Ban User (Prevent future registration)</option>
+                </select>
+            </div>
+            
+            <div id="banDurationSection" class="input-group" style="display: none;">
+                <i class="fas fa-clock"></i>
+                <select id="banDuration">
+                    <option value="1d">1 Day</option>
+                    <option value="7d">1 Week</option>
+                    <option value="30d">1 Month</option>
+                    <option value="permanent">Permanent</option>
+                </select>
+            </div>
+            
             <div class="modal-actions">
-                <button class="btn btn-danger" id="confirmDeleteBtn"><i class="fas fa-trash"></i> Delete</button>
-                <button class="btn btn-secondary" id="cancelDeleteBtn"><i class="fas fa-times"></i> Cancel</button>
+                <button class="btn btn-danger" id="confirmEnhancedDeleteBtn">
+                    <i class="fas fa-trash"></i> Confirm Deletion
+                </button>
+                <button class="btn btn-secondary" id="cancelEnhancedDeleteBtn">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
+            
+            <div style="margin-top: 1rem; font-size: 0.8rem; color: var(--text-secondary);">
+                <i class="fas fa-info-circle"></i> 
+                <strong>Soft Delete:</strong> User data is archived and can be restored<br>
+                <strong>Hard Delete:</strong> User data is permanently removed<br>
+                <strong>Ban:</strong> User is blocked from accessing the system
             </div>
         </div>
     </div>
+    <!-- Delete Confirmation Modal -->
+<div id="deleteConfirmModal" class="modal">
+    <div class="modal-content">
+        <h2><i class="fas fa-exclamation-triangle"></i> Confirm Deletion</h2>
+        <p id="deleteMessage">Are you sure you want to delete this user?</p>
+        <div class="modal-actions">
+            <button class="btn btn-danger" id="confirmDeleteBtn">
+                <i class="fas fa-trash"></i> Delete
+            </button>
+            <button class="btn btn-secondary" id="cancelDeleteBtn">
+                <i class="fas fa-times"></i> Cancel
+            </button>
+        </div>
+    </div>
+</div>
 
+
+<!-- Simple Delete Modal (for backward compatibility) -->
+<div id="simpleDeleteModal" class="modal">
+    <div class="modal-content">
+        <h2><i class="fas fa-exclamation-triangle"></i> Confirm Deletion</h2>
+        <p id="simpleDeleteMessage">Are you sure you want to delete this item?</p>
+        <div class="modal-actions">
+            <button class="btn btn-danger" id="confirmSimpleDeleteBtn">
+                <i class="fas fa-trash"></i> Delete
+            </button>
+            <button class="btn btn-secondary" id="cancelSimpleDeleteBtn">
+                <i class="fas fa-times"></i> Cancel
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Spinner -->
+<div id="loadingSpinner" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div style="text-align: center; padding: 2rem;">
+            <i class="fas fa-spinner fa-spin" style="font-size: 3rem; color: var(--primary); margin-bottom: 1rem;"></i>
+            <p>Loading...</p>
+        </div>
+    </div>
+</div>
+
+<!-- Success Message Container -->
+<div id="successMessage" style="display: none; position: fixed; top: 100px; right: 20px; padding: 1rem 1.5rem; border-radius: var(--radius); background: var(--success); color: white; font-weight: 600; z-index: 10000;"></div>
+
+<!-- Error Message Container -->
+<div id="errorMessage" style="display: none; position: fixed; top: 100px; right: 20px; padding: 1rem 1.5rem; border-radius: var(--radius); background: var(--error); color: white; font-weight: 600; z-index: 10000;"></div>
+
+<!-- Bulk Actions Panel -->
+<div id="bulkActionsPanel" style="display: none; position: fixed; bottom: 20px; right: 20px; background: var(--surface); padding: 1rem; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); z-index: 999;">
+    <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem;">
+        <span id="bulkSelectionCount" style="font-weight: 600;">0 items selected</span>
+        <button class="action-btn" onclick="hideBulkActions()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <button class="btn btn-primary btn-sm" onclick="userManager.bulkVerify()">
+            <i class="fas fa-check-circle"></i> Verify
+        </button>
+        <button class="btn btn-secondary btn-sm" onclick="userManager.bulkReject()">
+            <i class="fas fa-times-circle"></i> Reject
+        </button>
+        <button class="btn btn-premium btn-sm" onclick="userManager.bulkPromoteToModerator()">
+            <i class="fas fa-user-shield"></i> Promote
+        </button>
+        <button class="btn btn-trial btn-sm" onclick="userManager.bulkStartTrial()">
+            <i class="fas fa-gift"></i> Trial
+        </button>
+        <button class="btn btn-danger btn-sm" onclick="userManager.showEnhancedBulkDeleteModal()">
+            <i class="fas fa-trash"></i> Delete
+        </button>
+    </div>
+</div>
+
+<!-- Quick Stats Summary -->
+<div id="quickStats" style="display: none; position: fixed; top: 100px; left: 20px; background: var(--surface); padding: 1rem; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); z-index: 998;">
+    <h4 style="margin-bottom: 0.5rem;">Quick Stats</h4>
+    <div id="quickStatsContent">
+        <!-- Stats will be populated here -->
+    </div>
+</div>
+
+<!-- Mobile Menu (for smaller screens) -->
+<div id="mobileMenu" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="mobile-menu-header">
+            <h3>Admin Menu</h3>
+            <button class="action-btn" onclick="closeMobileMenu()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="mobile-menu-items">
+            <button class="mobile-menu-item" onclick="switchTab('users')">
+                <i class="fas fa-users"></i> Users
+            </button>
+            <button class="mobile-menu-item" onclick="switchTab('broadcasts')">
+                <i class="fas fa-bullhorn"></i> Broadcasts
+            </button>
+            <button class="mobile-menu-item" onclick="switchTab('localstorage')">
+                <i class="fas fa-database"></i> LocalStorage
+            </button>
+            <button class="mobile-menu-item" onclick="userManager.toggleDeletedUsers()">
+                <i class="fas fa-archive"></i> Deleted Users
+            </button>
+            <button class="mobile-menu-item" onclick="openBroadcastModal()">
+                <i class="fas fa-plus"></i> New Broadcast
+            </button>
+            <button class="mobile-menu-item" onclick="showQuickStats()">
+                <i class="fas fa-chart-bar"></i> Quick Stats
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Mobile Menu Button (for smaller screens) -->
+<button id="mobileMenuBtn" class="action-btn" style="display: none; position: fixed; bottom: 20px; left: 20px; z-index: 997;">
+    <i class="fas fa-bars"></i>
+</button>
     <!-- Broadcast Message Modal -->
     <div id="broadcastModal" class="modal">
         <div class="modal-content">
@@ -1243,12 +1739,13 @@
     <main id="adminContent" class="main-content">
         <div class="page-header">
             <h1 class="page-title">Enhanced Admin Panel</h1>
-            <p class="page-subtitle">User and Broadcast Management with Free Trial System</p>
+            <p class="page-subtitle">Complete User and Broadcast Management with Enhanced Deletion System</p>
         </div>
         
         <div class="tab-container">
             <button class="tab-btn active" data-tab="users">Users</button>
             <button class="tab-btn" data-tab="broadcasts">Broadcasts</button>
+            <button class="tab-btn" data-tab="localstorage">LocalStorage</button>
         </div>
         
         <div class="tab-content active" id="usersTab">
@@ -1321,10 +1818,27 @@
                     <button class="quick-action-btn trial" onclick="userManager.bulkStartTrial()">
                         <i class="fas fa-gift"></i> Start Free Trial
                     </button>
-                    <button class="quick-action-btn danger" onclick="userManager.bulkDelete()">
+                    <button class="quick-action-btn danger" onclick="userManager.showEnhancedBulkDeleteModal()">
                         <i class="fas fa-trash"></i> Delete Selected
                     </button>
+                     <button class="quick-action-btn" onclick="userManager.bulkVerify()">
+        <i class="fas fa-check-circle"></i> Verify Selected
+    </button>
+    <button class="quick-action-btn" onclick="userManager.bulkReject()">
+        <i class="fas fa-times-circle"></i> Reject Selected
+    </button>
+    <!-- ... other existing buttons ... -->
+    
+    <!-- ADD THESE NEW BUTTONS: -->
+    <button class="quick-action-btn warning" onclick="userManager.forceLogoutSelected()">
+        <i class="fas fa-sign-out-alt"></i> Logout Selected
+    </button>
+    <button class="quick-action-btn danger" onclick="userManager.forceLogoutAllActive()">
+        <i class="fas fa-users-slash"></i> Logout All Active
+    </button>
+                    
                 </div>
+                
                 
                 <div class="admin-controls">
                     <div class="search-box">
@@ -1338,6 +1852,7 @@
                             <option value="verified">Verified</option>
                             <option value="rejected">Rejected</option>
                             <option value="premium">Premium</option>
+                            <option value="banned">Banned</option>
                         </select>
                         <select id="roleFilter" class="filter-select">
                             <option value="all">All Roles</option>
@@ -1415,6 +1930,69 @@
                 <div class="pagination" id="pagination">
                     <!-- Pagination will be generated here -->
                 </div>
+            </div>
+
+            <!-- Deleted Users Archive -->
+            <div class="admin-panel" style="margin-top: 2rem; display: none;" id="deletedUsersPanel">
+                <div class="admin-header archive-header">
+                    <h2><i class="fas fa-archive"></i> Deleted Users Archive</h2>
+                    <button class="action-btn" onclick="userManager.toggleDeletedUsers()">
+                        <i class="fas fa-times"></i> Close Archive
+                    </button>
+                </div>
+                
+                <div class="admin-controls">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="deletedUsersSearch" placeholder="Search deleted users...">
+                    </div>
+                    <div class="filter-group">
+                        <select id="deletionTypeFilter" class="filter-select">
+                            <option value="all">All Deletion Types</option>
+                            <option value="soft">Soft Deleted</option>
+                            <option value="hard">Hard Deleted</option>
+                            <option value="banned">Banned</option>
+                        </select>
+                        <select id="deletionTimeFilter" class="filter-select">
+                            <option value="all">Any Time</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="users-table-container">
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>User Info</th>
+                                <th>Deletion Details</th>
+                                <th>Deleted By</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="deletedUsersTableBody">
+                            <!-- Deleted users will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="bulk-actions">
+                    <button class="btn btn-success" onclick="userManager.bulkRestoreUsers()">
+                        <i class="fas fa-undo"></i> Restore Selected
+                    </button>
+                    <button class="btn btn-danger" onclick="userManager.bulkPermanentDelete()">
+                        <i class="fas fa-trash"></i> Permanent Delete Selected
+                    </button>
+                </div>
+            </div>
+
+            <!-- Show Deleted Users Button -->
+            <div style="text-align: center; margin: 1rem 0;">
+                <button class="btn btn-secondary" onclick="userManager.toggleDeletedUsers()" id="showDeletedUsersBtn">
+                    <i class="fas fa-archive"></i> Show Deleted Users Archive
+                </button>
             </div>
         </div>
         
@@ -1504,7 +2082,63 @@
                 </div>
             </div>
         </div>
+
+        <div class="tab-content" id="localstorageTab">
+            <!-- LocalStorage Management Section -->
+            <div class="admin-panel">
+                <div class="admin-header">
+                    <h2><i class="fas fa-database"></i> LocalStorage Management</h2>
+                </div>
+                
+                <div class="admin-controls">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="localStorageSearch" placeholder="Search users to clear localStorage...">
+                    </div>
+                    <button class="btn btn-warning" onclick="userManager.showLocalStorageUsers()">
+                        <i class="fas fa-sync"></i> Refresh Online Users
+                    </button>
+                </div>
+                
+                <div class="users-table-container">
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>LocalStorage Status</th>
+                                <th>Last Active</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="localStorageUsersBody">
+                            <!-- Online users with localStorage data will be listed here -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="bulk-actions">
+                    <button class="btn btn-warning" onclick="userManager.clearAllLocalStorage()">
+                        <i class="fas fa-broom"></i> Clear All Active Sessions
+                    </button>
+                    <button class="btn btn-danger" onclick="userManager.forceLogoutAll()">
+                        <i class="fas fa-sign-out-alt"></i> Force Logout All Users
+                    </button>
+                </div>
+            </div>
+        </div>
     </main>
+    <!-- Add these buttons to your admin controls -->
+<div class="quick-actions">
+    <!-- Existing buttons... -->
+    
+    <button class="quick-action-btn warning" onclick="userManager.forceLogoutSelected()">
+        <i class="fas fa-sign-out-alt"></i> Logout Selected
+    </button>
+    
+    <button class="quick-action-btn danger" onclick="userManager.forceLogoutAllActive()">
+        <i class="fas fa-users-slash"></i> Logout All Active
+    </button>
+</div>
 
     <script>
         // Firebase configuration
@@ -1527,11 +2161,13 @@
             password: "alif1noth"
         };
 
-        // Enhanced User Management Class with Trial System
+        // Enhanced User Management Class with Complete Deletion System
         class EnhancedUserManager {
             constructor() {
                 this.usersCollection = db.collection('users');
                 this.trialsCollection = db.collection('trials');
+                this.deletedUsersCollection = db.collection('deletedUsers');
+                this.adminLogsCollection = db.collection('adminLogs');
                 this.users = [];
                 this.filteredUsers = [];
                 this.selectedUsers = new Set();
@@ -1763,6 +2399,7 @@
                     const isModerator = user.role === 'moderator';
                     const isTrialUser = user.isTrial || user.plan === 'trial';
                     const isTrialActive = this.isTrialActive(user);
+                    const isBanned = user.status === 'banned';
                     
                     // Get online status
                     const onlineUser = this.onlineUsers.get(user.id);
@@ -1810,6 +2447,7 @@
                                 ${isNew ? '<span class="user-badge badge-new">NEW</span>' : ''}
                                 ${user.status === 'verified' ? '<span class="user-badge badge-verified">VERIFIED</span>' : ''}
                                 ${isTrialUser && isTrialActive ? '<span class="user-badge badge-trial">TRIAL</span>' : ''}
+                                ${isBanned ? '<span class="user-badge badge-banned">BANNED</span>' : ''}
                             </div>
                             <div class="online-status">
                                 <span class="status-dot ${status}" title="${status === 'online' ? 'Online' : status === 'idle' ? 'Idle' : 'Offline'}"></span>
@@ -1872,7 +2510,7 @@
                                     <i class="fas fa-user-tag"></i>
                                 </div>
                             ` : ''}
-                            ${!isTrialUser ? `
+                            ${!isTrialUser && !isBanned ? `
                                 <div class="action-icon action-trial" data-user-id="${user.id}" title="Start Trial">
                                     <i class="fas fa-gift"></i>
                                 </div>
@@ -1968,7 +2606,7 @@
                 document.querySelectorAll('.action-delete').forEach(btn => {
                     btn.addEventListener('click', () => {
                         const userId = btn.dataset.userId;
-                        this.confirmDeleteUser(userId);
+                        this.showEnhancedDeleteModal(userId);
                     });
                 });
             }
@@ -2150,7 +2788,7 @@
                     });
                     
                     // Create trial record
-                    await db.collection('trials').add({
+                    await this.trialsCollection.add({
                         phone: user.phone,
                         name: user.name,
                         startDate: Date.now(),
@@ -2211,7 +2849,7 @@
                     
                     // Create trial record if it's a trial user
                     if (userData.plan === 'trial') {
-                        await db.collection('trials').add({
+                        await this.trialsCollection.add({
                             phone: userData.phone,
                             name: userData.name,
                             startDate: userRecord.trialStart,
@@ -2228,25 +2866,623 @@
                 }
             }
 
-            confirmDeleteUser(userId) {
+            // Enhanced delete user method
+            async enhancedDeleteUser(userId, deleteType = 'soft', reason = '', banDuration = null) {
                 const user = this.users.find(u => u.id === userId);
                 if (!user) return;
 
-                document.getElementById('deleteMessage').textContent = 
-                    `Are you sure you want to delete user "${user.name}" (${user.phone})? This action cannot be undone.`;
-                
-                document.getElementById('confirmDeleteBtn').onclick = () => this.deleteUser(userId);
-                document.getElementById('deleteConfirmModal').style.display = 'flex';
-            }
-
-            async deleteUser(userId) {
                 try {
-                    await this.usersCollection.doc(userId).delete();
-                    document.getElementById('deleteConfirmModal').style.display = 'none';
-                    this.showMessage('User deleted successfully', 'success');
+                    const adminUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                    
+                    const deletionRecord = {
+                        originalUser: user,
+                        deletedAt: Date.now(),
+                        deletedBy: adminUser.name || 'Admin',
+                        deletedById: adminUser.id,
+                        deleteType: deleteType,
+                        reason: reason,
+                        banDuration: banDuration,
+                        banExpires: banDuration ? this.calculateBanExpiry(banDuration) : null
+                    };
+
+                    // Send logout signal to user BEFORE deletion
+                    await this.sendLogoutCommand(user.phone, 'logout', reason);
+
+                    if (deleteType === 'soft') {
+                        // Move to deleted users collection
+                        await this.deletedUsersCollection.doc(userId).set(deletionRecord);
+                        // Remove from active users
+                        await this.usersCollection.doc(userId).delete();
+                    } 
+                    else if (deleteType === 'hard') {
+                        // Permanent deletion - remove from both collections
+                        await this.usersCollection.doc(userId).delete();
+                        await this.deletedUsersCollection.doc(userId).delete();
+                        
+                        // Also delete from trials collection if exists
+                        const trialSnapshot = await this.trialsCollection.where('userId', '==', userId).get();
+                        trialSnapshot.forEach(async doc => {
+                            await doc.ref.delete();
+                        });
+                    }
+                    else if (deleteType === 'ban') {
+                        // Ban user - mark as banned but keep record
+                        await this.usersCollection.doc(userId).update({
+                            status: 'banned',
+                            bannedAt: Date.now(),
+                            banReason: reason,
+                            banExpires: deletionRecord.banExpires,
+                            bannedBy: adminUser.name || 'Admin',
+                            isOnline: false // Force offline status
+                        });
+                        
+                        // Also add to deleted users archive for tracking
+                        await this.deletedUsersCollection.doc(userId).set(deletionRecord);
+                    }
+
+                    // Force clear user's localStorage by sending a broadcast
+                    await this.forceClearUserLocalStorage(user.phone);
+
+                    // Log the deletion
+                    await this.adminLogsCollection.add({
+                        action: 'user_deletion',
+                        targetUserId: userId,
+                        targetUserName: user.name,
+                        targetUserPhone: user.phone,
+                        adminId: adminUser.id,
+                        adminName: adminUser.name,
+                        deleteType: deleteType,
+                        reason: reason,
+                        timestamp: Date.now(),
+                        localStorageCleared: true
+                    });
+
+                    this.showMessage(`User ${deleteType === 'ban' ? 'banned' : 'deleted'} successfully. LocalStorage cleanup initiated.`, 'success');
+                    
                 } catch (error) {
                     console.error('Error deleting user:', error);
                     this.showMessage('Error deleting user: ' + error.message, 'error');
+                }
+            }
+
+            // Enhanced bulk delete with localStorage cleanup
+            async enhancedBulkDelete(deleteType = 'soft', reason = 'Bulk deletion') {
+                if (this.selectedUsers.size === 0) return;
+                
+                try {
+                    const batch = db.batch();
+                    const adminUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                    const userPhones = [];
+                    
+                    // First, collect all user phones for localStorage cleanup
+                    this.selectedUsers.forEach(userId => {
+                        const user = this.users.find(u => u.id === userId);
+                        if (user && user.phone) {
+                            userPhones.push(user.phone);
+                        }
+                    });
+                    
+                    // Send localStorage cleanup signals
+                    await this.bulkLogoutUsers(userPhones, reason);
+                    
+                    // Process deletions
+                    this.selectedUsers.forEach(userId => {
+                        const user = this.users.find(u => u.id === userId);
+                        if (!user) return;
+                        
+                        const userRef = this.usersCollection.doc(userId);
+                        
+                        if (deleteType === 'soft') {
+                            // Move to deleted users
+                            const deletionRecord = {
+                                originalUser: user,
+                                deletedAt: Date.now(),
+                                deletedBy: adminUser.name || 'Admin',
+                                deletedById: adminUser.id,
+                                deleteType: 'soft',
+                                reason: reason
+                            };
+                            
+                            this.deletedUsersCollection.doc(userId).set(deletionRecord);
+                            batch.delete(userRef);
+                        } 
+                        else if (deleteType === 'hard') {
+                            batch.delete(userRef);
+                        }
+                        else if (deleteType === 'ban') {
+                            batch.update(userRef, {
+                                status: 'banned',
+                                bannedAt: Date.now(),
+                                banReason: reason,
+                                bannedBy: adminUser.name || 'Admin',
+                                isOnline: false,
+                                forceLogout: true
+                            });
+                        }
+                    });
+                    
+                    await batch.commit();
+                    
+                    // Log bulk action
+                    await this.adminLogsCollection.add({
+                        action: 'bulk_user_deletion',
+                        count: this.selectedUsers.size,
+                        deleteType: deleteType,
+                        reason: reason,
+                        adminId: adminUser.id,
+                        adminName: adminUser.name,
+                        timestamp: Date.now(),
+                        localStorageCleared: true,
+                        usersAffected: userPhones
+                    });
+                    
+                    this.selectedUsers.clear();
+                    this.showMessage(`${this.selectedUsers.size} users ${deleteType === 'ban' ? 'banned' : 'deleted'}. LocalStorage cleanup initiated.`, 'success');
+                    
+                } catch (error) {
+                    console.error('Error bulk deleting users:', error);
+                    this.showMessage('Error deleting users: ' + error.message, 'error');
+                }
+            }
+
+            // Show enhanced delete modal for single user
+            showEnhancedDeleteModal(userId) {
+                const user = this.users.find(u => u.id === userId);
+                if (!user) return;
+
+                const userDetails = document.getElementById('deleteUserDetails');
+                userDetails.innerHTML = `
+                    <div style="margin-bottom: 0.5rem;">
+                        <strong>User:</strong> ${user.name} (${user.phone})
+                    </div>
+                    <div style="margin-bottom: 0.5rem;">
+                        <strong>Registered:</strong> ${user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
+                    </div>
+                    <div style="margin-bottom: 0.5rem;">
+                        <strong>Status:</strong> ${user.status || 'pending'}
+                    </div>
+                    <div style="margin-bottom: 0.5rem;">
+                        <strong>Years:</strong> ${user.registeredYears ? user.registeredYears.join(', ') : 'N/A'}
+                    </div>
+                    ${user.lastActive ? `<div><strong>Last Active:</strong> ${this.formatLastSeen(user.lastActive)}</div>` : ''}
+                `;
+
+                document.getElementById('deleteReason').value = '';
+                document.getElementById('banOption').value = 'soft';
+                document.getElementById('banDurationSection').style.display = 'none';
+
+                // Set up event listeners
+                document.getElementById('banOption').onchange = (e) => {
+                    document.getElementById('banDurationSection').style.display = 
+                        e.target.value === 'ban' ? 'block' : 'none';
+                };
+
+                document.getElementById('confirmEnhancedDeleteBtn').onclick = () => {
+                    const deleteType = document.getElementById('banOption').value;
+                    const reason = document.getElementById('deleteReason').value;
+                    const banDuration = deleteType === 'ban' ? document.getElementById('banDuration').value : null;
+                    
+                    this.enhancedDeleteUser(userId, deleteType, reason, banDuration);
+                    document.getElementById('enhancedDeleteModal').style.display = 'none';
+                };
+
+                document.getElementById('cancelEnhancedDeleteBtn').onclick = () => {
+                    document.getElementById('enhancedDeleteModal').style.display = 'none';
+                };
+
+                document.getElementById('enhancedDeleteModal').style.display = 'flex';
+            }
+
+            // Enhanced bulk delete modal
+            showEnhancedBulkDeleteModal() {
+                if (this.selectedUsers.size === 0) return;
+
+                const userDetails = document.getElementById('deleteUserDetails');
+                userDetails.innerHTML = `
+                    <div style="margin-bottom: 0.5rem;">
+                        <strong>Selected Users:</strong> ${this.selectedUsers.size} users
+                    </div>
+                    <div style="margin-bottom: 0.5rem;">
+                        <strong>Action:</strong> Choose deletion type below
+                    </div>
+                `;
+
+                document.getElementById('deleteReason').value = 'Bulk deletion by admin';
+                document.getElementById('banOption').value = 'soft';
+                document.getElementById('banDurationSection').style.display = 'none';
+
+                // Set up event listeners
+                document.getElementById('banOption').onchange = (e) => {
+                    document.getElementById('banDurationSection').style.display = 
+                        e.target.value === 'ban' ? 'block' : 'none';
+                };
+
+                document.getElementById('confirmEnhancedDeleteBtn').onclick = () => {
+                    const deleteType = document.getElementById('banOption').value;
+                    const reason = document.getElementById('deleteReason').value;
+                    const banDuration = deleteType === 'ban' ? document.getElementById('banDuration').value : null;
+                    
+                    this.enhancedBulkDelete(deleteType, reason, banDuration);
+                    document.getElementById('enhancedDeleteModal').style.display = 'none';
+                };
+
+                document.getElementById('cancelEnhancedDeleteBtn').onclick = () => {
+                    document.getElementById('enhancedDeleteModal').style.display = 'none';
+                };
+
+                document.getElementById('enhancedDeleteModal').style.display = 'flex';
+            }
+
+            // Calculate ban expiry
+            calculateBanExpiry(duration) {
+                const now = Date.now();
+                switch(duration) {
+                    case '1d': return now + (24 * 60 * 60 * 1000);
+                    case '7d': return now + (7 * 24 * 60 * 60 * 1000);
+                    case '30d': return now + (30 * 24 * 60 * 60 * 1000);
+                    case 'permanent': return null;
+                    default: return now + (24 * 60 * 60 * 1000);
+                }
+            }
+
+            // Notify user to logout and clear localStorage
+           // Enhanced method to send logout commands
+async sendLogoutCommand(userPhone, commandType = 'logout', reason = 'Admin action') {
+    try {
+        const broadcastData = {
+            type: 'admin_command',
+            message: this.getLogoutMessage(commandType, reason),
+            target: 'specific',
+            targetPhone: userPhone,
+            timestamp: Date.now(),
+            action: this.getLogoutAction(commandType),
+            reason: reason,
+            urgent: true,
+            admin: JSON.parse(localStorage.getItem('currentUser') || '{}').name || 'Admin'
+        };
+
+        await db.collection('broadcasts').add(broadcastData);
+        
+        // Also mark user for logout in their record
+        const userSnapshot = await this.usersCollection.where('phone', '==', userPhone).get();
+        userSnapshot.forEach(async doc => {
+            await doc.ref.update({
+                forceLogout: true,
+                lastActive: Date.now(),
+                isOnline: false
+            });
+        });
+        
+        return true;
+    } catch (error) {
+        console.error('Error sending logout command:', error);
+        return false;
+    }
+}
+
+// Helper method to get appropriate logout message
+getLogoutMessage(commandType, reason) {
+    const messages = {
+        'logout': `Your session has been terminated by administrator. Reason: ${reason}`,
+        'ban': `Your account has been suspended. Reason: ${reason}`,
+        'clear_data': `Your local data has been cleared by administrator. Reason: ${reason}`,
+        'maintenance': 'System maintenance: All users have been logged out.'
+    };
+    return messages[commandType] || messages['logout'];
+}
+
+// Helper method to get logout action
+getLogoutAction(commandType) {
+    const actions = {
+        'logout': 'clear_localstorage_and_logout',
+        'ban': 'admin_forced_logout', 
+        'clear_data': 'clear_all_data',
+        'maintenance': 'global_logout'
+    };
+    return actions[commandType] || actions['logout'];
+}
+
+// Enhanced bulk logout
+// Enhanced bulk logout
+async bulkLogoutUsers(userPhones, reason = 'Bulk admin action') {
+    try {
+        const promises = userPhones.map(phone => 
+            this.sendLogoutCommand(phone, 'logout', reason)
+        );
+        
+        await Promise.all(promises);
+        this.showMessage(`Logout commands sent to ${userPhones.length} users`, 'success');
+    } catch (error) {
+        console.error('Error in bulk logout:', error);
+        this.showMessage('Error sending logout commands', 'error');
+    }
+}
+
+// Force logout selected users
+async forceLogoutSelected() {
+    if (this.selectedUsers.size === 0) return;
+    
+    const userPhones = [];
+    this.selectedUsers.forEach(userId => {
+        const user = this.users.find(u => u.id === userId);
+        if (user && user.phone) {
+            userPhones.push(user.phone);
+        }
+    });
+    
+    const reason = prompt('Reason for logging out these users:') || 'Admin action';
+    await this.bulkLogoutUsers(userPhones, reason);
+}
+
+// Force logout all active users
+async forceLogoutAllActive() {
+    const activeUsers = this.users.filter(user => 
+        user.lastActive && (Date.now() - user.lastActive) < (2 * 60 * 60 * 1000)
+    );
+    
+    if (activeUsers.length === 0) {
+        this.showMessage('No active users found', 'info');
+        return;
+    }
+    
+    if (!confirm(`Force logout ${activeUsers.length} active users? This will clear their localStorage!`)) {
+        return;
+    }
+    
+    const userPhones = activeUsers.map(user => user.phone).filter(phone => phone);
+    const reason = prompt('Reason for mass logout:') || 'System maintenance';
+    await this.bulkLogoutUsers(userPhones, reason);
+}
+
+            // Show users who might have localStorage data
+            async showLocalStorageUsers() {
+                const onlineUsers = this.users.filter(user => 
+                    user.lastActive && (Date.now() - user.lastActive) < (24 * 60 * 60 * 1000) // Active in last 24 hours
+                );
+                
+                this.renderLocalStorageUsers(onlineUsers);
+            }
+
+            // Render localStorage management table
+            renderLocalStorageUsers(users) {
+                const tbody = document.getElementById('localStorageUsersBody');
+                
+                tbody.innerHTML = users.map(user => {
+                    const lastActive = this.formatLastSeen(user.lastActive);
+                    const isOnline = this.onlineUsers.has(user.id);
+                    
+                    return `
+                    <tr>
+                        <td>
+                            <div><strong>${user.name}</strong></div>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary);">
+                                ${user.phone} • ${user.role || 'user'}
+                            </div>
+                        </td>
+                        <td>
+                            <span class="user-status ${isOnline ? 'status-verified' : 'status-pending'}">
+                                ${isOnline ? 'Active Session' : 'Inactive'}
+                            </span>
+                            <div style="font-size: 0.8rem; margin-top: 0.25rem;">
+                                Last active: ${lastActive}
+                            </div>
+                        </td>
+                        <td>${new Date(user.lastActive).toLocaleString()}</td>
+                        <td class="user-actions">
+                            <div class="action-icon action-edit" onclick="userManager.clearUserLocalStorage('${user.phone}')" title="Clear User LocalStorage">
+                                <i class="fas fa-broom"></i>
+                            </div>
+                            <div class="action-icon action-delete" onclick="userManager.forceUserLogout('${user.phone}')" title="Force Logout">
+                                <i class="fas fa-sign-out-alt"></i>
+                            </div>
+                        </td>
+                    </tr>
+                    `;
+                }).join('');
+            }
+
+            // Clear specific user's localStorage
+            async clearUserLocalStorage(userPhone) {
+                if (!confirm(`Clear localStorage for user ${userPhone}? This will log them out.`)) return;
+                
+                try {
+                    await this.sendLogoutCommand(userPhone, 'clear_data', 'LocalStorage cleanup');
+                    this.showMessage(`LocalStorage cleanup sent to ${userPhone}`, 'success');
+                } catch (error) {
+                    console.error('Error clearing localStorage:', error);
+                    this.showMessage('Error clearing localStorage: ' + error.message, 'error');
+                }
+            }
+
+            // Force user logout
+            async forceUserLogout(userPhone) {
+                try {
+                    await this.notifyUserLogout(userPhone);
+                    this.showMessage(`Logout signal sent to ${userPhone}`, 'success');
+                } catch (error) {
+                    console.error('Error forcing logout:', error);
+                    this.showMessage('Error forcing logout: ' + error.message, 'error');
+                }
+            }
+
+            // Clear all active sessions
+            async clearAllLocalStorage() {
+                if (!confirm('Clear localStorage for ALL active users? This will log everyone out!')) return;
+                
+                try {
+                    const activeUsers = this.users.filter(user => 
+                        user.lastActive && (Date.now() - user.lastActive) < (2 * 60 * 60 * 1000) // Active in last 2 hours
+                    );
+                    
+                    const userPhones = activeUsers.map(user => user.phone).filter(phone => phone);
+                    await this.bulkLogoutUsers(userPhones, 'LocalStorage cleanup');
+                    
+                    this.showMessage(`LocalStorage cleanup initiated for ${userPhones.length} active users`, 'success');
+                } catch (error) {
+                    console.error('Error clearing all localStorage:', error);
+                    this.showMessage('Error clearing sessions: ' + error.message, 'error');
+                }
+            }
+
+            // Force logout all users
+            async forceLogoutAll() {
+                if (!confirm('Force logout ALL users? This will terminate all active sessions!')) return;
+                
+                try {
+                    const batch = db.batch();
+                    const usersRef = this.usersCollection;
+                    
+                    // Set all users offline and clear verification codes
+                    this.users.forEach(user => {
+                        const userRef = usersRef.doc(user.id);
+                        batch.update(userRef, {
+                            isOnline: false,
+                            verificationCode: null,
+                            forceLogout: true,
+                            lastActive: Date.now()
+                        });
+                    });
+                    
+                    await batch.commit();
+                    
+                    // Send global logout broadcast
+                    await db.collection('broadcasts').add({
+                        type: 'global_logout',
+                        message: 'SYSTEM_MAINTENANCE: All users have been logged out for system maintenance.',
+                        target: 'all',
+                        timestamp: Date.now(),
+                        action: 'clear_localstorage_and_logout',
+                        urgent: true
+                    });
+                    
+                    this.showMessage('All users have been logged out successfully', 'success');
+                } catch (error) {
+                    console.error('Error forcing logout all:', error);
+                    this.showMessage('Error forcing logout: ' + error.message, 'error');
+                }
+            }
+
+            // Load deleted users
+            async loadDeletedUsers() {
+                try {
+                    const snapshot = await this.deletedUsersCollection.get();
+                    const deletedUsers = snapshot.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }));
+                    
+                    this.renderDeletedUsers(deletedUsers);
+                } catch (error) {
+                    console.error('Error loading deleted users:', error);
+                }
+            }
+
+            // Render deleted users
+            renderDeletedUsers(deletedUsers) {
+                const tableBody = document.getElementById('deletedUsersTableBody');
+                
+                tableBody.innerHTML = deletedUsers.map(record => {
+                    const user = record.originalUser;
+                    const deletedDate = new Date(record.deletedAt).toLocaleString();
+                    
+                    return `
+                    <tr class="deleted-user-row">
+                        <td>
+                            <div><strong>${user.name}</strong></div>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary);">
+                                ${user.phone} • ${user.role || 'user'}
+                            </div>
+                        </td>
+                        <td>
+                            <div><strong>Type:</strong> ${record.deleteType}</div>
+                            <div style="font-size: 0.8rem;"><strong>When:</strong> ${deletedDate}</div>
+                            <div style="font-size: 0.8rem;"><strong>Reason:</strong> ${record.reason || 'No reason provided'}</div>
+                            ${record.banExpires ? `<div style="font-size: 0.8rem;"><strong>Ban Expires:</strong> ${new Date(record.banExpires).toLocaleDateString()}</div>` : ''}
+                        </td>
+                        <td>
+                            <div>${record.deletedBy}</div>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary);">
+                                ${record.deletedById}
+                            </div>
+                        </td>
+                        <td class="user-actions">
+                            ${record.deleteType === 'soft' || record.deleteType === 'ban' ? `
+                            <div class="action-icon action-restore" onclick="userManager.restoreUser('${record.id}')" title="Restore User">
+                                <i class="fas fa-undo"></i>
+                            </div>
+                            ` : ''}
+                            <div class="action-icon action-delete" onclick="userManager.permanentDeleteUser('${record.id}')" title="Permanent Delete">
+                                <i class="fas fa-trash"></i>
+                            </div>
+                        </td>
+                    </tr>
+                    `;
+                }).join('');
+            }
+
+            // Restore user
+            async restoreUser(userId) {
+                try {
+                    const deletedUserDoc = await this.deletedUsersCollection.doc(userId).get();
+                    if (!deletedUserDoc.exists) return;
+
+                    const deletionRecord = deletedUserDoc.data();
+                    const userData = deletionRecord.originalUser;
+                    
+                    // Remove from deleted users
+                    await this.deletedUsersCollection.doc(userId).delete();
+                    
+                    // Add back to active users
+                    await this.usersCollection.doc(userId).set(userData);
+                    
+                    // Log restoration
+                    const adminUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                    await this.adminLogsCollection.add({
+                        action: 'user_restoration',
+                        targetUserId: userId,
+                        targetUserName: userData.name,
+                        adminId: adminUser.id,
+                        adminName: adminUser.name,
+                        timestamp: Date.now()
+                    });
+
+                    this.showMessage('User restored successfully', 'success');
+                    this.loadDeletedUsers();
+                    
+                } catch (error) {
+                    console.error('Error restoring user:', error);
+                    this.showMessage('Error restoring user: ' + error.message, 'error');
+                }
+            }
+
+            // Permanent delete user
+            async permanentDeleteUser(userId) {
+                if (!confirm('Are you sure you want to permanently delete this user? This action cannot be undone!')) {
+                    return;
+                }
+
+                try {
+                    await this.deletedUsersCollection.doc(userId).delete();
+                    this.showMessage('User permanently deleted', 'success');
+                    this.loadDeletedUsers();
+                } catch (error) {
+                    console.error('Error permanent deleting user:', error);
+                    this.showMessage('Error deleting user: ' + error.message, 'error');
+                }
+            }
+
+            // Toggle deleted users view
+            toggleDeletedUsers() {
+                const archivePanel = document.getElementById('deletedUsersPanel');
+                const showBtn = document.getElementById('showDeletedUsersBtn');
+                
+                if (archivePanel.style.display === 'none') {
+                    archivePanel.style.display = 'block';
+                    showBtn.innerHTML = '<i class="fas fa-times"></i> Hide Deleted Users Archive';
+                    this.loadDeletedUsers();
+                } else {
+                    archivePanel.style.display = 'none';
+                    showBtn.innerHTML = '<i class="fas fa-archive"></i> Show Deleted Users Archive';
                 }
             }
 
@@ -2363,7 +3599,7 @@
                     const trialPromises = Array.from(this.selectedUsers).map(async userId => {
                         const user = this.users.find(u => u.id === userId);
                         if (user) {
-                            await db.collection('trials').add({
+                            await this.trialsCollection.add({
                                 phone: user.phone,
                                 name: user.name,
                                 startDate: Date.now(),
@@ -2383,31 +3619,14 @@
                 }
             }
 
-            bulkDelete() {
-                if (this.selectedUsers.size === 0) return;
-                
-                document.getElementById('deleteMessage').textContent = 
-                    `Are you sure you want to delete ${this.selectedUsers.size} selected users? This action cannot be undone.`;
-                
-                document.getElementById('confirmDeleteBtn').onclick = async () => {
-                    try {
-                        const batch = db.batch();
-                        this.selectedUsers.forEach(userId => {
-                            const userRef = this.usersCollection.doc(userId);
-                            batch.delete(userRef);
-                        });
-                        
-                        await batch.commit();
-                        document.getElementById('deleteConfirmModal').style.display = 'none';
-                        this.selectedUsers.clear();
-                        this.showMessage('Users deleted successfully', 'success');
-                    } catch (error) {
-                        console.error('Error bulk deleting users:', error);
-                        this.showMessage('Error deleting users: ' + error.message, 'error');
-                    }
-                };
-                
-                document.getElementById('deleteConfirmModal').style.display = 'flex';
+            async bulkRestoreUsers() {
+                // Implementation for bulk restore
+                this.showMessage('Bulk restore functionality coming soon', 'info');
+            }
+
+            async bulkPermanentDelete() {
+                // Implementation for bulk permanent delete
+                this.showMessage('Bulk permanent delete functionality coming soon', 'info');
             }
 
             showMessage(message, type) {
@@ -2423,7 +3642,10 @@
                     font-weight: 600;
                     z-index: 10000;
                     animation: slideInRight 0.3s ease-out;
-                    ${type === 'success' ? 'background: var(--success);' : 'background: var(--error);'}
+                    ${type === 'success' ? 'background: var(--success);' : 
+                      type === 'error' ? 'background: var(--error);' :
+                      type === 'warning' ? 'background: var(--warning);' :
+                      'background: var(--info);'}
                 `;
                 
                 document.body.appendChild(messageEl);
@@ -2441,7 +3663,7 @@
             }
         }
 
-        // Broadcast Manager Class (unchanged from your original)
+        // Broadcast Manager Class
         class BroadcastManager {
             constructor() {
                 this.broadcastsCollection = db.collection('broadcasts');
@@ -2969,7 +4191,7 @@
         });
 
         bulkDeleteBtn.addEventListener('click', () => {
-            userManager.bulkDelete();
+            userManager.showEnhancedBulkDeleteModal();
         });
 
         bulkTrialBtn.addEventListener('click', () => {
@@ -3182,5 +4404,107 @@
         // Initialize
         checkAdminLogin();
     </script>
+    <script>
+    // Helper functions for the new elements
+    function showBulkActions(count) {
+        const panel = document.getElementById('bulkActionsPanel');
+        const countElement = document.getElementById('bulkSelectionCount');
+        countElement.textContent = count + ' items selected';
+        panel.style.display = 'block';
+    }
+    
+    function hideBulkActions() {
+        document.getElementById('bulkActionsPanel').style.display = 'none';
+    }
+    
+    function showLoading() {
+        document.getElementById('loadingSpinner').style.display = 'flex';
+    }
+    
+    function hideLoading() {
+        document.getElementById('loadingSpinner').style.display = 'none';
+    }
+    
+    function showSuccessMessage(message) {
+        const element = document.getElementById('successMessage');
+        element.textContent = message;
+        element.style.display = 'block';
+        setTimeout(() => {
+            element.style.display = 'none';
+        }, 3000);
+    }
+    
+    function showErrorMessage(message) {
+        const element = document.getElementById('errorMessage');
+        element.textContent = message;
+        element.style.display = 'block';
+        setTimeout(() => {
+            element.style.display = 'none';
+        }, 5000);
+    }
+    
+    function openMobileMenu() {
+        document.getElementById('mobileMenu').style.display = 'flex';
+    }
+    
+    function closeMobileMenu() {
+        document.getElementById('mobileMenu').style.display = 'none';
+    }
+    
+    function switchTab(tabName) {
+        // Close mobile menu first
+        closeMobileMenu();
+        
+        // Switch to the specified tab
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        tabContents.forEach(content => content.classList.remove('active'));
+        
+        document.querySelector(`.tab-btn[data-tab="${tabName}"]`).classList.add('active');
+        document.getElementById(`${tabName}Tab`).classList.add('active');
+    }
+    
+    function showQuickStats() {
+        const panel = document.getElementById('quickStats');
+        const content = document.getElementById('quickStatsContent');
+        
+        if (panel.style.display === 'none') {
+            // Populate quick stats
+            content.innerHTML = `
+                <div>Total: ${document.getElementById('totalUsers').textContent}</div>
+                <div>Verified: ${document.getElementById('verifiedUsers').textContent}</div>
+                <div>Online: ${document.getElementById('onlineUsers').textContent}</div>
+                <div>Admins: ${document.getElementById('adminUsers').textContent}</div>
+                <div>Trials: ${document.getElementById('trialUsers').textContent}</div>
+            `;
+            panel.style.display = 'block';
+        } else {
+            panel.style.display = 'none';
+        }
+    }
+    
+    // Initialize mobile menu button
+    document.addEventListener('DOMContentLoaded', function() {
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', openMobileMenu);
+        }
+        
+        // Check screen size and show/hide mobile menu button
+        function checkScreenSize() {
+            if (window.innerWidth <= 768) {
+                mobileMenuBtn.style.display = 'flex';
+            } else {
+                mobileMenuBtn.style.display = 'none';
+                closeMobileMenu();
+            }
+        }
+        
+        window.addEventListener('resize', checkScreenSize);
+        checkScreenSize();
+    });
+</script>
 </body>
 </html>
