@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Enhanced Admin Panel | MediLearn Pro</title>
+    <title>Enhanced Admin Panel | ALIF</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -28,6 +28,9 @@
             --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             --gradient: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
             --gradient-premium: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+            --trial-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --trial-color: #10b981;
+            --trial-dark: #059669;
         }
         body.light-mode {
             --background: #f3f4f6;
@@ -147,6 +150,11 @@
             color: white;
             border: none;
         }
+        .action-btn.trial {
+            background: var(--trial-gradient);
+            color: white;
+            border: none;
+        }
         .main-content {
             max-width: 1400px;
             margin: 0 auto;
@@ -232,6 +240,10 @@
         }
         .stat-card.premium {
             background: var(--gradient-premium);
+            color: white;
+        }
+        .stat-card.trial {
+            background: var(--trial-gradient);
             color: white;
         }
         .stat-value {
@@ -337,6 +349,10 @@
             background: rgba(139, 92, 246, 0.1);
             color: var(--purple);
         }
+        .status-trial {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--trial-color);
+        }
         .role-badge {
             display: inline-block;
             padding: 0.25rem 0.5rem;
@@ -374,7 +390,7 @@
             color: white;
         }
         .plan-trial {
-            background: var(--gradient);
+            background: var(--trial-gradient);
             color: white;
         }
         .status-dot {
@@ -430,6 +446,14 @@
         }
         .action-role:hover {
             background: var(--purple);
+            color: white;
+        }
+        .action-trial {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--trial-color);
+        }
+        .action-trial:hover {
+            background: var(--trial-color);
             color: white;
         }
         .bulk-actions {
@@ -600,6 +624,13 @@
         .btn-premium:hover {
             background: var(--purple);
         }
+        .btn-trial {
+            background: var(--trial-gradient);
+            color: white;
+        }
+        .btn-trial:hover {
+            background: var(--trial-dark);
+        }
         .error {
             color: var(--error);
             font-size: 0.85rem;
@@ -680,6 +711,14 @@
             background: #dc2626;
             border-color: #dc2626;
         }
+        .quick-action-btn.trial {
+            background: var(--trial-gradient);
+            color: white;
+            border: none;
+        }
+        .quick-action-btn.trial:hover {
+            background: var(--trial-dark);
+        }
         .verification-code {
             font-family: monospace;
             background: rgba(59, 130, 246, 0.1);
@@ -708,7 +747,7 @@
             color: white;
         }
         .badge-trial {
-            background: var(--info);
+            background: var(--trial-gradient);
             color: white;
         }
         
@@ -763,6 +802,28 @@
             font-size: 0.7rem;
             color: var(--text-tertiary);
             margin-top: 0.1rem;
+        }
+
+        /* Trial-specific styles */
+        .trial-info {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--trial-color);
+            border-radius: var(--radius);
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            font-size: 0.8rem;
+        }
+        
+        .trial-expired {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: var(--error);
+            color: var(--error);
+        }
+        
+        .trial-active {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: var(--trial-color);
+            color: var(--trial-color);
         }
 
         @media (max-width: 768px) {
@@ -856,12 +917,13 @@
                 <div class="input-group">
                     <i class="fas fa-graduation-cap"></i>
                     <select id="editYears" multiple style="height: 120px;">
-                        <option value="1">1st Year</option>
-                        <option value="2">2nd Year</option>
-                        <option value="3">3rd Year</option>
-                        <option value="4">4th Year</option>
-                        <option value="5">5th Year</option>
-                        <option value="6">6th Year</option>
+                        <option value="1">Pre Med</option>
+                        <option value="2">Intro Med</option>
+                        <option value="3">Meta</option>
+                        <option value="4">Hema</option>
+                        <option value="5">CVS</option>
+                        <option value="6">RESPA</option>
+                        <option value="7">Musclo</option>
                     </select>
                 </div>
                 <div class="form-row">
@@ -896,7 +958,7 @@
                 <div class="form-row">
                     <div class="input-group">
                         <i class="fas fa-clock"></i>
-                        <input id="editTrialDuration" type="number" min="1" placeholder="Free Trial Duration (days)" value="7">
+                        <input id="editTrialDuration" type="number" min="1" placeholder="Free Trial Duration (days)" value="3">
                     </div>
                     <div class="input-group">
                         <i class="fas fa-calendar"></i>
@@ -980,12 +1042,13 @@
                 <div class="input-group">
                     <i class="fas fa-graduation-cap"></i>
                     <select id="addYears" multiple style="height: 120px;">
-                        <option value="1">1st Year</option>
-                        <option value="2">2nd Year</option>
-                        <option value="3">3rd Year</option>
-                        <option value="4">4th Year</option>
-                        <option value="5">5th Year</option>
-                        <option value="6">6th Year</option>
+                        <option value="1">Pre Med</option>
+                        <option value="2">Intro Med</option>
+                        <option value="3">Meta</option>
+                        <option value="4">Hema</option>
+                        <option value="5">CVS</option>
+                        <option value="6">RESPA</option>
+                        <option value="7">Musclo</option>
                     </select>
                 </div>
                 <div class="form-row">
@@ -1020,7 +1083,7 @@
                 <div class="form-row">
                     <div class="input-group">
                         <i class="fas fa-clock"></i>
-                        <input id="addTrialDuration" type="number" min="1" placeholder="Free Trial Duration (days)" value="7">
+                        <input id="addTrialDuration" type="number" min="1" placeholder="Free Trial Duration (days)" value="3">
                     </div>
                     <div class="input-group">
                         <i class="fas fa-calendar"></i>
@@ -1157,7 +1220,7 @@
         <div class="header-container">
             <div class="logo" id="logoBtn">
                 <i class="fas fa-stethoscope"></i>
-                <span>ALIF | MED Admin</span>
+                <span>ALIF | Admin Panel</span>
             </div>
             <div class="nav-actions">
                 <button class="action-btn" id="themeToggle">
@@ -1180,7 +1243,7 @@
     <main id="adminContent" class="main-content">
         <div class="page-header">
             <h1 class="page-title">Enhanced Admin Panel</h1>
-            <p class="page-subtitle">User and Broadcast Management with Real-Time Tracking</p>
+            <p class="page-subtitle">User and Broadcast Management with Free Trial System</p>
         </div>
         
         <div class="tab-container">
@@ -1232,9 +1295,9 @@
                         <div class="stat-value" id="premiumUsers">0</div>
                         <div class="stat-label">Premium Users</div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card trial">
                         <div class="stat-value" id="trialUsers">0</div>
-                        <div class="stat-label">Trial Users</div>
+                        <div class="stat-label">Active Trials</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-value" id="onlineUsers">0</div>
@@ -1255,7 +1318,7 @@
                     <button class="quick-action-btn" onclick="userManager.bulkGenerateCodes()">
                         <i class="fas fa-key"></i> Generate Temp Passwords
                     </button>
-                    <button class="quick-action-btn" onclick="userManager.bulkStartTrial()">
+                    <button class="quick-action-btn trial" onclick="userManager.bulkStartTrial()">
                         <i class="fas fa-gift"></i> Start Free Trial
                     </button>
                     <button class="quick-action-btn danger" onclick="userManager.bulkDelete()">
@@ -1284,12 +1347,13 @@
                         </select>
                         <select id="yearFilter" class="filter-select">
                             <option value="all">All Years</option>
-                            <option value="1">1st Year</option>
-                            <option value="2">2nd Year</option>
-                            <option value="3">3rd Year</option>
-                            <option value="4">4th Year</option>
-                            <option value="5">5th Year</option>
-                            <option value="6">6th Year</option>
+                            <option value="1">Pre Med</option>
+                            <option value="2">Intro Med</option>
+                            <option value="3">Meta</option>
+                            <option value="4">Hema</option>
+                            <option value="5">CVS</option>
+                            <option value="6">RESPA</option>
+                            <option value="7">Musclo</option>
                         </select>
                         <select id="planFilter" class="filter-select">
                             <option value="all">All Plans</option>
@@ -1344,7 +1408,7 @@
                     <button class="btn btn-primary" id="bulkVerifyBtn" disabled><i class="fas fa-check-circle"></i> Verify Selected</button>
                     <button class="btn btn-secondary" id="bulkRejectBtn" disabled><i class="fas fa-times-circle"></i> Reject Selected</button>
                     <button class="btn btn-premium" id="bulkPromoteBtn" disabled><i class="fas fa-user-shield"></i> Promote to Moderator</button>
-                    <button class="btn btn-premium" id="bulkTrialBtn" disabled><i class="fas fa-gift"></i> Start Trial Selected</button>
+                    <button class="btn btn-trial" id="bulkTrialBtn" disabled><i class="fas fa-gift"></i> Start Trial Selected</button>
                     <button class="btn btn-danger" id="bulkDeleteBtn" disabled><i class="fas fa-trash"></i> Delete Selected</button>
                 </div>
                 
@@ -1463,10 +1527,11 @@
             password: "alif1noth"
         };
 
-        // Enhanced User Management Class with Online Tracking
+        // Enhanced User Management Class with Trial System
         class EnhancedUserManager {
             constructor() {
                 this.usersCollection = db.collection('users');
+                this.trialsCollection = db.collection('trials');
                 this.users = [];
                 this.filteredUsers = [];
                 this.selectedUsers = new Set();
@@ -1484,15 +1549,12 @@
 
             // Initialize online status tracking
             initOnlineTracking() {
-                // Update online status every 30 seconds
                 this.onlineStatusInterval = setInterval(() => {
                     this.updateOnlineStatus();
                 }, 30000);
                 
-                // Initial update
                 this.updateOnlineStatus();
                 
-                // Listen for page visibility changes
                 document.addEventListener('visibilitychange', () => {
                     if (!document.hidden) {
                         this.updateOnlineStatus();
@@ -1503,7 +1565,7 @@
             // Update online status for all users
             updateOnlineStatus() {
                 const now = Date.now();
-                const fiveMinutesAgo = now - (5 * 60 * 1000); // 5 minutes threshold for online status
+                const fiveMinutesAgo = now - (5 * 60 * 1000);
                 
                 this.onlineUsers.clear();
                 
@@ -1660,10 +1722,22 @@
                 document.getElementById('onlineUsers').textContent = online;
             }
 
+            // Check if trial is active
             isTrialActive(user) {
+                if (!user.isTrial && user.plan !== 'trial') return false;
                 if (!user.trialStart || !user.trialDuration) return false;
                 const trialEnd = user.trialStart + (user.trialDuration * 24 * 60 * 60 * 1000);
                 return Date.now() < trialEnd;
+            }
+
+            // Get trial time remaining
+            getTrialTimeRemaining(user) {
+                if (!this.isTrialActive(user)) return 'Expired';
+                const trialEnd = user.trialStart + (user.trialDuration * 24 * 60 * 60 * 1000);
+                const remainingMs = trialEnd - Date.now();
+                const days = Math.floor(remainingMs / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((remainingMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                return `${days}d ${hours}h`;
             }
 
             renderUsers() {
@@ -1687,6 +1761,8 @@
                     const isNew = Date.now() - (user.createdAt || 0) < 7 * 24 * 60 * 60 * 1000;
                     const isAdmin = user.role === 'admin';
                     const isModerator = user.role === 'moderator';
+                    const isTrialUser = user.isTrial || user.plan === 'trial';
+                    const isTrialActive = this.isTrialActive(user);
                     
                     // Get online status
                     const onlineUser = this.onlineUsers.get(user.id);
@@ -1713,11 +1789,12 @@
                     }
 
                     let trialInfo = '';
-                    if (user.plan === 'trial') {
-                        const isActive = this.isTrialActive(user);
-                        const daysLeft = user.trialDuration ? Math.max(0, Math.ceil((user.trialStart + (user.trialDuration * 24 * 60 * 60 * 1000) - Date.now()) / (24 * 60 * 60 * 1000))) : 0;
-                        trialInfo = `<div style="font-size: 0.8rem; color: ${isActive ? 'var(--success)' : 'var(--error)'}; margin-top: 0.25rem;">
-                            Trial: ${isActive ? 'Active' : 'Expired'} (${daysLeft} days left)
+                    if (isTrialUser) {
+                        const timeRemaining = this.getTrialTimeRemaining(user);
+                        trialInfo = `
+                        <div class="trial-info ${isTrialActive ? 'trial-active' : 'trial-expired'}">
+                            <i class="fas ${isTrialActive ? 'fa-crown' : 'fa-clock'}"></i>
+                            Trial: ${isTrialActive ? 'Active' : 'Expired'} (${timeRemaining})
                         </div>`;
                     }
                     
@@ -1732,7 +1809,7 @@
                                 <strong>${user.name}</strong>
                                 ${isNew ? '<span class="user-badge badge-new">NEW</span>' : ''}
                                 ${user.status === 'verified' ? '<span class="user-badge badge-verified">VERIFIED</span>' : ''}
-                                ${user.plan === 'trial' && this.isTrialActive(user) ? '<span class="user-badge badge-trial">TRIAL</span>' : ''}
+                                ${isTrialUser && isTrialActive ? '<span class="user-badge badge-trial">TRIAL</span>' : ''}
                             </div>
                             <div class="online-status">
                                 <span class="status-dot ${status}" title="${status === 'online' ? 'Online' : status === 'idle' ? 'Idle' : 'Offline'}"></span>
@@ -1751,9 +1828,13 @@
                         </td>
                         <td>
                             <div>
-                                ${user.registeredYears ? user.registeredYears.map(year => 
-                                    `<span class="role-badge role-user">Year ${year}</span>`
-                                ).join('') : 'N/A'}
+                                ${user.registeredYears ? user.registeredYears.map(year => {
+                                    const yearNames = {
+                                        '1': 'Pre Med', '2': 'Intro Med', '3': 'Meta', 
+                                        '4': 'Hema', '5': 'CVS', '6': 'RESPA', '7': 'Musclo'
+                                    };
+                                    return `<span class="role-badge role-user">${yearNames[year] || `Year ${year}`}</span>`;
+                                }).join('') : 'N/A'}
                             </div>
                             <div style="margin-top: 0.5rem;">
                                 <span class="role-badge ${isAdmin ? 'role-admin' : isModerator ? 'role-moderator' : 'role-user'}">
@@ -1789,6 +1870,11 @@
                             ${!isAdmin ? `
                                 <div class="action-icon action-role" data-user-id="${user.id}" title="Change Role">
                                     <i class="fas fa-user-tag"></i>
+                                </div>
+                            ` : ''}
+                            ${!isTrialUser ? `
+                                <div class="action-icon action-trial" data-user-id="${user.id}" title="Start Trial">
+                                    <i class="fas fa-gift"></i>
                                 </div>
                             ` : ''}
                             <div class="action-icon action-delete" data-user-id="${user.id}" title="Delete User">
@@ -1872,6 +1958,13 @@
                     });
                 });
 
+                document.querySelectorAll('.action-trial').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const userId = btn.dataset.userId;
+                        this.startTrial(userId);
+                    });
+                });
+
                 document.querySelectorAll('.action-delete').forEach(btn => {
                     btn.addEventListener('click', () => {
                         const userId = btn.dataset.userId;
@@ -1910,7 +2003,7 @@
                 document.getElementById('editStatus').value = user.status || 'pending';
                 document.getElementById('editPlan').value = user.plan || 'basic';
                 document.getElementById('editUsesAllowed').value = user.tempPasswordUsesAllowed || 1;
-                document.getElementById('editTrialDuration').value = user.trialDuration || 7;
+                document.getElementById('editTrialDuration').value = user.trialDuration || 3;
                 
                 if (user.trialStart) {
                     document.getElementById('editTrialStart').value = new Date(user.trialStart).toISOString().split('T')[0];
@@ -1979,7 +2072,8 @@
                         registeredYears: selectedYears,
                         passwordExpiration,
                         tempPasswordUsesAllowed: usesAllowed,
-                        trialDuration: plan === 'trial' ? trialDuration : null
+                        trialDuration: plan === 'trial' ? trialDuration : null,
+                        isTrial: plan === 'trial'
                     };
                     
                     if (oldUser.verificationCode !== verificationCode) {
@@ -1988,7 +2082,9 @@
                     
                     if (trialStart && plan === 'trial') {
                         updateData.trialStart = new Date(trialStart).getTime();
-                    } else {
+                    } else if (plan === 'trial' && !oldUser.trialStart) {
+                        updateData.trialStart = Date.now();
+                    } else if (plan !== 'trial') {
                         updateData.trialStart = null;
                     }
                     
@@ -2037,6 +2133,39 @@
                 }
             }
 
+            async startTrial(userId) {
+                const user = this.users.find(u => u.id === userId);
+                if (!user) return;
+
+                const duration = prompt('Enter trial duration in days (default: 3):', '3') || '3';
+                const trialDuration = parseInt(duration) || 3;
+                
+                try {
+                    await this.usersCollection.doc(userId).update({
+                        plan: 'trial',
+                        isTrial: true,
+                        trialStart: Date.now(),
+                        trialDuration: trialDuration,
+                        registeredYears: ['1', '2', '3', '4', '5', '6', '7'] // All programs for trial
+                    });
+                    
+                    // Create trial record
+                    await db.collection('trials').add({
+                        phone: user.phone,
+                        name: user.name,
+                        startDate: Date.now(),
+                        endDate: Date.now() + (trialDuration * 24 * 60 * 60 * 1000),
+                        userId: userId,
+                        used: true
+                    });
+                    
+                    this.showMessage(`Free trial started for ${user.name} (${trialDuration} days)`, 'success');
+                } catch (error) {
+                    console.error('Error starting trial:', error);
+                    this.showMessage('Error starting trial: ' + error.message, 'error');
+                }
+            }
+
             async createUser(userData) {
                 try {
                     const existingUser = await this.usersCollection.where('phone', '==', userData.phone).get();
@@ -2069,10 +2198,29 @@
                         tempPasswordUsesAllowed: usesAllowed,
                         tempPasswordUsesCount: userData.verificationCode ? 0 : null,
                         trialDuration: userData.plan === 'trial' ? trialDuration : null,
-                        trialStart: userData.plan === 'trial' && trialStart ? new Date(trialStart).getTime() : (userData.plan === 'trial' ? Date.now() : null)
+                        trialStart: userData.plan === 'trial' && trialStart ? new Date(trialStart).getTime() : (userData.plan === 'trial' ? Date.now() : null),
+                        isTrial: userData.plan === 'trial'
                     };
 
+                    // For trial users, give access to all programs
+                    if (userData.plan === 'trial') {
+                        userRecord.registeredYears = ['1', '2', '3', '4', '5', '6', '7'];
+                    }
+
                     const docRef = await this.usersCollection.add(userRecord);
+                    
+                    // Create trial record if it's a trial user
+                    if (userData.plan === 'trial') {
+                        await db.collection('trials').add({
+                            phone: userData.phone,
+                            name: userData.name,
+                            startDate: userRecord.trialStart,
+                            endDate: userRecord.trialStart + (trialDuration * 24 * 60 * 60 * 1000),
+                            userId: docRef.id,
+                            used: true
+                        });
+                    }
+                    
                     return { success: true, userId: docRef.id };
                 } catch (error) {
                     console.error('Error creating user:', error);
@@ -2195,8 +2343,8 @@
             async bulkStartTrial() {
                 if (this.selectedUsers.size === 0) return;
                 
-                const defaultDuration = prompt('Enter default trial duration in days (e.g., 7):') || '7';
-                const duration = parseInt(defaultDuration) || 7;
+                const defaultDuration = prompt('Enter default trial duration in days (e.g., 3):') || '3';
+                const duration = parseInt(defaultDuration) || 3;
                 
                 try {
                     const batch = db.batch();
@@ -2204,12 +2352,29 @@
                         const userRef = this.usersCollection.doc(userId);
                         batch.update(userRef, { 
                             plan: 'trial',
+                            isTrial: true,
                             trialStart: Date.now(),
-                            trialDuration: duration
+                            trialDuration: duration,
+                            registeredYears: ['1', '2', '3', '4', '5', '6', '7'] // All programs for trial
                         });
                     });
                     
-                    await batch.commit();
+                    // Create trial records
+                    const trialPromises = Array.from(this.selectedUsers).map(async userId => {
+                        const user = this.users.find(u => u.id === userId);
+                        if (user) {
+                            await db.collection('trials').add({
+                                phone: user.phone,
+                                name: user.name,
+                                startDate: Date.now(),
+                                endDate: Date.now() + (duration * 24 * 60 * 60 * 1000),
+                                userId: userId,
+                                used: true
+                            });
+                        }
+                    });
+                    
+                    await Promise.all(trialPromises);
                     this.selectedUsers.clear();
                     this.showMessage('Free trials started successfully', 'success');
                 } catch (error) {
@@ -2276,7 +2441,7 @@
             }
         }
 
-        // Broadcast Manager Class
+        // Broadcast Manager Class (unchanged from your original)
         class BroadcastManager {
             constructor() {
                 this.broadcastsCollection = db.collection('broadcasts');
@@ -3003,7 +3168,7 @@
                     type,
                     timestamp: Date.now(),
                     sentBy: 'admin',
-                    readBy: [] // track who saw it
+                    readBy: []
                 });
 
                 closeBroadcastModal();
