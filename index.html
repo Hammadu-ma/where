@@ -8,6 +8,7 @@
     <title>Enhanced Admin Panel | ALIF</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -181,6 +182,7 @@
             display: flex;
             border-bottom: 1px solid var(--border);
             margin-bottom: 2rem;
+            overflow-x: auto;
         }
         .tab-btn {
             padding: 1rem 2rem;
@@ -190,6 +192,7 @@
             font-weight: 600;
             transition: var(--transition);
             border-bottom: 2px solid transparent;
+            white-space: nowrap;
         }
         .tab-btn.active {
             border-bottom: 2px solid var(--primary);
@@ -237,6 +240,11 @@
             box-shadow: var(--shadow);
             position: relative;
             overflow: hidden;
+            transition: var(--transition);
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
         }
         .stat-card.premium {
             background: var(--gradient-premium);
@@ -712,6 +720,7 @@
             padding: 1rem 1.5rem;
             background: var(--background);
             border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
         }
         .quick-action-btn {
             padding: 0.5rem 1rem;
@@ -724,10 +733,16 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            white-space: nowrap;
         }
         .quick-action-btn:hover {
             background: var(--primary-light);
             border-color: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        .quick-action-btn:active {
+            transform: translateY(0);
         }
         .quick-action-btn.danger {
             background: var(--error);
@@ -895,6 +910,197 @@
             border-left: 4px solid var(--text-tertiary);
         }
 
+        /* Data Visualization */
+        .chart-container {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .chart-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .chart-actions button {
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+            background: var(--background);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.8rem;
+        }
+        
+        .chart-actions button:hover {
+            background: var(--primary-light);
+            border-color: var(--primary-light);
+        }
+        
+        .chart-wrapper {
+            height: 300px;
+            position: relative;
+        }
+
+        /* Advanced Filter Panel */
+        .advanced-filter-panel {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+        
+        .filter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .filter-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .filter-option-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .filter-option-group label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        
+        .filter-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            justify-content: flex-end;
+        }
+
+        /* Performance Indicators */
+        .performance-indicators {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .performance-indicator {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 1rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--primary);
+        }
+        
+        .performance-indicator.warning {
+            border-left-color: var(--warning);
+        }
+        
+        .performance-indicator.danger {
+            border-left-color: var(--error);
+        }
+        
+        .performance-indicator.success {
+            border-left-color: var(--success);
+        }
+        
+        .indicator-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        
+        .indicator-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* Loading States */
+        .skeleton-loader {
+            background: linear-gradient(90deg, var(--background) 25%, var(--surface) 50%, var(--background) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: var(--radius);
+        }
+        
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        .skeleton-row {
+            height: 20px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .skeleton-card {
+            height: 100px;
+            margin-bottom: 1rem;
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .toast {
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius);
+            color: white;
+            font-weight: 600;
+            animation: slideInRight 0.3s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            max-width: 350px;
+        }
+        
+        .toast.success {
+            background: var(--success);
+        }
+        
+        .toast.error {
+            background: var(--error);
+        }
+        
+        .toast.warning {
+            background: var(--warning);
+        }
+        
+        .toast.info {
+            background: var(--info);
+        }
+        
+        .toast .close {
+            margin-left: auto;
+            cursor: pointer;
+        }
+
         @media (max-width: 768px) {
             .header-container {
                 padding: 0.75rem;
@@ -932,278 +1138,77 @@
             .online-users-grid {
                 grid-template-columns: 1fr;
             }
+            .filter-options {
+                grid-template-columns: 1fr;
+            }
+            .performance-indicators {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
-    .btn-sm {
-        padding: 0.5rem 1rem;
-        font-size: 0.8rem;
-    }
-    
-    .mobile-menu-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1rem;
-        padding-bottom: 1rem;
-        border-bottom: 1px solid var(--border);
-    }
-    
-    .mobile-menu-items {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-    
-    .mobile-menu-item {
-        padding: 1rem;
-        background: var(--background);
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        cursor: pointer;
-        transition: var(--transition);
-        text-align: left;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 1rem;
-    }
-    
-    .mobile-menu-item:hover {
-        background: var(--primary-light);
-        border-color: var(--primary-light);
-    }
-    
-    @media (max-width: 768px) {
-        #mobileMenuBtn {
+        
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+        }
+        
+        .mobile-menu-header {
             display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
         }
         
-        .bulk-actions {
+        .mobile-menu-items {
+            display: flex;
             flex-direction: column;
+            gap: 0.5rem;
         }
         
-        .quick-actions {
-            flex-wrap: wrap;
+        .mobile-menu-item {
+            padding: 1rem;
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
         }
         
-        .quick-action-btn {
-            flex: 1;
-            min-width: 120px;
+        .mobile-menu-item:hover {
+            background: var(--primary-light);
+            border-color: var(--primary-light);
         }
-    }
-    /* Quick Action Button Styles */
-.quick-action-btn {
-    padding: 0.5rem 1rem;
-    border-radius: var(--radius);
-    background: var(--surface);
-    border: 1px solid var(--border);
-    cursor: pointer;
-    transition: var(--transition);
-    font-size: 0.9rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    white-space: nowrap;
-}
-
-.quick-action-btn:hover {
-    background: var(--primary-light);
-    border-color: var(--primary-light);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow);
-}
-
-.quick-action-btn:active {
-    transform: translateY(0);
-}
-
-/* Warning Button (Logout Selected) */
-.quick-action-btn.warning {
-    background: var(--warning);
-    color: white;
-    border-color: var(--warning);
-}
-
-.quick-action-btn.warning:hover {
-    background: #ca8a04;
-    border-color: #ca8a04;
-    color: white;
-}
-
-.quick-action-btn.warning:active {
-    background: #a16207;
-}
-
-/* Danger Button (Logout All Active) */
-.quick-action-btn.danger {
-    background: var(--error);
-    color: white;
-    border-color: var(--error);
-}
-
-.quick-action-btn.danger:hover {
-    background: #dc2626;
-    border-color: #dc2626;
-    color: white;
-}
-
-.quick-action-btn.danger:active {
-    background: #b91c1c;
-}
-
-/* Button States */
-.quick-action-btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none !important;
-}
-
-.quick-action-btn:disabled:hover {
-    background: var(--surface);
-    border-color: var(--border);
-    transform: none;
-    box-shadow: none;
-}
-
-/* Loading state for buttons */
-.quick-action-btn.loading {
-    position: relative;
-    color: transparent;
-}
-
-.quick-action-btn.loading::after {
-    content: '';
-    position: absolute;
-    width: 16px;
-    height: 16px;
-    border: 2px solid transparent;
-    border-top: 2px solid currentColor;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-.quick-action-btn.warning.loading::after {
-    border-top-color: white;
-}
-
-.quick-action-btn.danger.loading::after {
-    border-top-color: white;
-}
-
-/* Button icons */
-.quick-action-btn i {
-    font-size: 0.8rem;
-    transition: var(--transition);
-}
-
-.quick-action-btn:hover i {
-    transform: scale(1.1);
-}
-
-.quick-action-btn.warning:hover i {
-    animation: shake 0.5s ease-in-out;
-}
-
-.quick-action-btn.danger:hover i {
-    animation: pulse 0.5s ease-in-out;
-}
-
-/* Animations */
-@keyframes shake {
-    0%, 100% { transform: translateX(0) scale(1.1); }
-    25% { transform: translateX(-2px) scale(1.1); }
-    75% { transform: translateX(2px) scale(1.1); }
-}
-
-@keyframes pulse {
-    0%, 100% { transform: scale(1.1); }
-    50% { transform: scale(1.3); }
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .quick-action-btn {
-        padding: 0.75rem 1rem;
-        font-size: 0.8rem;
-        flex: 1;
-        min-width: 140px;
-        justify-content: center;
-    }
-    
-    .quick-action-btn i {
-        font-size: 0.9rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .quick-actions {
-        gap: 0.5rem;
-    }
-    
-    .quick-action-btn {
-        min-width: 120px;
-        padding: 0.6rem 0.8rem;
-        font-size: 0.75rem;
-    }
-    
-    .quick-action-btn i {
-        font-size: 0.8rem;
-    }
-}
-
-/* Button group styling for the quick actions section */
-.quick-actions {
-    display: flex;
-    gap: 0.5rem;
-    padding: 1rem 1.5rem;
-    background: var(--background);
-    border-bottom: 1px solid var(--border);
-    flex-wrap: wrap;
-}
-
-/* Focus states for accessibility */
-.quick-action-btn:focus {
-    outline: 2px solid var(--primary);
-    outline-offset: 2px;
-}
-
-.quick-action-btn.warning:focus {
-    outline-color: var(--warning);
-}
-
-.quick-action-btn.danger:focus {
-    outline-color: var(--error);
-}
-
-/* Dark mode adjustments */
-body.dark-mode .quick-action-btn:not(.warning):not(.danger) {
-    background: var(--surface);
-    color: var(--text-primary);
-    border-color: var(--border);
-}
-
-body.dark-mode .quick-action-btn:not(.warning):not(.danger):hover {
-    background: var(--primary-light);
-    color: var(--primary);
-}
-
-/* Light mode adjustments */
-body.light-mode .quick-action-btn:not(.warning):not(.danger) {
-    background: white;
-    color: var(--text-primary);
-    border-color: var(--border);
-}
-
-body.light-mode .quick-action-btn:not(.warning):not(.danger):hover {
-    background: var(--primary-light);
-    color: var(--primary-dark);
-}
+        
+        @media (max-width: 768px) {
+            #mobileMenuBtn {
+                display: flex;
+            }
+            
+            .bulk-actions {
+                flex-direction: column;
+            }
+            
+            .quick-actions {
+                flex-wrap: wrap;
+            }
+            
+            .quick-action-btn {
+                flex: 1;
+                min-width: 120px;
+            }
+        }
     </style>
 </head>
 <body class="dark-mode">
+    <!-- Toast Notifications Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
     <!-- Admin Login Modal -->
     <div id="adminLoginModal" class="modal">
         <div class="modal-content">
@@ -1517,126 +1522,121 @@ body.light-mode .quick-action-btn:not(.warning):not(.danger):hover {
             </div>
         </div>
     </div>
+
     <!-- Delete Confirmation Modal -->
-<div id="deleteConfirmModal" class="modal">
-    <div class="modal-content">
-        <h2><i class="fas fa-exclamation-triangle"></i> Confirm Deletion</h2>
-        <p id="deleteMessage">Are you sure you want to delete this user?</p>
-        <div class="modal-actions">
-            <button class="btn btn-danger" id="confirmDeleteBtn">
-                <i class="fas fa-trash"></i> Delete
-            </button>
-            <button class="btn btn-secondary" id="cancelDeleteBtn">
-                <i class="fas fa-times"></i> Cancel
-            </button>
+    <div id="deleteConfirmModal" class="modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-exclamation-triangle"></i> Confirm Deletion</h2>
+            <p id="deleteMessage">Are you sure you want to delete this user?</p>
+            <div class="modal-actions">
+                <button class="btn btn-danger" id="confirmDeleteBtn">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+                <button class="btn btn-secondary" id="cancelDeleteBtn">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
         </div>
     </div>
-</div>
 
-
-<!-- Simple Delete Modal (for backward compatibility) -->
-<div id="simpleDeleteModal" class="modal">
-    <div class="modal-content">
-        <h2><i class="fas fa-exclamation-triangle"></i> Confirm Deletion</h2>
-        <p id="simpleDeleteMessage">Are you sure you want to delete this item?</p>
-        <div class="modal-actions">
-            <button class="btn btn-danger" id="confirmSimpleDeleteBtn">
-                <i class="fas fa-trash"></i> Delete
-            </button>
-            <button class="btn btn-secondary" id="cancelSimpleDeleteBtn">
-                <i class="fas fa-times"></i> Cancel
-            </button>
+    <!-- Simple Delete Modal (for backward compatibility) -->
+    <div id="simpleDeleteModal" class="modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-exclamation-triangle"></i> Confirm Deletion</h2>
+            <p id="simpleDeleteMessage">Are you sure you want to delete this item?</p>
+            <div class="modal-actions">
+                <button class="btn btn-danger" id="confirmSimpleDeleteBtn">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+                <button class="btn btn-secondary" id="cancelSimpleDeleteBtn">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- Loading Spinner -->
-<div id="loadingSpinner" class="modal" style="display: none;">
-    <div class="modal-content">
-        <div style="text-align: center; padding: 2rem;">
-            <i class="fas fa-spinner fa-spin" style="font-size: 3rem; color: var(--primary); margin-bottom: 1rem;"></i>
-            <p>Loading...</p>
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div style="text-align: center; padding: 2rem;">
+                <i class="fas fa-spinner fa-spin" style="font-size: 3rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                <p>Loading...</p>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- Success Message Container -->
-<div id="successMessage" style="display: none; position: fixed; top: 100px; right: 20px; padding: 1rem 1.5rem; border-radius: var(--radius); background: var(--success); color: white; font-weight: 600; z-index: 10000;"></div>
-
-<!-- Error Message Container -->
-<div id="errorMessage" style="display: none; position: fixed; top: 100px; right: 20px; padding: 1rem 1.5rem; border-radius: var(--radius); background: var(--error); color: white; font-weight: 600; z-index: 10000;"></div>
-
-<!-- Bulk Actions Panel -->
-<div id="bulkActionsPanel" style="display: none; position: fixed; bottom: 20px; right: 20px; background: var(--surface); padding: 1rem; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); z-index: 999;">
-    <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem;">
-        <span id="bulkSelectionCount" style="font-weight: 600;">0 items selected</span>
-        <button class="action-btn" onclick="hideBulkActions()">
-            <i class="fas fa-times"></i>
-        </button>
-    </div>
-    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-        <button class="btn btn-primary btn-sm" onclick="userManager.bulkVerify()">
-            <i class="fas fa-check-circle"></i> Verify
-        </button>
-        <button class="btn btn-secondary btn-sm" onclick="userManager.bulkReject()">
-            <i class="fas fa-times-circle"></i> Reject
-        </button>
-        <button class="btn btn-premium btn-sm" onclick="userManager.bulkPromoteToModerator()">
-            <i class="fas fa-user-shield"></i> Promote
-        </button>
-        <button class="btn btn-trial btn-sm" onclick="userManager.bulkStartTrial()">
-            <i class="fas fa-gift"></i> Trial
-        </button>
-        <button class="btn btn-danger btn-sm" onclick="userManager.showEnhancedBulkDeleteModal()">
-            <i class="fas fa-trash"></i> Delete
-        </button>
-    </div>
-</div>
-
-<!-- Quick Stats Summary -->
-<div id="quickStats" style="display: none; position: fixed; top: 100px; left: 20px; background: var(--surface); padding: 1rem; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); z-index: 998;">
-    <h4 style="margin-bottom: 0.5rem;">Quick Stats</h4>
-    <div id="quickStatsContent">
-        <!-- Stats will be populated here -->
-    </div>
-</div>
-
-<!-- Mobile Menu (for smaller screens) -->
-<div id="mobileMenu" class="modal" style="display: none;">
-    <div class="modal-content">
-        <div class="mobile-menu-header">
-            <h3>Admin Menu</h3>
-            <button class="action-btn" onclick="closeMobileMenu()">
+    <!-- Bulk Actions Panel -->
+    <div id="bulkActionsPanel" style="display: none; position: fixed; bottom: 20px; right: 20px; background: var(--surface); padding: 1rem; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); z-index: 999;">
+        <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem;">
+            <span id="bulkSelectionCount" style="font-weight: 600;">0 items selected</span>
+            <button class="action-btn" onclick="hideBulkActions()">
                 <i class="fas fa-times"></i>
             </button>
         </div>
-        <div class="mobile-menu-items">
-            <button class="mobile-menu-item" onclick="switchTab('users')">
-                <i class="fas fa-users"></i> Users
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button class="btn btn-primary btn-sm" onclick="userManager.bulkVerify()">
+                <i class="fas fa-check-circle"></i> Verify
             </button>
-            <button class="mobile-menu-item" onclick="switchTab('broadcasts')">
-                <i class="fas fa-bullhorn"></i> Broadcasts
+            <button class="btn btn-secondary btn-sm" onclick="userManager.bulkReject()">
+                <i class="fas fa-times-circle"></i> Reject
             </button>
-            <button class="mobile-menu-item" onclick="switchTab('localstorage')">
-                <i class="fas fa-database"></i> LocalStorage
+            <button class="btn btn-premium btn-sm" onclick="userManager.bulkPromoteToModerator()">
+                <i class="fas fa-user-shield"></i> Promote
             </button>
-            <button class="mobile-menu-item" onclick="userManager.toggleDeletedUsers()">
-                <i class="fas fa-archive"></i> Deleted Users
+            <button class="btn btn-trial btn-sm" onclick="userManager.bulkStartTrial()">
+                <i class="fas fa-gift"></i> Trial
             </button>
-            <button class="mobile-menu-item" onclick="openBroadcastModal()">
-                <i class="fas fa-plus"></i> New Broadcast
-            </button>
-            <button class="mobile-menu-item" onclick="showQuickStats()">
-                <i class="fas fa-chart-bar"></i> Quick Stats
+            <button class="btn btn-danger btn-sm" onclick="userManager.showEnhancedBulkDeleteModal()">
+                <i class="fas fa-trash"></i> Delete
             </button>
         </div>
     </div>
-</div>
 
-<!-- Mobile Menu Button (for smaller screens) -->
-<button id="mobileMenuBtn" class="action-btn" style="display: none; position: fixed; bottom: 20px; left: 20px; z-index: 997;">
-    <i class="fas fa-bars"></i>
-</button>
+    <!-- Quick Stats Summary -->
+    <div id="quickStats" style="display: none; position: fixed; top: 100px; left: 20px; background: var(--surface); padding: 1rem; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); z-index: 998;">
+        <h4 style="margin-bottom: 0.5rem;">Quick Stats</h4>
+        <div id="quickStatsContent">
+            <!-- Stats will be populated here -->
+        </div>
+    </div>
+
+    <!-- Mobile Menu (for smaller screens) -->
+    <div id="mobileMenu" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="mobile-menu-header">
+                <h3>Admin Menu</h3>
+                <button class="action-btn" onclick="closeMobileMenu()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="mobile-menu-items">
+                <button class="mobile-menu-item" onclick="switchTab('users')">
+                    <i class="fas fa-users"></i> Users
+                </button>
+                <button class="mobile-menu-item" onclick="switchTab('broadcasts')">
+                    <i class="fas fa-bullhorn"></i> Broadcasts
+                </button>
+                <button class="mobile-menu-item" onclick="switchTab('localstorage')">
+                    <i class="fas fa-database"></i> LocalStorage
+                </button>
+                <button class="mobile-menu-item" onclick="userManager.toggleDeletedUsers()">
+                    <i class="fas fa-archive"></i> Deleted Users
+                </button>
+                <button class="mobile-menu-item" onclick="openBroadcastModal()">
+                    <i class="fas fa-plus"></i> New Broadcast
+                </button>
+                <button class="mobile-menu-item" onclick="showQuickStats()">
+                    <i class="fas fa-chart-bar"></i> Quick Stats
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Menu Button (for smaller screens) -->
+    <button id="mobileMenuBtn" class="action-btn" style="display: none; position: fixed; bottom: 20px; left: 20px; z-index: 997;">
+        <i class="fas fa-bars"></i>
+    </button>
+
     <!-- Broadcast Message Modal -->
     <div id="broadcastModal" class="modal">
         <div class="modal-content">
@@ -1654,7 +1654,12 @@ body.light-mode .quick-action-btn:not(.warning):not(.danger):hover {
                         <option value="premium">Premium Users</option>
                         <option value="trial">Trial Users</option>
                         <option value="online">Online Now</option>
+                        <option value="specific">Specific User</option>
                     </select>
+                </div>
+                <div class="input-group" id="specificPhoneGroup" style="display: none;">
+                    <i class="fas fa-phone"></i>
+                    <input id="broadcastTargetPhone" placeholder="Target User Phone" required>
                 </div>
                 <div class="input-group">
                     <i class="fas fa-bell"></i>
@@ -1691,7 +1696,12 @@ body.light-mode .quick-action-btn:not(.warning):not(.danger):hover {
                         <option value="premium">Premium Users</option>
                         <option value="trial">Trial Users</option>
                         <option value="online">Online Now</option>
+                        <option value="specific">Specific User</option>
                     </select>
+                </div>
+                <div class="input-group" id="editSpecificPhoneGroup" style="display: none;">
+                    <i class="fas fa-phone"></i>
+                    <input id="editBroadcastTargetPhone" placeholder="Target User Phone" required>
                 </div>
                 <div class="input-group">
                     <i class="fas fa-bell"></i>
@@ -1746,9 +1756,30 @@ body.light-mode .quick-action-btn:not(.warning):not(.danger):hover {
             <button class="tab-btn active" data-tab="users">Users</button>
             <button class="tab-btn" data-tab="broadcasts">Broadcasts</button>
             <button class="tab-btn" data-tab="localstorage">LocalStorage</button>
+            <button class="tab-btn" data-tab="analytics">Analytics</button>
         </div>
         
         <div class="tab-content active" id="usersTab">
+            <!-- Performance Indicators -->
+            <div class="performance-indicators">
+                <div class="performance-indicator">
+                    <div class="indicator-value" id="totalUsersIndicator">0</div>
+                    <div class="indicator-label">Total Users</div>
+                </div>
+                <div class="performance-indicator success">
+                    <div class="indicator-value" id="verifiedUsersIndicator">0</div>
+                    <div class="indicator-label">Verified Users</div>
+                </div>
+                <div class="performance-indicator warning">
+                    <div class="indicator-value" id="pendingUsersIndicator">0</div>
+                    <div class="indicator-label">Pending Users</div>
+                </div>
+                <div class="performance-indicator">
+                    <div class="indicator-value" id="onlineUsersIndicator">0</div>
+                    <div class="indicator-label">Online Users</div>
+                </div>
+            </div>
+
             <!-- Online Users Panel -->
             <div class="online-users-panel">
                 <div class="online-users-header">
@@ -1762,6 +1793,81 @@ body.light-mode .quick-action-btn:not(.warning):not(.danger):hover {
                         <i class="fas fa-users-slash" style="font-size: 2rem; margin-bottom: 1rem;"></i>
                         <p>No users online at the moment</p>
                     </div>
+                </div>
+            </div>
+            
+            <!-- Advanced Filter Panel -->
+            <div class="advanced-filter-panel">
+                <div class="filter-header">
+                    <h3><i class="fas fa-filter"></i> Advanced Filters</h3>
+                    <button class="action-btn" id="toggleAdvancedFilters">
+                        <i class="fas fa-chevron-up"></i> Hide
+                    </button>
+                </div>
+                <div class="filter-options" id="advancedFilterOptions">
+                    <div class="filter-option-group">
+                        <label>Status</label>
+                        <select id="statusFilter" class="filter-select">
+                            <option value="all">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="verified">Verified</option>
+                            <option value="rejected">Rejected</option>
+                            <option value="premium">Premium</option>
+                            <option value="banned">Banned</option>
+                        </select>
+                    </div>
+                    <div class="filter-option-group">
+                        <label>Role</label>
+                        <select id="roleFilter" class="filter-select">
+                            <option value="all">All Roles</option>
+                            <option value="user">User</option>
+                            <option value="moderator">Moderator</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <div class="filter-option-group">
+                        <label>Year</label>
+                        <select id="yearFilter" class="filter-select">
+                            <option value="all">All Years</option>
+                            <option value="1">Pre Med</option>
+                            <option value="2">Intro Med</option>
+                            <option value="3">Meta</option>
+                            <option value="4">Hema</option>
+                            <option value="5">CVS</option>
+                            <option value="6">RESPA</option>
+                            <option value="7">Musclo</option>
+                        </select>
+                    </div>
+                    <div class="filter-option-group">
+                        <label>Plan</label>
+                        <select id="planFilter" class="filter-select">
+                            <option value="all">All Plans</option>
+                            <option value="basic">Basic</option>
+                            <option value="premium">Premium</option>
+                            <option value="trial">Trial</option>
+                        </select>
+                    </div>
+                    <div class="filter-option-group">
+                        <label>Sort By</label>
+                        <select id="sortBy" class="filter-select">
+                            <option value="newest">Newest First</option>
+                            <option value="oldest">Oldest First</option>
+                            <option value="name">Name A-Z</option>
+                            <option value="role">Role</option>
+                        </select>
+                    </div>
+                    <div class="filter-option-group">
+                        <label>Registration Date</label>
+                        <input type="date" id="registrationDateFilter" class="filter-select">
+                    </div>
+                </div>
+                <div class="filter-actions">
+                    <button class="btn btn-secondary" onclick="userManager.clearFilters()">
+                        <i class="fas fa-times"></i> Clear Filters
+                    </button>
+                    <button class="btn btn-primary" onclick="userManager.applyAdvancedFilters()">
+                        <i class="fas fa-filter"></i> Apply Filters
+                    </button>
                 </div>
             </div>
             
@@ -1818,27 +1924,16 @@ body.light-mode .quick-action-btn:not(.warning):not(.danger):hover {
                     <button class="quick-action-btn trial" onclick="userManager.bulkStartTrial()">
                         <i class="fas fa-gift"></i> Start Free Trial
                     </button>
+                    <button class="quick-action-btn warning" onclick="userManager.forceLogoutSelected()">
+                        <i class="fas fa-sign-out-alt"></i> Logout Selected
+                    </button>
+                    <button class="quick-action-btn danger" onclick="userManager.forceLogoutAllActive()">
+                        <i class="fas fa-users-slash"></i> Logout All Active
+                    </button>
                     <button class="quick-action-btn danger" onclick="userManager.showEnhancedBulkDeleteModal()">
                         <i class="fas fa-trash"></i> Delete Selected
                     </button>
-                     <button class="quick-action-btn" onclick="userManager.bulkVerify()">
-        <i class="fas fa-check-circle"></i> Verify Selected
-    </button>
-    <button class="quick-action-btn" onclick="userManager.bulkReject()">
-        <i class="fas fa-times-circle"></i> Reject Selected
-    </button>
-    <!-- ... other existing buttons ... -->
-    
-    <!-- ADD THESE NEW BUTTONS: -->
-    <button class="quick-action-btn warning" onclick="userManager.forceLogoutSelected()">
-        <i class="fas fa-sign-out-alt"></i> Logout Selected
-    </button>
-    <button class="quick-action-btn danger" onclick="userManager.forceLogoutAllActive()">
-        <i class="fas fa-users-slash"></i> Logout All Active
-    </button>
-                    
                 </div>
-                
                 
                 <div class="admin-controls">
                     <div class="search-box">
@@ -1846,42 +1941,12 @@ body.light-mode .quick-action-btn:not(.warning):not(.danger):hover {
                         <input type="text" id="searchInput" placeholder="Search users by name, phone, email, or role...">
                     </div>
                     <div class="filter-group">
-                        <select id="statusFilter" class="filter-select">
-                            <option value="all">All Status</option>
-                            <option value="pending">Pending</option>
-                            <option value="verified">Verified</option>
-                            <option value="rejected">Rejected</option>
-                            <option value="premium">Premium</option>
-                            <option value="banned">Banned</option>
-                        </select>
-                        <select id="roleFilter" class="filter-select">
-                            <option value="all">All Roles</option>
-                            <option value="user">User</option>
-                            <option value="moderator">Moderator</option>
-                            <option value="admin">Admin</option>
-                        </select>
-                        <select id="yearFilter" class="filter-select">
-                            <option value="all">All Years</option>
-                            <option value="1">Pre Med</option>
-                            <option value="2">Intro Med</option>
-                            <option value="3">Meta</option>
-                            <option value="4">Hema</option>
-                            <option value="5">CVS</option>
-                            <option value="6">RESPA</option>
-                            <option value="7">Musclo</option>
-                        </select>
-                        <select id="planFilter" class="filter-select">
-                            <option value="all">All Plans</option>
-                            <option value="basic">Basic</option>
-                            <option value="premium">Premium</option>
-                            <option value="trial">Trial</option>
-                        </select>
-                        <select id="sortBy" class="filter-select">
-                            <option value="newest">Newest First</option>
-                            <option value="oldest">Oldest First</option>
-                            <option value="name">Name A-Z</option>
-                            <option value="role">Role</option>
-                        </select>
+                        <button class="btn btn-secondary" onclick="userManager.exportUsers()">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                        <button class="btn btn-secondary" onclick="userManager.importUsers()">
+                            <i class="fas fa-upload"></i> Import
+                        </button>
                     </div>
                 </div>
                 
@@ -2031,6 +2096,7 @@ body.light-mode .quick-action-btn:not(.warning):not(.danger):hover {
                             <option value="premium">Premium</option>
                             <option value="trial">Trial</option>
                             <option value="online">Online</option>
+                            <option value="specific">Specific</option>
                         </select>
                         <select id="broadcastSortBy" class="filter-select">
                             <option value="newest">Newest First</option>
@@ -2126,19 +2192,58 @@ body.light-mode .quick-action-btn:not(.warning):not(.danger):hover {
                 </div>
             </div>
         </div>
+
+        <div class="tab-content" id="analyticsTab">
+            <!-- Analytics Dashboard -->
+            <div class="admin-panel">
+                <div class="admin-header">
+                    <h2><i class="fas fa-chart-line"></i> Analytics Dashboard</h2>
+                </div>
+                
+                <div class="admin-stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalUsersAnalytics">0</div>
+                        <div class="stat-label">Total Users</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="activeUsersAnalytics">0</div>
+                        <div class="stat-label">Active Users (7d)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="newUsersAnalytics">0</div>
+                        <div class="stat-label">New Users (7d)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="conversionRate">0%</div>
+                        <div class="stat-label">Conversion Rate</div>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>User Growth</h3>
+                        <div class="chart-actions">
+                            <button class="btn btn-secondary" onclick="analyticsManager.changeChartPeriod('7d')">7D</button>
+                            <button class="btn btn-secondary" onclick="analyticsManager.changeChartPeriod('30d')">30D</button>
+                            <button class="btn btn-secondary" onclick="analyticsManager.changeChartPeriod('90d')">90D</button>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="userGrowthChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>User Distribution</h3>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="userDistributionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
-    <!-- Add these buttons to your admin controls -->
-<div class="quick-actions">
-    <!-- Existing buttons... -->
-    
-    <button class="quick-action-btn warning" onclick="userManager.forceLogoutSelected()">
-        <i class="fas fa-sign-out-alt"></i> Logout Selected
-    </button>
-    
-    <button class="quick-action-btn danger" onclick="userManager.forceLogoutAllActive()">
-        <i class="fas fa-users-slash"></i> Logout All Active
-    </button>
-</div>
 
     <script>
         // Firebase configuration
@@ -2161,6 +2266,40 @@ body.light-mode .quick-action-btn:not(.warning):not(.danger):hover {
             password: "alif1noth"
         };
 
+        // Toast Notification System
+        class ToastManager {
+            static show(message, type = 'info', duration = 5000) {
+                const toastContainer = document.getElementById('toastContainer');
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.innerHTML = `
+                    <i class="fas fa-${this.getIcon(type)}"></i>
+                    <span>${message}</span>
+                    <span class="close" onclick="this.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </span>
+                `;
+                
+                toastContainer.appendChild(toast);
+                
+                setTimeout(() => {
+                    if (toast.parentElement) {
+                        toast.remove();
+                    }
+                }, duration);
+            }
+            
+            static getIcon(type) {
+                const icons = {
+                    'success': 'check-circle',
+                    'error': 'exclamation-circle',
+                    'warning': 'exclamation-triangle',
+                    'info': 'info-circle'
+                };
+                return icons[type] || 'info-circle';
+            }
+        }
+
         // Enhanced User Management Class with Complete Deletion System
         class EnhancedUserManager {
             constructor() {
@@ -2181,6 +2320,7 @@ body.light-mode .quick-action-btn:not(.warning):not(.danger):hover {
                 this.sortBy = 'newest';
                 this.onlineUsers = new Map();
                 this.onlineStatusInterval = null;
+                this.isLoading = false;
             }
 
             // Initialize online status tracking
@@ -2287,10 +2427,13 @@ body.light-mode .quick-action-btn:not(.warning):not(.danger):hover {
             // Refresh online status manually
             refreshOnlineStatus() {
                 this.updateOnlineStatus();
-                this.showMessage('Online status refreshed', 'success');
+                ToastManager.show('Online status refreshed', 'success');
             }
 
             loadUsers() {
+                this.isLoading = true;
+                this.showSkeletonLoader();
+                
                 this.usersCollection.onSnapshot(snapshot => {
                     this.users = snapshot.docs.map(doc => ({
                         id: doc.id,
@@ -2300,7 +2443,39 @@ body.light-mode .quick-action-btn:not(.warning):not(.danger):hover {
                     this.updateStats();
                     this.renderUsers();
                     this.updateOnlineStatus();
+                    this.isLoading = false;
+                    this.hideSkeletonLoader();
+                }, error => {
+                    console.error('Error loading users:', error);
+                    this.isLoading = false;
+                    this.hideSkeletonLoader();
+                    ToastManager.show('Error loading users: ' + error.message, 'error');
                 });
+            }
+
+            // Show skeleton loader
+            showSkeletonLoader() {
+                const tableBody = document.getElementById('usersTableBody');
+                tableBody.innerHTML = '';
+                
+                for (let i = 0; i < this.usersPerPage; i++) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><div class="skeleton-loader skeleton-row"></div></td>
+                        <td><div class="skeleton-loader skeleton-row"></div></td>
+                        <td><div class="skeleton-loader skeleton-row"></div></td>
+                        <td><div class="skeleton-loader skeleton-row"></div></td>
+                        <td><div class="skeleton-loader skeleton-row"></div></td>
+                        <td><div class="skeleton-loader skeleton-row"></div></td>
+                        <td><div class="skeleton-loader skeleton-row"></div></td>
+                    `;
+                    tableBody.appendChild(row);
+                }
+            }
+
+            // Hide skeleton loader
+            hideSkeletonLoader() {
+                // Will be replaced by actual data
             }
 
             applyFilters() {
@@ -2340,9 +2515,50 @@ body.light-mode .quick-action-btn:not(.warning):not(.danger):hover {
                 });
             }
 
+            // Apply advanced filters
+            applyAdvancedFilters() {
+                this.searchTerm = document.getElementById('searchInput').value;
+                this.statusFilter = document.getElementById('statusFilter').value;
+                this.roleFilter = document.getElementById('roleFilter').value;
+                this.yearFilter = document.getElementById('yearFilter').value;
+                this.planFilter = document.getElementById('planFilter').value;
+                this.sortBy = document.getElementById('sortBy').value;
+                
+                this.currentPage = 1;
+                this.applyFilters();
+                this.renderUsers();
+                
+                ToastManager.show('Filters applied successfully', 'success');
+            }
+
+            // Clear all filters
+            clearFilters() {
+                document.getElementById('searchInput').value = '';
+                document.getElementById('statusFilter').value = 'all';
+                document.getElementById('roleFilter').value = 'all';
+                document.getElementById('yearFilter').value = 'all';
+                document.getElementById('planFilter').value = 'all';
+                document.getElementById('sortBy').value = 'newest';
+                document.getElementById('registrationDateFilter').value = '';
+                
+                this.searchTerm = '';
+                this.statusFilter = 'all';
+                this.roleFilter = 'all';
+                this.yearFilter = 'all';
+                this.planFilter = 'all';
+                this.sortBy = 'newest';
+                
+                this.currentPage = 1;
+                this.applyFilters();
+                this.renderUsers();
+                
+                ToastManager.show('Filters cleared', 'info');
+            }
+
             updateStats() {
                 const total = this.users.length;
                 const verified = this.users.filter(u => u.status === 'verified').length;
+                const pending = this.users.filter(u => u.status === 'pending').length;
                 const admins = this.users.filter(u => u.role === 'admin').length;
                 const moderators = this.users.filter(u => u.role === 'moderator').length;
                 const premium = this.users.filter(u => u.status === 'premium' || u.plan === 'premium').length;
@@ -2356,6 +2572,12 @@ body.light-mode .quick-action-btn:not(.warning):not(.danger):hover {
                 document.getElementById('premiumUsers').textContent = premium;
                 document.getElementById('trialUsers').textContent = trials;
                 document.getElementById('onlineUsers').textContent = online;
+
+                // Update performance indicators
+                document.getElementById('totalUsersIndicator').textContent = total;
+                document.getElementById('verifiedUsersIndicator').textContent = verified;
+                document.getElementById('pendingUsersIndicator').textContent = pending;
+                document.getElementById('onlineUsersIndicator').textContent = online;
             }
 
             // Check if trial is active
@@ -2737,7 +2959,7 @@ body.light-mode .quick-action-btn:not(.warning):not(.danger):hover {
                     await this.usersCollection.doc(userId).update(updateData);
                     
                     document.getElementById('editUserModal').style.display = 'none';
-                    this.showMessage('User updated successfully', 'success');
+                    ToastManager.show('User updated successfully', 'success');
                 } catch (error) {
                     console.error('Error updating user:', error);
                     document.getElementById('editUserError').textContent = 'Error updating user: ' + error.message;
@@ -2764,10 +2986,10 @@ body.light-mode .quick-action-btn:not(.warning):not(.danger):hover {
                         role: newRole
                     });
                     
-                    this.showMessage(`User role changed to ${newRole}`, 'success');
+                    ToastManager.show(`User role changed to ${newRole}`, 'success');
                 } catch (error) {
                     console.error('Error changing user role:', error);
-                    this.showMessage('Error changing user role: ' + error.message, 'error');
+                    ToastManager.show('Error changing user role: ' + error.message, 'error');
                 }
             }
 
@@ -2797,10 +3019,10 @@ body.light-mode .quick-action-btn:not(.warning):not(.danger):hover {
                         used: true
                     });
                     
-                    this.showMessage(`Free trial started for ${user.name} (${trialDuration} days)`, 'success');
+                    ToastManager.show(`Free trial started for ${user.name} (${trialDuration} days)`, 'success');
                 } catch (error) {
                     console.error('Error starting trial:', error);
-                    this.showMessage('Error starting trial: ' + error.message, 'error');
+                    ToastManager.show('Error starting trial: ' + error.message, 'error');
                 }
             }
 
@@ -2867,163 +3089,165 @@ body.light-mode .quick-action-btn:not(.warning):not(.danger):hover {
             }
 
             // Enhanced delete user method
-            async enhancedDeleteUser(userId, deleteType = 'soft', reason = '', banDuration = null) {
-                const user = this.users.find(u => u.id === userId);
-                if (!user) return;
+            // Enhanced delete user method
+async enhancedDeleteUser(userId, deleteType = 'soft', reason = '', banDuration = null) {
+    const user = this.users.find(u => u.id === userId);
+    if (!user) return;
 
-                try {
-                    const adminUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-                    
-                    const deletionRecord = {
-                        originalUser: user,
-                        deletedAt: Date.now(),
-                        deletedBy: adminUser.name || 'Admin',
-                        deletedById: adminUser.id,
-                        deleteType: deleteType,
-                        reason: reason,
-                        banDuration: banDuration,
-                        banExpires: banDuration ? this.calculateBanExpiry(banDuration) : null
-                    };
+    try {
+        const adminUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        
+        // Create deletion record with safe values
+        const deletionRecord = {
+            originalUser: user,
+            deletedAt: Date.now(),
+            deletedBy: adminUser.name || 'Admin',
+            deletedById: adminUser.id || 'unknown', // Provide default value
+            deleteType: deleteType,
+            reason: reason,
+            banDuration: banDuration,
+            banExpires: banDuration ? this.calculateBanExpiry(banDuration) : null
+        };
 
-                    // Send logout signal to user BEFORE deletion
-                    await this.sendLogoutCommand(user.phone, 'logout', reason);
+        // Send logout signal to user BEFORE deletion
+        await this.sendLogoutCommand(user.phone, 'logout', reason);
 
-                    if (deleteType === 'soft') {
-                        // Move to deleted users collection
-                        await this.deletedUsersCollection.doc(userId).set(deletionRecord);
-                        // Remove from active users
-                        await this.usersCollection.doc(userId).delete();
-                    } 
-                    else if (deleteType === 'hard') {
-                        // Permanent deletion - remove from both collections
-                        await this.usersCollection.doc(userId).delete();
-                        await this.deletedUsersCollection.doc(userId).delete();
-                        
-                        // Also delete from trials collection if exists
-                        const trialSnapshot = await this.trialsCollection.where('userId', '==', userId).get();
-                        trialSnapshot.forEach(async doc => {
-                            await doc.ref.delete();
-                        });
-                    }
-                    else if (deleteType === 'ban') {
-                        // Ban user - mark as banned but keep record
-                        await this.usersCollection.doc(userId).update({
-                            status: 'banned',
-                            bannedAt: Date.now(),
-                            banReason: reason,
-                            banExpires: deletionRecord.banExpires,
-                            bannedBy: adminUser.name || 'Admin',
-                            isOnline: false // Force offline status
-                        });
-                        
-                        // Also add to deleted users archive for tracking
-                        await this.deletedUsersCollection.doc(userId).set(deletionRecord);
-                    }
+        if (deleteType === 'soft') {
+            // Move to deleted users collection
+            await this.deletedUsersCollection.doc(userId).set(deletionRecord);
+            // Remove from active users
+            await this.usersCollection.doc(userId).delete();
+        } 
+        else if (deleteType === 'hard') {
+            // Permanent deletion - remove from both collections
+            await this.usersCollection.doc(userId).delete();
+            await this.deletedUsersCollection.doc(userId).delete();
+            
+            // Also delete from trials collection if exists
+            const trialSnapshot = await this.trialsCollection.where('userId', '==', userId).get();
+            trialSnapshot.forEach(async doc => {
+                await doc.ref.delete();
+            });
+        }
+        else if (deleteType === 'ban') {
+            // Ban user - mark as banned but keep record
+            await this.usersCollection.doc(userId).update({
+                status: 'banned',
+                bannedAt: Date.now(),
+                banReason: reason,
+                banExpires: deletionRecord.banExpires,
+                bannedBy: adminUser.name || 'Admin',
+                isOnline: false // Force offline status
+            });
+            
+            // Also add to deleted users archive for tracking
+            await this.deletedUsersCollection.doc(userId).set(deletionRecord);
+        }
 
-                    // Force clear user's localStorage by sending a broadcast
-                    await this.forceClearUserLocalStorage(user.phone);
+        // Force clear user's localStorage by sending a broadcast
+        await this.forceClearUserLocalStorage(user.phone);
 
-                    // Log the deletion
-                    await this.adminLogsCollection.add({
-                        action: 'user_deletion',
-                        targetUserId: userId,
-                        targetUserName: user.name,
-                        targetUserPhone: user.phone,
-                        adminId: adminUser.id,
-                        adminName: adminUser.name,
-                        deleteType: deleteType,
-                        reason: reason,
-                        timestamp: Date.now(),
-                        localStorageCleared: true
-                    });
+        // Log the deletion
+        await this.adminLogsCollection.add({
+            action: 'user_deletion',
+            targetUserId: userId,
+            targetUserName: user.name,
+            targetUserPhone: user.phone,
+            adminId: adminUser.id || 'unknown', // Provide default value
+            adminName: adminUser.name || 'Admin',
+            deleteType: deleteType,
+            reason: reason,
+            timestamp: Date.now(),
+            localStorageCleared: true
+        });
 
-                    this.showMessage(`User ${deleteType === 'ban' ? 'banned' : 'deleted'} successfully. LocalStorage cleanup initiated.`, 'success');
-                    
-                } catch (error) {
-                    console.error('Error deleting user:', error);
-                    this.showMessage('Error deleting user: ' + error.message, 'error');
-                }
-            }
+        ToastManager.show(`User ${deleteType === 'ban' ? 'banned' : 'deleted'} successfully. LocalStorage cleanup initiated.`, 'success');
+        
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        ToastManager.show('Error deleting user: ' + error.message, 'error');
+    }
+}
 
             // Enhanced bulk delete with localStorage cleanup
-            async enhancedBulkDelete(deleteType = 'soft', reason = 'Bulk deletion') {
-                if (this.selectedUsers.size === 0) return;
-                
-                try {
-                    const batch = db.batch();
-                    const adminUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-                    const userPhones = [];
-                    
-                    // First, collect all user phones for localStorage cleanup
-                    this.selectedUsers.forEach(userId => {
-                        const user = this.users.find(u => u.id === userId);
-                        if (user && user.phone) {
-                            userPhones.push(user.phone);
-                        }
-                    });
-                    
-                    // Send localStorage cleanup signals
-                    await this.bulkLogoutUsers(userPhones, reason);
-                    
-                    // Process deletions
-                    this.selectedUsers.forEach(userId => {
-                        const user = this.users.find(u => u.id === userId);
-                        if (!user) return;
-                        
-                        const userRef = this.usersCollection.doc(userId);
-                        
-                        if (deleteType === 'soft') {
-                            // Move to deleted users
-                            const deletionRecord = {
-                                originalUser: user,
-                                deletedAt: Date.now(),
-                                deletedBy: adminUser.name || 'Admin',
-                                deletedById: adminUser.id,
-                                deleteType: 'soft',
-                                reason: reason
-                            };
-                            
-                            this.deletedUsersCollection.doc(userId).set(deletionRecord);
-                            batch.delete(userRef);
-                        } 
-                        else if (deleteType === 'hard') {
-                            batch.delete(userRef);
-                        }
-                        else if (deleteType === 'ban') {
-                            batch.update(userRef, {
-                                status: 'banned',
-                                bannedAt: Date.now(),
-                                banReason: reason,
-                                bannedBy: adminUser.name || 'Admin',
-                                isOnline: false,
-                                forceLogout: true
-                            });
-                        }
-                    });
-                    
-                    await batch.commit();
-                    
-                    // Log bulk action
-                    await this.adminLogsCollection.add({
-                        action: 'bulk_user_deletion',
-                        count: this.selectedUsers.size,
-                        deleteType: deleteType,
-                        reason: reason,
-                        adminId: adminUser.id,
-                        adminName: adminUser.name,
-                        timestamp: Date.now(),
-                        localStorageCleared: true,
-                        usersAffected: userPhones
-                    });
-                    
-                    this.selectedUsers.clear();
-                    this.showMessage(`${this.selectedUsers.size} users ${deleteType === 'ban' ? 'banned' : 'deleted'}. LocalStorage cleanup initiated.`, 'success');
-                    
-                } catch (error) {
-                    console.error('Error bulk deleting users:', error);
-                    this.showMessage('Error deleting users: ' + error.message, 'error');
-                }
+async enhancedBulkDelete(deleteType = 'soft', reason = 'Bulk deletion') {
+    if (this.selectedUsers.size === 0) return;
+    
+    try {
+        const batch = db.batch();
+        const adminUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        const userPhones = [];
+        
+        // First, collect all user phones for localStorage cleanup
+        this.selectedUsers.forEach(userId => {
+            const user = this.users.find(u => u.id === userId);
+            if (user && user.phone) {
+                userPhones.push(user.phone);
             }
+        });
+        
+        // Send localStorage cleanup signals
+        await this.bulkLogoutUsers(userPhones, reason);
+        
+        // Process deletions
+        this.selectedUsers.forEach(userId => {
+            const user = this.users.find(u => u.id === userId);
+            if (!user) return;
+            
+            const userRef = this.usersCollection.doc(userId);
+            
+            if (deleteType === 'soft') {
+                // Move to deleted users
+                const deletionRecord = {
+                    originalUser: user,
+                    deletedAt: Date.now(),
+                    deletedBy: adminUser.name || 'Admin',
+                    deletedById: adminUser.id || 'unknown', // Provide default value
+                    deleteType: 'soft',
+                    reason: reason
+                };
+                
+                this.deletedUsersCollection.doc(userId).set(deletionRecord);
+                batch.delete(userRef);
+            } 
+            else if (deleteType === 'hard') {
+                batch.delete(userRef);
+            }
+            else if (deleteType === 'ban') {
+                batch.update(userRef, {
+                    status: 'banned',
+                    bannedAt: Date.now(),
+                    banReason: reason,
+                    bannedBy: adminUser.name || 'Admin',
+                    isOnline: false,
+                    forceLogout: true
+                });
+            }
+        });
+        
+        await batch.commit();
+        
+        // Log bulk action
+        await this.adminLogsCollection.add({
+            action: 'bulk_user_deletion',
+            count: this.selectedUsers.size,
+            deleteType: deleteType,
+            reason: reason,
+            adminId: adminUser.id || 'unknown', // Provide default value
+            adminName: adminUser.name || 'Admin',
+            timestamp: Date.now(),
+            localStorageCleared: true,
+            usersAffected: userPhones
+        });
+        
+        this.selectedUsers.clear();
+        ToastManager.show(`${this.selectedUsers.size} users ${deleteType === 'ban' ? 'banned' : 'deleted'}. LocalStorage cleanup initiated.`, 'success');
+        
+    } catch (error) {
+        console.error('Error bulk deleting users:', error);
+        ToastManager.show('Error deleting users: ' + error.message, 'error');
+    }
+}
 
             // Show enhanced delete modal for single user
             showEnhancedDeleteModal(userId) {
@@ -3125,114 +3349,122 @@ body.light-mode .quick-action-btn:not(.warning):not(.danger):hover {
                 }
             }
 
-            // Notify user to logout and clear localStorage
-           // Enhanced method to send logout commands
-async sendLogoutCommand(userPhone, commandType = 'logout', reason = 'Admin action') {
-    try {
-        const broadcastData = {
-            type: 'admin_command',
-            message: this.getLogoutMessage(commandType, reason),
-            target: 'specific',
-            targetPhone: userPhone,
-            timestamp: Date.now(),
-            action: this.getLogoutAction(commandType),
-            reason: reason,
-            urgent: true,
-            admin: JSON.parse(localStorage.getItem('currentUser') || '{}').name || 'Admin'
-        };
+            // Enhanced method to send logout commands
+            async sendLogoutCommand(userPhone, commandType = 'logout', reason = 'Admin action') {
+                try {
+                    const broadcastData = {
+                        type: 'admin_command',
+                        message: this.getLogoutMessage(commandType, reason),
+                        target: 'specific',
+                        targetPhone: userPhone,
+                        timestamp: Date.now(),
+                        action: this.getLogoutAction(commandType),
+                        reason: reason,
+                        urgent: true,
+                        admin: JSON.parse(localStorage.getItem('currentUser') || '{}').name || 'Admin'
+                    };
 
-        await db.collection('broadcasts').add(broadcastData);
-        
-        // Also mark user for logout in their record
-        const userSnapshot = await this.usersCollection.where('phone', '==', userPhone).get();
-        userSnapshot.forEach(async doc => {
-            await doc.ref.update({
-                forceLogout: true,
-                lastActive: Date.now(),
-                isOnline: false
-            });
-        });
-        
+                    await db.collection('broadcasts').add(broadcastData);
+                    
+                    // Also mark user for logout in their record
+                    const userSnapshot = await this.usersCollection.where('phone', '==', userPhone).get();
+                    userSnapshot.forEach(async doc => {
+                        await doc.ref.update({
+                            forceLogout: true,
+                            lastActive: Date.now(),
+                            isOnline: false
+                        });
+                    });
+                    
+                    return true;
+                } catch (error) {
+                    console.error('Error sending logout command:', error);
+                    return false;
+                }
+            }
+            // Force clear user's localStorage
+async forceClearUserLocalStorage(userPhone) {
+    try {
+        await this.sendLogoutCommand(userPhone, 'clear_data', 'Account deletion');
         return true;
     } catch (error) {
-        console.error('Error sending logout command:', error);
+        console.error('Error clearing localStorage:', error);
         return false;
     }
 }
 
-// Helper method to get appropriate logout message
-getLogoutMessage(commandType, reason) {
-    const messages = {
-        'logout': `Your session has been terminated by administrator. Reason: ${reason}`,
-        'ban': `Your account has been suspended. Reason: ${reason}`,
-        'clear_data': `Your local data has been cleared by administrator. Reason: ${reason}`,
-        'maintenance': 'System maintenance: All users have been logged out.'
-    };
-    return messages[commandType] || messages['logout'];
-}
+            // Helper method to get appropriate logout message
+            getLogoutMessage(commandType, reason) {
+                const messages = {
+                    'logout': `Your session has been terminated by administrator. Reason: ${reason}`,
+                    'ban': `Your account has been suspended. Reason: ${reason}`,
+                    'clear_data': `Your local data has been cleared by administrator. Reason: ${reason}`,
+                    'maintenance': 'System maintenance: All users have been logged out.'
+                };
+                return messages[commandType] || messages['logout'];
+            }
 
-// Helper method to get logout action
-getLogoutAction(commandType) {
-    const actions = {
-        'logout': 'clear_localstorage_and_logout',
-        'ban': 'admin_forced_logout', 
-        'clear_data': 'clear_all_data',
-        'maintenance': 'global_logout'
-    };
-    return actions[commandType] || actions['logout'];
-}
+            // Helper method to get logout action
+            getLogoutAction(commandType) {
+                const actions = {
+                    'logout': 'clear_localstorage_and_logout',
+                    'ban': 'admin_forced_logout', 
+                    'clear_data': 'clear_all_data',
+                    'maintenance': 'global_logout'
+                };
+                return actions[commandType] || actions['logout'];
+            }
 
-// Enhanced bulk logout
-// Enhanced bulk logout
-async bulkLogoutUsers(userPhones, reason = 'Bulk admin action') {
-    try {
-        const promises = userPhones.map(phone => 
-            this.sendLogoutCommand(phone, 'logout', reason)
-        );
-        
-        await Promise.all(promises);
-        this.showMessage(`Logout commands sent to ${userPhones.length} users`, 'success');
-    } catch (error) {
-        console.error('Error in bulk logout:', error);
-        this.showMessage('Error sending logout commands', 'error');
-    }
-}
+            // Enhanced bulk logout
+            async bulkLogoutUsers(userPhones, reason = 'Bulk admin action') {
+                try {
+                    const promises = userPhones.map(phone => 
+                        this.sendLogoutCommand(phone, 'logout', reason)
+                    );
+                    
+                    await Promise.all(promises);
+                    ToastManager.show(`Logout commands sent to ${userPhones.length} users`, 'success');
+                } catch (error) {
+                    console.error('Error in bulk logout:', error);
+                    ToastManager.show('Error sending logout commands', 'error');
+                }
+            }
 
-// Force logout selected users
-async forceLogoutSelected() {
-    if (this.selectedUsers.size === 0) return;
-    
-    const userPhones = [];
-    this.selectedUsers.forEach(userId => {
-        const user = this.users.find(u => u.id === userId);
-        if (user && user.phone) {
-            userPhones.push(user.phone);
-        }
-    });
-    
-    const reason = prompt('Reason for logging out these users:') || 'Admin action';
-    await this.bulkLogoutUsers(userPhones, reason);
-}
+            // Force logout selected users
+            async forceLogoutSelected() {
+                if (this.selectedUsers.size === 0) return;
+                
+                const userPhones = [];
+                this.selectedUsers.forEach(userId => {
+                    const user = this.users.find(u => u.id === userId);
+                    if (user && user.phone) {
+                        userPhones.push(user.phone);
+                    }
+                });
+                
+                const reason = prompt('Reason for logging out these users:') || 'Admin action';
+                await this.bulkLogoutUsers(userPhones, reason);
+            }
 
-// Force logout all active users
-async forceLogoutAllActive() {
-    const activeUsers = this.users.filter(user => 
-        user.lastActive && (Date.now() - user.lastActive) < (2 * 60 * 60 * 1000)
-    );
-    
-    if (activeUsers.length === 0) {
-        this.showMessage('No active users found', 'info');
-        return;
-    }
-    
-    if (!confirm(`Force logout ${activeUsers.length} active users? This will clear their localStorage!`)) {
-        return;
-    }
-    
-    const userPhones = activeUsers.map(user => user.phone).filter(phone => phone);
-    const reason = prompt('Reason for mass logout:') || 'System maintenance';
-    await this.bulkLogoutUsers(userPhones, reason);
-}
+            // Force logout all active users
+            async forceLogoutAllActive() {
+                const activeUsers = this.users.filter(user => 
+                    user.lastActive && (Date.now() - user.lastActive) < (2 * 60 * 60 * 1000)
+                );
+                
+                if (activeUsers.length === 0) {
+                    ToastManager.show('No active users found', 'info');
+                    return;
+                }
+                
+                if (!confirm(`Force logout ${activeUsers.length} active users? This will clear their localStorage!`)) {
+                    return;
+                }
+                
+                const userPhones = activeUsers.map(user => user.phone).filter(phone => phone);
+                const reason = prompt('Reason for mass logout:') || 'System maintenance';
+                await this.bulkLogoutUsers(userPhones, reason);
+            }
 
             // Show users who might have localStorage data
             async showLocalStorageUsers() {
@@ -3287,21 +3519,21 @@ async forceLogoutAllActive() {
                 
                 try {
                     await this.sendLogoutCommand(userPhone, 'clear_data', 'LocalStorage cleanup');
-                    this.showMessage(`LocalStorage cleanup sent to ${userPhone}`, 'success');
+                    ToastManager.show(`LocalStorage cleanup sent to ${userPhone}`, 'success');
                 } catch (error) {
                     console.error('Error clearing localStorage:', error);
-                    this.showMessage('Error clearing localStorage: ' + error.message, 'error');
+                    ToastManager.show('Error clearing localStorage: ' + error.message, 'error');
                 }
             }
 
             // Force user logout
             async forceUserLogout(userPhone) {
                 try {
-                    await this.notifyUserLogout(userPhone);
-                    this.showMessage(`Logout signal sent to ${userPhone}`, 'success');
+                    await this.sendLogoutCommand(userPhone);
+                    ToastManager.show(`Logout signal sent to ${userPhone}`, 'success');
                 } catch (error) {
                     console.error('Error forcing logout:', error);
-                    this.showMessage('Error forcing logout: ' + error.message, 'error');
+                    ToastManager.show('Error forcing logout: ' + error.message, 'error');
                 }
             }
 
@@ -3317,10 +3549,10 @@ async forceLogoutAllActive() {
                     const userPhones = activeUsers.map(user => user.phone).filter(phone => phone);
                     await this.bulkLogoutUsers(userPhones, 'LocalStorage cleanup');
                     
-                    this.showMessage(`LocalStorage cleanup initiated for ${userPhones.length} active users`, 'success');
+                    ToastManager.show(`LocalStorage cleanup initiated for ${userPhones.length} active users`, 'success');
                 } catch (error) {
                     console.error('Error clearing all localStorage:', error);
-                    this.showMessage('Error clearing sessions: ' + error.message, 'error');
+                    ToastManager.show('Error clearing sessions: ' + error.message, 'error');
                 }
             }
 
@@ -3355,10 +3587,10 @@ async forceLogoutAllActive() {
                         urgent: true
                     });
                     
-                    this.showMessage('All users have been logged out successfully', 'success');
+                    ToastManager.show('All users have been logged out successfully', 'success');
                 } catch (error) {
                     console.error('Error forcing logout all:', error);
-                    this.showMessage('Error forcing logout: ' + error.message, 'error');
+                    ToastManager.show('Error forcing logout: ' + error.message, 'error');
                 }
             }
 
@@ -3421,39 +3653,40 @@ async forceLogoutAllActive() {
             }
 
             // Restore user
-            async restoreUser(userId) {
-                try {
-                    const deletedUserDoc = await this.deletedUsersCollection.doc(userId).get();
-                    if (!deletedUserDoc.exists) return;
+            // Restore user
+async restoreUser(userId) {
+    try {
+        const deletedUserDoc = await this.deletedUsersCollection.doc(userId).get();
+        if (!deletedUserDoc.exists) return;
 
-                    const deletionRecord = deletedUserDoc.data();
-                    const userData = deletionRecord.originalUser;
-                    
-                    // Remove from deleted users
-                    await this.deletedUsersCollection.doc(userId).delete();
-                    
-                    // Add back to active users
-                    await this.usersCollection.doc(userId).set(userData);
-                    
-                    // Log restoration
-                    const adminUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-                    await this.adminLogsCollection.add({
-                        action: 'user_restoration',
-                        targetUserId: userId,
-                        targetUserName: userData.name,
-                        adminId: adminUser.id,
-                        adminName: adminUser.name,
-                        timestamp: Date.now()
-                    });
+        const deletionRecord = deletedUserDoc.data();
+        const userData = deletionRecord.originalUser;
+        
+        // Remove from deleted users
+        await this.deletedUsersCollection.doc(userId).delete();
+        
+        // Add back to active users
+        await this.usersCollection.doc(userId).set(userData);
+        
+        // Log restoration
+        const adminUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        await this.adminLogsCollection.add({
+            action: 'user_restoration',
+            targetUserId: userId,
+            targetUserName: userData.name,
+            adminId: adminUser.id || 'unknown', // Provide default value
+            adminName: adminUser.name || 'Admin',
+            timestamp: Date.now()
+        });
 
-                    this.showMessage('User restored successfully', 'success');
-                    this.loadDeletedUsers();
-                    
-                } catch (error) {
-                    console.error('Error restoring user:', error);
-                    this.showMessage('Error restoring user: ' + error.message, 'error');
-                }
-            }
+        ToastManager.show('User restored successfully', 'success');
+        this.loadDeletedUsers();
+        
+    } catch (error) {
+        console.error('Error restoring user:', error);
+        ToastManager.show('Error restoring user: ' + error.message, 'error');
+    }
+}
 
             // Permanent delete user
             async permanentDeleteUser(userId) {
@@ -3463,11 +3696,11 @@ async forceLogoutAllActive() {
 
                 try {
                     await this.deletedUsersCollection.doc(userId).delete();
-                    this.showMessage('User permanently deleted', 'success');
+                    ToastManager.show('User permanently deleted', 'success');
                     this.loadDeletedUsers();
                 } catch (error) {
                     console.error('Error permanent deleting user:', error);
-                    this.showMessage('Error deleting user: ' + error.message, 'error');
+                    ToastManager.show('Error deleting user: ' + error.message, 'error');
                 }
             }
 
@@ -3498,10 +3731,10 @@ async forceLogoutAllActive() {
                     
                     await batch.commit();
                     this.selectedUsers.clear();
-                    this.showMessage('Users verified successfully', 'success');
+                    ToastManager.show('Users verified successfully', 'success');
                 } catch (error) {
                     console.error('Error bulk verifying users:', error);
-                    this.showMessage('Error verifying users: ' + error.message, 'error');
+                    ToastManager.show('Error verifying users: ' + error.message, 'error');
                 }
             }
 
@@ -3517,10 +3750,10 @@ async forceLogoutAllActive() {
                     
                     await batch.commit();
                     this.selectedUsers.clear();
-                    this.showMessage('Users rejected successfully', 'success');
+                    ToastManager.show('Users rejected successfully', 'success');
                 } catch (error) {
                     console.error('Error bulk rejecting users:', error);
-                    this.showMessage('Error rejecting users: ' + error.message, 'error');
+                    ToastManager.show('Error rejecting users: ' + error.message, 'error');
                 }
             }
 
@@ -3536,10 +3769,10 @@ async forceLogoutAllActive() {
                     
                     await batch.commit();
                     this.selectedUsers.clear();
-                    this.showMessage('Users promoted to moderator successfully', 'success');
+                    ToastManager.show('Users promoted to moderator successfully', 'success');
                 } catch (error) {
                     console.error('Error bulk promoting users:', error);
-                    this.showMessage('Error promoting users: ' + error.message, 'error');
+                    ToastManager.show('Error promoting users: ' + error.message, 'error');
                 }
             }
 
@@ -3569,10 +3802,10 @@ async forceLogoutAllActive() {
                     
                     await batch.commit();
                     this.selectedUsers.clear();
-                    this.showMessage('Temporary passwords generated successfully', 'success');
+                    ToastManager.show('Temporary passwords generated successfully', 'success');
                 } catch (error) {
                     console.error('Error bulk generating passwords:', error);
-                    this.showMessage('Error generating passwords: ' + error.message, 'error');
+                    ToastManager.show('Error generating passwords: ' + error.message, 'error');
                 }
             }
 
@@ -3612,47 +3845,63 @@ async forceLogoutAllActive() {
                     
                     await Promise.all(trialPromises);
                     this.selectedUsers.clear();
-                    this.showMessage('Free trials started successfully', 'success');
+                    ToastManager.show('Free trials started successfully', 'success');
                 } catch (error) {
                     console.error('Error starting bulk trials:', error);
-                    this.showMessage('Error starting trials: ' + error.message, 'error');
+                    ToastManager.show('Error starting trials: ' + error.message, 'error');
                 }
             }
 
             async bulkRestoreUsers() {
                 // Implementation for bulk restore
-                this.showMessage('Bulk restore functionality coming soon', 'info');
+                ToastManager.show('Bulk restore functionality coming soon', 'info');
             }
 
             async bulkPermanentDelete() {
                 // Implementation for bulk permanent delete
-                this.showMessage('Bulk permanent delete functionality coming soon', 'info');
+                ToastManager.show('Bulk permanent delete functionality coming soon', 'info');
             }
 
-            showMessage(message, type) {
-                const messageEl = document.createElement('div');
-                messageEl.textContent = message;
-                messageEl.style.cssText = `
-                    position: fixed;
-                    top: 100px;
-                    right: 20px;
-                    padding: 1rem 1.5rem;
-                    border-radius: var(--radius);
-                    color: white;
-                    font-weight: 600;
-                    z-index: 10000;
-                    animation: slideInRight 0.3s ease-out;
-                    ${type === 'success' ? 'background: var(--success);' : 
-                      type === 'error' ? 'background: var(--error);' :
-                      type === 'warning' ? 'background: var(--warning);' :
-                      'background: var(--info);'}
-                `;
+            // Export users to CSV
+            exportUsers() {
+                if (this.filteredUsers.length === 0) {
+                    ToastManager.show('No users to export', 'warning');
+                    return;
+                }
                 
-                document.body.appendChild(messageEl);
+                const headers = ['Name', 'Phone', 'Email', 'Telegram', 'Role', 'Status', 'Plan', 'Years', 'Registration Date'];
+                const csvData = this.filteredUsers.map(user => [
+                    user.name || '',
+                    user.phone || '',
+                    user.email || '',
+                    user.telegram || '',
+                    user.role || '',
+                    user.status || '',
+                    user.plan || '',
+                    user.registeredYears ? user.registeredYears.join(', ') : '',
+                    user.createdAt ? new Date(user.createdAt).toLocaleDateString() : ''
+                ]);
                 
-                setTimeout(() => {
-                    messageEl.remove();
-                }, 3000);
+                const csvContent = [headers, ...csvData].map(row => 
+                    row.map(field => `"${field}"`).join(',')
+                ).join('\n');
+                
+                const blob = new Blob([csvContent], { type: 'text/csv' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `users_export_${new Date().toISOString().split('T')[0]}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                ToastManager.show(`Exported ${this.filteredUsers.length} users to CSV`, 'success');
+            }
+
+            // Import users from CSV
+            importUsers() {
+                ToastManager.show('User import functionality coming soon', 'info');
             }
 
             // Clean up when done
@@ -3855,6 +4104,9 @@ async forceLogoutAllActive() {
                 document.getElementById('editBroadcastMessage').value = broadcast.message;
                 document.getElementById('editBroadcastTarget').value = broadcast.target;
                 document.getElementById('editBroadcastType').value = broadcast.type;
+                document.getElementById('editBroadcastTargetPhone').value = broadcast.targetPhone || '';
+
+                document.getElementById('editSpecificPhoneGroup').style.display = broadcast.target === 'specific' ? 'block' : 'none';
 
                 document.getElementById('editBroadcastModal').style.display = 'flex';
             }
@@ -3864,16 +4116,25 @@ async forceLogoutAllActive() {
                 const message = document.getElementById('editBroadcastMessage').value;
                 const target = document.getElementById('editBroadcastTarget').value;
                 const type = document.getElementById('editBroadcastType').value;
+                let targetPhone = null;
+                if (target === 'specific') {
+                    targetPhone = document.getElementById('editBroadcastTargetPhone').value.trim();
+                    if (!targetPhone) {
+                        document.getElementById('editBroadcastError').textContent = 'Please enter target phone';
+                        return;
+                    }
+                }
                 
                 try {
                     await this.broadcastsCollection.doc(broadcastId).update({
                         message,
                         target,
-                        type
+                        type,
+                        targetPhone
                     });
                     
                     document.getElementById('editBroadcastModal').style.display = 'none';
-                    this.showMessage('Broadcast updated successfully', 'success');
+                    ToastManager.show('Broadcast updated successfully', 'success');
                 } catch (error) {
                     console.error('Error updating broadcast:', error);
                     document.getElementById('editBroadcastError').textContent = 'Error updating broadcast: ' + error.message;
@@ -3892,10 +4153,10 @@ async forceLogoutAllActive() {
                 try {
                     await this.broadcastsCollection.doc(broadcastId).delete();
                     document.getElementById('deleteConfirmModal').style.display = 'none';
-                    this.showMessage('Broadcast deleted successfully', 'success');
+                    ToastManager.show('Broadcast deleted successfully', 'success');
                 } catch (error) {
                     console.error('Error deleting broadcast:', error);
-                    this.showMessage('Error deleting broadcast: ' + error.message, 'error');
+                    ToastManager.show('Error deleting broadcast: ' + error.message, 'error');
                 }
             }
 
@@ -3916,43 +4177,179 @@ async forceLogoutAllActive() {
                         await batch.commit();
                         document.getElementById('deleteConfirmModal').style.display = 'none';
                         this.selectedBroadcasts.clear();
-                        this.showMessage('Broadcasts deleted successfully', 'success');
+                        ToastManager.show('Broadcasts deleted successfully', 'success');
                     } catch (error) {
                         console.error('Error bulk deleting broadcasts:', error);
-                        this.showMessage('Error deleting broadcasts: ' + error.message, 'error');
+                        ToastManager.show('Error deleting broadcasts: ' + error.message, 'error');
                     }
                 };
                 
                 document.getElementById('deleteConfirmModal').style.display = 'flex';
             }
+        }
 
-            showMessage(message, type) {
-                const messageEl = document.createElement('div');
-                messageEl.textContent = message;
-                messageEl.style.cssText = `
-                    position: fixed;
-                    top: 100px;
-                    right: 20px;
-                    padding: 1rem 1.5rem;
-                    border-radius: var(--radius);
-                    color: white;
-                    font-weight: 600;
-                    z-index: 10000;
-                    animation: slideInRight 0.3s ease-out;
-                    ${type === 'success' ? 'background: var(--success);' : 'background: var(--error);'}
-                `;
+        // Analytics Manager Class
+        class AnalyticsManager {
+            constructor() {
+                this.userGrowthChart = null;
+                this.userDistributionChart = null;
+                this.chartPeriod = '30d';
+            }
+
+            initCharts() {
+                this.initUserGrowthChart();
+                this.initUserDistributionChart();
+            }
+
+            initUserGrowthChart() {
+                const ctx = document.getElementById('userGrowthChart').getContext('2d');
                 
-                document.body.appendChild(messageEl);
+                // Sample data - in a real app, this would come from Firebase
+                const labels = this.generateDateLabels(30);
+                const data = this.generateSampleData(30, 100, 500);
                 
-                setTimeout(() => {
-                    messageEl.remove();
-                }, 3000);
+                this.userGrowthChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'User Growth',
+                            data: data,
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                },
+                                ticks: {
+                                    color: 'var(--text-secondary)'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                },
+                                ticks: {
+                                    color: 'var(--text-secondary)'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            initUserDistributionChart() {
+                const ctx = document.getElementById('userDistributionChart').getContext('2d');
+                
+                this.userDistributionChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Verified', 'Pending', 'Premium', 'Trial', 'Banned'],
+                        datasets: [{
+                            data: [45, 25, 15, 10, 5],
+                            backgroundColor: [
+                                '#22c55e',
+                                '#eab308',
+                                '#8b5cf6',
+                                '#10b981',
+                                '#ef4444'
+                            ],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    color: 'var(--text-secondary)',
+                                    padding: 20
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            generateDateLabels(days) {
+                const labels = [];
+                for (let i = days; i >= 0; i--) {
+                    const date = new Date();
+                    date.setDate(date.getDate() - i);
+                    labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+                }
+                return labels;
+            }
+
+            generateSampleData(days, min, max) {
+                const data = [];
+                let current = min;
+                
+                for (let i = 0; i <= days; i++) {
+                    current += Math.floor(Math.random() * 20) - 5;
+                    if (current < min) current = min;
+                    if (current > max) current = max;
+                    data.push(current);
+                }
+                
+                return data;
+            }
+
+            changeChartPeriod(period) {
+                this.chartPeriod = period;
+                
+                // Update charts based on period
+                const days = period === '7d' ? 7 : period === '30d' ? 30 : 90;
+                const labels = this.generateDateLabels(days);
+                const data = this.generateSampleData(days, 100, 500);
+                
+                this.userGrowthChart.data.labels = labels;
+                this.userGrowthChart.data.datasets[0].data = data;
+                this.userGrowthChart.update();
+                
+                ToastManager.show(`Chart period changed to ${period}`, 'info');
+            }
+
+            updateAnalyticsStats(users) {
+                const total = users.length;
+                const activeUsers = users.filter(user => 
+                    user.lastActive && (Date.now() - user.lastActive) < (7 * 24 * 60 * 60 * 1000)
+                ).length;
+                
+                const newUsers = users.filter(user => 
+                    user.createdAt && (Date.now() - user.createdAt) < (7 * 24 * 60 * 60 * 1000)
+                ).length;
+                
+                const conversionRate = total > 0 ? Math.round((activeUsers / total) * 100) : 0;
+                
+                document.getElementById('totalUsersAnalytics').textContent = total;
+                document.getElementById('activeUsersAnalytics').textContent = activeUsers;
+                document.getElementById('newUsersAnalytics').textContent = newUsers;
+                document.getElementById('conversionRate').textContent = `${conversionRate}%`;
             }
         }
 
         // Initialize Managers
         const userManager = new EnhancedUserManager();
         const broadcastManager = new BroadcastManager();
+        const analyticsManager = new AnalyticsManager();
 
         // DOM Elements
         const adminLoginModal = document.getElementById('adminLoginModal');
@@ -3994,6 +4391,8 @@ async forceLogoutAllActive() {
         const editBroadcastForm = document.getElementById('editBroadcastForm');
         const editBroadcastError = document.getElementById('editBroadcastError');
         const cancelEditBroadcastBtn = document.getElementById('cancelEditBroadcastBtn');
+        const toggleAdvancedFilters = document.getElementById('toggleAdvancedFilters');
+        const advancedFilterOptions = document.getElementById('advancedFilterOptions');
 
         // Function to generate random password
         function generateRandomPassword(length = 8) {
@@ -4020,6 +4419,7 @@ async forceLogoutAllActive() {
                 userManager.loadUsers();
                 userManager.initOnlineTracking();
                 broadcastManager.loadBroadcasts();
+                analyticsManager.initCharts();
             } else {
                 adminLoginModal.style.display = 'flex';
                 adminContent.style.display = 'none';
@@ -4081,7 +4481,7 @@ async forceLogoutAllActive() {
             
             if (result.success) {
                 document.getElementById('addUserModal').style.display = 'none';
-                userManager.showMessage('User created successfully', 'success');
+                ToastManager.show('User created successfully', 'success');
             } else {
                 document.getElementById('addUserError').textContent = result.error;
             }
@@ -4264,6 +4664,11 @@ async forceLogoutAllActive() {
                 
                 tabContents.forEach(content => content.classList.remove('active'));
                 document.getElementById(`${button.dataset.tab}Tab`).classList.add('active');
+                
+                // Update analytics when switching to analytics tab
+                if (button.dataset.tab === 'analytics') {
+                    analyticsManager.updateAnalyticsStats(userManager.users);
+                }
             });
         });
 
@@ -4377,9 +4782,17 @@ async forceLogoutAllActive() {
             const message = document.getElementById('broadcastMessage').value.trim();
             const target = document.getElementById('broadcastTarget').value;
             const type = document.getElementById('broadcastType').value;
+            let targetPhone = null;
+            if (target === 'specific') {
+                targetPhone = document.getElementById('broadcastTargetPhone').value.trim();
+                if (!targetPhone) {
+                    ToastManager.show('Please enter target phone', 'error');
+                    return;
+                }
+            }
 
             if (!message) {
-                userManager.showMessage('Message cannot be empty', 'error');
+                ToastManager.show('Message cannot be empty', 'error');
                 return;
             }
 
@@ -4390,121 +4803,127 @@ async forceLogoutAllActive() {
                     type,
                     timestamp: Date.now(),
                     sentBy: 'admin',
-                    readBy: []
+                    readBy: [],
+                    targetPhone: targetPhone || null
                 });
 
                 closeBroadcastModal();
-                userManager.showMessage('Broadcast sent successfully!', 'success');
+                ToastManager.show('Broadcast sent successfully!', 'success');
             } catch (error) {
                 console.error('Broadcast error:', error);
-                userManager.showMessage('Failed to send broadcast', 'error');
+                ToastManager.show('Failed to send broadcast', 'error');
             }
         });
 
+        // Handle broadcast target change
+        document.getElementById('broadcastTarget').addEventListener('change', (e) => {
+            document.getElementById('specificPhoneGroup').style.display = e.target.value === 'specific' ? 'block' : 'none';
+        });
+
+        // Handle edit broadcast target change
+        document.getElementById('editBroadcastTarget').addEventListener('change', (e) => {
+            document.getElementById('editSpecificPhoneGroup').style.display = e.target.value === 'specific' ? 'block' : 'none';
+        });
+
+        // Toggle advanced filters
+        if (toggleAdvancedFilters) {
+            toggleAdvancedFilters.addEventListener('click', () => {
+                const isVisible = advancedFilterOptions.style.display !== 'none';
+                if (isVisible) {
+                    advancedFilterOptions.style.display = 'none';
+                    toggleAdvancedFilters.innerHTML = '<i class="fas fa-chevron-down"></i> Show';
+                } else {
+                    advancedFilterOptions.style.display = 'grid';
+                    toggleAdvancedFilters.innerHTML = '<i class="fas fa-chevron-up"></i> Hide';
+                }
+            });
+        }
+
         // Initialize
         checkAdminLogin();
-    </script>
-    <script>
-    // Helper functions for the new elements
-    function showBulkActions(count) {
-        const panel = document.getElementById('bulkActionsPanel');
-        const countElement = document.getElementById('bulkSelectionCount');
-        countElement.textContent = count + ' items selected';
-        panel.style.display = 'block';
-    }
-    
-    function hideBulkActions() {
-        document.getElementById('bulkActionsPanel').style.display = 'none';
-    }
-    
-    function showLoading() {
-        document.getElementById('loadingSpinner').style.display = 'flex';
-    }
-    
-    function hideLoading() {
-        document.getElementById('loadingSpinner').style.display = 'none';
-    }
-    
-    function showSuccessMessage(message) {
-        const element = document.getElementById('successMessage');
-        element.textContent = message;
-        element.style.display = 'block';
-        setTimeout(() => {
-            element.style.display = 'none';
-        }, 3000);
-    }
-    
-    function showErrorMessage(message) {
-        const element = document.getElementById('errorMessage');
-        element.textContent = message;
-        element.style.display = 'block';
-        setTimeout(() => {
-            element.style.display = 'none';
-        }, 5000);
-    }
-    
-    function openMobileMenu() {
-        document.getElementById('mobileMenu').style.display = 'flex';
-    }
-    
-    function closeMobileMenu() {
-        document.getElementById('mobileMenu').style.display = 'none';
-    }
-    
-    function switchTab(tabName) {
-        // Close mobile menu first
-        closeMobileMenu();
-        
-        // Switch to the specified tab
-        const tabButtons = document.querySelectorAll('.tab-btn');
-        const tabContents = document.querySelectorAll('.tab-content');
-        
-        tabButtons.forEach(btn => btn.classList.remove('active'));
-        tabContents.forEach(content => content.classList.remove('active'));
-        
-        document.querySelector(`.tab-btn[data-tab="${tabName}"]`).classList.add('active');
-        document.getElementById(`${tabName}Tab`).classList.add('active');
-    }
-    
-    function showQuickStats() {
-        const panel = document.getElementById('quickStats');
-        const content = document.getElementById('quickStatsContent');
-        
-        if (panel.style.display === 'none') {
-            // Populate quick stats
-            content.innerHTML = `
-                <div>Total: ${document.getElementById('totalUsers').textContent}</div>
-                <div>Verified: ${document.getElementById('verifiedUsers').textContent}</div>
-                <div>Online: ${document.getElementById('onlineUsers').textContent}</div>
-                <div>Admins: ${document.getElementById('adminUsers').textContent}</div>
-                <div>Trials: ${document.getElementById('trialUsers').textContent}</div>
-            `;
+
+        // Helper functions for the new elements
+        function showBulkActions(count) {
+            const panel = document.getElementById('bulkActionsPanel');
+            const countElement = document.getElementById('bulkSelectionCount');
+            countElement.textContent = count + ' items selected';
             panel.style.display = 'block';
-        } else {
-            panel.style.display = 'none';
-        }
-    }
-    
-    // Initialize mobile menu button
-    document.addEventListener('DOMContentLoaded', function() {
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        if (mobileMenuBtn) {
-            mobileMenuBtn.addEventListener('click', openMobileMenu);
         }
         
-        // Check screen size and show/hide mobile menu button
-        function checkScreenSize() {
-            if (window.innerWidth <= 768) {
-                mobileMenuBtn.style.display = 'flex';
+        function hideBulkActions() {
+            document.getElementById('bulkActionsPanel').style.display = 'none';
+        }
+        
+        function showLoading() {
+            document.getElementById('loadingSpinner').style.display = 'flex';
+        }
+        
+        function hideLoading() {
+            document.getElementById('loadingSpinner').style.display = 'none';
+        }
+        
+        function openMobileMenu() {
+            document.getElementById('mobileMenu').style.display = 'flex';
+        }
+        
+        function closeMobileMenu() {
+            document.getElementById('mobileMenu').style.display = 'none';
+        }
+        
+        function switchTab(tabName) {
+            // Close mobile menu first
+            closeMobileMenu();
+            
+            // Switch to the specified tab
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            document.querySelector(`.tab-btn[data-tab="${tabName}"]`).classList.add('active');
+            document.getElementById(`${tabName}Tab`).classList.add('active');
+        }
+        
+        function showQuickStats() {
+            const panel = document.getElementById('quickStats');
+            const content = document.getElementById('quickStatsContent');
+            
+            if (panel.style.display === 'none') {
+                // Populate quick stats
+                content.innerHTML = `
+                    <div>Total: ${document.getElementById('totalUsers').textContent}</div>
+                    <div>Verified: ${document.getElementById('verifiedUsers').textContent}</div>
+                    <div>Online: ${document.getElementById('onlineUsers').textContent}</div>
+                    <div>Admins: ${document.getElementById('adminUsers').textContent}</div>
+                    <div>Trials: ${document.getElementById('trialUsers').textContent}</div>
+                `;
+                panel.style.display = 'block';
             } else {
-                mobileMenuBtn.style.display = 'none';
-                closeMobileMenu();
+                panel.style.display = 'none';
             }
         }
         
-        window.addEventListener('resize', checkScreenSize);
-        checkScreenSize();
-    });
-</script>
+        // Initialize mobile menu button
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', openMobileMenu);
+            }
+            
+            // Check screen size and show/hide mobile menu button
+            function checkScreenSize() {
+                if (window.innerWidth <= 768) {
+                    mobileMenuBtn.style.display = 'flex';
+                } else {
+                    mobileMenuBtn.style.display = 'none';
+                    closeMobileMenu();
+                }
+            }
+            
+            window.addEventListener('resize', checkScreenSize);
+            checkScreenSize();
+        });
+    </script>
 </body>
 </html>
