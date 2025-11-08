@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qirat Registration – Sisters</title>
+    <style>
+        :root { 
+            --primary: #4a90e2; 
+            --accent: #7ed321; 
+            --light: #f9f9f9; 
+            --dark: #333; 
+            --warning: #ff9800;
+            --success: #4caf50;
+            --error: #f44336;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; padding: 20px;
+        }
+        .form-container {
+            background: #fff; border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0,0,0,.15);
+            padding: 40px; max-width: 700px; width: 100%;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        h2 { 
+            text-align: center; color: var(--primary); margin-bottom: 30px; 
+            font-size: 28px; text-shadow: 1px 1px 2px rgba(0,0,0,.1);
+        }
+        h3 { color: var(--primary); margin: 30px 0 15px; font-size: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--dark); }
+        input[type=text], select {
+            width: 100%; padding: 12px; margin-bottom: 20px;
+            border: 1px solid #ddd; border-radius: 8px; font-size: 16px;
+            transition: border .3s, box-shadow .3s;
+        }
+        input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 8px rgba(74,144,226,.3); outline: none; }
+        .schedule-group {
+            background: var(--light); border: 1px solid #ddd; border-radius: 12px;
+            padding: 20px; margin-bottom: 20px; transition: transform .2s, box-shadow .2s;
+        }
+        .schedule-group:hover { transform: translateY(-5px); box-shadow: 0 4px 15px rgba(0,0,0,.1); }
+        .days-selector {
+            display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;
+        }
+        .days-selector label {
+            flex: 1 1 auto; display: flex; align-items: center; cursor: pointer;
+            background: #fff; border: 1px solid #ddd; border-radius: 8px;
+            padding: 8px 12px; transition: background .3s, border .3s;
+        }
+        .days-selector input[type=checkbox] { margin-right: 8px; }
+        .days-selector label:hover { background: rgba(74,144,226,.1); border-color: var(--primary); }
+        .days-selector input:checked + span { color: var(--primary); font-weight: bold; }
+        button {
+            background: var(--primary); color: #fff; border: none; border-radius: 8px;
+            padding: 12px 20px; font-size: 16px; cursor: pointer;
+            transition: background .3s, transform .2s;
+            display: block; width: 100%; margin-top: 10px;
+        }
+        button:hover { background: #357abd; transform: scale(1.02); }
+        #add-schedule {
+            background: var(--accent); width: auto; padding: 10px 20px;
+            font-size: 14px; margin-bottom: 20px; display: inline-block;
+        }
+        #add-schedule:hover { background: #6ab21c; }
+        #status { margin-top: 15px; text-align: center; font-weight: 600; padding: 10px; border-radius: 8px; }
+        .success { background: rgba(76,175,80,.1); color: var(--success); }
+        .error { background: rgba(244,67,54,.1); color: var(--error); }
+        @media(max-width:480px) {
+            .form-container { padding: 20px; }
+            .days-selector { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+<div class="form-container">
+    <h2>Qirat Registration – Sisters</h2>
+
+    <form id="qiratForm">
+        <label for="full_name">Full Name</label>
+        <input type="text" id="full_name" required>
+
+        <label for="phone">Phone Number</label>
+        <input type="text" id="phone" required>
+
+        <label for="telegram">Telegram Username</label>
+        <input type="text" id="telegram" placeholder="@username" required>
+
+        <h3>Qirat Schedules</h3>
+        <p>Select any days of the week and enter the Qirat name. Add multiple schedules as needed.</p>
+
+        <div id="schedules">
+            <!-- first schedule -->
+            <div class="schedule-group">
+                <div class="days-selector">
+                    <label><input type="checkbox" class="day-check" value="Monday"><span>Monday</span></label>
+                    <label><input type="checkbox" class="day-check" value="Tuesday"><span>Tuesday</span></label>
+                    <label><input type="checkbox" class="day-check" value="Wednesday"><span>Wednesday</span></label>
+                    <label><input type="checkbox" class="day-check" value="Thursday"><span>Thursday</span></label>
+                    <label><input type="checkbox" class="day-check" value="Friday"><span>Friday</span></label>
+                    <label><input type="checkbox" class="day-check" value="Saturday"><span>Saturday</span></label>
+                    <label><input type="checkbox" class="day-check" value="Sunday"><span>Sunday</span></label>
+                </div>
+                <label>Qirat Name</label>
+                <input type="text" class="qirat_name" placeholder="e.g. Surah Al-Fatiha" required>
+            </div>
+        </div>
+
+        <button type="button" id="add-schedule">+ Add Another Schedule</button>
+
+        <button type="submit">Submit Registration</button>
+    </form>
+
+    <div id="status"></div>
+</div>
+
+<script>
+/* ---------- CONFIGURATION ---------- */
+const BOT_TOKEN = '8471368946:AAHXFpFGC5ob5ptDivokYDVpEVBqM0c5iKQ';
+
+// <<<--- PUT YOUR ADMIN CHAT IDs HERE (strings) --->
+const ADMIN_IDS = [7897840965];   // Example: ['123456789', '-1001234567890']
+
+/* ---------- DYNAMIC SCHEDULES ---------- */
+let scheduleIdx = 1;
+document.getElementById('add-schedule').addEventListener('click', () => {
+    const container = document.getElementById('schedules');
+    const group = document.createElement('div');
+    group.className = 'schedule-group';
+
+    const daysSel = document.createElement('div');
+    daysSel.className = 'days-selector';
+    daysSel.innerHTML = `
+        <label><input type="checkbox" class="day-check" value="Monday"><span>Monday</span></label>
+        <label><input type="checkbox" class="day-check" value="Tuesday"><span>Tuesday</span></label>
+        <label><input type="checkbox" class="day-check" value="Wednesday"><span>Wednesday</span></label>
+        <label><input type="checkbox" class="day-check" value="Thursday"><span>Thursday</span></label>
+        <label><input type="checkbox" class="day-check" value="Friday"><span>Friday</span></label>
+        <label><input type="checkbox" class="day-check" value="Saturday"><span>Saturday</span></label>
+        <label><input type="checkbox" class="day-check" value="Sunday"><span>Sunday</span></label>
+    `;
+
+    const label = document.createElement('label');
+    label.textContent = 'Qirat Name';
+    const qiratInp = document.createElement('input');
+    qiratInp.type = 'text';
+    qiratInp.className = 'qirat_name';
+    qiratInp.placeholder = 'e.g. tawhiid';
+    qiratInp.required = true;
+
+    group.append(daysSel, label, qiratInp);
+    container.appendChild(group);
+    scheduleIdx++;
+});
+
+/* ---------- TELEGRAM SEND ---------- */
+async function sendToTelegram(chatId, text) {
+    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+    const payload = { chat_id: chatId, text, parse_mode: 'HTML' };
+    const resp = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    });
+    return resp.json();
+}
+
+/* ---------- FORM SUBMISSION ---------- */
+document.getElementById('qiratForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const status = document.getElementById('status');
+    status.textContent = 'Sending…';
+    status.className = '';
+
+    // ----- collect basic info -----
+    const full_name = document.getElementById('full_name').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const telegram = document.getElementById('telegram').value.trim().replace(/^@/, '');
+
+    // ----- collect schedules -----
+    const groups = document.querySelectorAll('.schedule-group');
+    const schedules = [];
+    for (let group of groups) {
+        const checkedDays = Array.from(group.querySelectorAll('.day-check:checked')).map(c => c.value);
+        const qirat = group.querySelector('.qirat_name').value.trim();
+        if (checkedDays.length > 0 && qirat) {
+            schedules.push({ days: checkedDays, qirat });
+        }
+    }
+
+    if (schedules.length === 0) {
+        status.textContent = 'Please add at least one schedule with days selected.';
+        status.className = 'error';
+        return;
+    }
+
+    // ----- BUILD BEAUTIFUL MESSAGE -----
+    const scheduleLines = schedules.map(s => 
+        `• <b>${s.days.join(' • ')}</b> → <i>${s.qirat}</i>`
+    ).join('\n');
+
+    const message = `
+<b>New Qirat Registration</b>
+
+<b>Full Name:</b> ${full_name}
+<b>Phone:</b> ${phone}
+<b>Telegram:</b> @${telegram}
+
+<b>Schedules:</b>
+${scheduleLines}
+
+──────────────
+Submitted on ${new Date().toLocaleString()}
+`.trim();
+
+    // ----- send to every admin -----
+    const results = await Promise.all(
+        ADMIN_IDS.map(id => sendToTelegram(id, message))
+    );
+
+    const allOk = results.every(r => r.ok);
+    if (allOk) {
+        status.textContent = 'Registration sent to all organizers!';
+        status.className = 'success';
+        document.getElementById('qiratForm').reset();
+        document.getElementById('schedules').innerHTML = `
+            <div class="schedule-group">
+                <div class="days-selector">
+                    <label><input type="checkbox" class="day-check" value="Monday"><span>Monday</span></label>
+                    <label><input type="checkbox" class="day-check" value="Tuesday"><span>Tuesday</span></label>
+                    <label><input type="checkbox" class="day-check" value="Wednesday"><span>Wednesday</span></label>
+                    <label><input type="checkbox" class="day-check" value="Thursday"><span>Thursday</span></label>
+                    <label><input type="checkbox" class="day-check" value="Friday"><span>Friday</span></label>
+                    <label><input type="checkbox" class="day-check" value="Saturday"><span>Saturday</span></label>
+                    <label><input type="checkbox" class="day-check" value="Sunday"><span>Sunday</span></label>
+                </div>
+                <label>Qirat Name</label>
+                <input type="text" class="qirat_name" placeholder="e.g. Tawhid" required>
+            </div>`;
+    } else {
+        status.textContent = 'Error – some messages failed. Check the admin IDs.';
+        status.className = 'error';
+        console.error('Telegram errors:', results);
+    }
+});
+</script>
+</body>
+</html>
