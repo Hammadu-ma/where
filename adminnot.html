@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALIF Admin Panel - Full Analytics</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.0.0/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #3b82f6; --success: #10b981; --danger: #ef4444; --warning: #f59e0b;
+            --gray: #6b7280; --light: #f3f4f6; --dark: #1f2937; --radius: 16px;
+        }
+        body { font-family: 'Inter', sans-serif; background: #0f172a; color: #e5e7eb; margin: 0; padding: 0; }
+        .container { max-width: 1400px; margin: 2rem auto; padding: 0 1rem; }
+        .header { background: linear-gradient(135deg, var(--primary), #2563eb); padding: 2rem; border-radius: var(--radius); text-align: center; color: white; margin-bottom: 2rem; box-shadow: 0 10px 30px rgba(59,130,246,0.3); }
+        .header h1 { margin: 0; font-size: 2.5rem; font-weight: 800; }
+        .tabs { display: flex; background: #1e293b; border-radius: var(--radius); overflow: hidden; margin-bottom: 1.5rem; }
+        .tab { flex: 1; padding: 1rem; text-align: center; background: transparent; border: none; color: #94a3b8; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .tab.active { background: var(--primary); color: white; }
+
+        .panel { display: none; background: #1e293b; border-radius: var(--radius); padding: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .panel.active { display: block; animation: fadeIn 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+        .form-group { margin-bottom: 1.5rem; }
+        label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: #e2e8f0; }
+        input, select, textarea { width: 100%; padding: 0.875rem; border-radius: 12px; border: 1px solid #334155; background: #0f172a; color: white; font-size: 1rem; }
+        textarea { min-height: 120px; resize: vertical; }
+        .btn { padding: 0.75rem 1.5rem; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; transition: all 0.3s; margin-right: 0.5rem; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-sm { padding: 0.5rem 1rem; font-size: 0.9rem; }
+
+        .broadcast-item { background: #0f172a; border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem; border-left: 5px solid var(--primary); }
+        .broadcast-item.info { border-left-color: #0ea5e9; }
+        .broadcast-item.success { border-left-color: var(--success); }
+        .broadcast-item.warning { border-left-color: var(--warning); }
+        .broadcast-item.error { border-left-color: var(--danger); }
+
+        .broadcast-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .broadcast-title { font-weight: 700; font-size: 1.3rem; }
+        .broadcast-meta { font-size: 0.9rem; color: #94a3b8; }
+
+        .analytics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+        .analytic-card { background: #0f172a; padding: 1.5rem; border-radius: var(--radius); text-align: center; }
+        .analytic-value { font-size: 2.2rem; font-weight: 800; color: var(--primary); }
+        .analytic-label { color: #94a3b8; margin-top: 0.5rem; }
+
+        .comment-item { background: #1e293b; padding: 1rem; border-radius: 12px; margin: 0.75rem 0; }
+        .comment-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+        .comment-user { font-weight: 600; color: var(--primary); }
+        .comment-time { font-size: 0.8rem; color: #94a3b8; }
+        .reply-input { display: flex; gap: 0.5rem; margin-top: 1rem; }
+        .reply-input input { flex: 1; }
+
+        .like-list { margin: 1rem 0; }
+        .like-user { display: inline-block; background: #334155; padding: 0.4rem 0.8rem; border-radius: 50px; margin: 0.3rem; font-size: 0.9rem; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid #334155; }
+        th { background: #0f172a; font-weight: 600; color: #94a3b8; }
+        tr:hover td { background: #1e293b; }
+
+        canvas { max-height: 300px; margin: 2rem 0; background: #0f172a; padding: 1rem; border-radius: var(--radius); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>ALIF Admin Panel - Full Analytics</h1>
+            <p>Advanced Broadcast Management & User Interaction Insights</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" data-tab="dashboard">Dashboard</button>
+            <button class="tab" data-tab="send">Send Broadcast</button>
+            <button class="tab" data-tab="history">Broadcast History & Analytics</button>
+            <button class="tab" data-tab="users">Users</button>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dashboard" class="panel active">
+            <h2>Real-time Analytics</h2>
+            <div class="analytics-grid">
+                <div class="analytic-card">
+                    <div class="analytic-value" id="totalLikes">0</div>
+                    <div class="analytic-label">Total Likes All Time</div>
+                </div>
+                <div class="analytic-card">
+                    <div class="analytic-value" id="totalComments">0</div>
+                    <div class="analytic-label">Total Comments</div>
+                </div>
+                <div class="analytic-card">
+                    <div class="analytic-value" id="avgEngagement">0%</div>
+                    <div class="analytic-label">Avg Engagement Rate</div>
+                </div>
+                <div class="analytic-card">
+                    <div class="analytic-value" id="mostActiveUser">-</div>
+                    <div class="analytic-label">Most Active User</div>
+                </div>
+            </div>
+            <canvas id="engagementChart"></canvas>
+        </div>
+
+        <!-- Send Broadcast -->
+        <div id="send" class="panel">
+            <h2>Send Push Notification</h2>
+            <div class="form-group">
+                <label>Target Audience</label>
+                <select id="target">
+                    <option value="all">All Users</option>
+                    <option value="verified">Verified Only</option>
+                    <option value="premium">Premium Users</option>
+                    <option value="trial">Trial Users</option>
+                    <option value="online">Currently Online</option>
+                    <option value="specific_user">Specific User (UID)</option>
+                    <option value="specific_phone">Specific Phone</option>
+                </select>
+            </div>
+            <div class="form-group" id="specificUserGroup" style="display:none;">
+                <label>User ID</label>
+                <input type="text" id="targetUserId" placeholder="e.g. abc123xyz">
+            </div>
+            <div class="form-group" id="specificPhoneGroup" style="display:none;">
+                <label>Phone Number</label>
+                <input type="text" id="targetPhone" placeholder="+201234567890">
+            </div>
+            <div class="form-group">
+                <label>Type</label>
+                <select id="type">
+                    <option value="info">Info</option>
+                    <option value="success">Success</option>
+                    <option value="warning">Warning</option>
+                    <option value="error">Error</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Message (Markdown)</label>
+                <textarea id="message" placeholder="**Bold**, _italic_, [links](https://...), etc."></textarea>
+            </div>
+            <button class="btn btn-primary" id="sendBroadcast">Send Notification</button>
+            <p id="sendStatus" style="margin-top:1rem; font-weight:600;"></p>
+        </div>
+
+        <!-- Broadcast History with Full Analytics -->
+        <div id="history" class="panel">
+            <h2>Broadcast History & Interaction Details</h2>
+            <div id="broadcastList"></div>
+        </div>
+
+        <!-- Users -->
+        <div id="users" class="panel">
+            <h2>All Users</h2>
+            <input type="text" id="userSearch" placeholder="Search by name or phone..." style="margin-bottom:1rem; padding:0.875rem; width:100%; border-radius:12px;">
+            <table id="usersTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Plan</th>
+                        <th>Likes Given</th>
+                        <th>Comments Made</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+
+ const firebaseConfig = {
+    apiKey: "AIzaSyC4DSMVg4c98kQf5sSF8ueD631QgO4SXn0",
+    authDomain: "medical-quiz-40228.firebaseapp.com",
+    projectId: "medical-quiz-40228",
+    storageBucket: "medical-quiz-40228.firebasestorage.app",
+    messagingSenderId: "483043078873",
+    appId: "1:483043078873:web:4029dd83e53557f08b04c8"
+};
+
+// Initialize Firebase if not already initialized
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
+const db = firebase.firestore();
+
+        // Auth Check
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        if (!currentUser || currentUser.role !== 'admin') {
+            alert('Access Denied');
+            window.location.href = '../register.html';
+        }
+
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(t => t.addEventListener('click', () => {
+            tabs.forEach(x => x.classList.remove('active'));
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            t.classList.add('active');
+            document.getElementById(t.dataset.tab).classList.add('active');
+        }));
+
+        // Target audience
+        document.getElementById('target').addEventListener('change', function() {
+            const v = this.value;
+            document.getElementById('specificUserGroup').style.display = v === 'specific_user' ? 'block' : 'none';
+            document.getElementById('specificPhoneGroup').style.display = v === 'specific_phone' ? 'block' : 'none';
+        });
+
+        // Send Broadcast
+        document.getElementById('sendBroadcast').addEventListener('click', async () => {
+            const payload = {
+                target: document.getElementById('target').value,
+                type: document.getElementById('type').value,
+                message: document.getElementById('message').value.trim(),
+                timestamp: Date.now(),
+                readBy: [], likes: 0, likedBy: [], commentsCount: 0
+            };
+            if (payload.target === 'specific_user') payload.targetUserId = document.getElementById('targetUserId').value.trim();
+            if (payload.target === 'specific_phone') payload.targetPhone = document.getElementById('targetPhone').value.trim();
+
+            try {
+                await db.collection('broadcasts').add(payload);
+                document.getElementById('sendStatus').style.color = '#10b981';
+                document.getElementById('sendStatus').textContent = 'Sent successfully!';
+                document.getElementById('message').value = '';
+            } catch (e) {
+                document.getElementById('sendStatus').style.color = '#ef4444';
+                document.getElementById('sendStatus').textContent = 'Error: ' + e.message;
+            }
+        });
+
+        // Load Full Broadcast History with Comments & Likes
+        async function loadBroadcasts() {
+            const list = document.getElementById('broadcastList');
+            db.collection('broadcasts').orderBy('timestamp', 'desc').onSnapshot(async snap => {
+                list.innerHTML = '';
+                for (const doc of snap.docs) {
+                    const b = doc.data();
+                    b.id = doc.id;
+
+                    // Fetch user names for likes
+                    const likeUsers = await Promise.all((b.likedBy || []).map(uid => getUserName(uid)));
+                    // Fetch comments
+                    const commentsSnap = await doc.ref.collection('comments').orderBy('timestamp').get();
+                    const comments = commentsSnap.docs.map(c => ({ id: c.id, ...c.data() }));
+
+                    const userComments = await Promise.all(comments.map(async c => {
+                        const name = await getUserName(c.userId);
+                        return { ...c, userName: name };
+                    }));
+
+                    const date = new Date(b.timestamp).toLocaleString();
+                    const engagement = b.readBy?.length > 0 ? Math.round((b.likes + b.commentsCount) / b.readBy.length * 100) : 0;
+
+                    list.innerHTML += `
+                        <div class="broadcast-item ${b.type}">
+                            <div class="broadcast-header">
+                                <div class="broadcast-title">${b.type.toUpperCase()} • ${b.target}${b.targetUserId ? ' (UID: '+b.targetUserId+')' : ''}</div>
+                                <div class="broadcast-meta">${date} • Engagement: ${engagement}%</div>
+                            </div>
+                            <div style="margin:1.5rem 0; line-height:1.7;">${marked.parse(b.message)}</div>
+
+                            <div class="analytics-grid">
+                                <div class="analytic-card">
+                                    <div class="analytic-value">${b.likes || 0}</div>
+                                    <div class="analytic-label">Likes</div>
+                                </div>
+                                <div class="analytic-card">
+                                    <div class="analytic-value">${b.commentsCount || 0}</div>
+                                    <div class="analytic-label">Comments</div>
+                                </div>
+                                <div class="analytic-card">
+                                    <div class="analytic-value">${b.readBy?.length || 0}</div>
+                                    <div class="analytic-label">Read</div>
+                                </div>
+                            </div>
+
+                            ${b.likes > 0 ? `
+                            <div class="like-list">
+                                <strong>Liked by:</strong>
+                                ${likeUsers.map(n => `<span class="like-user">${n}</span>`).join('')}
+                            </div>` : ''}
+
+                            <div style="margin-top:1.5rem;">
+                                <strong>Comments (${b.commentsCount || 0}):</strong>
+                                <div style="margin-top:0.75rem;">
+                                    ${userComments.map(c => `
+                                        <div class="comment-item">
+                                            <div class="comment-header">
+                                                <span class="comment-user">${c.userName}</span>
+                                                <span class="comment-time">${new Date(c.timestamp).toLocaleString()}</span>
+                                            </div>
+                                            <div>${c.text}</div>
+                                            <div class="reply-input">
+                                                <input type="text" placeholder="Reply publicly...">
+                                                <button class="btn btn-sm btn-primary" onclick="replyToComment('${b.id}', '${c.id}', this.previousElementSibling, false)">Public</button>
+                                                <button class="btn btn-sm btn-success" onclick="replyToComment('${b.id}', '${c.id}', this.previousElementSibling.previousElementSibling, true)">Private</button>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                    ${b.commentsCount === 0 ? '<p>No comments yet.</p>' : ''}
+                                </div>
+                            </div>
+                        </div>`;
+                }
+            });
+        }
+
+        // Reply to comment
+        window.replyToComment = async (broadcastId, commentId, input, isPrivate) => {
+            const text = input.value.trim();
+            if (!text) return;
+
+            const replyRef = db.collection('broadcasts').doc(broadcastId).collection('comments').doc();
+            await replyRef.set({
+                userId: 'admin',
+                userName: 'Admin',
+                text: isPrivate ? `[Private to you] ${text}` : text,
+                timestamp: Date.now(),
+                parentId: commentId
+            });
+
+            await db.collection('broadcasts').doc(broadcastId).update({
+                commentsCount: firebase.firestore.FieldValue.increment(1)
+            });
+
+            input.value = '';
+            alert(isPrivate ? 'Private reply sent!' : 'Public reply posted!');
+        };
+
+        // Helper: Get user name by UID
+        async function getUserName(uid) {
+            if (!uid || uid === 'admin') return uid === 'admin' ? 'Admin' : 'Unknown';
+            try {
+                const doc = await db.collection('users').doc(uid).get();
+                return doc.exists ? (doc.data().name || doc.data().phone || 'User') : 'Deleted User';
+            } catch { return 'Unknown User'; }
+        }
+
+        // Load Dashboard Analytics
+        async function loadDashboard() {
+            const broadcastsSnap = await db.collection('broadcasts').get();
+            let totalLikes = 0, totalComments = 0, totalReads = 0;
+            const userActivity = {};
+
+            for (const doc of broadcastsSnap.docs) {
+                const d = doc.data();
+                totalLikes += d.likes || 0;
+                totalComments += d.commentsCount || 0;
+                totalReads += d.readBy?.length || 0;
+
+                (d.likedBy || []).forEach(uid => userActivity[uid] = (userActivity[uid] || 0) + 1);
+                const commentsSnap = await doc.ref.collection('comments').get();
+                commentsSnap.docs.forEach(c => {
+                    const uid = c.data().userId;
+                    if (uid !== 'admin') userActivity[uid] = (userActivity[uid] || 0) + 1;
+                });
+            }
+
+            document.getElementById('totalLikes').textContent = totalLikes;
+            document.getElementById('totalComments').textContent = totalComments;
+            document.getElementById('avgEngagement').textContent = totalReads > 0 ? Math.round((totalLikes + totalComments) / totalReads * 100) + '%' : '0%';
+
+            const mostActive = Object.entries(userActivity).sort((a,b) => b[1]-a[1])[0];
+            if (mostActive) {
+                const name = await getUserName(mostActive[0]);
+                document.getElementById('mostActiveUser').textContent = `${name} (${mostActive[1]} actions)`;
+            }
+        }
+
+        // Load Users with Activity
+        function loadUsersWithActivity() {
+            const tbody = document.querySelector('#usersTable tbody');
+            db.collection('users').onSnapshot(async snap => {
+                const users = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                const activity = {};
+
+                // Count likes & comments per user
+                const bSnap = await db.collection('broadcasts').get();
+                for (const b of bSnap.docs) {
+                    const d = b.data();
+                    (d.likedBy || []).forEach(uid => activity[uid] = (activity[uid] || { likes: 0, comments: 0 }).likes + 1);
+                    const cSnap = await b.ref.collection('comments').get();
+                    cSnap.docs.forEach(c => {
+                        const uid = c.data().userId;
+                        if (uid !== 'admin') activity[uid] = (activity[uid] || { likes: 0, comments: 0 });
+                        activity[uid].comments = (activity[uid].comments || 0) + 1;
+                    });
+                }
+
+                tbody.innerHTML = users.map(u => {
+                    const act = activity[u.id] || { likes: 0, comments: 0 };
+                    return `<tr>
+                        <td>${u.name || '—'}</td>
+                        <td>${u.phone || '—'}</td>
+                        <td><span class="badge badge-${u.plan || 'free'}">${(u.plan || 'free').toUpperCase()}</span></td>
+                        <td>${act.likes}</td>
+                        <td>${act.comments}</td>
+                        <td>${u.isOnline ? 'Online' : 'Offline'}</td>
+                        <td><button class="btn btn-success btn-sm" onclick="sendToUser('${u.id}')">Notify</button></td>
+                    </tr>`;
+                }).join('');
+            });
+        }
+
+        window.sendToUser = async (uid) => {
+            const msg = prompt("Message:");
+            if (msg) {
+                await db.collection('broadcasts').add({
+                    target: 'specific_user', targetUserId: uid, type: 'info', message: msg,
+                    timestamp: Date.now(), readBy: []
+                });
+                alert('Sent!');
+            }
+        };
+
+        // Init
+        loadBroadcasts();
+        loadDashboard();
+        loadUsersWithActivity();
+    </script>
+</body>
+</html>

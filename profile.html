@@ -1,0 +1,1645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Profile - ALIF Medical Quiz Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <!-- Add this at the end of <head> section -->
+    <script src="auth-check.js"></script>
+    <style>
+        :root {
+            --primary: #60a5fa;
+            --primary-dark: #3b82f6;
+            --primary-light: #93c5fd;
+            --secondary: #94a3b8;
+            --success: #22c55e;
+            --error: #ef4444;
+            --warning: #eab308;
+            --info: #0ea5e9;
+            --purple: #8b5cf6;
+            --pink: #ec4899;
+            --shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+            --radius: 12px;
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --gradient: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+            --trial-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --trial-color: #10b981;
+            --trial-dark: #059669;
+        }
+        body.light-mode {
+            --background: #f3f4f6;
+            --surface: #ffffff;
+            --text-primary: #111827;
+            --text-secondary: #4b5563;
+            --text-tertiary: #9ca3af;
+            --border: #d1d5db;
+        }
+        body.dark-mode {
+            --background: #0f172a;
+            --surface: #1e293b;
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+            --text-tertiary: #6b7280;
+            --border: #334155;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            touch-action: manipulation;
+        }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-size: 16px;
+            transition: var(--transition);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            touch-action: pan-x pan-y;
+        }
+        html {
+            touch-action: none;
+        }
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: var(--background);
+            border-bottom: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .logo i {
+            font-size: 1.5rem;
+        }
+        .nav-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .action-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            text-decoration: none;
+            position: relative;
+        }
+        .action-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary-light);
+        }
+        .action-btn.primary {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .action-btn.primary:hover {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--error);
+            color: white;
+            border-radius: 50%;
+            padding: 0.2rem 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            min-width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 80px 1rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: calc(100vh - 80px);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .profile-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2rem;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: var(--shadow);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .profile-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 50%, #8b5cf6 100%);
+            padding: 2rem;
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            pointer-events: none;
+            z-index: 1;
+        }
+        .profile-pic {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid white;
+            margin-bottom: 1rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s ease;
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        .profile-pic:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+        .change-pic-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            position: relative;
+            z-index: 2;
+        }
+        .change-pic-btn:hover {
+            background: var(--primary-dark);
+        }
+        .profile-info {
+            margin-bottom: 2rem;
+        }
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 0.8rem;
+            transition: all 0.3s ease;
+        }
+        .info-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(10px);
+        }
+        .info-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .info-label::before {
+            content: '▸';
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+        .info-value {
+            color: var(--text-primary);
+        }
+        .add-year-btn {
+            color: var(--primary);
+            cursor: pointer;
+            margin-left: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, rgba(96, 165, 250, 0.2) 0%, rgba(59, 130, 246, 0.3) 100%);
+            padding: 1.5rem 1rem;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            background: linear-gradient(135deg, rgba(96, 165, 250, 0.3) 0%, rgba(59, 130, 246, 0.4) 100%);
+        }
+        .stat-icon {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+        /* Enhanced Contact Section */
+        .contact-section {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .contact-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(90deg, #22c55e, #3b82f6, #eab308);
+            border-radius: 10px 10px 0 0;
+        }
+        .contact-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+        .contact-title i {
+            color: #22c55e;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #22c55e, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .contact-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            font-style: italic;
+        }
+        .contact-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+        .contact-link {
+            display: flex;
+            align-items: center;
+            padding: 1.25rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        .contact-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.6s;
+        }
+        .contact-link:hover::before {
+            left: 100%;
+        }
+        .contact-link:hover {
+            transform: translateY(-5px) scale(1.02);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        .contact-link i {
+            font-size: 2rem;
+            margin-right: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .contact-link:first-child i {
+            background: linear-gradient(135deg, #0088cc, #00aced);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .contact-link:last-child i {
+            background: linear-gradient(135deg, #ea4335, #fbbc05);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .contact-link:hover i {
+            transform: scale(1.2) rotate(10deg);
+            filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.3));
+        }
+        .comment-section {
+            margin-bottom: 2rem;
+            width: 100%;
+            max-width: 800px;
+        }
+        .comment-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        #commentBox {
+            width: 100%;
+            min-height: 100px;
+            padding: 1rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--background);
+            color: var(--text-primary);
+            resize: vertical;
+            font-family: 'Inter', sans-serif;
+        }
+        #sendCommentBtn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            margin-top: 1rem;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        #sendCommentBtn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+        #sendCommentBtn:hover::before {
+            left: 100%;
+        }
+        #sendCommentBtn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.6);
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+        #sendCommentBtn.loading {
+            background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+            pointer-events: none;
+        }
+        .comment-success {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            text-align: center;
+            animation: slideDown 0.5s ease;
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        #commentError {
+            color: var(--error);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+        .profile-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            width: 100%;
+            max-width: 800px;
+        }
+        #profileLogoutBtn {
+            background: var(--error);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        #profileLogoutBtn:hover {
+            background: #dc2626;
+        }
+        #backToMainBtn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        #backToMainBtn:hover {
+            background: var(--primary-dark);
+        }
+        /* Status Badges */
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .status-pending {
+            background: rgba(234, 179, 8, 0.1);
+            color: var(--warning);
+        }
+        .status-verified {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+        }
+        .status-rejected {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+        .status-premium {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--purple);
+        }
+        .status-trial {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--trial-color);
+        }
+        .status-banned {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--error);
+            border: 1px solid var(--error);
+        }
+        /* Plan Badges */
+        .plan-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .plan-basic {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary);
+        }
+        .plan-premium {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--purple);
+        }
+        .plan-trial {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--trial-color);
+        }
+        /* Futuristic Programs */
+        .futuristic-program {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 15px;
+            margin: 4px;
+            font-size: 0.85rem;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+        .futuristic-program::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.6s;
+        }
+        .futuristic-program:hover::before {
+            left: 100%;
+        }
+        .futuristic-program:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        .futuristic-program i {
+            font-size: 1.1rem;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+        .futuristic-program strong {
+            font-weight: 800;
+            letter-spacing: 0.8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            font-size: 0.8rem;
+        }
+        /* Individual gradient colors for each program */
+        .futuristic-program:nth-child(1) { background: linear-gradient(135deg, rgba(255, 87, 34, 0.9) 0%, rgba(255, 152, 0, 0.9) 100%); }
+        .futuristic-program:nth-child(2) { background: linear-gradient(135deg, rgba(33, 150, 243, 0.9) 0%, rgba(3, 169, 244, 0.9) 100%); }
+        .futuristic-program:nth-child(3) { background: linear-gradient(135deg, rgba(156, 39, 176, 0.9) 0%, rgba(233, 30, 99, 0.9) 100%); }
+        .futuristic-program:nth-child(4) { background: linear-gradient(135deg, rgba(76, 175, 80, 0.9) 0%, rgba(139, 195, 74, 0.9) 100%); }
+        .futuristic-program:nth-child(5) { background: linear-gradient(135deg, rgba(244, 67, 54, 0.9) 0%, rgba(255, 87, 34, 0.9) 100%); }
+        .futuristic-program:nth-child(6) { background: linear-gradient(135deg, rgba(0, 188, 212, 0.9) 0%, rgba(0, 150, 136, 0.9) 100%); }
+        .futuristic-program:nth-child(7) { background: linear-gradient(135deg, rgba(255, 193, 7, 0.9) 0%, rgba(255, 152, 0, 0.9) 100%); }
+        /* Trial Status */
+        .trial-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: var(--radius);
+            margin: 1rem 0;
+        }
+        .trial-status i {
+            color: var(--trial-color);
+        }
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1001;
+        }
+        .modal-content {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: var(--radius);
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            animation: slideIn 0.3s ease-out;
+            overflow-y: auto;
+            max-height: 80vh;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .modal-content h2 {
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            font-size: 1.75rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .modal-content h2 i {
+            color: var(--primary);
+        }
+        .input-group {
+            position: relative;
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        .input-group i {
+            position: absolute;
+            left: 1rem;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+        select, input {
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--background);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            width: 100%;
+        }
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        .file-upload {
+            position: relative;
+            padding: 1rem;
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s;
+            margin-bottom: 1.5rem;
+        }
+        .file-upload:hover {
+            border-color: var(--primary-light);
+        }
+        .file-upload i {
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .file-upload input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .file-upload span {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        .receipt-preview {
+            margin-top: 1rem;
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            display: none;
+        }
+        .submit-btn {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            position: relative;
+            width: 100%;
+            margin-top: 1rem;
+        }
+        .submit-btn:hover {
+            background: var(--primary-dark);
+        }
+        .submit-btn.loading::after {
+            content: '';
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid white;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            margin-left: 8px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .error {
+            color: var(--error);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+        .account-section {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: rgba(59, 130, 246, 0.05);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+        .account-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .account-title i {
+            color: var(--primary);
+        }
+        .account-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .account-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: var(--surface);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+        .account-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        .account-name {
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+        .account-number {
+            font-family: monospace;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+        .copy-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            padding: 0.5rem 0.75rem;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        .copy-btn:hover {
+            background: var(--primary-dark);
+        }
+        .copy-btn.copied {
+            background: var(--success);
+        }
+        .payment-note {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 0.75rem;
+            }
+            .main-content {
+                padding: 70px 0.75rem 1rem;
+            }
+            .profile-card {
+                padding: 1.5rem;
+            }
+            .profile-header {
+                padding: 1.5rem;
+            }
+            .info-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            .add-year-btn {
+                margin-left: 0 !important;
+                margin-top: 10px;
+                align-self: flex-start;
+            }
+            .futuristic-program {
+                padding: 8px 12px;
+                font-size: 0.75rem;
+                gap: 6px;
+                margin: 3px;
+            }
+            .futuristic-program i {
+                font-size: 0.9rem !important;
+            }
+            .futuristic-program strong {
+                font-size: 0.7rem !important;
+                letter-spacing: 0.5px;
+            }
+            .contact-links {
+                grid-template-columns: 1fr;
+            }
+            .modal-content {
+                padding: 1.5rem;
+                width: 95%;
+            }
+        }
+        @media (max-width: 480px) {
+            .profile-pic {
+                width: 100px;
+                height: 100px;
+            }
+            .futuristic-program {
+                padding: 6px 10px;
+                font-size: 0.7rem;
+                gap: 4px;
+                margin: 2px;
+                border-radius: 12px;
+            }
+            .futuristic-program i {
+                font-size: 0.8rem !important;
+            }
+            .futuristic-program strong {
+                font-size: 0.65rem !important;
+                letter-spacing: 0.3px;
+            }
+            .modal-content h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo" id="logoBtn">
+                <i class="fas fa-stethoscope"></i>
+                <span>ALIF</span>
+            </div>
+            <div class="nav-actions">
+                <button class="action-btn" id="themeToggle">
+                    <i class="fas fa-sun"></i>
+                </button>
+                <button class="action-btn" id="notificationsBtn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge" id="unreadCount" style="display: none;">0</span>
+                </button>
+                <button id="dashboardBtn" class="action-btn primary">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </button>
+                <button id="adminBtn" class="action-btn primary" style="display: none;">
+                    <i class="fas fa-cog"></i>
+                </button>
+                <a href="#" id="logout" class="action-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="profileContent" class="main-content">
+        <div class="profile-card">
+            <div class="profile-header">
+                <img id="profilePic" class="profile-pic" src="https://via.placeholder.com/120/3b82f6/ffffff?text=USER" alt="Profile Picture">
+                <label for="profilePicInput" class="change-pic-btn"><i class="fas fa-camera"></i> Change Picture</label>
+                <input id="profilePicInput" type="file" accept="image/*" style="display: none;">
+            </div>
+            
+            <div class="profile-info">
+                <h2 class="page-title">Your Profile</h2>
+                
+                <!-- Trial Status in Profile -->
+                <div id="profileTrialStatus" class="trial-status" style="display: none;">
+                    <i class="fas fa-crown"></i>
+                    <span>You're on a free trial. <span id="trialTimeRemaining">3 days</span> remaining.</span>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-label">Name:</span>
+                    <span class="info-value" id="profileName"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Phone:</span>
+                    <span class="info-value" id="profilePhone"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Email:</span>
+                    <span class="info-value" id="profileEmail"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Telegram:</span>
+                    <span class="info-value" id="profileTelegram"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Location:</span>
+                    <span class="info-value" id="profileLocation">N/A</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Status:</span>
+                    <span class="info-value" id="profileStatus"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Plan:</span>
+                    <span class="info-value" id="profilePlan"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Program(s):</span>
+                    <span class="info-value" id="profileYears"></span>
+                    <span id="addYearBtn" class="add-year-btn"><i class="fas fa-plus"></i> Add Program</span>
+                </div>
+            </div>
+
+            <!-- Stats Section -->
+            <div class="profile-stats">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-book-open"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="quizCount">0</div>
+                        <div class="stat-label">Quizzes Taken</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-trophy"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="scoreAverage">0%</div>
+                        <div class="stat-label">Average Score</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="studyTime">0h</div>
+                        <div class="stat-label">Study Time</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Section -->
+        <div class="contact-section">
+            <h3 class="contact-title"><i class="fas fa-headset"></i> Contact Us</h3>
+            <p class="contact-subtitle">We're here to help! Reach out to us through any of these channels</p>
+            <div class="contact-links">
+                <a href="https://t.me/alifomed" class="contact-link" target="_blank">
+                    <i class="fab fa-telegram-plane"></i>
+                    <div>
+                        <strong>Telegram</strong>
+                        <p>Get instant support and updates</p>
+                    </div>
+                </a>
+                <a href="mailto:hammadhassen3@gmail.com" class="contact-link">
+                    <i class="fas fa-envelope"></i>
+                    <div>
+                        <strong>Email</strong>
+                        <p>Send us your questions and feedback</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Comment Section -->
+        <div class="comment-section">
+            <h3 class="comment-title">Send Us Your Comment</h3>
+            <textarea id="commentBox" placeholder="Write your message here... We'd love to hear your feedback! 💫"></textarea>
+            <button id="sendCommentBtn"><i class="fas fa-paper-plane"></i> Send Message</button>
+            <div id="commentError" class="error"></div>
+        </div>
+
+        <!-- Profile Actions -->
+        <div class="profile-actions">
+            <button id="profileLogoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            <button id="backToMainBtn"><i class="fas fa-arrow-left"></i> Back to Dashboard</button>
+        </div>
+    </main>
+
+    <!-- Add Year Modal -->
+    <div id="addModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2><i class="fas fa-plus"></i> Add Program</h2>
+            <div class="price-info">Additional Charge: 50 ETB</div>
+            
+            <!-- Account Numbers Section -->
+            <div class="account-section">
+                <h3 class="account-title"><i class="fas fa-university"></i> Payment Accounts</h3>
+                <div class="account-list">
+                    <div class="account-item">
+                        <div class="account-info">
+                            <span class="account-name">CBE</span>
+                            <span class="account-number">1000544233185</span>
+                        </div>
+                        <button class="copy-btn" onclick="copyToClipboard('1000544233185', this)">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                    <div class="account-item">
+                        <div class="account-info">
+                            <span class="account-name">Awash Bank</span>
+                            <span class="account-number">014251165418600</span>
+                        </div>
+                        <button class="copy-btn" onclick="copyToClipboard('014251165418600', this)">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                    <div class="account-item">
+                        <div class="account-info">
+                            <span class="account-name">Tele Birr</span>
+                            <span class="account-number">0912496441</span>
+                        </div>
+                        <button class="copy-btn" onclick="copyToClipboard('0912496441', this)">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                </div>
+                <p class="payment-note">Please use your name as payment reference</p>
+            </div>
+            
+            <form id="addForm">
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input id="addName" placeholder="Full Name (for verification)" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-graduation-cap"></i>
+                    <select id="newYear" required>
+                        <option value="" disabled selected>Select New Program</option>
+                        <option value="1">Pre Med - 100 ETB</option>
+                        <option value="2">Intro Med - 100 ETB</option>
+                        <option value="3">Meta - 100 ETB</option>
+                        <option value="4">Hema - 100 ETB</option>
+                        <option value="5">CVS - 100 ETB</option>
+                        <option value="6">RESPA - 100 ETB</option>
+                        <option value="7">Musclo - 100 ETB</option>
+                    </select>
+                </div>
+                <div class="file-upload">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <span id="addUploadText">Upload Payment Receipt (50 ETB)</span>
+                    <input id="addReceipt" type="file" accept="image/*" required>
+                </div>
+                <img id="addReceiptPreview" class="receipt-preview" alt="Receipt Preview">
+                <button type="submit" class="submit-btn" id="addSubmitBtn"><i class="fas fa-paper-plane"></i> Submit</button>
+                <div id="addError" class="error"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Logout Modal -->
+    <div id="logoutModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2><i class="fas fa-sign-out-alt"></i> Confirm Logout</h2>
+            <div class="input-group">
+                <i class="fas fa-key"></i>
+                <input id="logoutCode" placeholder="6-digit logout code" maxlength="6" required>
+            </div>
+            <button id="confirmLogoutBtn" class="submit-btn"><i class="fas fa-check-circle"></i> Confirm Logout</button>
+            <div id="logoutError" class="error"></div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const themeToggle = document.getElementById('themeToggle');
+        const dashboardBtn = document.getElementById('dashboardBtn');
+        const adminBtn = document.getElementById('adminBtn');
+        const logout = document.getElementById('logout');
+        const profilePicInput = document.getElementById('profilePicInput');
+        const profilePic = document.getElementById('profilePic');
+        const profileName = document.getElementById('profileName');
+        const profilePhone = document.getElementById('profilePhone');
+        const profileEmail = document.getElementById('profileEmail');
+        const profileTelegram = document.getElementById('profileTelegram');
+        const profileLocation = document.getElementById('profileLocation');
+        const profileStatus = document.getElementById('profileStatus');
+        const profilePlan = document.getElementById('profilePlan');
+        const profileYears = document.getElementById('profileYears');
+        const addYearBtn = document.getElementById('addYearBtn');
+        const quizCount = document.getElementById('quizCount');
+        const scoreAverage = document.getElementById('scoreAverage');
+        const studyTime = document.getElementById('studyTime');
+        const profileTrialStatus = document.getElementById('profileTrialStatus');
+        const trialTimeRemaining = document.getElementById('trialTimeRemaining');
+        const sendCommentBtn = document.getElementById('sendCommentBtn');
+        const commentBox = document.getElementById('commentBox');
+        const commentError = document.getElementById('commentError');
+        const profileLogoutBtn = document.getElementById('profileLogoutBtn');
+        const backToMainBtn = document.getElementById('backToMainBtn');
+        const addModal = document.getElementById('addModal');
+        const addForm = document.getElementById('addForm');
+        const addError = document.getElementById('addError');
+        const addReceiptInput = document.getElementById('addReceipt');
+        const addReceiptPreview = document.getElementById('addReceiptPreview');
+        const addUploadText = document.getElementById('addUploadText');
+        const addSubmitBtn = document.getElementById('addSubmitBtn');
+        const logoutModal = document.getElementById('logoutModal');
+        const logoutError = document.getElementById('logoutError');
+        const confirmLogoutBtn = document.getElementById('confirmLogoutBtn');
+
+        // Firebase User Manager
+        class FirebaseUserManager {
+            constructor() {
+                this.usersCollection = db.collection('users');
+            }
+
+            // Check if trial has expired
+            isTrialExpired(trialEndDate) {
+                return new Date().getTime() > trialEndDate;
+            }
+
+            // Get remaining trial time in milliseconds
+            getTrialRemainingTime(trialEndDate) {
+                return Math.max(0, trialEndDate - new Date().getTime());
+            }
+
+            // Format trial time for display
+            formatTrialTime(ms) {
+                const days = Math.floor(ms / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((ms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((ms % (1000 * 60)) / 1000);
+                
+                if (days > 0) {
+                    return `${days}d ${hours}h ${minutes}m`;
+                } else {
+                    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }
+            }
+
+            // Add year to user
+            async addYearToUser(userId, newYear, userData) {
+                try {
+                    const userDoc = await this.usersCollection.doc(userId).get();
+                    if (!userDoc.exists) {
+                        return { success: false, error: 'User not found' };
+                    }
+
+                    const user = userDoc.data();
+                    const currentYears = user.registeredYears || [];
+
+                    if (currentYears.includes(newYear)) {
+                        return { success: false, error: 'Program already registered' };
+                    }
+
+                    const code = Math.floor(100000 + Math.random() * 900000).toString();
+                    
+                    await this.usersCollection.doc(userId).update({
+                        registeredYears: [...currentYears, newYear],
+                        verificationCode: code,
+                        codeTimestamp: new Date().getTime(),
+                        status: 'pending_addition'
+                    });
+
+                    return { success: true, code };
+                } catch (error) {
+                    console.error('Error adding program to user:', error);
+                    return { success: false, error: error.message };
+                }
+            }
+        }
+
+        const firebaseUserManager = new FirebaseUserManager();
+
+        // Theme toggle
+        function toggleTheme() {
+            if (document.body.classList.contains('dark-mode')) {
+                document.body.classList.remove('dark-mode');
+                document.body.classList.add('light-mode');
+                themeToggle.querySelector('i').className = 'fas fa-moon';
+            } else {
+                document.body.classList.remove('light-mode');
+                document.body.classList.add('dark-mode');
+                themeToggle.querySelector('i').className = 'fas fa-sun';
+            }
+        }
+        themeToggle.addEventListener('click', toggleTheme);
+
+        // Load profile data
+        function loadProfile() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (currentUser) {
+                profileName.textContent = currentUser.name || 'N/A';
+                profilePhone.textContent = currentUser.phone || 'N/A';
+                profileEmail.textContent = currentUser.email || 'N/A';
+                profileTelegram.textContent = currentUser.telegram || 'N/A';
+                profileLocation.textContent = currentUser.location || 'N/A';
+                
+                // Status badge
+                profileStatus.innerHTML = `<span class="status-badge status-${currentUser.status}">${currentUser.status.toUpperCase()}</span>`;
+                
+                // Plan badge
+                profilePlan.innerHTML = `<span class="plan-badge plan-${currentUser.plan}">${currentUser.plan.toUpperCase()}</span>`;
+                
+                // Programs
+                const yearNames = {
+                    '1': '<span class="futuristic-program"><i class="fas fa-flask"></i> <strong>PRE MED</strong></span>',
+                    '2': '<span class="futuristic-program"><i class="fas fa-user-md"></i> <strong>INTRO MED</strong></span>', 
+                    '3': '<span class="futuristic-program"><i class="fas fa-fire"></i> <strong>META</strong></span>',
+                    '4': '<span class="futuristic-program"><i class="fas fa-droplet"></i> <strong>HEMA</strong></span>',
+                    '5': '<span class="futuristic-program"><i class="fas fa-heart-pulse"></i> <strong>CVS</strong></span>',
+                    '6': '<span class="futuristic-program"><i class="fas fa-wind"></i> <strong>RESPA</strong></span>',
+                    '7': '<span class="futuristic-program"><i class="fas fa-running"></i> <strong>MUSCLO</strong></span>'
+                };
+
+                const programNames = currentUser.registeredYears.map(year => yearNames[year] || `<span class="futuristic-program"><strong>Year ${year}</strong></span>`);
+                profileYears.innerHTML = programNames.join('') || '<span style="color: var(--text-tertiary);">No programs registered</span>';
+                
+                // Trial status
+                if (currentUser.plan === 'trial' && !firebaseUserManager.isTrialExpired(currentUser.trialEndDate)) {
+                    profileTrialStatus.style.display = 'flex';
+                    const remainingTime = firebaseUserManager.getTrialRemainingTime(currentUser.trialEndDate);
+                    trialTimeRemaining.textContent = firebaseUserManager.formatTrialTime(remainingTime);
+                }
+                
+                // Check role for admin
+                if (currentUser.role === 'admin') {
+                    adminBtn.style.display = 'inline-flex';
+                    adminBtn.addEventListener('click', () => {
+                        window.location.href = 'admin/index.html';
+                    });
+                }
+            }
+            
+            // Load profile picture from localStorage
+            const profilePicSrc = localStorage.getItem('profilePic');
+            if (profilePicSrc) {
+                profilePic.src = profilePicSrc;
+            }
+        }
+
+        // Profile picture change
+        profilePicInput.addEventListener('change', () => {
+            const file = profilePicInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    localStorage.setItem('profilePic', e.target.result);
+                    profilePic.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Add year functionality
+        addYearBtn.addEventListener('click', () => {
+            addModal.style.display = 'flex';
+        });
+
+        // Receipt preview for add year
+        addReceiptInput.addEventListener('change', () => {
+            const file = addReceiptInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    addReceiptPreview.src = e.target.result;
+                    addReceiptPreview.style.display = 'block';
+                    addUploadText.textContent = 'Change Payment Receipt';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                addReceiptPreview.style.display = 'none';
+                addUploadText.textContent = 'Upload Payment Receipt (50 ETB)';
+            }
+        });
+
+        // Add year form submission
+        addForm.addEventListener('submit', async e => {
+            e.preventDefault();
+            addSubmitBtn.classList.add('loading');
+            addSubmitBtn.disabled = true;
+            
+            const addName = document.getElementById('addName').value;
+            const newYear = document.getElementById('newYear').value;
+            const addReceipt = document.getElementById('addReceipt').files[0];
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+            if (!addName || !newYear || !addReceipt) {
+                addError.textContent = 'Please fill all required fields.';
+                addSubmitBtn.classList.remove('loading');
+                addSubmitBtn.disabled = false;
+                return;
+            }
+
+            if (addName !== currentUser.name) {
+                addError.textContent = 'Name does not match registered name.';
+                addSubmitBtn.classList.remove('loading');
+                addSubmitBtn.disabled = false;
+                return;
+            }
+
+            const result = await firebaseUserManager.addYearToUser(currentUser.id, newYear, currentUser);
+            
+            if (result.success) {
+                // Send to Telegram
+                const caption = `Add Program\nPrograms: ${currentUser.registeredYears.join(', ')}\nNew Program: ${newYear}\nName: ${addName}\nPhone: ${currentUser.phone}\nCode: ${result.code}`;
+                const formData = new FormData();
+                formData.append('chat_id', '7986574047');
+                formData.append('photo', addReceipt);
+                formData.append('caption', caption);
+                formData.append('parse_mode', 'Markdown');
+
+                try {
+                    const response = await fetch('https://api.telegram.org/bot8237566699:AAHICwsiqIrs-4_vUdrsORPlD8-WFSFYB2Y/sendPhoto', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const data = await response.json();
+                    if (data.ok) {
+                        addModal.style.display = 'none';
+                        addError.textContent = '';
+                        alert('Program addition request submitted successfully! Please wait for admin verification.');
+                    } else {
+                        addError.textContent = 'Error sending to Telegram: ' + data.description;
+                    }
+                } catch (err) {
+                    addError.textContent = 'Error: ' + err.message;
+                }
+            } else {
+                addError.textContent = 'Error adding program: ' + result.error;
+            }
+
+            addSubmitBtn.classList.remove('loading');
+            addSubmitBtn.disabled = false;
+        });
+
+        // Send comment functionality
+        sendCommentBtn.addEventListener('click', async () => {
+            const message = commentBox.value.trim();
+            if (!message) {
+                commentError.textContent = 'Please write a message.';
+                return;
+            }
+            
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const name = currentUser?.name;
+            const phone = currentUser?.phone;
+            const telegram = currentUser?.telegram || 'N/A';
+            const caption = `Comment\nName: ${name}\nPhone: ${phone}\nMessage: ${message}`;
+
+            const formData = new FormData();
+            formData.append('chat_id', '7986574047');
+            formData.append('text', caption);
+            formData.append('parse_mode', 'Markdown');
+
+            try {
+                // Enhanced loading state
+                sendCommentBtn.classList.add('loading');
+                sendCommentBtn.disabled = true;
+                sendCommentBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+                commentBox.disabled = true;
+
+                const response = await fetch('https://api.telegram.org/bot8237566699:AAHICwsiqIrs-4_vUdrsORPlD8-WFSFYB2Y/sendMessage', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                // Small delay for better UX
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                if (data.ok) {
+                    commentBox.value = '';
+                    commentError.textContent = '';
+                    
+                    // Add success message animation
+                    const successMsg = document.createElement('div');
+                    successMsg.className = 'comment-success';
+                    successMsg.innerHTML = '<i class="fas fa-check-circle"></i> Message sent successfully!';
+                    document.querySelector('.comment-section').appendChild(successMsg);
+
+                    // Remove after 3 seconds
+                    setTimeout(() => {
+                        successMsg.remove();
+                    }, 3000);
+                } else {
+                    commentError.textContent = 'Error sending comment: ' + data.description;
+                }
+            } catch (err) {
+                commentError.textContent = 'Error: ' + err.message;
+            } finally {
+                // Reset button state
+                sendCommentBtn.classList.remove('loading');
+                sendCommentBtn.disabled = false;
+                sendCommentBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Message';
+                commentBox.disabled = false;
+            }
+        });
+
+        // Copy to clipboard function
+        function copyToClipboard(text, button) {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+                
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                button.innerHTML = '<i class="fas fa-times"></i> Failed';
+                button.style.background = 'var(--error)';
+                
+                setTimeout(() => {
+                    button.innerHTML = '<i class="fas fa-copy"></i> Copy';
+                    button.style.background = 'var(--primary)';
+                }, 2000);
+            });
+        }
+
+        // Navigation
+        dashboardBtn.addEventListener('click', () => {
+            window.location.href = 'dashboard.html';
+        });
+
+        backToMainBtn.addEventListener('click', () => {
+            window.location.href = 'dashboard.html';
+        });
+
+        // Logout handler
+        const logoutHandler = async (e) => {
+            e.preventDefault();
+            const logoutCode = Math.floor(100000 + Math.random() * 900000).toString();
+            localStorage.setItem('logoutCode', logoutCode);
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const name = currentUser?.name;
+            const phone = currentUser?.phone;
+            const caption = `Logout Request\nName: ${name}\nPhone: ${phone}\nCode: ${logoutCode}`;
+            const formData = new FormData();
+            formData.append('chat_id', '7986574047');
+            formData.append('text', caption);
+            formData.append('parse_mode', 'Markdown');
+            try {
+                const response = await fetch('https://api.telegram.org/bot8237566699:AAHICwsiqIrs-4_vUdrsORPlD8-WFSFYB2Y/sendMessage', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                if (data.ok) {
+                    logoutModal.style.display = 'flex';
+                    logoutError.textContent = '';
+                } else {
+                    logoutError.textContent = 'Error sending logout code: ' + data.description;
+                }
+            } catch (err) {
+                logoutError.textContent = 'Error: ' + err.message;
+            }
+        };
+        logout.addEventListener('click', logoutHandler);
+        profileLogoutBtn.addEventListener('click', logoutHandler);
+
+        // Confirm logout
+        confirmLogoutBtn.addEventListener('click', async () => {
+            const enteredCode = document.getElementById('logoutCode').value;
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            
+            if (enteredCode === localStorage.getItem('logoutCode')) {
+                // Update user status in Firebase
+                if (currentUser && currentUser.id) {
+                    try {
+                        await db.collection('users').doc(currentUser.id).update({
+                            isOnline: false,
+                            lastActive: Date.now()
+                        });
+                    } catch (error) {
+                        console.error('Error updating online status:', error);
+                    }
+                }
+
+                // Clear localStorage
+                localStorage.clear();
+                
+                // Redirect to registration page
+                window.location.href = 'register.html';
+            } else {
+                logoutError.textContent = 'Invalid logout code.';
+            }
+        });
+
+        // Initialize profile
+        function initProfile() {
+            const currentUser = localStorage.getItem('currentUser');
+            
+            if (!currentUser) {
+                // Redirect to registration if not logged in
+                window.location.href = 'register.html';
+                return;
+            }
+            
+            try {
+                const user = JSON.parse(currentUser);
+                
+                // Check if user is verified
+                if (user.status !== 'verified') {
+                    alert('Your account is not verified. Please complete verification.');
+                    window.location.href = 'register.html';
+                    return;
+                }
+                
+                loadProfile();
+            } catch (error) {
+                console.error('Error initializing profile:', error);
+                // Redirect to registration on error
+                window.location.href = 'register.html';
+            }
+        }
+
+        // Initialize the profile when page loads
+        document.addEventListener('DOMContentLoaded', initProfile);
+    </script>
+</body>
+</html>
