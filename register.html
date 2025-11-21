@@ -11,43 +11,44 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <!-- Add this at the end of <head> section -->
     <script src="auth-check.js"></script>
     <style>
         :root {
-            --primary: #60a5fa;
-            --primary-dark: #3b82f6;
-            --primary-light: #93c5fd;
-            --secondary: #94a3b8;
-            --success: #22c55e;
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #3b82f6;
+            --secondary: #64748b;
+            --success: #10b981;
             --error: #ef4444;
-            --warning: #eab308;
+            --warning: #f59e0b;
             --info: #0ea5e9;
             --purple: #8b5cf6;
             --pink: #ec4899;
-            --shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             --radius: 12px;
+            --radius-sm: 8px;
             --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            --gradient: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+            --gradient: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
             --trial-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
             --trial-color: #10b981;
             --trial-dark: #059669;
-        }
-        body.light-mode {
-            --background: #f3f4f6;
             --surface: #ffffff;
-            --text-primary: #111827;
-            --text-secondary: #4b5563;
-            --text-tertiary: #9ca3af;
-            --border: #d1d5db;
+            --background: #f8fafc;
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --text-tertiary: #94a3b8;
+            --border: #e2e8f0;
         }
         body.dark-mode {
-            --background: #0f172a;
             --surface: #1e293b;
-            --text-primary: #f9fafb;
-            --text-secondary: #d1d5db;
-            --text-tertiary: #6b7280;
+            --background: #0f172a;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-tertiary: #64748b;
             --border: #334155;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
         }
         * {
             margin: 0;
@@ -68,7 +69,7 @@
             font-size: 16px;
             transition: var(--transition);
             min-height: 100vh;
-            overflow-x: hidden;
+            overflow: hidden;
             -webkit-text-size-adjust: 100%;
             -ms-text-size-adjust: 100%;
             touch-action: pan-x pan-y;
@@ -82,7 +83,7 @@
             left: 0;
             right: 0;
             z-index: 1000;
-            background: var(--background);
+            background: var(--surface);
             border-bottom: 1px solid var(--border);
             box-shadow: var(--shadow);
         }
@@ -115,7 +116,7 @@
         .action-btn {
             background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: var(--radius);
+            border-radius: var(--radius-sm);
             padding: 0.5rem;
             cursor: pointer;
             transition: var(--transition);
@@ -129,7 +130,7 @@
         }
         .action-btn:hover {
             background: var(--primary-light);
-            color: var(--primary);
+            color: white;
             border-color: var(--primary-light);
         }
         .action-btn.primary {
@@ -144,28 +145,34 @@
         .main-content {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 80px 1rem 2rem;
+            padding: 80px 1rem 1rem;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: calc(100vh - 80px);
+            height: calc(100vh - 80px);
+            overflow: hidden;
         }
         .registration-container {
             background: var(--surface);
             border-radius: var(--radius);
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow-lg);
             width: 100%;
             max-width: 500px;
-            overflow: hidden;
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+            overflow-x: hidden;
         }
         .registration-header {
             background: var(--gradient);
             color: white;
-            padding: 2rem;
+            padding: 1.5rem;
             text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
         .registration-header h1 {
-            font-size: 1.75rem;
+            font-size: 1.5rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
             display: flex;
@@ -175,10 +182,10 @@
         }
         .registration-header p {
             opacity: 0.9;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
         .registration-body {
-            padding: 2rem;
+            padding: 1.5rem;
         }
         .trial-option {
             display: flex;
@@ -247,7 +254,7 @@
         .account-section {
             margin: 1.5rem 0;
             padding: 1rem;
-            background: rgba(59, 130, 246, 0.05);
+            background: rgba(37, 99, 235, 0.05);
             border-radius: var(--radius);
             border: 1px solid var(--border);
         }
@@ -274,7 +281,7 @@
             align-items: center;
             padding: 0.75rem;
             background: var(--surface);
-            border-radius: var(--radius);
+            border-radius: var(--radius-sm);
             border: 1px solid var(--border);
         }
         .account-info {
@@ -296,7 +303,7 @@
             background: var(--primary);
             color: white;
             border: none;
-            border-radius: var(--radius);
+            border-radius: var(--radius-sm);
             padding: 0.5rem 0.75rem;
             cursor: pointer;
             transition: var(--transition);
@@ -337,7 +344,7 @@
             color: var(--purple);
         }
         .temp-login-btn {
-            background: var(--gradient-premium);
+            background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
             color: white;
             border: none;
             border-radius: var(--radius);
@@ -352,14 +359,11 @@
             gap: 0.5rem;
         }
         .temp-login-btn:hover {
-            background: var(--purple);
-        }
-        :root {
-            --purple: #8b5cf6;
-            --gradient-premium: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
         }
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.25rem;
         }
         .input-group {
             position: relative;
@@ -375,8 +379,8 @@
         select, input {
             padding: 0.75rem 1rem 0.75rem 2.5rem;
             border: 1px solid var(--border);
-            border-radius: var(--radius);
-            background: var(--background);
+            border-radius: var(--radius-sm);
+            background: var(--surface);
             color: var(--text-primary);
             font-size: 1rem;
             transition: border-color 0.3s;
@@ -385,6 +389,7 @@
         select:focus, input:focus {
             outline: none;
             border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
         .file-upload {
             position: relative;
@@ -419,8 +424,8 @@
         .receipt-preview {
             margin-top: 1rem;
             max-width: 100%;
-            max-height: 200px;
-            border-radius: var(--radius);
+            max-height: 150px;
+            border-radius: var(--radius-sm);
             border: 1px solid var(--border);
             display: none;
         }
@@ -444,6 +449,8 @@
         }
         .submit-btn:hover {
             background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
         }
         .submit-btn.loading::after {
             content: '';
@@ -540,7 +547,7 @@
         }
         .back-btn:hover, .cancel-btn:hover, .ok-btn:hover {
             background: var(--primary-light);
-            color: var(--primary);
+            color: white;
             border-color: var(--primary-light);
         }
         .ok-btn {
@@ -620,9 +627,10 @@
             }
             .main-content {
                 padding: 70px 0.75rem 1rem;
+                height: calc(100vh - 70px);
             }
             .registration-body {
-                padding: 1.5rem;
+                padding: 1.25rem;
             }
             .modal-content {
                 padding: 1.5rem;
@@ -631,7 +639,7 @@
         }
         @media (max-width: 480px) {
             .registration-header h1 {
-                font-size: 1.5rem;
+                font-size: 1.25rem;
             }
             .modal-content h2 {
                 font-size: 1.5rem;
@@ -916,7 +924,6 @@
     </div>
 
     <script>
-
         // Firebase User Manager
         class FirebaseUserManager {
             constructor() {
@@ -1183,10 +1190,8 @@
         function toggleTheme() {
             if (document.body.classList.contains('dark-mode')) {
                 document.body.classList.remove('dark-mode');
-                document.body.classList.add('light-mode');
                 themeToggle.querySelector('i').className = 'fas fa-moon';
             } else {
-                document.body.classList.remove('light-mode');
                 document.body.classList.add('dark-mode');
                 themeToggle.querySelector('i').className = 'fas fa-sun';
             }
