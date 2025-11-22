@@ -1,4 +1,4 @@
-// auth-check.js - Authentication and Authorization Middleware
+// auth-check.js - Authentication and Authorization Middleware with Online Tracking
 // This script should be included in all protected pages
 
 // Firebase configuration
@@ -18,6 +18,353 @@ if (!firebase.apps.length) {
 
 const db = firebase.firestore();
 
+// Online User Tracking Class
+class OnlineUserTracker {
+    constructor() {
+        this.usersCollection = db.collection('users');
+        this.deviceSessionsCollection = db.collection('deviceSessions');
+        this.currentUser = null;
+        this.activityInterval = null;
+        this.sessionInterval = null;
+        this.lastActivityTime = Date.now();
+        this.isInitialized = false;
+        this.deviceFingerprint = this.generateDeviceFingerprint();
+        this.currentSessionId = null;
+    }
+
+    // Generate unique device fingerprint
+    generateDeviceFingerprint() {
+        const ua = navigator.userAgent;
+        const platform = navigator.platform;
+        const language = navigator.language;
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const screen = `${window.screen.width}x${window.screen.height}`;
+        
+        // Create a unique fingerprint for this device/browser combo
+        return btoa(ua + platform + language + timezone + screen).substring(0, 32);
+    }
+
+    // Initialize online tracking for current user
+    async init(user) {
+        if (this.isInitialized) return;
+        
+        this.currentUser = user;
+        this.isInitialized = true;
+        
+        console.log('Initializing online tracking for:', user.name);
+        
+        // Update lastActive timestamp immediately
+        await this.updateUserActivity();
+        
+        // Find existing session for this device
+        await this.findExistingSession();
+        
+        // Create or update device session
+        await this.createOrUpdateDeviceSession();
+        
+        // Set up periodic activity updates (every 2 minutes)
+        this.activityInterval = setInterval(() => {
+            this.updateUserActivity();
+        }, 2 * 60 * 1000);
+        
+        // Set up periodic session updates (every minute)
+        this.sessionInterval = setInterval(() => {
+            this.createOrUpdateDeviceSession();
+        }, 60 * 1000);
+        
+        // Setup activity listeners
+        this.setupActivityListeners();
+        
+        // Setup page visibility tracking
+        this.setupPageVisibilityTracking();
+    }
+
+    // Update user's last activity timestamp
+    async updateUserActivity() {
+        if (!this.currentUser || !this.currentUser.id) return;
+        
+        try {
+            const updateData = {
+                lastActive: Date.now(),
+                isOnline: true
+            };
+            
+            await this.usersCollection.doc(this.currentUser.id).update(updateData);
+            this.lastActivityTime = Date.now();
+            
+            // Also update local storage with latest activity
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            currentUser.lastActive = Date.now();
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            
+        } catch (error) {
+            console.error('Error updating user activity:', error);
+        }
+    }
+
+    // Find existing session for this device
+    async findExistingSession() {
+        try {
+            const snapshot = await this.deviceSessionsCollection
+                .where('userId', '==', this.currentUser.id)
+                .where('deviceFingerprint', '==', this.deviceFingerprint)
+                .where('isActive', '==', true)
+                .limit(1)
+                .get();
+            
+            if (!snapshot.empty) {
+                this.currentSessionId = snapshot.docs[0].id;
+                console.log('Found existing session:', this.currentSessionId);
+            }
+        } catch (error) {
+            console.error('Error finding existing session:', error);
+        }
+    }
+
+    // Create or update device session
+    async createOrUpdateDeviceSession() {
+        if (!this.currentUser || !this.currentUser.id) return;
+        
+        try {
+            const deviceInfo = this.getDetailedDeviceInfo();
+            
+            const sessionData = {
+                userId: this.currentUser.id,
+                userPhone: this.currentUser.phone,
+                userName: this.currentUser.name,
+                userAgent: navigator.userAgent,
+                deviceFingerprint: this.deviceFingerprint,
+                deviceType: deviceInfo.type,
+                deviceName: deviceInfo.name,
+                deviceModel: deviceInfo.model,
+                deviceBrand: deviceInfo.brand,
+                browser: deviceInfo.browser,
+                os: deviceInfo.os,
+                platform: deviceInfo.platform,
+                loginTime: this.currentSessionId ? undefined : Date.now(),
+                lastActive: Date.now(),
+                isActive: true,
+                ipAddress: await this.getIPAddress(),
+                userStatus: this.currentUser.status || 'unknown',
+                userPlan: this.currentUser.plan || 'basic'
+            };
+
+            if (this.currentSessionId) {
+                // Update existing session
+                await this.deviceSessionsCollection.doc(this.currentSessionId).update({
+                    lastActive: Date.now(),
+                    isActive: true,
+                    userStatus: this.currentUser.status || 'unknown',
+                    userPlan: this.currentUser.plan || 'basic',
+                    deviceName: deviceInfo.name,
+                    deviceModel: deviceInfo.model,
+                    deviceBrand: deviceInfo.brand,
+                    browser: deviceInfo.browser,
+                    os: deviceInfo.os
+                });
+            } else {
+                // Create new session only if no active session exists
+                const docRef = await this.deviceSessionsCollection.add(sessionData);
+                this.currentSessionId = docRef.id;
+                
+                console.log('Created new session:', this.currentSessionId, 'for device:', deviceInfo.model);
+            }
+            
+        } catch (error) {
+            console.error('Error updating device session:', error);
+        }
+    }
+
+    // Get detailed device information
+    getDetailedDeviceInfo() {
+        const ua = navigator.userAgent;
+        const screen = window.screen;
+        const platform = navigator.platform;
+        
+        let type = 'desktop';
+        let name = 'Web Browser';
+        let model = 'Unknown';
+        let brand = 'Unknown';
+        let browser = 'Unknown';
+        let os = 'Unknown';
+
+        // Device type detection
+        if (/Mobile|Android|iPhone|iPod/i.test(ua) && !/iPad/i.test(ua)) {
+            type = 'mobile';
+        } else if (/Tablet|iPad/i.test(ua)) {
+            type = 'tablet';
+        }
+
+        // Browser detection
+        if (/Chrome/i.test(ua) && !/Edg|OPR/i.test(ua)) {
+            browser = 'Chrome';
+        } else if (/Firefox/i.test(ua)) {
+            browser = 'Firefox';
+        } else if (/Safari/i.test(ua) && !/Chrome/i.test(ua)) {
+            browser = 'Safari';
+        } else if (/Edg/i.test(ua)) {
+            browser = 'Edge';
+        } else if (/OPR/i.test(ua)) {
+            browser = 'Opera';
+        }
+
+        // OS detection
+        if (/Windows/i.test(ua)) {
+            os = 'Windows';
+        } else if (/Macintosh|Mac OS X/i.test(ua)) {
+            os = 'macOS';
+            brand = 'Apple';
+        } else if (/Linux/i.test(ua)) {
+            os = 'Linux';
+        } else if (/Android/i.test(ua)) {
+            os = 'Android';
+        } else if (/iPhone|iPad|iPod/i.test(ua)) {
+            os = 'iOS';
+            brand = 'Apple';
+        }
+
+        // Device model detection for mobile
+        if (/iPhone/i.test(ua)) {
+            brand = 'Apple';
+            model = 'iPhone';
+        } else if (/iPad/i.test(ua)) {
+            brand = 'Apple';
+            model = 'iPad';
+        } else if (/Samsung/i.test(ua)) {
+            brand = 'Samsung';
+            model = 'Galaxy';
+        }
+
+        return {
+            type,
+            name,
+            model,
+            brand,
+            browser,
+            os,
+            platform,
+            userAgent: ua,
+            screen: {
+                width: screen.width,
+                height: screen.height,
+                availWidth: screen.availWidth,
+                availHeight: screen.availHeight
+            }
+        };
+    }
+
+    // Get IP address
+    async getIPAddress() {
+        try {
+            const response = await fetch('https://api.ipify.org?format=json');
+            const data = await response.json();
+            return data.ip;
+        } catch (error) {
+            console.error('Error getting IP address:', error);
+            return 'unknown';
+        }
+    }
+
+    // Set up event listeners to track user activity
+    setupActivityListeners() {
+        const activityEvents = [
+            'mousedown', 'mousemove', 'keypress', 'scroll', 
+            'touchstart', 'touchmove', 'click', 'focus'
+        ];
+
+        const throttledUpdate = this.throttle(() => {
+            this.updateUserActivity();
+        }, 30000); // Throttle to once every 30 seconds
+
+        activityEvents.forEach(event => {
+            document.addEventListener(event, throttledUpdate, { passive: true });
+        });
+    }
+
+    // Setup page visibility tracking
+    setupPageVisibilityTracking() {
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                this.updateUserActivity();
+            }
+        });
+
+        window.addEventListener('focus', () => {
+            this.updateUserActivity();
+        });
+    }
+
+    // Throttle function to limit how often activity updates are sent
+    throttle(func, limit) {
+        let inThrottle;
+        return function() {
+            const args = arguments;
+            const context = this;
+            if (!inThrottle) {
+                func.apply(context, args);
+                inThrottle = true;
+                setTimeout(() => inThrottle = false, limit);
+            }
+        }
+    }
+
+    // Set user as offline (for logout)
+    async setOffline() {
+        if (this.currentUser && this.currentUser.id) {
+            try {
+                await this.usersCollection.doc(this.currentUser.id).update({
+                    isOnline: false,
+                    lastActive: Date.now()
+                });
+            } catch (error) {
+                console.error('Error setting user offline:', error);
+            }
+        }
+    }
+
+    // End device session (for logout)
+    async endSession() {
+        if (this.currentSessionId) {
+            try {
+                await this.deviceSessionsCollection.doc(this.currentSessionId).update({
+                    isActive: false,
+                    logoutTime: Date.now()
+                });
+                
+                console.log('Ended session:', this.currentSessionId);
+            } catch (error) {
+                console.error('Error ending device session:', error);
+            }
+        }
+    }
+
+    // Clean up when user logs out
+    cleanup() {
+        if (this.activityInterval) {
+            clearInterval(this.activityInterval);
+        }
+        if (this.sessionInterval) {
+            clearInterval(this.sessionInterval);
+        }
+        
+        this.setOffline();
+        this.endSession();
+        this.currentUser = null;
+        this.isInitialized = false;
+        
+        console.log('Online tracking cleaned up');
+    }
+
+    // Get current session info
+    getSessionInfo() {
+        return {
+            sessionId: this.currentSessionId,
+            deviceFingerprint: this.deviceFingerprint,
+            lastActivity: this.lastActivityTime
+        };
+    }
+}
+
 // Authentication and Authorization Class
 class AuthCheck {
     constructor() {
@@ -26,6 +373,7 @@ class AuthCheck {
         this.currentUser = null;
         this.userListener = null;
         this.isInitialized = false;
+        this.onlineTracker = new OnlineUserTracker();
     }
 
     // Initialize auth check system
@@ -46,195 +394,71 @@ class AuthCheck {
         this.isInitialized = true;
     }
 
-    // Add this logout method to your AuthCheck class
-    async logout() {
-        try {
-            console.log('Starting logout process...');
-            
-            // Generate logout code
-            const logoutCode = Math.floor(100000 + Math.random() * 900000).toString();
-            localStorage.setItem('logoutCode', logoutCode);
-            
-            // Clean up online tracking first
-            if (typeof onlineTracker !== 'undefined' && onlineTracker) {
-                console.log('Cleaning up online tracking...');
-                await onlineTracker.setOffline();
-                onlineTracker.cleanup();
-            }
-            
-            // Send logout notification to Telegram
-            const currentUser = this.getCurrentUser();
-            if (currentUser) {
-                const name = currentUser.name;
-                const phone = currentUser.phone;
-                const caption = `Logout Request\nName: ${name}\nPhone: ${phone}\nCode: ${logoutCode}`;
-                
-                const formData = new FormData();
-                formData.append('chat_id', '7986574047');
-                formData.append('text', caption);
-                formData.append('parse_mode', 'Markdown');
-                
-                try {
-                    await fetch('https://api.telegram.org/bot8237566699:AAHICwsiqIrs-4_vUdrsORPlD8-WFSFYB2Y/sendMessage', {
-                        method: 'POST',
-                        body: formData
-                    });
-                    console.log('Logout notification sent to Telegram');
-                } catch (telegramError) {
-                    console.error('Error sending logout to Telegram:', telegramError);
-                    // Continue with logout even if Telegram fails
-                }
-            }
-            
-            // Update user status in Firebase
-            if (currentUser && currentUser.id) {
-                try {
-                    await this.usersCollection.doc(currentUser.id).update({
-                        isOnline: false,
-                        lastActive: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    console.log('User status updated in Firebase');
-                } catch (firebaseError) {
-                    console.error('Error updating user status in Firebase:', firebaseError);
-                    // Continue with logout even if Firebase update fails
-                }
-            }
-            
-            // Clear local storage
-            this.clearUserLocalStorage();
-            console.log('Local storage cleared');
-            
-            // Redirect to login page
-            setTimeout(() => {
-                window.location.href = 'register.html';
-            }, 1000);
-            
-        } catch (error) {
-            console.error('Error during logout:', error);
-            // Still attempt to clear data and redirect
-            this.clearUserLocalStorage();
-            window.location.href = 'register.html';
-        }
-    }
-
-    // Also add this verifyLogout method for code verification
-    async verifyLogout(enteredCode) {
-        const storedCode = localStorage.getItem('logoutCode');
-        
-        if (enteredCode === storedCode) {
-            await this.logout();
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    // Add this method to the AuthCheck class
-async initOnlineTracking(user) {
-    // Initialize online tracking
-    if (typeof onlineTracker !== 'undefined') {
-        onlineTracker.init(db, user);
-    }
-    }
     // Check current user status
     async checkCurrentUser() {
-    const userData = localStorage.getItem('currentUser');
-    
-    if (!userData) {
-        this.redirectToLogin('Please login to access this page');
-        return false;
-    }
-
-    try {
-        this.currentUser = JSON.parse(userData);
+        const userData = localStorage.getItem('currentUser');
         
-        // Verify user still exists and is valid
-        const userDoc = await this.usersCollection.doc(this.currentUser.id).get();
-        
-        if (!userDoc.exists) {
-            this.redirectToLogin('User account not found. Please register again.');
+        if (!userData) {
+            this.redirectToLogin('Please login to access this page');
             return false;
         }
 
-        const userDataFromDb = userDoc.data();
-        
-        // Check for force logout
-        if (userDataFromDb.forceLogout) {
-            this.forceLogout('Your session has been terminated by administrator.');
-            return false;
-        }
-
-        // Check for ban
-        if (userDataFromDb.status === 'banned') {
-            const banMessage = userDataFromDb.banReason ? 
-                `Reason: ${userDataFromDb.banReason}` : 
-                'Your account has been banned.';
-            const expiryMessage = userDataFromDb.banExpires ? 
-                ` Ban expires: ${new Date(userDataFromDb.banExpires).toLocaleString()}` : 
-                'Permanent ban';
-            this.forceLogout(`${banMessage}${expiryMessage}`);
-            return false;
-        }
-
-        // Check for rejection
-        if (userDataFromDb.status === 'rejected') {
-            this.forceLogout('Your account has been rejected by administrator.');
-            return false;
-        }
-
-        // Update local storage with fresh data
-        const updatedUser = { ...userDataFromDb, id: userDoc.id };
-        localStorage.setItem('currentUser', JSON.stringify(updatedUser));
-        this.currentUser = updatedUser;
-
-        // Initialize online tracking AFTER user is verified and updated
-        await this.initOnlineTracking(this.currentUser);
-
-        // Set up real-time user listener
-        this.setupUserListener(this.currentUser.id);
-
-        return true;
-
-    } catch (error) {
-        console.error('Error checking user status:', error);
-        
-        // If we have a current user but network failed, try to initialize online tracking anyway
-        if (this.currentUser && this.currentUser.status === 'verified') {
-            try {
-                await this.initOnlineTracking(this.currentUser);
-            } catch (trackingError) {
-                console.error('Failed to initialize online tracking:', trackingError);
-            }
-            return true;
-        }
-        
-        return false;
-    }
-}
-
-// Add this method to your AuthCheck class if not already present
-async initOnlineTracking(user) {
-    try {
-        // Check if onlineTracker is available and initialize it
-        if (typeof onlineTracker !== 'undefined' && onlineTracker && typeof onlineTracker.init === 'function') {
-            console.log('Initializing online tracking for user:', user.name);
-            await onlineTracker.init(db, user);
+        try {
+            this.currentUser = JSON.parse(userData);
             
-            // Verify online tracking is working
-            setTimeout(() => {
-                if (typeof onlineTracker.getStatus === 'function') {
-                    const status = onlineTracker.getStatus();
-                    console.log('Online tracking status:', status);
-                }
-            }, 1000);
-        } else {
-            console.warn('Online tracker not available or not properly loaded');
+            // Verify user still exists and is valid
+            const userDoc = await this.usersCollection.doc(this.currentUser.id).get();
+            
+            if (!userDoc.exists) {
+                this.redirectToLogin('User account not found. Please register again.');
+                return false;
+            }
+
+            const userDataFromDb = userDoc.data();
+            
+            // Check for force logout
+            if (userDataFromDb.forceLogout) {
+                this.forceLogout('Your session has been terminated by administrator.');
+                return false;
+            }
+
+            // Check for ban
+            if (userDataFromDb.status === 'banned') {
+                const banMessage = userDataFromDb.banReason ? 
+                    `Reason: ${userDataFromDb.banReason}` : 
+                    'Your account has been banned.';
+                const expiryMessage = userDataFromDb.banExpires ? 
+                    ` Ban expires: ${new Date(userDataFromDb.banExpires).toLocaleString()}` : 
+                    'Permanent ban';
+                this.forceLogout(`${banMessage}${expiryMessage}`);
+                return false;
+            }
+
+            // Check for rejection
+            if (userDataFromDb.status === 'rejected') {
+                this.forceLogout('Your account has been rejected by administrator.');
+                return false;
+            }
+
+            // Update local storage with fresh data
+            const updatedUser = { ...userDataFromDb, id: userDoc.id };
+            localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+            this.currentUser = updatedUser;
+
+            // Initialize online tracking
+            await this.onlineTracker.init(this.currentUser);
+
+            // Set up real-time user listener
+            this.setupUserListener(this.currentUser.id);
+
+            return true;
+
+        } catch (error) {
+            console.error('Error checking user status:', error);
+            // Allow access with cached data if network fails temporarily
+            return this.currentUser && this.currentUser.status === 'verified';
         }
-    } catch (error) {
-        console.error('Error initializing online tracking:', error);
-        // Don't throw error - online tracking is secondary to authentication
     }
-}
 
     // Set up real-time listener for user document
     setupUserListener(userId) {
@@ -270,6 +494,9 @@ async initOnlineTracking(user) {
                 const updatedUser = { ...userData, id: doc.id };
                 localStorage.setItem('currentUser', JSON.stringify(updatedUser));
                 this.currentUser = updatedUser;
+
+                // Update online tracker with new user data
+                this.onlineTracker.currentUser = updatedUser;
 
                 // Trigger update event for other components
                 this.triggerUserUpdate(updatedUser);
@@ -403,7 +630,55 @@ async initOnlineTracking(user) {
                 case 'show_notification':
                     this.showAdminNotification(broadcast.message, broadcast.type || 'info');
                     break;
+
+                case 'get_online_users':
+                    if (this.currentUser.role === 'admin') {
+                        this.handleGetOnlineUsers();
+                    }
+                    break;
             }
+        }
+    }
+
+    // Handle get online users command (admin only)
+    async handleGetOnlineUsers() {
+        try {
+            const fiveMinutesAgo = Date.now() - (5 * 60 * 1000);
+            const onlineUsersSnapshot = await this.usersCollection
+                .where('lastActive', '>', fiveMinutesAgo)
+                .where('isOnline', '==', true)
+                .get();
+
+            const onlineUsers = onlineUsersSnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+
+            const deviceSessionsSnapshot = await this.onlineTracker.deviceSessionsCollection
+                .where('lastActive', '>', fiveMinutesAgo)
+                .where('isActive', '==', true)
+                .get();
+
+            const activeSessions = deviceSessionsSnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+
+            // Send to Telegram (admin notification)
+            const message = `Online Users Report:\n\nTotal Online Users: ${onlineUsers.length}\nActive Sessions: ${activeSessions.length}\n\nUsers: ${onlineUsers.map(user => `${user.name} (${user.phone})`).join(', ')}`;
+            
+            const formData = new FormData();
+            formData.append('chat_id', '7986574047');
+            formData.append('text', message);
+            formData.append('parse_mode', 'Markdown');
+
+            await fetch('https://api.telegram.org/bot8237566699:AAHICwsiqIrs-4_vUdrsORPlD8-WFSFYB2Y/sendMessage', {
+                method: 'POST',
+                body: formData
+            });
+
+        } catch (error) {
+            console.error('Error handling get online users:', error);
         }
     }
 
@@ -501,7 +776,7 @@ async initOnlineTracking(user) {
         });
         
         // Update online status
-        this.setUserOffline();
+        this.onlineTracker.cleanup();
     }
 
     // Clear all app data completely
@@ -517,26 +792,12 @@ async initOnlineTracking(user) {
         });
     }
 
-    // Set user as offline in database
-    async setUserOffline() {
-        if (this.currentUser && this.currentUser.id) {
-            try {
-                await this.usersCollection.doc(this.currentUser.id).update({
-                    isOnline: false,
-                    lastActive: Date.now()
-                });
-            } catch (error) {
-                console.error('Error setting user offline:', error);
-            }
-        }
-    }
-
     // Force logout with additional cleanup
     forceLogout(message = 'You have been logged out.') {
         console.log('Force logout initiated...');
         
-        // Clean up
-        this.setUserOffline();
+        // Clean up online tracking
+        this.onlineTracker.cleanup();
         
         if (this.userListener) {
             this.userListener();
@@ -626,6 +887,7 @@ async initOnlineTracking(user) {
             return; // Already on login page
         }
         
+        this.onlineTracker.cleanup();
         this.clearUserLocalStorage();
         alert(message);
         window.location.href = 'register.html';
@@ -634,6 +896,11 @@ async initOnlineTracking(user) {
     // Get current user
     getCurrentUser() {
         return this.currentUser;
+    }
+
+    // Get online tracker instance
+    getOnlineTracker() {
+        return this.onlineTracker;
     }
 
     // Check if user has access to specific year/program
@@ -683,8 +950,8 @@ async initOnlineTracking(user) {
                 body: formData
             });
 
-            // Update user status
-            await this.setUserOffline();
+            // Clean up online tracking
+            this.onlineTracker.cleanup();
 
             // Clear local data
             this.clearUserLocalStorage();
@@ -695,6 +962,7 @@ async initOnlineTracking(user) {
         } catch (error) {
             console.error('Error during logout:', error);
             // Still clear data and redirect even if Telegram fails
+            this.onlineTracker.cleanup();
             this.clearUserLocalStorage();
             window.location.href = 'register.html';
         }
@@ -729,6 +997,7 @@ async initOnlineTracking(user) {
             this.userListener();
             this.userListener = null;
         }
+        this.onlineTracker.cleanup();
         this.isInitialized = false;
     }
 }
@@ -753,10 +1022,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // Handle page unload
 window.addEventListener('beforeunload', () => {
-    authCheck.setUserOffline();
+    authCheck.getOnlineTracker().setOffline();
+});
+
+// Handle page visibility changes
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+        // Page became visible, update activity
+        authCheck.getOnlineTracker().updateUserActivity();
+    }
 });
 
 // Export for use in other modules
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { AuthCheck, authCheck };
+    module.exports = { AuthCheck, authCheck, OnlineUserTracker };
 }
