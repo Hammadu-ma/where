@@ -1,109 +1,300 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Offline 😔</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline - ALIFO Medical Education</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    body {
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      font-family: 'Roboto', sans-serif;
-      background: linear-gradient(135deg, #89f7fe, #66a6ff);
-      overflow: hidden;
-    }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
 
-    .container {
-      text-align: center;
-      color: #fff;
-      animation: fadeIn 1.5s ease-in-out;
-    }
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 60px 40px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
 
-    h1 {
-      font-size: 3rem;
-      margin-bottom: 20px;
-      animation: bounce 2s infinite;
-    }
+        .medical-icon {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 30px;
+            position: relative;
+        }
 
-    p {
-      font-size: 1.2rem;
-      margin-bottom: 30px;
-      opacity: 0;
-      animation: fadeInText 2s forwards 1s;
-    }
+        .wifi-icon {
+            width: 100%;
+            height: 100%;
+            animation: pulse 2s ease-in-out infinite;
+        }
 
-    a {
-      display: inline-block;
-      padding: 12px 30px;
-      font-size: 1rem;
-      text-decoration: none;
-      color: #66a6ff;
-      background: #fff;
-      border-radius: 50px;
-      transition: transform 0.3s, box-shadow 0.3s;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    }
+        .signal-wave {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            border: 2px solid #4facfe;
+            border-radius: 50%;
+            animation: ripple 2s linear infinite;
+        }
 
-    a:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-    }
+        .signal-wave:nth-child(2) {
+            width: 60px;
+            height: 60px;
+            animation-delay: 0.5s;
+        }
 
-    /* Animations */
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-20px); }
-    }
+        .signal-wave:nth-child(3) {
+            width: 40px;
+            height: 40px;
+            animation-delay: 1s;
+        }
 
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
+        .offline-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: shake 2s ease-in-out infinite;
+        }
 
-    @keyframes fadeInText {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
+        .error-title {
+            font-size: 32px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
 
-    /* Floating clouds */
-    .cloud {
-      position: absolute;
-      top: 20%;
-      width: 150px;
-      height: 80px;
-      background: rgba(255,255,255,0.6);
-      border-radius: 50%;
-      animation: floatCloud 20s linear infinite;
-    }
+        .error-message {
+            color: #718096;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
 
-    .cloud:nth-child(2) {
-      top: 40%;
-      width: 200px;
-      height: 100px;
-      animation-duration: 25s;
-      animation-delay: 5s;
-    }
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
 
-    @keyframes floatCloud {
-      0% { transform: translateX(-200px); }
-      100% { transform: translateX(120vw); }
-    }
-  </style>
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #4facfe;
+            border: 2px solid #4facfe;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            padding: 10px;
+            background: #f7fafc;
+            border-radius: 10px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #e53e3e;
+            animation: blink 1.5s ease-in-out infinite;
+        }
+
+        .status-text {
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .retry-animation {
+            margin-top: 20px;
+        }
+
+        .retry-bar {
+            width: 200px;
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .retry-progress {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            animation: retry 3s ease-in-out infinite;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        @keyframes ripple {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        @keyframes retry {
+            0% { transform: translateX(-100%); }
+            50% { transform: translateX(0); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Medical elements */
+        .medical-symbols {
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            width: 100px;
+            height: 100px;
+            opacity: 0.1;
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 20px;
+            }
+            
+            .error-title {
+                font-size: 24px;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 200px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="cloud"></div>
-  <div class="cloud"></div>
+    <div class="container">
+        <!-- Medical Symbols Decoration -->
+        <svg class="medical-symbols" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="40" fill="none" stroke="#4facfe" stroke-width="2"/>
+            <path d="M30,50 L70,50 M50,30 L50,70" stroke="#00f2fe" stroke-width="3"/>
+        </svg>
 
-  <div class="container">
-    <h1>😔 Oops! You're Offline</h1>
-    <p>Looks like your connection is lost. Don't worry, you can still enjoy the cached pages!</p>
-    <a href="index.html">Go Back Home</a>
-  </div>
+        <div class="offline-icon">📶</div>
+
+        <div class="medical-icon">
+            <div class="signal-wave"></div>
+            <div class="signal-wave"></div>
+            <div class="signal-wave"></div>
+            <svg class="wifi-icon" viewBox="0 0 100 100">
+                <path d="M50,20 C70,20 90,30 90,50 M50,40 C60,40 70,45 70,55 M50,60 C55,60 58,62 58,65" 
+                      stroke="#4facfe" stroke-width="4" fill="none" stroke-linecap="round"/>
+            </svg>
+        </div>
+
+        <h1 class="error-title">Connection Lost</h1>
+        <p class="error-message">
+            Your internet connection appears to be offline. 
+            ALIFO requires an active connection to access medical education resources.
+        </p>
+
+        <div class="connection-status">
+            <div class="status-dot"></div>
+            <span class="status-text">No internet connection detected</span>
+        </div>
+
+        <div class="btn-group">
+            <button onclick="window.location.reload()" class="btn btn-primary">
+                Retry Connection
+            </button>
+            <button onclick="checkConnection()" class="btn btn-secondary">
+                Check Network
+            </button>
+        </div>
+
+        <div class="retry-animation">
+            <div class="retry-bar">
+                <div class="retry-progress"></div>
+            </div>
+        </div>
+    </div>
+   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script>
+  const tg = window.Telegram.WebApp;
+
+  // Show Telegram's native back button
+  tg.BackButton.show();
+
+  // Handle Telegram back button press
+  tg.BackButton.onClick(() => {
+    // Example: navigate back
+    window.history.back();
+  });
+</script>
+
 </body>
 </html>
