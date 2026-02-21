@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Dashboard - ALIF Medical Quiz Platform</title>
+    <title>ALIF Medical Quiz Platform</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <style>
-        /* Your existing CSS remains the same */
+        /* ===== COLOR THEME (from dashboard) ===== */
         :root {
             --primary: #60a5fa;
             --primary-dark: #3b82f6;
@@ -31,8 +31,6 @@
             --trial-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
             --trial-color: #10b981;
             --trial-dark: #059669;
-            --dropdown-bg: rgba(30, 41, 59, 0.95);
-            --dropdown-hover: rgba(51, 65, 85, 0.95);
         }
         body.light-mode {
             --background: #f3f4f6;
@@ -41,8 +39,6 @@
             --text-secondary: #4b5563;
             --text-tertiary: #9ca3af;
             --border: #d1d5db;
-            --dropdown-bg: rgba(255, 255, 255, 0.98);
-            --dropdown-hover: rgba(243, 244, 246, 0.98);
         }
         body.dark-mode {
             --background: #0f172a;
@@ -76,9 +72,12 @@
             -ms-text-size-adjust: 100%;
             touch-action: pan-x pan-y;
         }
-        html {
-            touch-action: none;
+        html, body {
+            overflow-y: auto;
+            height: 100%;
         }
+
+        /* ===== HEADER (same as dashboard) ===== */
         .header {
             position: fixed;
             top: 0;
@@ -160,10 +159,14 @@
             align-items: center;
             justify-content: center;
         }
+
+        /* ===== MAIN CONTENT ===== */
         .main-content {
             max-width: 1400px;
             margin: 0 auto;
             padding: 80px 1rem 2rem;
+            overflow-y: visible;
+            height: auto;
         }
         .page-header {
             text-align: center;
@@ -181,6 +184,8 @@
             max-width: 600px;
             margin: 0 auto;
         }
+
+        /* ===== YEAR FILTER ===== */
         .year-filter {
             margin-bottom: 2rem;
             overflow-x: auto;
@@ -207,6 +212,8 @@
             color: white;
             border-color: var(--primary);
         }
+
+        /* ===== YEAR SECTIONS & CARDS ===== */
         .year-section {
             margin-bottom: 2rem;
         }
@@ -222,21 +229,12 @@
         .year-title i {
             color: var(--primary);
         }
-        
-        /* Grid layout */
         .cards-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             gap: 1rem;
             padding: 0.5rem 0;
         }
-        
-        /* Card styles with dropdown */
-        .quiz-card-wrapper {
-            position: relative;
-            width: 100%;
-        }
-        
         .quiz-card {
             background: var(--surface);
             border: 1px solid var(--border);
@@ -249,7 +247,6 @@
             gap: 0.5rem;
             position: relative;
             min-height: 140px;
-            z-index: 2;
         }
         .quiz-card:hover {
             transform: translateY(-3px);
@@ -271,25 +268,7 @@
             font-size: 1.5rem;
             color: var(--error);
             opacity: 0.8;
-            z-index: 3;
         }
-        .quiz-card.trial {
-            border: 2px solid var(--trial-color);
-        }
-        .quiz-card.trial::before {
-            content: 'TRIAL';
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            background: var(--trial-gradient);
-            color: white;
-            padding: 0.2rem 0.4rem;
-            border-radius: 4px;
-            font-size: 0.6rem;
-            font-weight: 600;
-            z-index: 3;
-        }
-        
         .quiz-icon {
             width: 36px;
             height: 36px;
@@ -306,7 +285,6 @@
             font-weight: 600;
             color: var(--text-primary);
             line-height: 1.3;
-            padding-right: 20px;
         }
         .quiz-meta {
             display: flex;
@@ -320,11 +298,6 @@
             gap: 0.5rem;
             font-size: 0.7rem;
             color: var(--text-secondary);
-        }
-        .stat {
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
         }
         .difficulty {
             display: inline-block;
@@ -345,270 +318,8 @@
             background: rgba(239, 68, 68, 0.1);
             color: var(--error);
         }
-        
-        /* Dropdown indicator */
-        .dropdown-indicator {
-            position: absolute;
-            bottom: 8px;
-            right: 8px;
-            width: 22px;
-            height: 22px;
-            background: var(--primary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 0.7rem;
-            opacity: 0;
-            transition: var(--transition);
-            z-index: 3;
-            pointer-events: none;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        }
-        
-        .quiz-card-wrapper:hover .dropdown-indicator {
-            opacity: 1;
-        }
-        
-        /* Dropdown panel */
-        .related-quizzes {
-            position: absolute;
-            top: 0;
-            left: 100%;
-            width: 280px;
-            background: var(--dropdown-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.3);
-            opacity: 0;
-            visibility: hidden;
-            transform: translateX(-10px);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 10;
-            max-height: 400px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .quiz-card-wrapper:hover .related-quizzes {
-            opacity: 1;
-            visibility: visible;
-            transform: translateX(5px);
-        }
-        
-        .related-header {
-            padding: 0.75rem 1rem;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            font-weight: 600;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            border-top-left-radius: var(--radius);
-            border-top-right-radius: var(--radius);
-        }
-        
-        .related-header i {
-            font-size: 1rem;
-        }
-        
-        .related-count {
-            margin-left: auto;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 0.2rem 0.6rem;
-            border-radius: 20px;
-            font-size: 0.7rem;
-        }
-        
-        .related-scroll {
-            max-height: 320px;
-            overflow-y: auto;
-            padding: 0.5rem;
-            scrollbar-width: thin;
-            scrollbar-color: var(--primary) var(--border);
-        }
-        
-        .related-scroll::-webkit-scrollbar {
-            width: 4px;
-        }
-        
-        .related-scroll::-webkit-scrollbar-track {
-            background: var(--border);
-            border-radius: 4px;
-        }
-        
-        .related-scroll::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 4px;
-        }
-        
-        .related-item {
-            padding: 0.75rem;
-            margin: 0.25rem 0;
-            border-radius: 8px;
-            background: var(--surface);
-            border: 1px solid transparent;
-            transition: var(--transition);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-size: 0.85rem;
-            color: var(--text-primary);
-            position: relative;
-        }
-        
-        .related-item:hover {
-            background: var(--dropdown-hover);
-            border-color: var(--primary-light);
-            transform: translateX(3px);
-        }
-        
-        .related-item-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            background: var(--gradient);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 0.9rem;
-            flex-shrink: 0;
-        }
-        
-        .related-item-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
-        
-        .related-item-title {
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-        
-        .related-item-meta {
-            display: flex;
-            gap: 0.75rem;
-            font-size: 0.7rem;
-            color: var(--text-secondary);
-        }
-        
-        .related-item-badge {
-            background: var(--primary-light);
-            color: var(--primary-dark);
-            padding: 0.2rem 0.5rem;
-            border-radius: 12px;
-            font-size: 0.6rem;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-        
-        .related-item-type {
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-        
-        .related-item-type i {
-            font-size: 0.6rem;
-            color: var(--primary);
-        }
-        
-        /* Position adjustment for cards near edge */
-        .quiz-card-wrapper:last-child .related-quizzes,
-        .quiz-card-wrapper:nth-child(3n) .related-quizzes {
-            left: auto;
-            right: 100%;
-        }
-        
-        .quiz-card-wrapper:last-child:hover .related-quizzes,
-        .quiz-card-wrapper:nth-child(3n):hover .related-quizzes {
-            transform: translateX(-5px);
-        }
-        
-        /* Mobile responsiveness */
-        @media (max-width: 768px) {
-            .related-quizzes {
-                left: 50%;
-                transform: translateX(-50%) translateY(10px);
-                top: 100%;
-                width: 260px;
-            }
-            
-            .quiz-card-wrapper:hover .related-quizzes {
-                transform: translateX(-50%) translateY(5px);
-            }
-            
-            .quiz-card-wrapper:last-child .related-quizzes,
-            .quiz-card-wrapper:nth-child(3n) .related-quizzes {
-                left: auto;
-                right: 0;
-                transform: translateX(0) translateY(10px);
-            }
-            
-            .quiz-card-wrapper:last-child:hover .related-quizzes,
-            .quiz-card-wrapper:nth-child(3n):hover .related-quizzes {
-                transform: translateX(0) translateY(5px);
-            }
-            
-            .cards-container {
-                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-                gap: 0.75rem;
-            }
-            
-            .quiz-card {
-                min-height: 130px;
-                padding: 0.6rem;
-            }
-            
-            .quiz-title {
-                font-size: 0.85rem;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .related-quizzes {
-                width: 220px;
-            }
-            
-            .related-item {
-                padding: 0.5rem;
-            }
-            
-            .cards-container {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 0.5rem;
-            }
-            
-            .quiz-card {
-                min-height: 120px;
-                padding: 0.5rem;
-            }
-            
-            .quiz-icon {
-                width: 32px;
-                height: 32px;
-                font-size: 0.9rem;
-            }
-            
-            .quiz-title {
-                font-size: 0.8rem;
-            }
-        }
-        
-        @media (min-width: 1200px) {
-            .cards-container {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            }
-        }
-        
+
+        /* ===== REGISTRATION MODAL (beautiful, same style) ===== */
         .modal {
             position: fixed;
             top: 0;
@@ -616,6 +327,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -625,7 +337,7 @@
             background: var(--surface);
             padding: 2rem;
             border-radius: var(--radius);
-            max-width: 450px;
+            max-width: 400px;
             width: 90%;
             text-align: center;
             position: relative;
@@ -633,15 +345,16 @@
             animation: slideIn 0.3s ease-out;
             overflow-y: auto;
             max-height: 80vh;
+            border: 1px solid var(--border);
         }
         @keyframes slideIn {
             from { transform: translateY(-50px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
         .modal-content h2 {
-            margin-bottom: 0.5rem;
+            margin-bottom: 1rem;
             color: var(--text-primary);
-            font-size: 1.75rem;
+            font-size: 2rem;
             font-weight: 700;
             display: flex;
             align-items: center;
@@ -651,40 +364,78 @@
         .modal-content h2 i {
             color: var(--primary);
         }
-        .back-btn, .cancel-btn, .ok-btn {
-            background: var(--surface);
-            color: var(--text-primary);
-            border: 1px solid var(--border);
-            padding: 0.75rem;
-            border-radius: var(--radius);
-            cursor: pointer;
-            transition: var(--transition);
-            font-weight: 600;
+        .modal-content p {
+            margin-bottom: 2rem;
+            color: var(--text-secondary);
             font-size: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-top: 1rem;
+            line-height: 1.5;
         }
-        .back-btn:hover, .cancel-btn:hover, .ok-btn:hover {
-            background: var(--primary-light);
+        .modal-icon {
+            font-size: 4rem;
             color: var(--primary);
-            border-color: var(--primary-light);
-        }
-        .ok-btn {
-            background: var(--gradient);
-            color: white;
-            border: none;
-        }
-        .ok-btn:hover {
-            background: var(--primary-dark);
+            margin-bottom: 1rem;
         }
         .button-group {
             display: flex;
             gap: 1rem;
             justify-content: center;
-            margin-top: 1rem;
+            margin-top: 1.5rem;
+        }
+        .modal-btn {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 0.85rem 2rem;
+            border-radius: var(--radius);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid transparent;
+        }
+        .modal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+        .modal-btn.secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+        .modal-btn.secondary:hover {
+            background: var(--surface);
+            border-color: var(--primary);
+        }
+
+        /* ===== TRIAL / PREMIUM BADGES ===== */
+        .trial-badge {
+            background: var(--trial-gradient);
+            color: white;
+            padding: 0.3rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            margin-left: 0.5rem;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+        }
+        .premium-badge {
+            background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+            color: white;
+            padding: 0.3rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            margin-left: 0.5rem;
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
         }
         .trial-card {
             background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%);
@@ -721,362 +472,51 @@
             color: white;
             font-size: 1.2rem;
         }
-        .trial-title {
-            font-weight: 700;
-            font-size: 1.1rem;
-            color: var(--trial-color);
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .header-container { padding: 0.75rem; }
+            .main-content { padding: 70px 0.75rem 1rem; }
+            .page-title { font-size: 1.75rem; }
+            .year-title { font-size: 1.25rem; }
+            .cards-container { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.75rem; }
+            .quiz-card { min-height: 130px; padding: 0.6rem; }
         }
-        .trial-content {
-            margin-bottom: 1rem;
+        @media (max-width: 480px) {
+            .cards-container { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+            .quiz-card { min-height: 120px; }
+            .modal-content { padding: 1.5rem; }
+            .modal-btn { padding: 0.7rem 1rem; }
         }
-        .trial-timer {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: var(--trial-color);
-            text-align: center;
-            margin: 1rem 0;
-            font-family: monospace;
-        }
-        .trial-actions {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-        }
-        .trial-btn {
-            background: var(--trial-gradient);
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: var(--radius);
-            cursor: pointer;
-            transition: var(--transition);
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .trial-btn:hover {
-            background: var(--trial-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-        }
-        .trial-btn.secondary {
-            background: transparent;
-            color: var(--trial-color);
-            border: 1px solid var(--trial-color);
-        }
-        .trial-btn.secondary:hover {
-            background: rgba(16, 185, 129, 0.1);
-        }
-        .trial-badge {
-            background: var(--trial-gradient);
-            color: white;
-            padding: 0.3rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            margin-left: 0.5rem;
-            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
-        }
-        .premium-badge {
-            background: var(--gradient-premium);
-            color: white;
-            padding: 0.3rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            margin-left: 0.5rem;
-            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
-        }
-        :root {
-            --gradient-premium: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
-        }
-        .trial-expired {
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.05) 100%);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-        }
-        .trial-expired::before {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-        }
-        .trial-expired .trial-icon {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-        }
-        .trial-expired .trial-title {
-            color: #ef4444;
-        }
-        .trial-expired .trial-timer {
-            color: #ef4444;
-        }
-        .connection-status {
-            position: fixed;
-            top: 70px;
-            right: 20px;
-            padding: 0.5rem 1rem;
-            border-radius: var(--radius);
-            font-size: 0.8rem;
-            font-weight: 600;
-            z-index: 999;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: var(--transition);
-        }
-        .connection-status.online {
-            background: var(--success);
-            color: white;
-        }
-        .connection-status.offline {
-            background: var(--error);
-            color: white;
-        }
-        .connection-status.syncing {
-            background: var(--warning);
-            color: white;
-        }
-        .data-backup-indicator {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 0.5rem 1rem;
-            font-size: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            box-shadow: var(--shadow);
-            z-index: 998;
-        }
-        .persistence-indicator {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 0.5rem 1rem;
-            font-size: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            box-shadow: var(--shadow);
-            z-index: 998;
-        }
-        html, body {
-            overflow-y: auto;
-            height: 100%;
-        }
-        .main-content {
-            overflow-y: visible;
-            height: auto;
-        }
-        #update-notification {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #4CAF50;
-            color: white;
-            padding: 15px 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            z-index: 10000;
-            display: none;
-            max-width: 350px;
-            animation: slideIn 0.3s ease-out;
-        }
-        #update-notification button {
-            background: white;
-            color: #4CAF50;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            margin-left: 10px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        #update-notification button:hover {
-            background: #f0f0f0;
-        }
-        .input-group {
-            margin: 1rem 0;
-            position: relative;
-        }
-        .input-group input, .input-group select {
-            width: 100%;
-            padding: 0.75rem 0.75rem 0.75rem 2.5rem;
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            background: var(--surface);
-            color: var(--text-primary);
-            font-size: 1rem;
-        }
-        .input-group i {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-secondary);
-        }
-        .file-upload {
-            position: relative;
-            border: 2px dashed var(--border);
-            border-radius: var(--radius);
-            padding: 1rem;
-            text-align: center;
-            margin: 1rem 0;
-            cursor: pointer;
-        }
-        .file-upload i {
-            font-size: 2rem;
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-        }
-        .file-upload input {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            cursor: pointer;
-        }
-        .receipt-preview {
-            max-width: 100%;
-            max-height: 200px;
-            margin-top: 1rem;
-            border-radius: var(--radius);
-            display: none;
-        }
-        .submit-btn {
-            width: 100%;
-            padding: 0.75rem;
-            background: var(--gradient);
-            color: white;
-            border: none;
-            border-radius: var(--radius);
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-        .submit-btn:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-        .error {
-            color: var(--error);
-            font-size: 0.85rem;
-            margin-top: 0.5rem;
-        }
-        .account-section {
-            background: rgba(96, 165, 250, 0.1);
-            border-radius: var(--radius);
-            padding: 1rem;
-            margin: 1rem 0;
-        }
-        .account-title {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--primary);
-            font-size: 0.9rem;
-            margin-bottom: 0.75rem;
-        }
-        .account-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-        .account-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 0.5rem;
-            font-size: 0.8rem;
-        }
-        .account-info {
-            display: flex;
-            flex-direction: column;
-        }
-        .account-name {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-        .account-number {
-            color: var(--text-secondary);
-            font-family: monospace;
-        }
-        .copy-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 0.25rem 0.5rem;
-            font-size: 0.7rem;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        .copy-btn:hover {
-            background: var(--primary-dark);
-        }
-        .payment-note {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            margin-top: 0.5rem;
-            font-style: italic;
+        @media (min-width: 1200px) {
+            .cards-container { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
         }
     </style>
 </head>
 <body class="dark-mode">
-    <!-- Update Notification -->
-    <div id="update-notification">
-        <span id="update-message">New version available!</span>
-        <button id="reload-button">Update Now</button>
-    </div>
-    <!-- Connection Status Indicator -->
-    <div id="connectionStatus" class="connection-status online" style="display: none;">
-        <i class="fas fa-wifi"></i>
-        <span>Connected</span>
-    </div>
-
-    <!-- Data Backup Indicator -->
-    <div id="dataBackupIndicator" class="data-backup-indicator" style="display: none;">
-        <i class="fas fa-cloud-upload-alt"></i>
-        <span>Backing up data...</span>
+    <!-- ===== REGISTRATION MODAL (shown if user not registered) ===== -->
+    <div id="registerModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-icon">
+                <i class="fas fa-user-lock"></i>
+            </div>
+            <h2><i class="fas fa-stethoscope"></i> ALIF</h2>
+            <p><strong>Registration required</strong><br>You need to register or log in to access the medical quiz platform. It only takes a minute.</p>
+            <div class="button-group">
+                <button class="modal-btn secondary" id="stayModalBtn"><i class="fas fa-times"></i> Stay</button>
+                <button class="modal-btn" id="registerModalBtn"><i class="fas fa-arrow-right"></i> Register / Login</button>
+            </div>
+        </div>
     </div>
 
-    <!-- Persistence Indicator -->
-    <div id="persistenceIndicator" class="persistence-indicator" style="display: none;">
-        <i class="fas fa-shield-alt"></i>
-        <span>Persistent Mode Active</span>
-    </div>
-
-    <!-- Header -->
+    <!-- ===== HEADER (identical to dashboard) ===== -->
     <header class="header">
         <div class="header-container">
             <div class="logo" id="logoBtn">
                 <i class="fas fa-stethoscope"></i>
                 <span>ALIF</span>
-                <span id="headerTrialBadge" class="trial-badge" style="display: none;">
-                    <i class="fas fa-crown"></i> TRIAL
-                </span>
-                <span id="headerPremiumBadge" class="premium-badge" style="display: none;">
-                    <i class="fas fa-star"></i> PREMIUM
-                </span>
+                <span id="headerTrialBadge" class="trial-badge" style="display: none;"><i class="fas fa-crown"></i> TRIAL</span>
+                <span id="headerPremiumBadge" class="premium-badge" style="display: none;"><i class="fas fa-star"></i> PREMIUM</span>
             </div>
             <div class="nav-actions">
                 <button class="action-btn" id="themeToggle">
@@ -1099,19 +539,17 @@
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main id="mainContent" class="main-content">
+    <!-- ===== MAIN CONTENT (only visible if registered) ===== -->
+    <main id="mainContent" class="main-content" style="display: none;">
         <div class="page-header">
             <h1 class="page-title">Medical Quiz Platform</h1>
             <p class="page-subtitle">Test your medical knowledge with our comprehensive quiz collection</p>
         </div>
-        
-        <!-- Free Trial Card -->
+
+        <!-- Free Trial Card (dynamic) -->
         <div id="trialCard" class="trial-card" style="display: none;">
             <div class="trial-header">
-                <div class="trial-icon">
-                    <i class="fas fa-crown"></i>
-                </div>
+                <div class="trial-icon"><i class="fas fa-crown"></i></div>
                 <div class="trial-title">Free Trial Active</div>
             </div>
             <div class="trial-content">
@@ -1120,15 +558,11 @@
                 <p>Upgrade to keep your access after the trial ends.</p>
             </div>
             <div class="trial-actions">
-                <button class="trial-btn" id="upgradeBtn">
-                    <i class="fas fa-rocket"></i> Upgrade Now
-                </button>
-                <button class="trial-btn secondary" id="viewProgramsBtn">
-                    <i class="fas fa-book-medical"></i> View All Programs
-                </button>
+                <button class="trial-btn" id="upgradeBtn"><i class="fas fa-rocket"></i> Upgrade Now</button>
+                <button class="trial-btn secondary" id="viewProgramsBtn"><i class="fas fa-book-medical"></i> View All Programs</button>
             </div>
         </div>
-        
+
         <div class="year-filter">
             <div class="year-filter-container">
                 <button class="year-btn active" data-year="all">All</button>
@@ -1141,1326 +575,303 @@
                 <button class="year-btn" data-year="7"><i class="fas fa-book-medical"></i> MUSCULOSKELETAL</button>
             </div>
         </div>
-        
-        <!-- Year Sections -->
-        <section class="year-section" data-year="1">
-            <h2 class="year-title"><i class="fas fa-book-medical"></i> PRE-MED</h2>
-            <div class="cards-container"></div>
-        </section>
-        <section class="year-section" data-year="2">
-            <h2 class="year-title"><i class="fas fa-book-medical"></i> INTRODUCTION-MED</h2>
-            <div class="cards-container"></div>
-        </section>
-        <section class="year-section" data-year="3">
-            <h2 class="year-title"><i class="fas fa-book-medical"></i> METABOLISM</h2>
-            <div class="cards-container"></div>
-        </section>
-        <section class="year-section" data-year="4">
-            <h2 class="year-title"><i class="fas fa-book-medical"></i> HEMATOLOGY</h2>
-            <div class="cards-container"></div>
-        </section>
-        <section class="year-section" data-year="5">
-            <h2 class="year-title"><i class="fas fa-book-medical"></i> CVS</h2>
-            <div class="cards-container"></div>
-        </section>
-        <section class="year-section" data-year="6">
-            <h2 class="year-title"><i class="fas fa-book-medical"></i> RESPIRATORY</h2>
-            <div class="cards-container"></div>
-        </section>
-        <section class="year-section" data-year="7">
-            <h2 class="year-title"><i class="fas fa-book-medical"></i> MUSCULOSKELETAL</h2>
-            <div class="cards-container"></div>
-        </section>
+
+        <!-- Year Sections (populated dynamically) -->
+        <section class="year-section" data-year="1"><h2 class="year-title"><i class="fas fa-book-medical"></i> PRE-MED</h2><div class="cards-container"></div></section>
+        <section class="year-section" data-year="2"><h2 class="year-title"><i class="fas fa-book-medical"></i> INTRODUCTION-MED</h2><div class="cards-container"></div></section>
+        <section class="year-section" data-year="3"><h2 class="year-title"><i class="fas fa-book-medical"></i> METABOLISM</h2><div class="cards-container"></div></section>
+        <section class="year-section" data-year="4"><h2 class="year-title"><i class="fas fa-book-medical"></i> HEMATOLOGY</h2><div class="cards-container"></div></section>
+        <section class="year-section" data-year="5"><h2 class="year-title"><i class="fas fa-book-medical"></i> CVS</h2><div class="cards-container"></div></section>
+        <section class="year-section" data-year="6"><h2 class="year-title"><i class="fas fa-book-medical"></i> RESPIRATORY</h2><div class="cards-container"></div></section>
+        <section class="year-section" data-year="7"><h2 class="year-title"><i class="fas fa-book-medical"></i> MUSCULOSKELETAL</h2><div class="cards-container"></div></section>
     </main>
 
-    <!-- Access Denied Modal -->
+    <!-- Access Denied Modal (for verification issues) -->
     <div id="accessDeniedModal" class="modal" style="display: none;">
         <div class="modal-content">
             <h2><i class="fas fa-lock"></i> Access Denied</h2>
             <p id="deniedMessage"></p>
-            <button class="ok-btn" id="closeDeniedBtn">OK</button>
+            <button class="modal-btn" id="closeDeniedBtn">OK</button>
         </div>
     </div>
 
-    <!-- Logout Modal -->
-    <div id="logoutModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <h2><i class="fas fa-sign-out-alt"></i> Confirm Logout</h2>
-            <div class="input-group">
-                <i class="fas fa-key"></i>
-                <input id="logoutCode" placeholder="6-digit logout code" maxlength="6" required>
-            </div>
-            <button class="submit-btn" id="confirmLogoutBtn"><i class="fas fa-check-circle"></i> Confirm Logout</button>
-            <div id="logoutError" class="error"></div>
-        </div>
-    </div>
-
-    <!-- Add Year Modal -->
-    <div id="addModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <h2><i class="fas fa-plus"></i> Add Program</h2>
-            <div class="price-info">Additional Charge:</div>
-            
-            <!-- Account Numbers Section -->
-            <div class="account-section">
-                <h3 class="account-title"><i class="fas fa-university"></i> Payment Accounts</h3>
-                <div class="account-list">
-                    <div class="account-item">
-                        <div class="account-info">
-                            <span class="account-name">CBE</span>
-                            <span class="account-number">1000544233185</span>
-                        </div>
-                        <button class="copy-btn" onclick="copyToClipboard('1000544233185', this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                    <div class="account-item">
-                        <div class="account-info">
-                            <span class="account-name">Awash Bank</span>
-                            <span class="account-number">014251165418600</span>
-                        </div>
-                        <button class="copy-btn" onclick="copyToClipboard('014251165418600', this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                    <div class="account-item">
-                        <div class="account-info">
-                            <span class="account-name">Tele Birr</span>
-                            <span class="account-number">0912496441</span>
-                        </div>
-                        <button class="copy-btn" onclick="copyToClipboard('0912496441', this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                </div>
-                <p class="payment-note">Please use your name as payment reference</p>
-            </div>
-            
-            <form id="addForm">
-                <div class="input-group">
-                    <i class="fas fa-user"></i>
-                    <input id="addName" placeholder="Full Name (for verification)" required>
-                </div>
-                <div class="input-group">
-                    <i class="fas fa-graduation-cap"></i>
-                    <select id="newYear" required>
-                        <option value="" disabled selected>Select New Program</option>
-                        <option value="1">Pre Med - 200 ETB</option>
-                        <option value="2">Intro Med - 280 ETB</option>
-                        <option value="3">Meta - 130 ETB</option>
-                        <option value="4">Hema - 130 ETB</option>
-                        <option value="5">meta and Hema - 210 ETB</option>
-                        <option value="6">CVS - 130 ETB</option>
-                        <option value="7">RESPA - 130 ETB</option>
-                        <option value="8">Musclo - 130 ETB</option>
-                        <option value="9">CVS, RESPA AND MUSCLO - 310</option>
-                    </select>
-                </div>
-                <div class="file-upload">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                    <span id="addUploadText">Upload Payment Receipt</span>
-                    <input id="addReceipt" type="file" accept="image/*" required>
-                </div>
-                <img id="addReceiptPreview" class="receipt-preview" alt="Receipt Preview">
-                <button type="submit" class="submit-btn" id="addSubmitBtn"><i class="fas fa-paper-plane"></i> Submit</button>
-                <div id="addError" class="error"></div>
-            </form>
-        </div>
-    </div>
-  
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    
     <script>
-        // Firebase configuration (replace with your own)
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
-        };
-
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-
-        // Question Sets JSON Structure
-        const questionSets = [
-            // ----- METABOLISM FINAL EXAMS (Year 3) -----
-            { 
-                id: 2, 
-                year: "3", 
-                title: "METABOLISM FINAL EXAM 2017", 
-                type: "exam", 
-                source: "metabolism",
-                examYear: "2017", 
-                difficulty: "advanced", 
-                description: "2017 Final Exam", 
-                questions: 87, 
-                avgScore: 0, 
-                rating: 4.8, 
-                icon: "fas fa-dna",
-                page: "meta/meta2017.html" 
-            },
-            { 
-                id: 3, 
-                year: "3", 
-                title: "METABOLISM FINAL EXAM 2016", 
-                type: "exam", 
-                source: "metabolism",
-                examYear: "2016", 
-                difficulty: "advanced", 
-                description: "2016 Final Exam", 
-                questions: 54, 
-                avgScore: 0, 
-                rating: 4.8, 
-                icon: "fas fa-virus",
-                page: "meta/meta2016.html" 
-            },
-            { 
-                id: 4, 
-                year: "3", 
-                title: "METABOLISM FINAL EXAM 2015", 
-                type: "exam", 
-                source: "metabolism",
-                examYear: "2015", 
-                difficulty: "advanced", 
-                description: "2015 Final Exam", 
-                questions: 57, 
-                avgScore: 0, 
-                rating: 4.9, 
-                icon: "fas fa-pills",
-                page: "meta/meta2015.html" 
-            },
-            { 
-                id: 5, 
-                year: "3", 
-                title: "METABOLISM FINAL EXAM 2014", 
-                type: "exam", 
-                source: "metabolism",
-                examYear: "2014", 
-                difficulty: "advanced", 
-                description: "2014 Final Exam", 
-                questions: 140, 
-                avgScore: 0, 
-                rating: 4.7, 
-                icon: "fas fa-bacteria",
-                page: "meta/meta2014.html" 
-            },
-            { 
-                id: 25, 
-                year: "3", 
-                title: "SPH & Metabolism Practice", 
-                type: "practice", 
-                source: "metabolism",
-                examYear: null, 
-                difficulty: "intermediate", 
-                description: "Practice Questions", 
-                questions: 700, 
-                avgScore: 0, 
-                rating: 4.5, 
-                icon: "fas fa-book",
-                page: "meta/practice.html" 
-            },
-            { 
-                id: 26, 
-                year: "3", 
-                title: "Metabolism Final 2013", 
-                type: "exam", 
-                source: "metabolism",
-                examYear: "2013", 
-                difficulty: "advanced", 
-                description: "2013 Final Exam", 
-                questions: 65, 
-                avgScore: 0, 
-                rating: 4.6, 
-                icon: "fas fa-dna",
-                page: "meta/meta2013.html" 
-            },
-            { 
-                id: 27, 
-                year: "3", 
-                title: "Metabolism Final 2012", 
-                type: "exam", 
-                source: "metabolism",
-                examYear: "2012", 
-                difficulty: "advanced", 
-                description: "2012 Final Exam", 
-                questions: 72, 
-                avgScore: 0, 
-                rating: 4.7, 
-                icon: "fas fa-dna",
-                page: "meta/meta2012.html" 
-            },
-            
-            // ----- PRE-MED QUIZZES (Year 1) -----
-            { 
-                id: 6, 
-                year: "1", 
-                title: "Organic Chemistry", 
-                type: "quiz", 
-                source: "premed",
-                examYear: null, 
-                difficulty: "intermediate", 
-                description: "Basic Organic Chemistry", 
-                questions: 30, 
-                avgScore: 0, 
-                rating: 4.6, 
-                icon: "fas fa-brain",
-                page: "premed/organic-chemistry.html" 
-            },
-            { 
-                id: 7, 
-                year: "1", 
-                title: "ENTREPRENUERSHIP", 
-                type: "quiz", 
-                source: "premed",
-                examYear: null, 
-                difficulty: "intermediate", 
-                description: "Business Basics", 
-                questions: 25, 
-                avgScore: 0, 
-                rating: 4.5, 
-                icon: "fas fa-heartbeat",
-                page: "premed/entrepreneurship.html" 
-            },
-            { 
-                id: 8, 
-                year: "1", 
-                title: "ECONOMICS", 
-                type: "quiz", 
-                source: "premed",
-                examYear: null, 
-                difficulty: "intermediate", 
-                description: "Medical Economics", 
-                questions: 20, 
-                avgScore: 0, 
-                rating: 4.3, 
-                icon: "fas fa-microscope",
-                page: "premed/economics.html" 
-            },
-            { 
-                id: 9, 
-                year: "1", 
-                title: "CIVIC", 
-                type: "quiz", 
-                source: "premed",
-                examYear: null, 
-                difficulty: "intermediate", 
-                description: "Civic Education", 
-                questions: 28, 
-                avgScore: 0, 
-                rating: 4.4, 
-                icon: "fas fa-flask",
-                page: "premed/civic.html" 
-            },
-            
-            // ----- INTRODUCTION MEDICINE (Year 2) -----
-            { 
-                id: 10, 
-                year: "2", 
-                title: "Pathology", 
-                type: "quiz", 
-                source: "intro",
-                examYear: null, 
-                difficulty: "intermediate", 
-                description: "General Pathology", 
-                questions: 400, 
-                avgScore: 0, 
-                rating: 4.8, 
-                icon: "fas fa-flask",
-                page: "intro/pathology.html" 
-            },
-            { 
-                id: 11, 
-                year: "2", 
-                title: "Pharmacology", 
-                type: "quiz", 
-                source: "intro",
-                examYear: null, 
-                difficulty: "intermediate", 
-                description: "Basic Pharmacology", 
-                questions: 400, 
-                avgScore: 0, 
-                rating: 4.8, 
-                icon: "fas fa-heartbeat",
-                page: "intro/pharmacology.html" 
-            },
-            { 
-                id: 12, 
-                year: "2", 
-                title: "PCD", 
-                type: "quiz", 
-                source: "intro",
-                examYear: null, 
-                difficulty: "intermediate", 
-                description: "Patient Centered Care", 
-                questions: 150, 
-                avgScore: 0, 
-                rating: 4.8, 
-                icon: "fas fa-heartbeat",
-                page: "intro/pcd.html" 
-            },
-            { 
-                id: 13, 
-                year: "2", 
-                title: "PARASITOLOGY", 
-                type: "quiz", 
-                source: "intro",
-                examYear: null, 
-                difficulty: "intermediate", 
-                description: "Medical Parasitology", 
-                questions: 180, 
-                avgScore: 0, 
-                rating: 4.8, 
-                icon: "fas fa-heartbeat",
-                page: "intro/parasitology.html" 
-            },
-            { 
-                id: 14, 
-                year: "2", 
-                title: "immunology", 
-                type: "quiz", 
-                source: "intro",
-                examYear: null, 
-                difficulty: "intermediate", 
-                description: "Basic Immunology", 
-                questions: 235, 
-                avgScore: 0, 
-                rating: 4.8, 
-                icon: "fas fa-heartbeat",
-                page: "intro/immunology.html" 
-            },
-            { 
-                id: 15, 
-                year: "2", 
-                title: "Microbiology", 
-                type: "quiz", 
-                source: "intro",
-                examYear: null, 
-                difficulty: "intermediate", 
-                description: "Medical Microbiology", 
-                questions: 320, 
-                avgScore: 0, 
-                rating: 4.8, 
-                icon: "fas fa-heartbeat",
-                page: "intro/microbiology.html" 
-            },
-            { 
-                id: 16, 
-                year: "2", 
-                title: "Anatomy", 
-                type: "quiz", 
-                source: "intro",
-                examYear: null, 
-                difficulty: "intermediate", 
-                description: "Human Anatomy", 
-                questions: 700, 
-                avgScore: 0, 
-                rating: 4.8, 
-                icon: "fas fa-brain",
-                page: "intro/anatomy.html" 
-            },
-            { 
-                id: 17, 
-                year: "2", 
-                title: "Physiology", 
-                type: "quiz", 
-                source: "intro",
-                examYear: null, 
-                difficulty: "intermediate", 
-                description: "Human Physiology", 
-                questions: 600, 
-                avgScore: 0, 
-                rating: 4.8, 
-                icon: "fas fa-microscope",
-                page: "intro/physiology.html" 
-            },
-            { 
-                id: 18, 
-                year: "2", 
-                title: "Biochemistry", 
-                type: "quiz", 
-                source: "intro",
-                examYear: null, 
-                difficulty: "intermediate", 
-                description: "Medical Biochemistry", 
-                questions: 800, 
-                avgScore: 0, 
-                rating: 4.8, 
-                icon: "fas fa-book",
-                page: "intro/biochemistry.html" 
-            },
-            
-            // ----- HEMATOLOGY (Year 4) -----
-            { 
-                id: 19, 
-                year: "4", 
-                title: "Hematology Anatomy", 
-                type: "quiz", 
-                source: "hematology",
-                examYear: null, 
-                difficulty: "advanced", 
-                description: "Hematology Anatomy", 
-                questions: 40, 
-                avgScore: 0, 
-                rating: 4.8, 
-                icon: "fas fa-stethoscope",
-                page: "hematology/anatomy.html" 
-            },
-            { 
-                id: 20, 
-                year: "4", 
-                title: "Hematology Physiology", 
-                type: "quiz", 
-                source: "hematology",
-                examYear: null, 
-                difficulty: "advanced", 
-                description: "Hematology Physiology", 
-                questions: 35, 
-                avgScore: 0, 
-                rating: 4.7, 
-                icon: "fas fa-syringe",
-                page: "hematology/physiology.html" 
-            },
-            { 
-                id: 21, 
-                year: "4", 
-                title: "Hematology Pharmacology", 
-                type: "quiz", 
-                source: "hematology",
-                examYear: null, 
-                difficulty: "advanced", 
-                description: "Hematology Pharmacology", 
-                questions: 38, 
-                avgScore: 0, 
-                rating: 4.6, 
-                icon: "fas fa-pills",
-                page: "hematology/pharmacology.html" 
-            },
-            { 
-                id: 22, 
-                year: "4", 
-                title: "Hematology Pathology", 
-                type: "quiz", 
-                source: "hematology",
-                examYear: null, 
-                difficulty: "advanced", 
-                description: "Hematology Pathology", 
-                questions: 42, 
-                avgScore: 0, 
-                rating: 4.7, 
-                icon: "fas fa-virus",
-                page: "hematology/pathology.html" 
-            },
-            
-            // ----- CVS (Year 5) -----
-            { 
-                id: 23, 
-                year: "5", 
-                title: "CVS Anatomy", 
-                type: "quiz", 
-                source: "cvs",
-                examYear: null, 
-                difficulty: "advanced", 
-                description: "Cardiovascular Anatomy", 
-                questions: 45, 
-                avgScore: 0, 
-                rating: 4.8, 
-                icon: "fas fa-heart",
-                page: "cvs/anatomy.html" 
-            },
-            { 
-                id: 24, 
-                year: "5", 
-                title: "CVS Physiology", 
-                type: "quiz", 
-                source: "cvs",
-                examYear: null, 
-                difficulty: "advanced", 
-                description: "Cardiovascular Physiology", 
-                questions: 40, 
-                avgScore: 0, 
-                rating: 4.7, 
-                icon: "fas fa-heartbeat",
-                page: "cvs/physiology.html" 
-            },
-            { 
-                id: 25, 
-                year: "5", 
-                title: "CVS Pharmacology", 
-                type: "quiz", 
-                source: "cvs",
-                examYear: null, 
-                difficulty: "advanced", 
-                description: "Cardiovascular Pharmacology", 
-                questions: 38, 
-                avgScore: 0, 
-                rating: 4.6, 
-                icon: "fas fa-pills",
-                page: "cvs/pharmacology.html" 
-            },
-            { 
-                id: 26, 
-                year: "5", 
-                title: "CVS Pathology", 
-                type: "quiz", 
-                source: "cvs",
-                examYear: null, 
-                difficulty: "advanced", 
-                description: "Cardiovascular Pathology", 
-                questions: 42, 
-                avgScore: 0, 
-                rating: 4.7, 
-                icon: "fas fa-disease",
-                page: "cvs/pathology.html" 
-            },
-            
-            // ----- RESPIRATORY (Year 6) -----
-            { 
-                id: 27, 
-                year: "6", 
-                title: "Respiratory Anatomy", 
-                type: "quiz", 
-                source: "respiratory",
-                examYear: null, 
-                difficulty: "advanced", 
-                description: "Respiratory Anatomy", 
-                questions: 50, 
-                avgScore: 0, 
-                rating: 4.9, 
-                icon: "fas fa-lungs",
-                page: "respiratory/anatomy.html" 
-            },
-            { 
-                id: 28, 
-                year: "6", 
-                title: "Respiratory Physiology", 
-                type: "quiz", 
-                source: "respiratory",
-                examYear: null, 
-                difficulty: "advanced", 
-                description: "Respiratory Physiology", 
-                questions: 45, 
-                avgScore: 0, 
-                rating: 4.8, 
-                icon: "fas fa-lungs",
-                page: "respiratory/physiology.html" 
-            },
-            { 
-                id: 29, 
-                year: "6", 
-                title: "Respiratory Pharmacology", 
-                type: "quiz", 
-                source: "respiratory",
-                examYear: null, 
-                difficulty: "advanced", 
-                description: "Respiratory Pharmacology", 
-                questions: 40, 
-                avgScore: 0, 
-                rating: 4.7, 
-                icon: "fas fa-pills",
-                page: "respiratory/pharmacology.html" 
-            },
-            { 
-                id: 30, 
-                year: "6", 
-                title: "Respiratory Pathology", 
-                type: "quiz", 
-                source: "respiratory",
-                examYear: null, 
-                difficulty: "advanced", 
-                description: "Respiratory Pathology", 
-                questions: 38, 
-                avgScore: 0, 
-                rating: 4.6, 
-                icon: "fas fa-disease",
-                page: "respiratory/pathology.html" 
-            },
-            
-            // ----- MUSCULOSKELETAL (Year 7) -----
-            { 
-                id: 31, 
-                year: "7", 
-                title: "MSK Anatomy", 
-                type: "quiz", 
-                source: "musculoskeletal",
-                examYear: null, 
-                difficulty: "advanced", 
-                description: "Musculoskeletal Anatomy", 
-                questions: 55, 
-                avgScore: 0, 
-                rating: 4.9, 
-                icon: "fas fa-bone",
-                page: "msk/anatomy.html" 
-            },
-            { 
-                id: 32, 
-                year: "7", 
-                title: "MSK Physiology", 
-                type: "quiz", 
-                source: "musculoskeletal",
-                examYear: null, 
-                difficulty: "advanced", 
-                description: "Musculoskeletal Physiology", 
-                questions: 50, 
-                avgScore: 0, 
-                rating: 4.8, 
-                icon: "fas fa-bone",
-                page: "msk/physiology.html" 
-            },
-            { 
-                id: 33, 
-                year: "7", 
-                title: "MSK Pharmacology", 
-                type: "quiz", 
-                source: "musculoskeletal",
-                examYear: null, 
-                difficulty: "advanced", 
-                description: "MSK Pharmacology", 
-                questions: 35, 
-                avgScore: 0, 
-                rating: 4.7, 
-                icon: "fas fa-pills",
-                page: "msk/pharmacology.html" 
-            },
-            { 
-                id: 34, 
-                year: "7", 
-                title: "MSK Pathology", 
-                type: "quiz", 
-                source: "musculoskeletal",
-                examYear: null, 
-                difficulty: "advanced", 
-                description: "MSK Pathology", 
-                questions: 60, 
-                avgScore: 0, 
-                rating: 4.9, 
-                icon: "fas fa-disease",
-                page: "msk/pathology.html" 
+        (function() {
+            // ---------- FIREBASE INIT (replace with your config if needed) ----------
+            const firebaseConfig = {
+                apiKey: "YOUR_API_KEY",
+                authDomain: "YOUR_AUTH_DOMAIN",
+                projectId: "YOUR_PROJECT_ID",
+                storageBucket: "YOUR_STORAGE_BUCKET",
+                messagingSenderId: "YOUR_SENDER_ID",
+                appId: "YOUR_APP_ID"
+            };
+            // Initialize Firebase if not already
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
             }
-        ];
+            const db = firebase.firestore();
 
-        // Group questionSets by year for easier access
-        const quizData = {};
-        questionSets.forEach(quiz => {
-            if (!quizData[quiz.year]) {
-                quizData[quiz.year] = [];
-            }
-            quizData[quiz.year].push(quiz);
-        });
+            // ---------- QUIZ DATA (same as dashboard) ----------
+            const quizData = {
+                1: [
+                    { id: 6, title: "Organic Chemistry", icon: "fas fa-brain", questions: 30, time: 25, difficulty: "intermediate", rating: 4.6, page: "year2/human-anatomy.html" },
+                    { id: 7, title: "ENTREPRENUERSHIP", icon: "fas fa-heartbeat", questions: 25, time: 20, difficulty: "intermediate", rating: 4.5, page: "year2/physiology-i.html" },
+                    { id: 8, title: "ECONOMICS", icon: "fas fa-microscope", questions: 20, time: 15, difficulty: "intermediate", rating: 4.3, page: "year2/histology.html" },
+                    { id: 9, title: "CIVIC", icon: "fas fa-flask", questions: 28, time: 22, difficulty: "intermediate", rating: 4.4, page: "year2/biochemistry-ii.html" }
+                ],
+                2: [
+                    { id: 4, title: "Pathology", icon: "fas fa-flask", questions: 400, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/pt.html" },
+                    { id: 5, title: "Pharmacology", icon: "fas fa-heartbeat", questions: 400, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/pc.html" },
+                    { id: 6, title: "PCD", icon: "fas fa-heartbeat", questions: 150, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/pcd.html" },
+                    { id: 7, title: "PARASITOLOGY", icon: "fas fa-heartbeat", questions: 180, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/pr.html" },
+                    { id: 8, title: "immunology", icon: "fas fa-heartbeat", questions: 235, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/im.html" },
+                    { id: 9, title: "Microbiology", icon: "fas fa-heartbeat", questions: 320, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/micro.html" },
+                    { id: 1, title: "Anatomy", icon: "fas fa-brain", questions: 700, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/an.html" },
+                    { id: 2, title: "Physiology", icon: "fas fa-microscope", questions: 600, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/ps.html" },
+                    { id: 3, title: "Biochemistry", icon: "fas fa-book", questions: 800, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/bc.html" }
+                ],
+                3: [
+                    { id: 13, title: "Metabolism Final Exam 2017", icon: "fas fa-dna", questions: 87, time: 172, difficulty: "intermediate", rating: 4.4, page: "yr3/meta2017.html" },
+                    { id: 10, title: "Metabolism Final Exam 2016", icon: "fas fa-virus", questions: 54, time: 108, difficulty: "intermediate", page: "yr3/meta2016.html", rating: 4.7 },
+                    { id: 11, title: "Metabolism Final Exam 2015", icon: "fas fa-pills", questions: 57, time: 114, difficulty: "intermediate", rating: 4.6, page: "yr3/meta2015.html" },
+                    { id: 12, title: "Metabolism Final Exam 2014", icon: "fas fa-bacteria", questions: 140, time: 280, difficulty: "intermediate", rating: 4.5, page: "yr3/meta2014.html" },
+                    { id: 14, title: "SPH & Other Metabolism Practice Questions", icon: "fas fa-bacteria", questions: 700, time: 280, difficulty: "intermediate", rating: 4.5, page: "yr3/meta.html" }
+                ],
+                4: [
+                    { id: 14, title: "Anatomy", icon: "fas fa-stethoscope", questions: 40, time: 35, difficulty: "advanced", rating: 4.8, page: "year4/clinical-medicine-i.html" },
+                    { id: 15, title: "Physiology", icon: "fas fa-syringe", questions: 35, time: 30, difficulty: "advanced", rating: 4.7, page: "year4/surgery-basics.html" },
+                    { id: 16, title: "Pharmacology", icon: "fas fa-pills", questions: 38, time: 32, difficulty: "advanced", rating: 4.6, page: "year4/pharmacology-ii.html" },
+                    { id: 17, title: "Pathology", icon: "fas fa-virus", questions: 42, time: 35, difficulty: "advanced", rating: 4.7, page: "year4/pathology-ii.html" }
+                ],
+                5: [
+                    { id: 18, title: "Anatomy", icon: "fas fa-stethoscope", questions: 45, time: 40, difficulty: "advanced", rating: 4.8, page: "year5/internal-medicine.html" },
+                    { id: 19, title: "Physiology", icon: "fas fa-syringe", questions: 40, time: 35, difficulty: "advanced", rating: 4.7, page: "year5/surgery.html" },
+                    { id: 20, title: "Pharma", icon: "fas fa-baby", questions: 38, time: 32, difficulty: "advanced", rating: 4.6, page: "year5/pediatrics.html" },
+                    { id: 21, title: "Pathology", icon: "fas fa-female", questions: 42, time: 35, difficulty: "advanced", rating: 4.7, page: "year5/obstetrics-gynecology.html" }
+                ],
+                6: [
+                    { id: 22, title: "Anatomy", icon: "fas fa-hospital-user", questions: 50, time: 45, difficulty: "advanced", rating: 4.9, page: "year6/clinical-rotations-i.html" },
+                    { id: 23, title: "Physiology", icon: "fas fa-ambulance", questions: 45, time: 40, difficulty: "advanced", rating: 4.8, page: "year6/emergency-medicine.html" },
+                    { id: 24, title: "Pharma", icon: "fas fa-brain", questions: 40, time: 35, difficulty: "advanced", rating: 4.7, page: "year6/psychiatry.html" },
+                    { id: 25, title: "Patho", icon: "fas fa-x-ray", questions: 38, time: 32, difficulty: "advanced", rating: 4.6, page: "year6/radiology.html" }
+                ],
+                7: [
+                    { id: 26, title: "Anatomy", icon: "fas fa-hospital-user", questions: 55, time: 50, difficulty: "advanced", rating: 4.9, page: "year7/clinical-rotations-ii.html" },
+                    { id: 27, title: "Physiology", icon: "fas fa-stethoscope", questions: 50, time: 45, difficulty: "advanced", rating: 4.8, page: "year7/specialty-medicine.html" },
+                    { id: 28, title: "Pharma", icon: "fas fa-balance-scale", questions: 35, time: 30, difficulty: "advanced", rating: 4.7, page: "year7/medical-ethics.html" },
+                    { id: 29, title: "Patho", icon: "fas fa-graduation-cap", questions: 60, time: 55, difficulty: "advanced", rating: 4.9, page: "year7/board-exam-prep.html" }
+                ]
+            };
 
-        // Sort quizzes within each year
-        for (let year in quizData) {
-            quizData[year].sort((a, b) => {
-                // Put exams first, then by year
-                if (a.type === 'exam' && b.type !== 'exam') return -1;
-                if (a.type !== 'exam' && b.type === 'exam') return 1;
-                return 0;
-            });
-        }
-
-        // DOM Elements
-        const themeToggle = document.getElementById('themeToggle');
-        const profileBtn = document.getElementById('profileBtn');
-        const notificationsBtn = document.getElementById('notificationsBtn');
-        const adminBtn = document.getElementById('adminBtn');
-        const logoBtn = document.getElementById('logoBtn');
-        const logout = document.getElementById('logout');
-        const logoutModal = document.getElementById('logoutModal');
-        const logoutError = document.getElementById('logoutError');
-        const yearButtons = document.querySelectorAll('.year-btn');
-        const yearSections = document.querySelectorAll('.year-section');
-        const accessDeniedModal = document.getElementById('accessDeniedModal');
-        const deniedMessage = document.getElementById('deniedMessage');
-        const closeDeniedBtn = document.getElementById('closeDeniedBtn');
-        const trialCard = document.getElementById('trialCard');
-        const activeTrialTimer = document.getElementById('activeTrialTimer');
-        const upgradeBtn = document.getElementById('upgradeBtn');
-        const viewProgramsBtn = document.getElementById('viewProgramsBtn');
-        const headerTrialBadge = document.getElementById('headerTrialBadge');
-        const headerPremiumBadge = document.getElementById('headerPremiumBadge');
-        const addModal = document.getElementById('addModal');
-        const addForm = document.getElementById('addForm');
-        const addError = document.getElementById('addError');
-
-        // Trial state variables
-        let trialTimerInterval = null;
-
-        // Firebase User Manager
-        class FirebaseUserManager {
-            constructor() {
-                this.usersCollection = db.collection('users');
-            }
-
-            isTrialExpired(trialEndDate) {
-                return new Date().getTime() > trialEndDate;
-            }
-
-            getTrialRemainingTime(trialEndDate) {
-                return Math.max(0, trialEndDate - new Date().getTime());
-            }
-
-            formatTrialTime(ms) {
-                const days = Math.floor(ms / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((ms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((ms % (1000 * 60)) / 1000);
-                
-                if (days > 0) {
-                    return `${days}d ${hours}h ${minutes}m`;
-                } else {
-                    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                }
-            }
-        }
-
-        const firebaseUserManager = new FirebaseUserManager();
-
-        // Theme toggle
-        function toggleTheme() {
-            if (document.body.classList.contains('dark-mode')) {
-                document.body.classList.remove('dark-mode');
-                document.body.classList.add('light-mode');
-                themeToggle.querySelector('i').className = 'fas fa-moon';
-                localStorage.setItem('theme', 'light');
-            } else {
-                document.body.classList.remove('light-mode');
-                document.body.classList.add('dark-mode');
-                themeToggle.querySelector('i').className = 'fas fa-sun';
-                localStorage.setItem('theme', 'dark');
-            }
-        }
-        themeToggle.addEventListener('click', toggleTheme);
-
-        // Load saved theme preference
-        function loadThemePreference() {
-            const savedTheme = localStorage.getItem('theme');
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            
-            if (savedTheme === 'light') {
-                document.body.classList.remove('dark-mode');
-                document.body.classList.add('light-mode');
-                themeToggle.querySelector('i').className = 'fas fa-moon';
-            } else if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-                document.body.classList.remove('light-mode');
-                document.body.classList.add('dark-mode');
-                themeToggle.querySelector('i').className = 'fas fa-sun';
-            }
-        }
-
-        // Get icon for quiz based on type/source
-        function getQuizIcon(quiz) {
-            if (quiz.icon) return quiz.icon;
-            
-            // Default icons based on type
-            if (quiz.type === 'exam') return 'fas fa-file-alt';
-            if (quiz.type === 'practice') return 'fas fa-tasks';
-            return 'fas fa-question-circle';
-        }
-
-        // Render quiz cards with dropdown functionality
-        function renderQuizCards() {
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            const userYears = currentUser ? (currentUser.registeredYears || []) : [];
-            
-            // Determine effective years based on plan
-            let effectiveYears = userYears;
-            const isTrialExpired = currentUser && currentUser.isTrial && firebaseUserManager.isTrialExpired(currentUser.trialEndDate);
-            
-            if (currentUser) {
-                if (currentUser.plan === 'premium' || (currentUser.plan === 'trial' && !isTrialExpired)) {
-                    effectiveYears = ['1', '2', '3', '4', '5', '6', '7'];
-                }
-            }
-            
-            // Clear and render each year section
-            for (let year = 1; year <= 7; year++) {
-                const yearStr = year.toString();
-                const container = document.querySelector(`.year-section[data-year="${yearStr}"] .cards-container`);
-                if (!container) continue;
-                
-                container.innerHTML = '';
-                
-                // Get all quizzes for this year
-                const yearQuizzes = quizData[yearStr] || [];
-                
-                // Group quizzes by source/topic for dropdown organization
-                const quizzesBySource = {};
-                yearQuizzes.forEach(quiz => {
-                    const source = quiz.source || 'general';
-                    if (!quizzesBySource[source]) {
-                        quizzesBySource[source] = [];
-                    }
-                    quizzesBySource[source].push(quiz);
-                });
-                
-                // Create a main card for each source/topic
-                Object.keys(quizzesBySource).forEach(source => {
-                    const sourceQuizzes = quizzesBySource[source];
-                    
-                    // Use the first quiz as the main card
-                    const mainQuiz = sourceQuizzes[0];
-                    const relatedQuizzes = sourceQuizzes.slice(1);
-                    
-                    // Create wrapper for positioning
-                    const wrapper = document.createElement('div');
-                    wrapper.className = 'quiz-card-wrapper';
-                    
-                    // Create main card
-                    const card = document.createElement('div');
-                    card.className = 'quiz-card';
-                    card.dataset.year = yearStr;
-                    
-                    // Add trial class if applicable
-                    if (currentUser && currentUser.plan === 'trial' && !isTrialExpired) {
-                        card.classList.add('trial');
-                    }
-                    
-                    // Get display title (simplify for main card)
-                    let displayTitle = mainQuiz.title;
-                    if (source === 'metabolism') displayTitle = 'Metabolism';
-                    else if (source === 'premed') displayTitle = 'Pre-Med';
-                    else if (source === 'intro') displayTitle = 'Intro Med';
-                    else if (source === 'hematology') displayTitle = 'Hematology';
-                    else if (source === 'cvs') displayTitle = 'CVS';
-                    else if (source === 'respiratory') displayTitle = 'Respiratory';
-                    else if (source === 'musculoskeletal') displayTitle = 'MSK';
-                    
-                    card.innerHTML = `
-                        <div class="quiz-icon"><i class="${getQuizIcon(mainQuiz)}"></i></div>
-                        <h3 class="quiz-title">${displayTitle}</h3>
-                        <div class="quiz-meta">
-                            <span>${sourceQuizzes.length} Quizzes</span>
-                            <span>${mainQuiz.difficulty}</span>
-                        </div>
-                        <div class="quiz-stats">
-                            <span class="difficulty ${mainQuiz.difficulty}">${mainQuiz.difficulty}</span>
-                            <div class="stat">
-                                <i class="fas fa-star"></i>
-                                <span>${mainQuiz.rating}</span>
-                            </div>
-                        </div>
-                    `;
-                    
-                    // Create dropdown panel with related quizzes
-                    const dropdown = document.createElement('div');
-                    dropdown.className = 'related-quizzes';
-                    
-                    let dropdownHTML = `
-                        <div class="related-header">
-                            <i class="fas fa-layer-group"></i>
-                            <span>${displayTitle} Quizzes</span>
-                            <span class="related-count">${sourceQuizzes.length}</span>
-                        </div>
-                        <div class="related-scroll">
-                    `;
-                    
-                    // Add all quizzes from this source as dropdown items
-                    sourceQuizzes.forEach(quiz => {
-                        const quizIcon = getQuizIcon(quiz);
-                        const yearBadge = quiz.examYear ? quiz.examYear : (quiz.type === 'practice' ? 'Practice' : 'Quiz');
-                        
-                        dropdownHTML += `
-                            <div class="related-item" data-page="${quiz.page}" data-id="${quiz.id}">
-                                <div class="related-item-icon"><i class="${quizIcon}"></i></div>
-                                <div class="related-item-content">
-                                    <span class="related-item-title">${quiz.title}</span>
-                                    <div class="related-item-meta">
-                                        <span class="related-item-type">
-                                            <i class="fas fa-question-circle"></i> ${quiz.questions} Qs
-                                        </span>
-                                        <span class="related-item-badge">${yearBadge}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    });
-                    
-                    dropdownHTML += `</div>`;
-                    dropdown.innerHTML = dropdownHTML;
-                    
-                    // Add dropdown indicator
-                    const indicator = document.createElement('span');
-                    indicator.className = 'dropdown-indicator';
-                    indicator.innerHTML = '<i class="fas fa-chevron-right"></i>';
-                    
-                    wrapper.appendChild(card);
-                    wrapper.appendChild(indicator);
-                    wrapper.appendChild(dropdown);
-                    
-                    // Check access conditions
-                    const hasAccess = effectiveYears.includes(yearStr) && currentUser && currentUser.status === 'verified';
-                    
-                    if (!hasAccess) {
-                        card.classList.add('locked');
-                    }
-                    
-                    // Main card click handler
-                    card.addEventListener('click', (e) => {
-                        // Check status
-                        if (!currentUser || currentUser.status !== 'verified') {
-                            showAccessDeniedModal(['not_verified'], yearStr);
-                            return;
-                        }
-                        
-                        if (currentUser.plan === 'trial' && isTrialExpired) {
-                            showAccessDeniedModal(['trial_expired'], yearStr);
-                            return;
-                        }
-                        
-                        if (!effectiveYears.includes(yearStr)) {
-                            showAccessDeniedModal(userYears, yearStr);
-                            return;
-                        }
-                        
-                        // Navigate to main quiz page
-                        window.location.href = mainQuiz.page;
-                    });
-                    
-                    // Related item click handlers
-                    dropdown.querySelectorAll('.related-item').forEach(item => {
-                        item.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            const page = item.dataset.page;
-                            
-                            // Check access conditions
-                            if (!currentUser || currentUser.status !== 'verified') {
-                                showAccessDeniedModal(['not_verified'], yearStr);
-                                return;
-                            }
-                            
-                            if (currentUser.plan === 'trial' && isTrialExpired) {
-                                showAccessDeniedModal(['trial_expired'], yearStr);
-                                return;
-                            }
-                            
-                            if (!effectiveYears.includes(yearStr)) {
-                                showAccessDeniedModal(userYears, yearStr);
-                                return;
-                            }
-                            
-                            window.location.href = page;
-                        });
-                    });
-                    
-                    container.appendChild(wrapper);
-                });
-            }
-        }
-
-        // Year filter
-        function applyYearFilter(year) {
-            yearButtons.forEach(btn => btn.classList.remove('active'));
-            const activeButton = document.querySelector(`.year-btn[data-year="${year}"]`);
-            if (activeButton) {
-                activeButton.classList.add('active');
-            }
-            
-            if (year === 'all') {
-                yearSections.forEach(section => section.style.display = 'block');
-            } else {
-                yearSections.forEach(section => {
-                    section.style.display = section.dataset.year === year ? 'block' : 'none';
-                });
-            }
-            
-            localStorage.setItem('activeYearFilter', year);
-        }
-
-        // Initialize year filter buttons
-        yearButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const year = button.dataset.year;
-                applyYearFilter(year);
-            });
-        });
-
-        // Navigation
-        logoBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            window.location.reload();
-        });
-
-        profileBtn.addEventListener('click', () => {
-            window.location.href = 'profile.html';
-        });
-
-        notificationsBtn.addEventListener('click', () => {
-            const badge = document.getElementById('unreadCount');
-            if (badge) {
-                badge.style.display = 'none';
-                badge.textContent = '0';
-            }
-            window.location.href = 'notifications.html';
-        });
-
-        // Trial UI functions
-        function setupTrialUI(user) {
-            headerTrialBadge.style.display = 'inline-flex';
-            headerPremiumBadge.style.display = 'none';
-            trialCard.style.display = 'block';
-            startTrialCountdown(user.trialEndDate);
-        }
-
-        function setupPremiumUI() {
-            headerPremiumBadge.style.display = 'inline-flex';
-            headerTrialBadge.style.display = 'none';
-            trialCard.style.display = 'none';
-        }
-
-        function startTrialCountdown(trialEndDate) {
-            if (trialTimerInterval) {
-                clearInterval(trialTimerInterval);
-            }
-            
-            updateTrialTimer(trialEndDate);
-            
-            trialTimerInterval = setInterval(() => {
-                updateTrialTimer(trialEndDate);
-            }, 1000);
-        }
-
-        function updateTrialTimer(trialEndDate) {
-            const remainingTime = firebaseUserManager.getTrialRemainingTime(trialEndDate);
-            const formattedTime = firebaseUserManager.formatTrialTime(remainingTime);
-            
-            if (activeTrialTimer) activeTrialTimer.textContent = formattedTime;
-            
-            if (remainingTime <= 0) {
-                clearInterval(trialTimerInterval);
-                handleTrialExpired();
-            }
-        }
-
-        function handleTrialExpired() {
-            trialCard.classList.add('trial-expired');
-            trialCard.querySelector('.trial-title').textContent = 'Free Trial Expired';
-            trialCard.querySelector('.trial-content p').textContent = 'Your free trial has ended. Upgrade now to continue accessing all programs.';
-            
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            if (currentUser && currentUser.isTrial) {
-                renderQuizCards();
-            }
-        }
-
-        upgradeBtn.addEventListener('click', () => {
-            addModal.style.display = 'flex';
-        });
-
-        viewProgramsBtn.addEventListener('click', () => {
-            document.querySelector('.year-filter').scrollIntoView({ behavior: 'smooth' });
-        });
-
-        // Show access denied modal
-        function showAccessDeniedModal(reasons, requestedYear) {
-            let message = '';
-            
-            if (reasons.includes('not_verified')) {
-                message = 'Your account is not verified. Please complete verification or contact admin.';
-            } else if (reasons.includes('trial_expired')) {
-                message = 'Your free trial has expired. Please upgrade to access the content.';
-            } else if (reasons.includes('pending')) {
-                message = 'Your account is pending approval. Please wait for admin verification.';
-            } else {
-                const yearNames = {
-                    '1': 'Pre Med',
-                    '2': 'Intro Med',
-                    '3': 'Meta',
-                    '4': 'Hema',
-                    '5': 'CVS',
-                    '6': 'RESPA',
-                    '7': 'Musclo'
-                };
-                
-                const programNames = reasons.map(year => yearNames[year] || `Year ${year}`);
-                const requestedProgram = yearNames[requestedYear] || `Year ${requestedYear}`;
-                
-                message = `You are registered for: ${programNames.join(', ')}. To access ${requestedProgram}, add the program in your profile.`;
-            }
-            
-            deniedMessage.textContent = message;
-            accessDeniedModal.style.display = 'flex';
-        }
-
-        closeDeniedBtn.addEventListener('click', () => {
-            accessDeniedModal.style.display = 'none';
-        });
-
-        // Logout handler
-        const logoutHandler = async (e) => {
-            e.preventDefault();
-            const logoutCode = Math.floor(100000 + Math.random() * 900000).toString();
-            localStorage.setItem('logoutCode', logoutCode);
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            const name = currentUser?.name;
-            const phone = currentUser?.phone;
-            const caption = `Logout Request\nName: ${name}\nPhone: ${phone}\nCode: ${logoutCode}`;
-            const formData = new FormData();
-            formData.append('chat_id', '7986574047');
-            formData.append('text', caption);
-            formData.append('parse_mode', 'Markdown');
-            try {
-                const response = await fetch('https://api.telegram.org/bot8237566699:AAHICwsiqIrs-4_vUdrsORPlD8-WFSFYB2Y/sendMessage', {
-                    method: 'POST',
-                    body: formData
-                });
-                const data = await response.json();
-                if (data.ok) {
-                    logoutModal.style.display = 'flex';
-                    logoutError.textContent = '';
-                } else {
-                    logoutError.textContent = 'Error sending logout code: ' + data.description;
-                }
-            } catch (err) {
-                logoutError.textContent = 'Error: ' + err.message;
-            }
-        };
-        logout.addEventListener('click', logoutHandler);
-
-        // Confirm logout
-        document.getElementById('confirmLogoutBtn').addEventListener('click', async () => {
-            const enteredCode = document.getElementById('logoutCode').value;
-            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-            
-            if (enteredCode === localStorage.getItem('logoutCode')) {
-                if (currentUser && currentUser.id) {
-                    try {
-                        await db.collection('users').doc(currentUser.id).update({
-                            isOnline: false,
-                            lastActive: Date.now()
-                        });
-                    } catch (error) {
-                        console.error('Error updating online status:', error);
-                    }
-                }
-
-                localStorage.clear();
-                window.location.href = 'register.html';
-            } else {
-                logoutError.textContent = 'Invalid logout code.';
-            }
-        });
-
-        // Copy to clipboard function
-        function copyToClipboard(text, button) {
-            navigator.clipboard.writeText(text).then(() => {
-                const originalText = button.innerHTML;
-                button.innerHTML = '<i class="fas fa-check"></i> Copied!';
-                button.classList.add('copied');
-                
-                setTimeout(() => {
-                    button.innerHTML = originalText;
-                    button.classList.remove('copied');
-                }, 2000);
-                
-            }).catch(err => {
-                console.error('Failed to copy: ', err);
-                button.innerHTML = '<i class="fas fa-times"></i> Failed';
-                button.style.background = 'var(--error)';
-                
-                setTimeout(() => {
-                    button.innerHTML = '<i class="fas fa-copy"></i> Copy';
-                    button.style.background = 'var(--primary)';
-                }, 2000);
-            });
-        }
-
-        // Initialize dashboard
-        async function initDashboard() {
+            // ---------- CHECK REGISTRATION FIRST ----------
             const currentUser = localStorage.getItem('currentUser');
-            
-            if (!currentUser) {
-                window.location.href = 'register.html';
-                return;
-            }
-            
-            try {
-                const user = JSON.parse(currentUser);
-                
-                if (user.status !== 'verified') {
-                    showAccessDeniedModal(['not_verified']);
-                    return;
-                }
-                
-                loadThemePreference();
-                
-                if (user.plan === 'trial') {
-                    setupTrialUI(user);
-                } else if (user.plan === 'premium') {
-                    setupPremiumUI();
-                }
-                
-                if (user.role === 'admin') {
-                    adminBtn.style.display = 'inline-flex';
-                    adminBtn.addEventListener('click', () => {
-                        window.location.href = 'admin/index.html';
-                    });
-                }
+            const registerModal = document.getElementById('registerModal');
+            const mainContent = document.getElementById('mainContent');
 
-                renderQuizCards();
-                
-                const savedFilter = localStorage.getItem('activeYearFilter');
-                if (savedFilter) {
-                    applyYearFilter(savedFilter);
+            function checkRegistration() {
+                if (!currentUser) {
+                    // Show registration modal, hide main content
+                    registerModal.style.display = 'flex';
+                    mainContent.style.display = 'none';
                 } else {
-                    applyYearFilter('all');
-                }
-            } catch (error) {
-                console.error('Error initializing dashboard:', error);
-                const cachedUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-                if (cachedUser && cachedUser.status === 'verified') {
-                    renderQuizCards();
-                    
-                    const savedFilter = localStorage.getItem('activeYearFilter');
-                    if (savedFilter) {
-                        applyYearFilter(savedFilter);
+                    try {
+                        const user = JSON.parse(currentUser);
+                        if (user && user.status === 'verified') {
+                            registerModal.style.display = 'none';
+                            mainContent.style.display = 'block';
+                            initAuthenticatedApp(user);
+                        } else {
+                            // Unverified or invalid user → show modal as well
+                            registerModal.style.display = 'flex';
+                            mainContent.style.display = 'none';
+                        }
+                    } catch (e) {
+                        registerModal.style.display = 'flex';
+                        mainContent.style.display = 'none';
                     }
-                } else {
-                    window.location.href = 'register.html';
                 }
             }
-        }
 
-        // Initialize the dashboard when page loads
-        document.addEventListener('DOMContentLoaded', initDashboard);
-
-        // Handle Telegram Mini App Back Button
-        const tg = window.Telegram?.WebApp;
-        if (tg) {
-            tg.ready();
-            tg.BackButton.show();
-            tg.BackButton.onClick(() => {
-                console.log("Telegram back button pressed");
-                handleBackAction();
+            // Modal buttons
+            document.getElementById('registerModalBtn').addEventListener('click', () => {
+                window.location.href = 'register.html';
             });
-        }
+            document.getElementById('stayModalBtn').addEventListener('click', () => {
+                registerModal.style.display = 'none';
+                // Optionally, you could do nothing or keep modal hidden until reload
+            });
 
-        // Handle Browser/Phone Back Button
-        window.addEventListener('popstate', () => {
-            console.log("Browser back button pressed");
-            handleBackAction();
-        });
-
-        function handleBackAction() {
-            if (document.referrer && window.history.length > 1) {
-                window.history.back();
-            }
-        }
-
-        history.pushState(null, '', location.href);
-
-        // Service worker registration
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/sw.js').then(function(registration) {
-                    console.log('ServiceWorker registered');
-                }).catch(function(err) {
-                    console.log('ServiceWorker registration failed: ', err);
+            // ---------- AUTHENTICATED APP (only runs if user is verified) ----------
+            async function initAuthenticatedApp(user) {
+                // Theme toggle
+                const themeToggle = document.getElementById('themeToggle');
+                const loadThemePreference = () => {
+                    const savedTheme = localStorage.getItem('theme');
+                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    if (savedTheme === 'light') {
+                        document.body.classList.remove('dark-mode');
+                        document.body.classList.add('light-mode');
+                        themeToggle.querySelector('i').className = 'fas fa-moon';
+                    } else if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                        document.body.classList.remove('light-mode');
+                        document.body.classList.add('dark-mode');
+                        themeToggle.querySelector('i').className = 'fas fa-sun';
+                    }
+                };
+                themeToggle.addEventListener('click', () => {
+                    if (document.body.classList.contains('dark-mode')) {
+                        document.body.classList.remove('dark-mode');
+                        document.body.classList.add('light-mode');
+                        themeToggle.querySelector('i').className = 'fas fa-moon';
+                        localStorage.setItem('theme', 'light');
+                    } else {
+                        document.body.classList.remove('light-mode');
+                        document.body.classList.add('dark-mode');
+                        themeToggle.querySelector('i').className = 'fas fa-sun';
+                        localStorage.setItem('theme', 'dark');
+                    }
                 });
+                loadThemePreference();
+
+                // Badges & trial UI (simplified)
+                const headerTrialBadge = document.getElementById('headerTrialBadge');
+                const headerPremiumBadge = document.getElementById('headerPremiumBadge');
+                const trialCard = document.getElementById('trialCard');
+
+                if (user.plan === 'trial') {
+                    headerTrialBadge.style.display = 'inline-flex';
+                    headerPremiumBadge.style.display = 'none';
+                    trialCard.style.display = 'block';
+                    // Start trial countdown (simplified)
+                    let trialEnd = user.trialEndDate || (Date.now() + 72*60*60*1000);
+                    const timerEl = document.getElementById('activeTrialTimer');
+                    setInterval(() => {
+                        const remaining = Math.max(0, trialEnd - Date.now());
+                        const hours = Math.floor(remaining / (1000*60*60));
+                        const mins = Math.floor((remaining % (1000*60*60)) / (1000*60));
+                        const secs = Math.floor((remaining % (1000*60)) / 1000);
+                        timerEl.textContent = `${hours.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+                    }, 1000);
+                } else if (user.plan === 'premium') {
+                    headerPremiumBadge.style.display = 'inline-flex';
+                    headerTrialBadge.style.display = 'none';
+                    trialCard.style.display = 'none';
+                }
+
+                // Admin button
+                if (user.role === 'admin') {
+                    const adminBtn = document.getElementById('adminBtn');
+                    adminBtn.style.display = 'inline-flex';
+                    adminBtn.addEventListener('click', () => window.location.href = 'admin/index.html');
+                }
+
+                // Render quiz cards
+                function renderQuizCards() {
+                    const userYears = user.registeredYears || [];
+                    const isTrialExpired = (user.plan === 'trial' && user.trialEndDate && Date.now() > user.trialEndDate);
+                    let effectiveYears = userYears;
+                    if (user.plan === 'premium' || (user.plan === 'trial' && !isTrialExpired)) {
+                        effectiveYears = ['1','2','3','4','5','6','7'];
+                    }
+
+                    for (let y = 1; y <= 7; y++) {
+                        const container = document.querySelector(`.year-section[data-year="${y}"] .cards-container`);
+                        if (!container) continue;
+                        container.innerHTML = '';
+                        if (quizData[y]) {
+                            quizData[y].forEach(quiz => {
+                                const card = document.createElement('div');
+                                card.className = 'quiz-card';
+                                card.dataset.year = y.toString();
+                                if (user.plan === 'trial' && !isTrialExpired) card.classList.add('trial');
+                                card.innerHTML = `
+                                    <div class="quiz-icon"><i class="${quiz.icon}"></i></div>
+                                    <h3 class="quiz-title">${quiz.title}</h3>
+                                    <div class="quiz-meta"><span>${quiz.questions} Qs</span><span>${quiz.time} min</span></div>
+                                    <div class="quiz-stats">
+                                        <span class="difficulty ${quiz.difficulty}">${quiz.difficulty}</span>
+                                        <div class="stat"><i class="fas fa-star"></i><span>${quiz.rating}</span></div>
+                                    </div>
+                                `;
+                                const hasAccess = effectiveYears.includes(y.toString()) && user.status === 'verified';
+                                if (!hasAccess) card.classList.add('locked');
+                                card.addEventListener('click', (e) => {
+                                    if (!hasAccess) {
+                                        showAccessDeniedModal(userYears, y.toString());
+                                        return;
+                                    }
+                                    window.location.href = quiz.page;
+                                });
+                                container.appendChild(card);
+                            });
+                        }
+                    }
+                }
+
+                // Access denied modal
+                function showAccessDeniedModal(registeredYears, requestedYear) {
+                    const yearNames = {1:'Pre Med',2:'Intro Med',3:'Meta',4:'Hema',5:'CVS',6:'RESPA',7:'Musclo'};
+                    const programNames = registeredYears.map(y => yearNames[y] || `Year ${y}`);
+                    const requested = yearNames[requestedYear] || `Year ${requestedYear}`;
+                    const msg = `You are registered for: ${programNames.join(', ')}. To access ${requested}, add it in your profile.`;
+                    document.getElementById('deniedMessage').textContent = msg;
+                    document.getElementById('accessDeniedModal').style.display = 'flex';
+                }
+                document.getElementById('closeDeniedBtn').addEventListener('click', () => {
+                    document.getElementById('accessDeniedModal').style.display = 'none';
+                });
+
+                // Year filter
+                const yearButtons = document.querySelectorAll('.year-btn');
+                const yearSections = document.querySelectorAll('.year-section');
+                function applyYearFilter(year) {
+                    yearButtons.forEach(btn => btn.classList.remove('active'));
+                    const activeBtn = document.querySelector(`.year-btn[data-year="${year}"]`);
+                    if (activeBtn) activeBtn.classList.add('active');
+                    yearSections.forEach(section => {
+                        section.style.display = (year === 'all' || section.dataset.year === year) ? 'block' : 'none';
+                    });
+                    localStorage.setItem('activeYearFilter', year);
+                }
+                yearButtons.forEach(btn => {
+                    btn.addEventListener('click', () => applyYearFilter(btn.dataset.year));
+                });
+
+                // Initial render
+                renderQuizCards();
+                const savedFilter = localStorage.getItem('activeYearFilter') || 'all';
+                applyYearFilter(savedFilter);
+
+                // Navigation
+                document.getElementById('profileBtn').addEventListener('click', () => window.location.href = 'profile.html');
+                document.getElementById('logoBtn').addEventListener('click', () => window.scrollTo({top:0,behavior:'smooth'}));
+                document.getElementById('notificationsBtn').addEventListener('click', () => window.location.href = 'notifications.html');
+                // Logout (simplified)
+                document.getElementById('logout').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    localStorage.clear();
+                    window.location.href = 'register.html';
+                });
+                // Upgrade / view programs (simplified)
+                document.getElementById('upgradeBtn')?.addEventListener('click', () => {
+                    alert('Upgrade flow – redirect to payment page.');
+                });
+                document.getElementById('viewProgramsBtn')?.addEventListener('click', () => {
+                    document.querySelector('.year-filter').scrollIntoView({behavior:'smooth'});
+                });
+            }
+
+            // Start: check registration immediately
+            checkRegistration();
+
+            // Also listen for storage changes (if user logs in elsewhere)
+            window.addEventListener('storage', (e) => {
+                if (e.key === 'currentUser') {
+                    checkRegistration();
+                }
             });
-        }
+        })();
     </script>
 </body>
 </html>
