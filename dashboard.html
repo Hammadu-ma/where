@@ -53,13 +53,209 @@
             min-height: 100vh;
         }
 
+        /* Custom Header with Back Button and Profile */
+        .app-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 0.75rem 1rem;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            background-color: rgba(var(--surface-rgb), 0.8);
+        }
+        
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        /* Beautiful Back Button */
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: var(--gradient);
+            border: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .back-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.4s, height 0.4s;
+        }
+        
+        .back-btn:hover::before {
+            width: 100px;
+            height: 100px;
+        }
+        
+        .back-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(59, 130, 246, 0.4);
+        }
+        
+        .back-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .back-btn i {
+            font-size: 1.2rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* App Logo/Title */
+        .app-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+        
+        .app-title-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--gradient);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+        
+        .app-title-text {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--text-primary);
+        }
+        
+        .app-title-text span {
+            color: var(--primary);
+        }
+        
+        /* Header Right */
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        /* Theme Toggle in Header */
+        .theme-toggle-header {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: var(--background);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .theme-toggle-header:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        /* Profile Button */
+        .profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.25rem 0.5rem 0.25rem 0.25rem;
+            border-radius: 40px;
+            background: var(--gradient);
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+        }
+        
+        .profile-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 15px rgba(59, 130, 246, 0.4);
+        }
+        
+        .profile-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .profile-info {
+            display: none;
+            color: white;
+            text-align: left;
+        }
+        
+        @media (min-width: 768px) {
+            .profile-info {
+                display: block;
+                padding-right: 0.5rem;
+            }
+            
+            .profile-name {
+                font-size: 0.85rem;
+                font-weight: 600;
+                line-height: 1.2;
+            }
+            
+            .profile-role {
+                font-size: 0.7rem;
+                opacity: 0.8;
+            }
+        }
+        
+        /* Gradient Header (for stats) */
         .gradient-header { 
             background: var(--gradient);
             color: white; 
             box-shadow: var(--shadow);
+            margin-top: 1rem;
         }
 
-        /* Subject Cards with Mini Search */
+        /* Subject Cards */
         .subject-card { 
             background-color: var(--surface); 
             border: 1px solid var(--border); 
@@ -100,11 +296,6 @@
             border-color: var(--primary);
             box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.2);
         }
-        
-        .mini-search-input::placeholder {
-            color: var(--text-tertiary);
-            font-size: 0.75rem;
-        }
 
         /* Mini Filter Buttons */
         .mini-filters {
@@ -128,7 +319,6 @@
             display: flex;
             align-items: center;
             gap: 0.2rem;
-            white-space: nowrap;
         }
         
         .mini-filter-btn:hover {
@@ -142,12 +332,8 @@
             color: white;
             border-color: transparent;
         }
-        
-        .mini-filter-btn i {
-            font-size: 0.6rem;
-        }
 
-        /* Sort Dropdown */
+        /* Mini Sort */
         .mini-sort {
             padding: 0.5rem;
             border-bottom: 1px solid var(--border);
@@ -163,11 +349,6 @@
             color: var(--text-primary);
             font-size: 0.75rem;
             cursor: pointer;
-        }
-        
-        .mini-sort-select:focus {
-            outline: none;
-            border-color: var(--primary);
         }
 
         /* Search Stats */
@@ -185,11 +366,6 @@
             color: var(--primary);
             cursor: pointer;
             font-size: 0.7rem;
-            text-decoration: none;
-        }
-        
-        .clear-search:hover {
-            text-decoration: underline;
         }
 
         .quiz-list { 
@@ -277,12 +453,6 @@
             color: white; 
         }
 
-        .offcanvas.offcanvas-start { 
-            background-color: var(--surface); 
-            color: var(--text-primary); 
-            width: 280px; 
-        }
-
         .badge-exam { 
             background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
             color: white; 
@@ -356,20 +526,6 @@
             color: white;
         }
         
-        .modal-content h2 {
-            margin-bottom: 1rem;
-            color: var(--text-primary);
-            font-size: 1.75rem;
-            font-weight: 700;
-        }
-        
-        .modal-content p {
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-            font-size: 1rem;
-            line-height: 1.5;
-        }
-        
         .modal-btn {
             background: var(--gradient);
             color: white;
@@ -384,7 +540,6 @@
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
-            min-width: 120px;
         }
         
         .modal-btn:hover {
@@ -392,19 +547,6 @@
             box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
         }
 
-        .bg-surface { 
-            background-color: var(--surface) !important; 
-        }
-        
-        .text-primary-custom { 
-            color: var(--primary) !important; 
-        }
-        
-        .border-custom { 
-            border-color: var(--border) !important; 
-        }
-
-        /* No results in card */
         .no-results-mini {
             padding: 1rem;
             text-align: center;
@@ -416,6 +558,13 @@
             font-size: 1.5rem;
             margin-bottom: 0.5rem;
             opacity: 0.5;
+        }
+
+        /* Offcanvas */
+        .offcanvas.offcanvas-start { 
+            background-color: var(--surface); 
+            color: var(--text-primary); 
+            width: 280px; 
         }
     </style>
 </head>
@@ -436,13 +585,53 @@
 
     <!-- Main Content (Initially Hidden) -->
     <div id="mainApp" style="display: none;">
+        <!-- New Header with Back Button and Profile -->
+        <header class="app-header">
+            <div class="header-container">
+                <div class="header-left">
+                    <!-- Beautiful Back Button -->
+                    <button class="back-btn" id="backButton" title="Go back">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    
+                    <!-- App Logo/Title -->
+                    <div class="app-title" id="logoHome">
+                        <div class="app-title-icon">
+                            <i class="fas fa-stethoscope"></i>
+                        </div>
+                        <div class="app-title-text">
+                            ALIF<span>Med</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="header-right">
+                    <!-- Theme Toggle -->
+                    <button class="theme-toggle-header" id="themeToggleHeader" title="Toggle theme">
+                        <i class="fas fa-sun"></i>
+                    </button>
+                    
+                    <!-- Profile Button -->
+                    <button class="profile-btn" id="profileBtn">
+                        <div class="profile-avatar" id="profileAvatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="profile-info">
+                            <div class="profile-name" id="profileName">Medical Student</div>
+                            <div class="profile-role" id="profileRole">Learner</div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </header>
+
         <div class="container-lg py-3 py-md-4">
             <!-- Header with stats -->
             <div class="gradient-header rounded-4 p-4 p-md-5 mb-4 position-relative overflow-hidden">
                 <div class="position-relative z-1 d-flex flex-wrap align-items-center justify-content-between gap-3">
-                    <div class="d-flex align-items-center gap-3" id="logoHome" style="cursor:pointer;">
-                        <div class="bg-white bg-opacity-25 rounded-3 p-3 fs-2"><i class="fas fa-stethoscope"></i></div>
-                        <div><h1 class="display-6 fw-bold mb-0">ALIF medical</h1><p class="mb-0 opacity-75">smart · adaptive · bootstrap</p></div>
+                    <div>
+                        <h1 class="display-6 fw-bold mb-0">Medical Quiz Dashboard</h1>
+                        <p class="mb-0 opacity-75">smart · adaptive · bootstrap</p>
                     </div>
                     <div class="d-flex gap-3" id="statsDisplay"></div>
                 </div>
@@ -467,19 +656,14 @@
                 </div>
             </div>
 
-            <!-- Main Search + theme toggle row -->
+            <!-- Main Search -->
             <div class="row g-3 align-items-center mb-4">
-                <div class="col-md-7 col-lg-6">
+                <div class="col-12">
                     <div class="input-group rounded-pill bg-surface border border-custom">
                         <span class="input-group-text bg-transparent border-0 text-secondary"><i class="fas fa-search"></i></span>
                         <input type="text" class="form-control bg-transparent border-0 ps-0" id="smartSearch" placeholder="🔍 Global search across all subjects...">
                         <span class="input-group-text bg-transparent border-0" id="globalSearchCount" style="display: none;"></span>
                     </div>
-                </div>
-                <div class="col-md-5 col-lg-6 text-md-end">
-                    <button class="btn btn-outline-secondary rounded-pill px-4 py-2" id="themeToggle">
-                        <i class="fas fa-sun"></i><span class="ms-2">Dark Mode</span>
-                    </button>
                 </div>
             </div>
 
@@ -547,6 +731,24 @@
 
             // App initialization function
             function initializeApp() {
+                // Get user data for profile
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                const profileName = document.getElementById('profileName');
+                const profileRole = document.getElementById('profileRole');
+                const profileAvatar = document.getElementById('profileAvatar');
+                
+                // Update profile with user data
+                if (currentUser.name) {
+                    profileName.textContent = currentUser.name.split(' ')[0] || 'Medical Student';
+                    profileAvatar.innerHTML = currentUser.name.charAt(0).toUpperCase() || '<i class="fas fa-user"></i>';
+                }
+                
+                if (currentUser.role) {
+                    profileRole.textContent = currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1);
+                } else if (currentUser.plan) {
+                    profileRole.textContent = currentUser.plan === 'premium' ? 'Premium User' : 'Trial User';
+                }
+
                 // ---------- JSON master data ----------
                 const quizData = [
                     { subject: "embryology", icon: "fas fa-egg", display: "Embryology", quizzes: [
@@ -644,6 +846,77 @@
                     miniSearchStates[subject.subject] = '';
                     miniFilterStates[subject.subject] = 'all';
                     miniSortStates[subject.subject] = 'default';
+                });
+
+                // Back button functionality
+                const backButton = document.getElementById('backButton');
+                backButton.addEventListener('click', () => {
+                    // Check if there's history to go back to
+                    if (window.history.length > 1) {
+                        window.history.back();
+                    } else {
+                        // If no history, scroll to top or show confirmation
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        
+                        // Optional: Show a toast or notification
+                        const toast = document.createElement('div');
+                        toast.style.cssText = `
+                            position: fixed;
+                            top: 80px;
+                            left: 50%;
+                            transform: translateX(-50%);
+                            background: var(--gradient);
+                            color: white;
+                            padding: 0.5rem 1.5rem;
+                            border-radius: 30px;
+                            font-size: 0.9rem;
+                            z-index: 9999;
+                            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+                            animation: slideDown 0.3s ease-out;
+                        `;
+                        toast.innerHTML = '<i class="fas fa-arrow-up me-2"></i>Scrolled to top';
+                        document.body.appendChild(toast);
+                        
+                        setTimeout(() => {
+                            toast.style.animation = 'fadeOut 0.3s ease-out';
+                            setTimeout(() => toast.remove(), 300);
+                        }, 2000);
+                    }
+                });
+
+                // Profile button
+                const profileBtn = document.getElementById('profileBtn');
+                profileBtn.addEventListener('click', () => {
+                    window.location.href = 'profile.html';
+                });
+
+                // Theme toggle in header
+                const themeToggleHeader = document.getElementById('themeToggleHeader');
+                const body = document.body;
+                const icon = themeToggleHeader.querySelector('i');
+                
+                // Remove old theme toggle if exists
+                const oldThemeToggle = document.getElementById('themeToggle');
+                if (oldThemeToggle) oldThemeToggle.style.display = 'none';
+                
+                if (localStorage.getItem('theme') === 'dark') {
+                    body.classList.replace('light-mode','dark-mode'); 
+                    icon.className = 'fas fa-sun'; 
+                } else if (localStorage.getItem('theme') === 'light') {
+                    body.classList.replace('dark-mode','light-mode'); 
+                    icon.className = 'fas fa-moon'; 
+                }
+
+                themeToggleHeader.addEventListener('click', () => {
+                    if (body.classList.contains('light-mode')) {
+                        body.classList.replace('light-mode','dark-mode'); 
+                        icon.className = 'fas fa-sun'; 
+                        localStorage.setItem('theme','dark');
+                    } else {
+                        body.classList.replace('dark-mode','light-mode'); 
+                        icon.className = 'fas fa-moon'; 
+                        localStorage.setItem('theme','light');
+                    }
                 });
 
                 // helpers
@@ -942,42 +1215,26 @@
                     }, 150);
                 });
 
-                // theme toggle
-                const toggle = document.getElementById('themeToggle');
-                const body = document.body;
-                const icon = toggle.querySelector('i');
-                const span = toggle.querySelector('span');
-                
-                if (localStorage.getItem('theme') === 'dark') {
-                    body.classList.replace('light-mode','dark-mode'); 
-                    icon.className = 'fas fa-sun'; 
-                    span.textContent = ' Dark Mode';
-                } else if (localStorage.getItem('theme') === 'light') {
-                    body.classList.replace('dark-mode','light-mode'); 
-                    icon.className = 'fas fa-moon'; 
-                    span.textContent = ' Light Mode';
-                }
-
-                toggle.addEventListener('click', () => {
-                    if (body.classList.contains('light-mode')) {
-                        body.classList.replace('light-mode','dark-mode'); 
-                        icon.className = 'fas fa-sun'; 
-                        span.textContent = ' Dark Mode';
-                        localStorage.setItem('theme','dark');
-                    } else {
-                        body.classList.replace('dark-mode','light-mode'); 
-                        icon.className = 'fas fa-moon'; 
-                        span.textContent = ' Light Mode';
-                        localStorage.setItem('theme','light');
-                    }
-                });
-
                 document.getElementById('logoHome').addEventListener('click', () => window.scrollTo({ top:0, behavior:'smooth' }));
 
                 // init
                 renderAllFilters();
                 renderCards();
                 setFilter('all');
+
+                // Add animation styles
+                const style = document.createElement('style');
+                style.textContent = `
+                    @keyframes slideDown {
+                        from { transform: translate(-50%, -20px); opacity: 0; }
+                        to { transform: translate(-50%, 0); opacity: 1; }
+                    }
+                    @keyframes fadeOut {
+                        from { opacity: 1; }
+                        to { opacity: 0; }
+                    }
+                `;
+                document.head.appendChild(style);
             }
         })();
     </script>
