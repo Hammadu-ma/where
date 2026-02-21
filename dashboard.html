@@ -11,8 +11,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-
     <style>
+        /* Your existing CSS remains the same */
         :root {
             --primary: #60a5fa;
             --primary-dark: #3b82f6;
@@ -31,6 +31,8 @@
             --trial-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
             --trial-color: #10b981;
             --trial-dark: #059669;
+            --dropdown-bg: rgba(30, 41, 59, 0.95);
+            --dropdown-hover: rgba(51, 65, 85, 0.95);
         }
         body.light-mode {
             --background: #f3f4f6;
@@ -39,6 +41,8 @@
             --text-secondary: #4b5563;
             --text-tertiary: #9ca3af;
             --border: #d1d5db;
+            --dropdown-bg: rgba(255, 255, 255, 0.98);
+            --dropdown-hover: rgba(243, 244, 246, 0.98);
         }
         body.dark-mode {
             --background: #0f172a;
@@ -218,45 +222,33 @@
         .year-title i {
             color: var(--primary);
         }
+        
+        /* MODIFIED: Grid layout instead of horizontal scroll */
         .cards-container {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             gap: 1rem;
-            overflow-x: auto;
-            padding-bottom: 1rem;
-            scrollbar-width: thin;
-            scrollbar-color: var(--primary-light) transparent;
+            padding: 0.5rem 0;
         }
-        .cards-container::-webkit-scrollbar {
-            height: 6px;
-        }
-        .cards-container::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .cards-container::-webkit-scrollbar-thumb {
-            background: var(--primary-light);
-            border-radius: 3px;
-        }
-        .cards-container::-webkit-scrollbar-thumb:hover {
-            background: var(--primary);
-        }
+        
+        /* MODIFIED: Smaller card size */
         .quiz-card {
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            padding: 1rem;
-            min-width: 200px;
-            max-width: 200px;
+            padding: 0.75rem;
             transition: var(--transition);
             cursor: pointer;
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
-            flex-shrink: 0;
+            gap: 0.5rem;
             position: relative;
+            min-height: 140px;
+            overflow: visible;
         }
         .quiz-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
             border-color: var(--primary-light);
         }
         .quiz-card.locked {
@@ -271,36 +263,38 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 2rem;
+            font-size: 1.5rem;
             color: var(--error);
             opacity: 0.8;
         }
         .quiz-icon {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             background: var(--gradient);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 1.25rem;
+            font-size: 1rem;
         }
         .quiz-title {
-            font-size: 1rem;
+            font-size: 0.9rem;
             font-weight: 600;
             color: var(--text-primary);
+            line-height: 1.3;
         }
         .quiz-meta {
             display: flex;
             justify-content: space-between;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--text-secondary);
+            margin-top: auto;
         }
         .quiz-stats {
             display: flex;
             gap: 0.5rem;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--text-secondary);
         }
         .stat {
@@ -310,9 +304,9 @@
         }
         .difficulty {
             display: inline-block;
-            padding: 0.25rem 0.5rem;
+            padding: 0.2rem 0.4rem;
             border-radius: 1rem;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 600;
         }
         .difficulty.beginner {
@@ -327,6 +321,212 @@
             background: rgba(239, 68, 68, 0.1);
             color: var(--error);
         }
+        
+        /* NEW: Beautiful dropdown styles */
+        .quiz-card-wrapper {
+            position: relative;
+            width: 100%;
+        }
+        
+        .dropdown-indicator {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            width: 20px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.7rem;
+            opacity: 0;
+            transition: var(--transition);
+            pointer-events: none;
+            z-index: 5;
+        }
+        
+        .quiz-card-wrapper:hover .dropdown-indicator {
+            opacity: 1;
+        }
+        
+        .related-quizzes {
+            position: absolute;
+            top: 0;
+            left: 100%;
+            width: 240px;
+            background: var(--dropdown-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(-10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            max-height: 350px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .quiz-card-wrapper:hover .related-quizzes {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(5px);
+        }
+        
+        .related-header {
+            padding: 0.75rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-top-left-radius: var(--radius);
+            border-top-right-radius: var(--radius);
+        }
+        
+        .related-header i {
+            font-size: 0.9rem;
+        }
+        
+        .related-count {
+            margin-left: auto;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.15rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+        }
+        
+        .related-scroll {
+            max-height: 280px;
+            overflow-y: auto;
+            padding: 0.5rem;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) var(--border);
+        }
+        
+        .related-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .related-scroll::-webkit-scrollbar-track {
+            background: var(--border);
+            border-radius: 4px;
+        }
+        
+        .related-scroll::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+        
+        .related-item {
+            padding: 0.6rem 0.75rem;
+            margin: 0.25rem 0;
+            border-radius: 8px;
+            background: var(--surface);
+            border: 1px solid transparent;
+            transition: var(--transition);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--text-primary);
+        }
+        
+        .related-item:hover {
+            background: var(--dropdown-hover);
+            border-color: var(--primary-light);
+            transform: translateX(3px);
+        }
+        
+        .related-item i {
+            color: var(--primary);
+            font-size: 0.75rem;
+            width: 16px;
+        }
+        
+        .related-item-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+        
+        .related-item-title {
+            font-weight: 500;
+        }
+        
+        .related-item-meta {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .related-item-badge {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            padding: 0.1rem 0.3rem;
+            border-radius: 4px;
+            font-size: 0.6rem;
+            font-weight: 600;
+        }
+        
+        /* Position adjustment for cards near edge */
+        .quiz-card-wrapper:last-child .related-quizzes,
+        .quiz-card-wrapper:nth-child(3n) .related-quizzes {
+            left: auto;
+            right: 100%;
+        }
+        
+        .quiz-card-wrapper:last-child:hover .related-quizzes,
+        .quiz-card-wrapper:nth-child(3n):hover .related-quizzes {
+            transform: translateX(-5px);
+        }
+        
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .related-quizzes {
+                left: 50%;
+                transform: translateX(-50%) translateY(10px);
+                top: 100%;
+                width: 200px;
+            }
+            
+            .quiz-card-wrapper:hover .related-quizzes {
+                transform: translateX(-50%) translateY(5px);
+            }
+            
+            .quiz-card-wrapper:last-child .related-quizzes,
+            .quiz-card-wrapper:nth-child(3n) .related-quizzes {
+                left: auto;
+                right: 0;
+                transform: translateX(0) translateY(10px);
+            }
+            
+            .quiz-card-wrapper:last-child:hover .related-quizzes,
+            .quiz-card-wrapper:nth-child(3n):hover .related-quizzes {
+                transform: translateX(0) translateY(5px);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .related-quizzes {
+                width: 180px;
+            }
+            
+            .related-item {
+                padding: 0.5rem;
+            }
+        }
+        
         .modal {
             position: fixed;
             top: 0;
@@ -495,13 +695,13 @@
         .quiz-card.trial::after {
             content: 'TRIAL';
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 8px;
+            right: 8px;
             background: var(--trial-gradient);
             color: white;
-            padding: 0.2rem 0.5rem;
+            padding: 0.2rem 0.4rem;
             border-radius: 4px;
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             font-weight: 600;
         }
         /* Trial Badge */
@@ -552,6 +752,79 @@
         .trial-expired .trial-timer {
             color: #ef4444;
         }
+
+        /* Enhanced UI Elements */
+        .connection-status {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+            font-size: 0.8rem;
+            font-weight: 600;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+        }
+        .connection-status.online {
+            background: var(--success);
+            color: white;
+        }
+        .connection-status.offline {
+            background: var(--error);
+            color: white;
+        }
+        .connection-status.syncing {
+            background: var(--warning);
+            color: white;
+        }
+
+        .data-backup-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow);
+            z-index: 998;
+        }
+
+        .persistence-indicator {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow);
+            z-index: 998;
+        }
+
+        /* FIXED: Ensure the page is scrollable */
+        html, body {
+            overflow-y: auto;
+            height: 100%;
+        }
+
+        /* FIXED: Main content should allow scrolling */
+        .main-content {
+            overflow-y: visible;
+            height: auto;
+        }
+
         @media (max-width: 768px) {
             .header-container {
                 padding: 0.75rem;
@@ -576,14 +849,37 @@
                 width: 100%;
                 justify-content: center;
             }
+            .connection-status {
+                top: 60px;
+                right: 10px;
+                font-size: 0.7rem;
+            }
+            .data-backup-indicator,
+            .persistence-indicator {
+                bottom: 10px;
+                font-size: 0.7rem;
+                padding: 0.4rem 0.8rem;
+            }
+            
+            /* MODIFIED: Responsive grid for mobile */
+            .cards-container {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 0.75rem;
+            }
+            
+            .quiz-card {
+                min-height: 130px;
+                padding: 0.6rem;
+            }
+            
+            .quiz-title {
+                font-size: 0.85rem;
+            }
         }
+        
         @media (max-width: 480px) {
             .page-title {
                 font-size: 1.5rem;
-            }
-            .quiz-card {
-                min-width: 180px;
-                max-width: 180px;
             }
             .year-title {
                 font-size: 1.25rem;
@@ -591,10 +887,95 @@
             .modal-content h2 {
                 font-size: 1.5rem;
             }
+            
+            /* MODIFIED: 2-column layout for very small screens */
+            .cards-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.5rem;
+            }
+            
+            .quiz-card {
+                min-height: 120px;
+                padding: 0.5rem;
+            }
+            
+            .quiz-icon {
+                width: 32px;
+                height: 32px;
+                font-size: 0.9rem;
+            }
+            
+            .quiz-title {
+                font-size: 0.8rem;
+            }
         }
+        
+        @media (min-width: 1200px) {
+            /* MODIFIED: More columns on larger screens */
+            .cards-container {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+        #update-notification {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #4CAF50;
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 10000;
+        display: none;
+        max-width: 350px;
+        animation: slideIn 0.3s ease-out;
+    }
+    
+    #update-notification button {
+        background: white;
+        color: #4CAF50;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        margin-left: 10px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    
+    #update-notification button:hover {
+        background: #f0f0f0;
+    }
+    
+    @keyframes slideIn {
+        from { transform: translateY(100px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
     </style>
 </head>
 <body class="dark-mode">
+    <!-- Update Notification -->
+    <div id="update-notification">
+        <span id="update-message">New version available!</span>
+        <button id="reload-button">Update Now</button>
+    </div>
+    <!-- Connection Status Indicator -->
+    <div id="connectionStatus" class="connection-status online" style="display: none;">
+        <i class="fas fa-wifi"></i>
+        <span>Connected</span>
+    </div>
+
+    <!-- Data Backup Indicator -->
+    <div id="dataBackupIndicator" class="data-backup-indicator" style="display: none;">
+        <i class="fas fa-cloud-upload-alt"></i>
+        <span>Backing up data...</span>
+    </div>
+
+    <!-- Persistence Indicator -->
+    <div id="persistenceIndicator" class="persistence-indicator" style="display: none;">
+        <i class="fas fa-shield-alt"></i>
+        <span>Persistent Mode Active</span>
+    </div>
+
     <!-- Header -->
     <header class="header">
         <div class="header-container">
@@ -731,7 +1112,7 @@
     <div id="addModal" class="modal" style="display: none;">
         <div class="modal-content">
             <h2><i class="fas fa-plus"></i> Add Program</h2>
-            <div class="price-info">Additional Charge: 50 ETB</div>
+            <div class="price-info">Additional Charge:</div>
             
             <!-- Account Numbers Section -->
             <div class="account-section">
@@ -777,18 +1158,19 @@
                     <i class="fas fa-graduation-cap"></i>
                     <select id="newYear" required>
                         <option value="" disabled selected>Select New Program</option>
-                        <option value="1">Pre Med - 100 ETB</option>
-                        <option value="2">Intro Med - 100 ETB</option>
-                        <option value="3">Meta - 100 ETB</option>
-                        <option value="4">Hema - 100 ETB</option>
-                        <option value="5">CVS - 100 ETB</option>
-                        <option value="6">RESPA - 100 ETB</option>
-                        <option value="7">Musclo - 100 ETB</option>
-                    </select>
+                        <option value="1">Pre Med - 200 ETB</option>
+                                    <option value="2">Intro Med - 280 ETB</option>
+                                    <option value="3">Meta - 130 ETB</option>
+                                    <option value="4">Hema - 130 ETB</option>
+                                    <option value="5">meta and Hema - 210 ETB</option>
+                                    <option value="6">CVS - 130 ETB</option>
+                                    <option value="7">RESPA - 130 ETB</option>
+                                    <option value="8">Musclo - 130 ETB</option>
+                                    <option value="9">CVS, RESPA AND MUSCLO - 310</option>
                 </div>
                 <div class="file-upload">
                     <i class="fas fa-cloud-upload-alt"></i>
-                    <span id="addUploadText">Upload Payment Receipt (50 ETB)</span>
+                    <span id="addUploadText">Upload Payment Receipt</span>
                     <input id="addReceipt" type="file" accept="image/*" required>
                 </div>
                 <img id="addReceiptPreview" class="receipt-preview" alt="Receipt Preview">
@@ -797,47 +1179,465 @@
             </form>
         </div>
     </div>
-        <script src="auth-check.js"></script>
-        <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script>
-  // Check if running inside Telegram
-  const tg = window.Telegram?.WebApp;
-
-  // --- 1️⃣ Handle Telegram Mini App Back Button ---
-  if (tg) {
-    tg.ready(); // Initialize Telegram SDK
-    tg.BackButton.show();
-
-    tg.BackButton.onClick(() => {
-      console.log("Telegram back button pressed");
-      handleBackAction();
-    });
-  }
-
-  // --- 2️⃣ Handle Browser/Phone Back Button ---
-  window.addEventListener('popstate', () => {
-    console.log("Browser back button pressed");
-    handleBackAction();
-  });
-
-  // --- 3️⃣ Function to handle back action globally ---
-  function handleBackAction() {
-    // Example actions (customize as you wish):
-    // Go back if possible, otherwise go to home page
-    if (document.referrer && window.history.length > 1) {
-      window.history.back();
-    } else {
-      window.location.href = '/'; // or your home page route
-    }
-  }
-
-  // --- 4️⃣ Optional: Prevent unwanted exits ---
-  // This ensures pressing back doesn’t immediately close the app
-  history.pushState(null, '', location.href);
-</script>
+  
+    <script src="auth-check.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
     <script>
+        // Enhanced Dashboard Manager
+        class EnhancedDashboardManager {
+            constructor() {
+                this.isInitialized = false;
+                this.connectionStatus = document.getElementById('connectionStatus');
+                this.dataBackupIndicator = document.getElementById('dataBackupIndicator');
+                this.persistenceIndicator = document.getElementById('persistenceIndicator');
+                this.backupInterval = null;
+                this.healthCheckInterval = null;
+                this.retryCount = 0;
+                this.maxRetries = 5;
+                this.backupData = {};
+            }
 
-        // Quiz data
+            async init() {
+                if (this.isInitialized) return;
+
+                console.log('Initializing Enhanced Dashboard Manager...');
+                
+                // Initialize connection monitoring
+                this.initConnectionMonitoring();
+                
+                // Initialize data persistence
+                await this.initDataPersistence();
+                
+                // Initialize periodic backups
+                this.initPeriodicBackups();
+                
+                // Initialize health checks
+                this.initHealthChecks();
+                
+                // Setup enhanced event listeners
+                this.setupEnhancedEventListeners();
+                
+                this.isInitialized = true;
+                console.log('Enhanced Dashboard Manager initialized');
+            }
+
+            // Connection Monitoring
+            initConnectionMonitoring() {
+                // Monitor online/offline status
+                window.addEventListener('online', () => {
+                    this.handleConnectionRestored();
+                });
+
+                window.addEventListener('offline', () => {
+                    this.handleConnectionLost();
+                });
+
+                // Show initial connection status
+                this.updateConnectionStatus(navigator.onLine);
+            }
+
+            updateConnectionStatus(isOnline) {
+                if (isOnline) {
+                    this.connectionStatus.className = 'connection-status online';
+                    this.connectionStatus.innerHTML = '<i class="fas fa-wifi"></i><span>Connected</span>';
+                    this.connectionStatus.style.display = 'flex';
+                    
+                    // Hide after 3 seconds if connected
+                    setTimeout(() => {
+                        this.connectionStatus.style.display = 'none';
+                    }, 3000);
+                } else {
+                    this.connectionStatus.className = 'connection-status offline';
+                    this.connectionStatus.innerHTML = '<i class="fas fa-wifi-slash"></i><span>Offline - Working locally</span>';
+                    this.connectionStatus.style.display = 'flex';
+                }
+            }
+
+            handleConnectionLost() {
+                console.log('Connection lost - switching to offline mode');
+                this.updateConnectionStatus(false);
+                
+                // Store pending operations
+                this.storePendingOperations();
+                
+                // Show offline capabilities message
+                this.showOfflineMessage();
+            }
+
+            handleConnectionRestored() {
+                console.log('Connection restored - syncing data');
+                this.updateConnectionStatus(true);
+                
+                // Show syncing status
+                this.connectionStatus.className = 'connection-status syncing';
+                this.connectionStatus.innerHTML = '<i class="fas fa-sync-alt fa-spin"></i><span>Syncing data...</span>';
+                this.connectionStatus.style.display = 'flex';
+                
+                // Sync pending operations
+                this.syncPendingOperations();
+                
+                // Hide after sync complete
+                setTimeout(() => {
+                    this.connectionStatus.style.display = 'none';
+                }, 2000);
+            }
+
+            // Data Persistence
+            async initDataPersistence() {
+                // Show persistence indicator
+                this.persistenceIndicator.style.display = 'flex';
+                
+                // Backup critical data to multiple storage locations
+                await this.backupCriticalData();
+                
+                // Setup storage event listeners
+                window.addEventListener('storage', (e) => {
+                    this.handleStorageChange(e);
+                });
+            }
+
+            async backupCriticalData() {
+                try {
+                    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                    const userSettings = JSON.parse(localStorage.getItem('userSettings') || '{}');
+                    
+                    // Backup to sessionStorage as fallback
+                    sessionStorage.setItem('backup_currentUser', JSON.stringify(currentUser));
+                    sessionStorage.setItem('backup_userSettings', JSON.stringify(userSettings));
+                    
+                    // Backup to IndexedDB if available
+                    if ('indexedDB' in window) {
+                        await this.backupToIndexedDB({
+                            currentUser,
+                            userSettings,
+                            backupTimestamp: Date.now()
+                        });
+                    }
+                    
+                    console.log('Critical data backed up successfully');
+                } catch (error) {
+                    console.error('Error backing up critical data:', error);
+                }
+            }
+
+            async backupToIndexedDB(data) {
+                return new Promise((resolve, reject) => {
+                    if (!('indexedDB' in window)) {
+                        resolve(false);
+                        return;
+                    }
+
+                    const request = indexedDB.open('ALIF_Backup', 1);
+                    
+                    request.onerror = () => reject(request.error);
+                    request.onsuccess = () => {
+                        const db = request.result;
+                        const transaction = db.transaction(['backups'], 'readwrite');
+                        const store = transaction.objectStore('backups');
+                        
+                        const backupRequest = store.put({
+                            id: 'critical_data',
+                            data: data,
+                            timestamp: Date.now()
+                        });
+                        
+                        backupRequest.onsuccess = () => resolve(true);
+                        backupRequest.onerror = () => reject(backupRequest.error);
+                    };
+                    
+                    request.onupgradeneeded = (event) => {
+                        const db = event.target.result;
+                        if (!db.objectStoreNames.contains('backups')) {
+                            db.createObjectStore('backups', { keyPath: 'id' });
+                        }
+                    };
+                });
+            }
+
+            // Periodic Backups
+            initPeriodicBackups() {
+                // Backup every 5 minutes
+                this.backupInterval = setInterval(() => {
+                    this.performBackup();
+                }, 5 * 60 * 1000);
+            }
+
+            async performBackup() {
+                try {
+                    this.dataBackupIndicator.style.display = 'flex';
+                    
+                    await this.backupCriticalData();
+                    
+                    // Simulate backup process
+                    setTimeout(() => {
+                        this.dataBackupIndicator.style.display = 'none';
+                    }, 1000);
+                    
+                } catch (error) {
+                    console.error('Backup failed:', error);
+                    this.dataBackupIndicator.style.display = 'none';
+                }
+            }
+
+            // Health Checks
+            initHealthChecks() {
+                // Check system health every 2 minutes
+                this.healthCheckInterval = setInterval(() => {
+                    this.performHealthCheck();
+                }, 2 * 60 * 1000);
+            }
+
+            async performHealthCheck() {
+                try {
+                    // Check localStorage integrity
+                    const currentUser = localStorage.getItem('currentUser');
+                    if (currentUser) {
+                        JSON.parse(currentUser); // This will throw if corrupted
+                    }
+                    
+                    // Check connection to Firebase
+                    await this.checkFirebaseConnection();
+                    
+                    // Check user session validity
+                    await this.checkSessionValidity();
+                    
+                    console.log('Health check passed');
+                } catch (error) {
+                    console.error('Health check failed:', error);
+                    this.handleHealthCheckFailure(error);
+                }
+            }
+
+            async checkFirebaseConnection() {
+                return new Promise((resolve, reject) => {
+                    const timeout = setTimeout(() => {
+                        reject(new Error('Firebase connection timeout'));
+                    }, 5000);
+
+                    // Try to read a small document to test connection
+                    db.collection('health').doc('check').get()
+                        .then(() => {
+                            clearTimeout(timeout);
+                            resolve(true);
+                        })
+                        .catch(reject);
+                });
+            }
+
+            async checkSessionValidity() {
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                if (!currentUser.id) return;
+
+                try {
+                    const userDoc = await db.collection('users').doc(currentUser.id).get();
+                    if (!userDoc.exists) {
+                        throw new Error('User session invalid');
+                    }
+                } catch (error) {
+                    throw new Error('Session validation failed');
+                }
+            }
+
+            handleHealthCheckFailure(error) {
+                console.warn('Health check failure:', error.message);
+                
+                // Implement retry logic
+                if (this.retryCount < this.maxRetries) {
+                    this.retryCount++;
+                    console.log(`Retrying health check (${this.retryCount}/${this.maxRetries})...`);
+                    setTimeout(() => this.performHealthCheck(), 30000);
+                } else {
+                    console.error('Max retries exceeded, requiring user action');
+                    this.showRecoveryMessage();
+                }
+            }
+
+            // Enhanced Event Listeners
+            setupEnhancedEventListeners() {
+                // Prevent accidental navigation away
+                window.addEventListener('beforeunload', (e) => {
+                    if (this.hasUnsavedChanges()) {
+                        e.preventDefault();
+                        e.returnValue = '';
+                        return '';
+                    }
+                });
+
+                // Handle page visibility changes
+                document.addEventListener('visibilitychange', () => {
+                    if (document.hidden) {
+                        this.handlePageHidden();
+                    } else {
+                        this.handlePageVisible();
+                    }
+                });
+
+                // Listen for auth check events
+                document.addEventListener('userUpdated', (e) => {
+                    this.handleUserUpdate(e.detail);
+                });
+
+                document.addEventListener('trialExpired', () => {
+                    this.handleTrialExpired();
+                });
+            }
+
+            // Utility Methods
+            hasUnsavedChanges() {
+                // Implement logic to check for unsaved changes
+                return false;
+            }
+
+            handlePageHidden() {
+                console.log('Page hidden - saving state');
+                this.backupCriticalData();
+            }
+
+            handlePageVisible() {
+                console.log('Page visible - refreshing data');
+                this.refreshUserData();
+            }
+
+            handleUserUpdate(user) {
+                console.log('User data updated:', user.name);
+                this.updateUIWithUserData(user);
+            }
+
+            handleTrialExpired() {
+                console.log('Trial expired - updating UI');
+                this.updateTrialExpiredUI();
+            }
+
+            storePendingOperations() {
+                // Store operations that need to be synced when back online
+                const pendingOps = JSON.parse(localStorage.getItem('pendingOperations') || '[]');
+                // Add current operation to pending
+                // This would be implemented based on specific operations
+                localStorage.setItem('pendingOperations', JSON.stringify(pendingOps));
+            }
+
+            async syncPendingOperations() {
+                const pendingOps = JSON.parse(localStorage.getItem('pendingOperations') || '[]');
+                
+                for (const op of pendingOps) {
+                    try {
+                        // Execute each pending operation
+                        await this.executePendingOperation(op);
+                    } catch (error) {
+                        console.error('Failed to sync operation:', op, error);
+                    }
+                }
+                
+                // Clear pending operations after sync
+                localStorage.removeItem('pendingOperations');
+            }
+
+            async executePendingOperation(operation) {
+                // Implement based on your specific operation types
+                console.log('Executing pending operation:', operation);
+            }
+
+            handleStorageChange(e) {
+                if (e.key === 'currentUser') {
+                    console.log('User data changed in another tab');
+                    this.refreshUserData();
+                }
+            }
+
+            async refreshUserData() {
+                try {
+                    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                    if (currentUser.id) {
+                        const userDoc = await db.collection('users').doc(currentUser.id).get();
+                        if (userDoc.exists) {
+                            const updatedUser = { ...userDoc.data(), id: userDoc.id };
+                            localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+                            this.updateUIWithUserData(updatedUser);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error refreshing user data:', error);
+                }
+            }
+
+            updateUIWithUserData(user) {
+                // Update UI elements based on user data
+                if (user.plan === 'trial') {
+                    setupTrialUI(user);
+                } else if (user.plan === 'premium') {
+                    setupPremiumUI();
+                }
+                
+                renderQuizCards();
+            }
+
+            updateTrialExpiredUI() {
+                const trialCard = document.getElementById('trialCard');
+                if (trialCard) {
+                    trialCard.classList.add('trial-expired');
+                    trialCard.querySelector('.trial-title').textContent = 'Free Trial Expired';
+                    trialCard.querySelector('.trial-content p').textContent = 'Your free trial has ended. Upgrade now to continue accessing all programs.';
+                }
+            }
+
+            showOfflineMessage() {
+                // Could implement a subtle offline indicator
+                console.log('App is running in offline mode');
+            }
+
+            showRecoveryMessage() {
+                const message = document.createElement('div');
+                message.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: var(--surface);
+                    border: 2px solid var(--error);
+                    border-radius: var(--radius);
+                    padding: 2rem;
+                    text-align: center;
+                    z-index: 10000;
+                    box-shadow: var(--shadow);
+                    max-width: 300px;
+                `;
+                message.innerHTML = `
+                    <h3 style="color: var(--error); margin-bottom: 1rem;">
+                        <i class="fas fa-exclamation-triangle"></i> System Recovery Needed
+                    </h3>
+                    <p style="margin-bottom: 1rem;">Please refresh the page to restore full functionality.</p>
+                    <button onclick="location.reload()" style="
+                        background: var(--primary);
+                        color: white;
+                        border: none;
+                        padding: 0.75rem 1.5rem;
+                        border-radius: var(--radius);
+                        cursor: pointer;
+                        font-weight: 600;
+                    ">
+                        Refresh Page
+                    </button>
+                `;
+                document.body.appendChild(message);
+            }
+
+            // Cleanup
+            destroy() {
+                if (this.backupInterval) {
+                    clearInterval(this.backupInterval);
+                }
+                if (this.healthCheckInterval) {
+                    clearInterval(this.healthCheckInterval);
+                }
+                this.isInitialized = false;
+            }
+        }
+
+        // Initialize enhanced dashboard manager
+        const dashboardManager = new EnhancedDashboardManager();
+
+        // Your existing quiz data and DOM elements
         const quizData = {
             1: [
                 { id: 6, title: "Organic Chemistry", icon: "fas fa-brain", questions: 30, time: 25, difficulty: "intermediate", rating: 4.6, page: "year2/human-anatomy.html" },
@@ -857,10 +1657,11 @@
                 { id: 3, title: "Biochemistry", icon: "fas fa-book", questions: 800, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/bc.html" }
             ],  
             3: [
-                { id: 10, title: "Anatomy", icon: "fas fa-virus", questions: 35, time: 30, difficulty: "intermediate", page: "year3/pathology.html", rating: 4.7 },
-                { id: 11, title: "Physiology", icon: "fas fa-pills", questions: 30, time: 25, difficulty: "intermediate", rating: 4.6, page: "year3/pharmacology-i.html" },
-                { id: 12, title: "Pharma", icon: "fas fa-bacteria", questions: 25, time: 20, difficulty: "intermediate", rating: 4.5, page: "year3/microbiology.html" },
-                { id: 13, title: "Pathology", icon: "fas fa-shield-virus", questions: 28, time: 22, difficulty: "intermediate", rating: 4.4, page: "year3/immunology.html" }
+                { id: 13, title: "Metabolism Final Exam 2017", icon: "fas fa-dna", questions: 87, time: 172, difficulty: "intermediate", rating: 4.4, page: "yr3/meta2017.html" },
+                { id: 10, title: "Metabolism Final Exam 2016", icon: "fas fa-virus", questions: 54, time: 108, difficulty: "intermediate", page: "yr3/meta2016.html", rating: 4.7 },
+                { id: 11, title: "Metabolism Final Exam 2015", icon: "fas fa-pills", questions: 57, time: 114, difficulty: "intermediate", rating: 4.6, page: "yr3/meta2015.html" },
+                { id: 12, title: "Metabolism Final Exam 2014", icon: "fas fa-bacteria", questions: 140, time: 280, difficulty: "intermediate", rating: 4.5, page: "yr3/meta2014.html" },
+                { id: 14, title: "SPH & Other Metabolism Practice Questions", icon: "fas fa-bacteria", questions: 700, time: 280, difficulty: "intermediate", rating: 4.5, page: "yr3/meta.html" }
             ],
             4: [
                 { id: 14, title: "Anatomy", icon: "fas fa-stethoscope", questions: 40, time: 35, difficulty: "advanced", rating: 4.8, page: "year4/clinical-medicine-i.html" },
@@ -949,19 +1750,61 @@
 
         const firebaseUserManager = new FirebaseUserManager();
 
-        // Theme toggle
+                // Theme toggle with localStorage synchronization
         function toggleTheme() {
             if (document.body.classList.contains('dark-mode')) {
                 document.body.classList.remove('dark-mode');
                 document.body.classList.add('light-mode');
                 themeToggle.querySelector('i').className = 'fas fa-moon';
+                
+                // Save theme preference to localStorage
+                localStorage.setItem('theme', 'light');
             } else {
+                document.body.classList.remove('light-mode');
+                document.body.classList.add('dark-mode');
+                themeToggle.querySelector('i').className = 'fas fa-sun';
+                
+                // Save theme preference to localStorage
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+        themeToggle.addEventListener('click', toggleTheme);
+
+                // Load saved theme preference with system preference fallback
+        function loadThemePreference() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            if (savedTheme === 'light') {
+                document.body.classList.remove('dark-mode');
+                document.body.classList.add('light-mode');
+                themeToggle.querySelector('i').className = 'fas fa-moon';
+            } else if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
                 document.body.classList.remove('light-mode');
                 document.body.classList.add('dark-mode');
                 themeToggle.querySelector('i').className = 'fas fa-sun';
             }
         }
-        themeToggle.addEventListener('click', toggleTheme);
+
+        // NEW: Function to generate related quizzes for each card
+        function generateRelatedQuizzes(cardTitle, year) {
+            // Base related quizzes template
+            const baseQuizzes = [
+                { title: `${cardTitle} - 2018`, icon: "fas fa-calendar-alt", year: "2018", questions: 50, page: `yr${year}/quiz2018.html` },
+                { title: `${cardTitle} - 2019`, icon: "fas fa-calendar-alt", year: "2019", questions: 55, page: `yr${year}/quiz2019.html` },
+                { title: `${cardTitle} - 2020`, icon: "fas fa-calendar-alt", year: "2020", questions: 48, page: `yr${year}/quiz2020.html` },
+                { title: `${cardTitle} - 2021`, icon: "fas fa-calendar-alt", year: "2021", questions: 52, page: `yr${year}/quiz2021.html` },
+                { title: `${cardTitle} - 2022`, icon: "fas fa-calendar-alt", year: "2022", questions: 60, page: `yr${year}/quiz2022.html` },
+                { title: `${cardTitle} - 2023`, icon: "fas fa-calendar-alt", year: "2023", questions: 45, page: `yr${year}/quiz2023.html` },
+                { title: `${cardTitle} - Practice Set A`, icon: "fas fa-flask", year: "Practice", questions: 30, page: `yr${year}/practice-a.html` },
+                { title: `${cardTitle} - Practice Set B`, icon: "fas fa-flask", year: "Practice", questions: 35, page: `yr${year}/practice-b.html` },
+                { title: `${cardTitle} - Mock Exam`, icon: "fas fa-graduation-cap", year: "Mock", questions: 100, page: `yr${year}/mock-exam.html` }
+            ];
+            
+            // Shuffle and take first 5-7 quizzes for variety
+            const shuffled = baseQuizzes.sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, 6);
+        }
 
         // Render quiz cards
         function renderQuizCards() {
@@ -984,6 +1827,10 @@
                 container.innerHTML = '';
                 if (quizData[year]) {
                     quizData[year].forEach(quiz => {
+                        // Create wrapper for positioning
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'quiz-card-wrapper';
+                        
                         const card = document.createElement('div');
                         card.className = 'quiz-card';
                         card.dataset.year = year.toString();
@@ -1009,6 +1856,42 @@
                             </div>
                         `;
                         
+                        // NEW: Create related quizzes dropdown
+                        const relatedQuizzes = generateRelatedQuizzes(quiz.title, year);
+                        
+                        const dropdown = document.createElement('div');
+                        dropdown.className = 'related-quizzes';
+                        dropdown.innerHTML = `
+                            <div class="related-header">
+                                <i class="fas fa-layer-group"></i>
+                                <span>Related Quizzes</span>
+                                <span class="related-count">${relatedQuizzes.length}</span>
+                            </div>
+                            <div class="related-scroll">
+                                ${relatedQuizzes.map(q => `
+                                    <div class="related-item" data-page="${q.page}" data-title="${q.title}">
+                                        <i class="${q.icon}"></i>
+                                        <div class="related-item-content">
+                                            <span class="related-item-title">${q.title}</span>
+                                            <div class="related-item-meta">
+                                                <span>${q.questions} Qs</span>
+                                                <span class="related-item-badge">${q.year}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                        
+                        // Add dropdown indicator
+                        const indicator = document.createElement('span');
+                        indicator.className = 'dropdown-indicator';
+                        indicator.innerHTML = '<i class="fas fa-chevron-right"></i>';
+                        
+                        wrapper.appendChild(card);
+                        wrapper.appendChild(indicator);
+                        wrapper.appendChild(dropdown);
+                        
                         // Check access conditions
                         const hasAccess = effectiveYears.includes(year.toString()) && currentUser && currentUser.status === 'verified';
                         
@@ -1016,8 +1899,9 @@
                             card.classList.add('locked');
                         }
                         
+                        // Main card click handler
                         card.addEventListener('click', (e) => {
-                            const quizYear = e.currentTarget.dataset.year;
+                            const quizYear = card.dataset.year;
                             
                             // Check status
                             if (!currentUser || currentUser.status !== 'verified') {
@@ -1039,25 +1923,67 @@
                             // Navigate to quiz page
                             window.location.href = quiz.page;
                         });
-                        container.appendChild(card);
+                        
+                        // NEW: Related item click handlers
+                        dropdown.querySelectorAll('.related-item').forEach(item => {
+                            item.addEventListener('click', (e) => {
+                                e.stopPropagation();
+                                const page = item.dataset.page;
+                                const title = item.dataset.title;
+                                
+                                // Check access conditions
+                                if (!currentUser || currentUser.status !== 'verified') {
+                                    showAccessDeniedModal(['not_verified'], year.toString());
+                                    return;
+                                }
+                                
+                                if (currentUser.plan === 'trial' && isTrialExpired) {
+                                    showAccessDeniedModal(['trial_expired'], year.toString());
+                                    return;
+                                }
+                                
+                                if (!effectiveYears.includes(year.toString())) {
+                                    showAccessDeniedModal(userYears, year.toString());
+                                    return;
+                                }
+                                
+                                // Navigate to related quiz page
+                                console.log(`Navigating to: ${page}`);
+                                window.location.href = page;
+                            });
+                        });
+                        
+                        container.appendChild(wrapper);
                     });
                 }
             }
         }
 
         // Year filter
+        function applyYearFilter(year) {
+            yearButtons.forEach(btn => btn.classList.remove('active'));
+            const activeButton = document.querySelector(`.year-btn[data-year="${year}"]`);
+            if (activeButton) {
+                activeButton.classList.add('active');
+            }
+            
+            if (year === 'all') {
+                yearSections.forEach(section => section.style.display = 'block');
+            } else {
+                yearSections.forEach(section => {
+                    section.style.display = section.dataset.year === year ? 'block' : 'none';
+                });
+            }
+            
+            // Save the active filter to localStorage
+            localStorage.setItem('activeYearFilter', year);
+        }
+
+        // Initialize year filter buttons
         yearButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const year = button.dataset.year;
-                yearButtons.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-                if (year === 'all') {
-                    yearSections.forEach(section => section.style.display = 'block');
-                } else {
-                    yearSections.forEach(section => {
-                        section.style.display = section.dataset.year === year ? 'block' : 'none';
-                    });
-                }
+                applyYearFilter(year);
             });
         });
 
@@ -1071,9 +1997,16 @@
             window.location.href = 'profile.html';
         });
 
-        notificationsBtn.addEventListener('click', () => {
-            window.location.href = 'notifications.html';
-        });
+        // Update the notifications button event listener
+notificationsBtn.addEventListener('click', () => {
+    // Clear badge when user clicks on notifications
+    const badge = document.getElementById('unreadCount');
+    if (badge) {
+        badge.style.display = 'none';
+        badge.textContent = '0';
+    }
+    window.location.href = 'notifications.html';
+});
 
         // Function to set up trial UI
         function setupTrialUI(user) {
@@ -1272,49 +2205,350 @@
         }
 
         // Initialize dashboard
-        function initDashboard() {
-            const currentUser = localStorage.getItem('currentUser');
-            
-            if (!currentUser) {
-                // Redirect to registration if not logged in
-                window.location.href = 'register.html';
-                return;
-            }
-            
-            try {
-                const user = JSON.parse(currentUser);
-                
-                // Check if user is verified
-                if (user.status !== 'verified') {
-                    showAccessDeniedModal(['not_verified']);
-                    return;
-                }
-                
-                // Set up plan UI
-                if (user.plan === 'trial') {
-                    setupTrialUI(user);
-                } else if (user.plan === 'premium') {
-                    setupPremiumUI();
-                }
-                
-                // Check role for admin
-                if (user.role === 'admin') {
-                    adminBtn.style.display = 'inline-flex';
-                    adminBtn.addEventListener('click', () => {
-                        window.location.href = 'admin/index.html';
-                    });
-                }
-
-                renderQuizCards();
-            } catch (error) {
-                console.error('Error initializing dashboard:', error);
-                // Redirect to registration on error
-                window.location.href = 'register.html';
-            }
+        // Update the initDashboard function
+// Update the initDashboard function
+async function initDashboard() {
+    const currentUser = localStorage.getItem('currentUser');
+    
+    if (!currentUser) {
+        window.location.href = 'register.html';
+        return;
+    }
+    
+    try {
+        const user = JSON.parse(currentUser);
+        
+        if (user.status !== 'verified') {
+            showAccessDeniedModal(['not_verified']);
+            return;
         }
+        
+        loadThemePreference();
+        await dashboardManager.init();
+        
+        // Add these lines:
+        // Initialize notification badge
+        updateNotificationBadge();
+        setupNotificationListener();
+        
+        if (user.plan === 'trial') {
+            setupTrialUI(user);
+        } else if (user.plan === 'premium') {
+            setupPremiumUI();
+        }
+        
+        if (user.role === 'admin') {
+            adminBtn.style.display = 'inline-flex';
+            adminBtn.addEventListener('click', () => {
+                window.location.href = 'admin/index.html';
+            });
+        }
+
+        renderQuizCards();
+        
+        const savedFilter = localStorage.getItem('activeYearFilter');
+        if (savedFilter) {
+            applyYearFilter(savedFilter);
+        } else {
+            applyYearFilter('all');
+        }
+    } catch (error) {
+        console.error('Error initializing dashboard:', error);
+        const cachedUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        if (cachedUser && cachedUser.status === 'verified') {
+            console.log('Using cached user data due to initialization error');
+            
+            // Try to update notification badge even in error state
+            try {
+                updateNotificationBadge();
+            } catch (e) {
+                console.log('Could not update notification badge:', e);
+            }
+            
+            renderQuizCards();
+            
+            const savedFilter = localStorage.getItem('activeYearFilter');
+            if (savedFilter) {
+                applyYearFilter(savedFilter);
+            }
+        } else {
+            window.location.href = 'register.html';
+        }
+    }
+}
 
         // Initialize the dashboard when page loads
         document.addEventListener('DOMContentLoaded', initDashboard);
+
+        // Handle Telegram Mini App Back Button
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.ready();
+            tg.BackButton.show();
+            tg.BackButton.onClick(() => {
+                console.log("Telegram back button pressed");
+                handleBackAction();
+            });
+        }
+
+        // Handle Browser/Phone Back Button
+        window.addEventListener('popstate', () => {
+            console.log("Browser back button pressed");
+            handleBackAction();
+        });
+
+        // Function to handle back action globally
+        function handleBackAction() {
+            // Example actions (customize as you wish):
+            // Go back if possible, otherwise do nothing (keep user in app)
+            if (document.referrer && window.history.length > 1) {
+                window.history.back();
+            }
+            // Don't allow exiting the app - just navigate within the app
+        }
+
+        // Prevent unwanted exits
+        history.pushState(null, '', location.href);
+    </script>
+    <script>
+    // Production-ready service worker registration with update handling
+    if ('serviceWorker' in navigator) {
+        const APP_VERSION = '1.8.6'; // Must match SW version
+        let isRefreshing = false;
+        
+        // Check if page is loaded offline
+        if (!navigator.onLine) {
+            console.log('📴 App loaded offline');
+            document.documentElement.classList.add('offline');
+        }
+        
+        // Listen for online/offline status
+        window.addEventListener('online', () => {
+            console.log('🌐 Back online');
+            document.documentElement.classList.remove('offline');
+            // Check for updates when coming back online
+            if (navigator.serviceWorker.controller) {
+                navigator.serviceWorker.controller.postMessage({
+                    type: 'CHECK_FOR_UPDATES'
+                });
+            }
+        });
+        
+        window.addEventListener('offline', () => {
+            console.log('📴 Gone offline');
+            document.documentElement.classList.add('offline');
+        });
+        
+        window.addEventListener('load', function() {
+            const swUrl = '/sw.js?v=' + APP_VERSION; // Cache busting
+            
+            navigator.serviceWorker.register(swUrl)
+                .then(function(registration) {
+                    console.log('✅ SW registered successfully on scope:', registration.scope);
+                    console.log('🏷️ App version:', APP_VERSION);
+                    
+                    // Check current controller
+                    if (navigator.serviceWorker.controller) {
+                        console.log('🎯 SW is controlling the page');
+                        
+                        // Check for updates periodically
+                        setInterval(() => {
+                            registration.update();
+                        }, 60 * 60 * 1000); // Check every hour
+                    } else {
+                        console.log('⏳ SW registered, will control after refresh');
+                    }
+                    
+                    // Check cache status
+                    setTimeout(() => {
+                        const cacheName = `medical-app-${APP_VERSION}`;
+                        caches.open(cacheName).then(cache => {
+                            cache.keys().then(requests => {
+                                console.log(`📦 Cache "${cacheName}" has ${requests.length} files`);
+                                
+                                // Verify critical files are cached
+                                const criticalFiles = ['/', '/index.html', '/offline.html'];
+                                let missingFiles = [];
+                                
+                                criticalFiles.forEach(url => {
+                                    cache.match(url).then(response => {
+                                        if (!response) {
+                                            console.warn(`⚠️ Critical file not cached: ${url}`);
+                                            missingFiles.push(url);
+                                        }
+                                    });
+                                });
+                                
+                                setTimeout(() => {
+                                    if (missingFiles.length > 0) {
+                                        console.warn(`Missing ${missingFiles.length} critical files`);
+                                    }
+                                }, 500);
+                            });
+                        }).catch(err => {
+                            console.log('Cache not yet ready:', err);
+                        });
+                    }, 2000);
+                    
+                    // Listen for SW updates
+                    registration.addEventListener('updatefound', () => {
+                        const newWorker = registration.installing;
+                        console.log('🔄 New SW found (installing...)');
+                        
+                        newWorker.addEventListener('statechange', () => {
+                            console.log(`🔄 SW state changed to: ${newWorker.state}`);
+                            
+                            if (newWorker.state === 'installed') {
+                                if (navigator.serviceWorker.controller) {
+                                    // New update available
+                                    showUpdateNotification();
+                                } else {
+                                    // First install
+                                    console.log('✨ SW installed for the first time');
+                                }
+                            }
+                        });
+                    });
+                    
+                    // Track SW lifecycle
+                    navigator.serviceWorker.addEventListener('controllerchange', () => {
+                        console.log('🔄 Controller changed');
+                        if (!isRefreshing) {
+                            isRefreshing = true;
+                            console.log('🔄 Reloading page for new version...');
+                            window.location.reload();
+                        }
+                    });
+                })
+                .catch(function(error) {
+                    console.error('❌ SW registration failed:', error);
+                    // Show error to user if needed
+                    if (error.name === 'SecurityError') {
+                        console.error('Make sure SW is served over HTTPS or localhost');
+                    }
+                });
+            
+            // Listen for messages from SW
+            navigator.serviceWorker.addEventListener('message', event => {
+                if (event.data && event.data.type === 'SW_UPDATED') {
+                    console.log(`🔄 SW Updated to v${event.data.version}: ${event.data.message}`);
+                    showUpdateNotification(event.data.version);
+                }
+            });
+        });
+        
+        // Update notification functions
+        function showUpdateNotification(version = null) {
+            const notification = document.getElementById('update-notification');
+            const message = document.getElementById('update-message');
+            const reloadBtn = document.getElementById('reload-button');
+            
+            message.textContent = version ? 
+                `Version ${version} available!` : 
+                'New update available!';
+            
+            notification.style.display = 'block';
+            
+            reloadBtn.onclick = () => {
+                if (navigator.serviceWorker.controller) {
+                    // Tell SW to skip waiting
+                    navigator.serviceWorker.controller.postMessage({
+                        type: 'SKIP_WAITING'
+                    });
+                } else {
+                    window.location.reload();
+                }
+            };
+        }
+        
+        function hideUpdateNotification() {
+            document.getElementById('update-notification').style.display = 'none';
+        }
+        
+        // Add CSS for offline state
+        const style = document.createElement('style');
+        style.textContent = `
+            .offline::before {
+                content: '📴 Offline';
+                position: fixed;
+                top: 10px;
+                right: 10px;
+                background: #ff9800;
+                color: white;
+                padding: 5px 10px;
+                border-radius: 4px;
+                font-size: 12px;
+                z-index: 9999;
+            }
+            
+            .offline body {
+                opacity: 0.95;
+            }
+        `;
+        document.head.appendChild(style);
+        
+    } else {
+        console.log('❌ Service Worker not supported');
+        // Show message for browsers without SW support
+        if (!navigator.onLine) {
+            alert('This app requires an internet connection. You are currently offline.');
+        }
+    }
+    // Add this function to check and update unread notifications count
+// Add this function to check and update unread notifications count
+async function updateNotificationBadge() {
+    try {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        if (!currentUser.id) return;
+
+        // Get all broadcasts
+        const broadcastsSnapshot = await db.collection('broadcasts')
+            .orderBy('timestamp', 'desc')
+            .get();
+        
+        let unreadCount = 0;
+        
+        broadcastsSnapshot.forEach(doc => {
+            const broadcast = { id: doc.id, ...doc.data() };
+            
+            // Check if this notification is for the current user
+            const isForUser = 
+                broadcast.target === 'all' || 
+                (broadcast.target === 'specific_user' && broadcast.targetUserId === currentUser.id) ||
+                (broadcast.target === 'specific_phone' && broadcast.targetPhone === currentUser.phone);
+            
+            if (isForUser) {
+                // Check if notification is unread
+                if (!broadcast.readBy || !broadcast.readBy.includes(currentUser.id)) {
+                    unreadCount++;
+                }
+            }
+        });
+        
+        // Update badge
+        const badge = document.getElementById('unreadCount');
+        if (badge) {
+            badge.textContent = unreadCount;
+            badge.style.display = unreadCount > 0 ? 'block' : 'none';
+        }
+    } catch (error) {
+        console.error('Error updating notification badge:', error);
+    }
+}
+
+// Also add a real-time listener for notifications
+function setupNotificationListener() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    if (!currentUser.id) return;
+
+    // Real-time listener for broadcasts
+    db.collection('broadcasts')
+        .orderBy('timestamp', 'desc')
+        .onSnapshot(snapshot => {
+            updateNotificationBadge();
+        });
+}
+
     </script>
 </body>
 </html>
