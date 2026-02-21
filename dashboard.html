@@ -3,16 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>ALIF Medical Quiz Platform</title>
+    <title>ALIF · Bootstrap medical quiz</title>
+    <!-- Bootstrap 5 + Icons + Fonts -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <style>
-        /* ===== COLOR THEME (from dashboard) ===== */
+        * { font-family: 'Inter', sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
+        
         :root {
             --primary: #60a5fa;
             --primary-dark: #3b82f6;
@@ -28,11 +26,9 @@
             --radius: 12px;
             --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             --gradient: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
-            --trial-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            --trial-color: #10b981;
-            --trial-dark: #059669;
         }
-        body.light-mode {
+        
+        .light-mode {
             --background: #f3f4f6;
             --surface: #ffffff;
             --text-primary: #111827;
@@ -40,7 +36,8 @@
             --text-tertiary: #9ca3af;
             --border: #d1d5db;
         }
-        body.dark-mode {
+        
+        .dark-mode {
             --background: #0f172a;
             --surface: #1e293b;
             --text-primary: #f9fafb;
@@ -48,278 +45,156 @@
             --text-tertiary: #6b7280;
             --border: #334155;
         }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            -webkit-touch-callout: none;
-            touch-action: manipulation;
-        }
+
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
             background-color: var(--background);
             color: var(--text-primary);
-            line-height: 1.6;
-            font-size: 16px;
             transition: var(--transition);
             min-height: 100vh;
-            overflow-x: hidden;
-            -webkit-text-size-adjust: 100%;
-            -ms-text-size-adjust: 100%;
-            touch-action: pan-x pan-y;
-        }
-        html, body {
-            overflow-y: auto;
-            height: 100%;
         }
 
-        /* ===== HEADER (same as dashboard) ===== */
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            background: var(--background);
-            border-bottom: 1px solid var(--border);
+        /* Header gradient matching new design */
+        .gradient-header { 
+            background: var(--gradient);
+            color: white; 
             box-shadow: var(--shadow);
         }
-        .header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1.25rem;
-            font-weight: 800;
-            color: var(--primary);
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .logo i {
-            font-size: 1.5rem;
-        }
-        .nav-actions {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-        }
-        .action-btn {
-            background: var(--surface);
-            border: 1px solid var(--border);
+
+        /* Cards matching new design */
+        .subject-card { 
+            background-color: var(--surface); 
+            border: 1px solid var(--border); 
+            transition: var(--transition); 
+            height: 100%; 
+            display: flex; 
+            flex-direction: column; 
             border-radius: var(--radius);
-            padding: 0.5rem;
-            cursor: pointer;
-            transition: var(--transition);
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 500;
-            text-decoration: none;
-            position: relative;
         }
-        .action-btn:hover {
-            background: var(--primary-light);
-            color: var(--primary);
-            border-color: var(--primary-light);
-        }
-        .action-btn.primary {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-        .action-btn.primary:hover {
-            background: var(--primary-dark);
-            border-color: var(--primary-dark);
-        }
-        .notification-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: var(--error);
-            color: white;
-            border-radius: 50%;
-            padding: 0.2rem 0.5rem;
-            font-size: 0.7rem;
-            font-weight: 600;
-            min-width: 18px;
-            height: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        
+        .subject-card:hover { 
+            transform: translateY(-5px); 
+            border-color: var(--primary); 
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
         }
 
-        /* ===== MAIN CONTENT ===== */
-        .main-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 80px 1rem 2rem;
-            overflow-y: visible;
-            height: auto;
+        .quiz-list { 
+            max-height: 270px; 
+            overflow-y: auto; 
+            scrollbar-width: thin; 
         }
-        .page-header {
-            text-align: center;
-            margin-bottom: 2rem;
+        
+        .quiz-list.expanded { 
+            max-height: 700px; 
         }
-        .page-title {
-            font-size: 2rem;
-            font-weight: 800;
-            margin-bottom: 0.5rem;
-            color: var(--primary);
+        
+        .quiz-item { 
+            border-radius: var(--radius); 
+            transition: var(--transition); 
         }
-        .page-subtitle {
-            font-size: 1rem;
-            color: var(--text-secondary);
-            max-width: 600px;
-            margin: 0 auto;
+        
+        .quiz-item:hover { 
+            background-color: rgba(96, 165, 250, 0.1); 
+            transform: translateX(5px); 
         }
-
-        /* ===== YEAR FILTER ===== */
-        .year-filter {
-            margin-bottom: 2rem;
-            overflow-x: auto;
-            padding-bottom: 0.5rem;
+        
+        .quiz-link { 
+            text-decoration: none; 
+            color: var(--text-primary); 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 0.5rem 0.75rem; 
         }
-        .year-filter-container {
-            display: flex;
-            gap: 0.5rem;
-            padding: 0.5rem 0;
+        
+        .quiz-icon { 
+            width: 28px; 
+            height: 28px; 
+            background: var(--surface); 
+            border-radius: 8px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: var(--primary); 
         }
-        .year-btn {
-            padding: 0.5rem 1rem;
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            background: var(--surface);
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: var(--transition);
-            white-space: nowrap;
-            font-weight: 500;
-        }
-        .year-btn.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
+        
+        .quiz-title mark { 
+            background: rgba(96, 165, 250, 0.3); 
+            color: inherit; 
+            padding: 0 2px; 
+            border-radius: 4px; 
         }
 
-        /* ===== YEAR SECTIONS & CARDS ===== */
-        .year-section {
-            margin-bottom: 2rem;
+        .filter-btn { 
+            width: 100%; 
+            text-align: left; 
+            padding: 0.6rem 1rem; 
+            border: none; 
+            background: transparent; 
+            color: var(--text-primary); 
+            border-radius: 30px; 
+            transition: var(--transition); 
         }
-        .year-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        
+        .filter-btn:hover { 
+            background: rgba(96, 165, 250, 0.1); 
+            color: var(--primary); 
+            transform: translateX(4px); 
         }
-        .year-title i {
-            color: var(--primary);
+        
+        .filter-btn.active { 
+            background: var(--gradient); 
+            color: white; 
+            font-weight: 500; 
         }
-        .cards-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 1rem;
-            padding: 0.5rem 0;
+        
+        .filter-count { 
+            background: var(--border); 
+            color: var(--text-secondary); 
+            padding: 0.15rem 0.6rem; 
+            border-radius: 30px; 
+            font-size: 0.75rem; 
         }
-        .quiz-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 0.75rem;
-            transition: var(--transition);
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            position: relative;
-            min-height: 140px;
-        }
-        .quiz-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-            border-color: var(--primary-light);
-        }
-        .quiz-card.locked {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-        .quiz-card.locked::after {
-            content: '\f023';
-            font-family: 'Font Awesome 6 Free';
-            font-weight: 900;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 1.5rem;
-            color: var(--error);
-            opacity: 0.8;
-        }
-        .quiz-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: var(--gradient);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1rem;
-        }
-        .quiz-title {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            line-height: 1.3;
-        }
-        .quiz-meta {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.7rem;
-            color: var(--text-secondary);
-            margin-top: auto;
-        }
-        .quiz-stats {
-            display: flex;
-            gap: 0.5rem;
-            font-size: 0.7rem;
-            color: var(--text-secondary);
-        }
-        .difficulty {
-            display: inline-block;
-            padding: 0.2rem 0.4rem;
-            border-radius: 1rem;
-            font-size: 0.65rem;
-            font-weight: 600;
-        }
-        .difficulty.beginner {
-            background: rgba(34, 197, 94, 0.1);
-            color: var(--success);
-        }
-        .difficulty.intermediate {
-            background: rgba(234, 179, 8, 0.1);
-            color: var(--warning);
-        }
-        .difficulty.advanced {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--error);
+        
+        .filter-btn.active .filter-count { 
+            background: rgba(255,255,255,0.2); 
+            color: white; 
         }
 
-        /* ===== REGISTRATION MODAL (beautiful, same style) ===== */
+        .offcanvas.offcanvas-start { 
+            background-color: var(--surface); 
+            color: var(--text-primary); 
+            width: 280px; 
+        }
+
+        .badge-exam { 
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white; 
+        }
+        
+        .badge-practice { 
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: white; 
+        }
+        
+        .badge-quizlet { 
+            background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+            color: white; 
+        }
+
+        .stat-card { 
+            background: rgba(255,255,255,0.15); 
+            border-radius: 20px; 
+            padding: 0.4rem 1rem; 
+            text-align: center; 
+        }
+        
+        .stat-value { 
+            font-size: 1.6rem; 
+            font-weight: 700; 
+            line-height: 1.2; 
+        }
+
+        /* Modal styles matching new design */
         .modal {
             position: fixed;
             top: 0;
@@ -327,12 +202,12 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(5px);
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 1001;
+            z-index: 9999;
         }
+        
         .modal-content {
             background: var(--surface);
             padding: 2rem;
@@ -343,534 +218,451 @@
             position: relative;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             animation: slideIn 0.3s ease-out;
-            overflow-y: auto;
-            max-height: 80vh;
             border: 1px solid var(--border);
         }
+        
         @keyframes slideIn {
             from { transform: translateY(-50px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
-        .modal-content h2 {
-            margin-bottom: 1rem;
-            color: var(--text-primary);
-            font-size: 2rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-        .modal-content h2 i {
-            color: var(--primary);
-        }
-        .modal-content p {
-            margin-bottom: 2rem;
-            color: var(--text-secondary);
-            font-size: 1rem;
-            line-height: 1.5;
-        }
+        
         .modal-icon {
-            font-size: 4rem;
-            color: var(--primary);
-            margin-bottom: 1rem;
-        }
-        .button-group {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            margin-top: 1.5rem;
-        }
-        .modal-btn {
+            width: 70px;
+            height: 70px;
             background: var(--gradient);
-            color: white;
-            border: none;
-            padding: 0.85rem 2rem;
-            border-radius: var(--radius);
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: var(--transition);
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            border: 1px solid transparent;
-        }
-        .modal-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
-        }
-        .modal-btn.secondary {
-            background: transparent;
-            color: var(--text-primary);
-            border: 1px solid var(--border);
-        }
-        .modal-btn.secondary:hover {
-            background: var(--surface);
-            border-color: var(--primary);
-        }
-
-        /* ===== TRIAL / PREMIUM BADGES ===== */
-        .trial-badge {
-            background: var(--trial-gradient);
-            color: white;
-            padding: 0.3rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            margin-left: 0.5rem;
-            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
-        }
-        .premium-badge {
-            background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
-            color: white;
-            padding: 0.3rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            margin-left: 0.5rem;
-            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
-        }
-        .trial-card {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            border-radius: var(--radius);
-            padding: 1.5rem;
-            margin: 1rem 0;
-            position: relative;
-            overflow: hidden;
-        }
-        .trial-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: var(--trial-gradient);
-        }
-        .trial-header {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 1rem;
-        }
-        .trial-icon {
-            background: var(--trial-gradient);
-            width: 40px;
-            height: 40px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
             color: white;
-            font-size: 1.2rem;
+        }
+        
+        .modal-content h2 {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+        
+        .modal-content p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+        
+        .modal-btn {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            min-width: 120px;
+        }
+        
+        .modal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+        }
+        
+        .modal-btn i {
+            font-size: 1.1rem;
         }
 
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 768px) {
-            .header-container { padding: 0.75rem; }
-            .main-content { padding: 70px 0.75rem 1rem; }
-            .page-title { font-size: 1.75rem; }
-            .year-title { font-size: 1.25rem; }
-            .cards-container { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.75rem; }
-            .quiz-card { min-height: 130px; padding: 0.6rem; }
+        .bg-surface { 
+            background-color: var(--surface) !important; 
         }
-        @media (max-width: 480px) {
-            .cards-container { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
-            .quiz-card { min-height: 120px; }
-            .modal-content { padding: 1.5rem; }
-            .modal-btn { padding: 0.7rem 1rem; }
+        
+        .text-primary-custom { 
+            color: var(--primary) !important; 
         }
-        @media (min-width: 1200px) {
-            .cards-container { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+        
+        .border-custom { 
+            border-color: var(--border) !important; 
         }
     </style>
 </head>
 <body class="dark-mode">
-    <!-- ===== REGISTRATION MODAL (shown if user not registered) ===== -->
-    <div id="registerModal" class="modal" style="display: none;">
+    <!-- Registration Required Modal -->
+    <div id="registerModal" class="modal" style="display: flex;">
         <div class="modal-content">
             <div class="modal-icon">
                 <i class="fas fa-user-lock"></i>
             </div>
-            <h2><i class="fas fa-stethoscope"></i> ALIF</h2>
-            <p><strong>Registration required</strong><br>You need to register or log in to access the medical quiz platform. It only takes a minute.</p>
-            <div class="button-group">
-                <button class="modal-btn secondary" id="stayModalBtn"><i class="fas fa-times"></i> Stay</button>
-                <button class="modal-btn" id="registerModalBtn"><i class="fas fa-arrow-right"></i> Register / Login</button>
-            </div>
+            <h2>Registration Required</h2>
+            <p>You need to register first to access the medical quiz platform. Create an account to unlock all features and track your progress.</p>
+            <button class="modal-btn" id="goToRegisterBtn">
+                <i class="fas fa-user-plus"></i> Register Now
+            </button>
         </div>
     </div>
 
-    <!-- ===== HEADER (identical to dashboard) ===== -->
-    <header class="header">
-        <div class="header-container">
-            <div class="logo" id="logoBtn">
-                <i class="fas fa-stethoscope"></i>
-                <span>ALIF</span>
-                <span id="headerTrialBadge" class="trial-badge" style="display: none;"><i class="fas fa-crown"></i> TRIAL</span>
-                <span id="headerPremiumBadge" class="premium-badge" style="display: none;"><i class="fas fa-star"></i> PREMIUM</span>
+    <!-- Main Content (Initially Hidden) -->
+    <div id="mainApp" style="display: none;">
+        <div class="container-lg py-3 py-md-4">
+            <!-- Header with stats -->
+            <div class="gradient-header rounded-4 p-4 p-md-5 mb-4 position-relative overflow-hidden">
+                <div class="position-relative z-1 d-flex flex-wrap align-items-center justify-content-between gap-3">
+                    <div class="d-flex align-items-center gap-3" id="logoHome" style="cursor:pointer;">
+                        <div class="bg-white bg-opacity-25 rounded-3 p-3 fs-2"><i class="fas fa-stethoscope"></i></div>
+                        <div><h1 class="display-6 fw-bold mb-0">ALIF medical</h1><p class="mb-0 opacity-75">smart · adaptive · bootstrap</p></div>
+                    </div>
+                    <div class="d-flex gap-3" id="statsDisplay"></div>
+                </div>
             </div>
-            <div class="nav-actions">
-                <button class="action-btn" id="themeToggle">
-                    <i class="fas fa-sun"></i>
+
+            <!-- Mobile filter bar + offcanvas toggle -->
+            <div class="d-flex d-lg-none align-items-center gap-3 mb-4">
+                <button class="btn btn-outline-secondary d-flex align-items-center gap-2 py-2 px-4 rounded-pill" type="button" data-bs-toggle="offcanvas" data-bs-target="#subjectOffcanvas" aria-controls="subjectOffcanvas">
+                    <i class="fas fa-sliders-h"></i> Subjects filter
                 </button>
-                <button class="action-btn" id="notificationsBtn">
-                    <i class="fas fa-bell"></i>
-                    <span class="notification-badge" id="unreadCount" style="display: none;">0</span>
-                </button>
-                <button id="profileBtn" class="action-btn primary">
-                    <i class="fas fa-user"></i>
-                </button>
-                <button id="adminBtn" class="action-btn primary" style="display: none;">
-                    <i class="fas fa-cog"></i>
-                </button>
-                <a href="#" id="logout" class="action-btn">
-                    <i class="fas fa-sign-out-alt"></i>
-                </a>
+                <span class="text-secondary small" id="mobileActiveFilter">All subjects</span>
             </div>
-        </div>
-    </header>
 
-    <!-- ===== MAIN CONTENT (only visible if registered) ===== -->
-    <main id="mainContent" class="main-content" style="display: none;">
-        <div class="page-header">
-            <h1 class="page-title">Medical Quiz Platform</h1>
-            <p class="page-subtitle">Test your medical knowledge with our comprehensive quiz collection</p>
-        </div>
-
-        <!-- Free Trial Card (dynamic) -->
-        <div id="trialCard" class="trial-card" style="display: none;">
-            <div class="trial-header">
-                <div class="trial-icon"><i class="fas fa-crown"></i></div>
-                <div class="trial-title">Free Trial Active</div>
+            <!-- Offcanvas (mobile sidebar) -->
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="subjectOffcanvas" aria-labelledby="offcanvasLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title fw-bold" id="offcanvasLabel"><i class="fas fa-filter me-2"></i>Subjects</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <ul class="list-unstyled" id="drawerSubjectsList"></ul>
+                </div>
             </div>
-            <div class="trial-content">
-                <p>You have full access to all programs during your trial period. Your trial ends in:</p>
-                <div class="trial-timer" id="activeTrialTimer">72:00:00</div>
-                <p>Upgrade to keep your access after the trial ends.</p>
-            </div>
-            <div class="trial-actions">
-                <button class="trial-btn" id="upgradeBtn"><i class="fas fa-rocket"></i> Upgrade Now</button>
-                <button class="trial-btn secondary" id="viewProgramsBtn"><i class="fas fa-book-medical"></i> View All Programs</button>
-            </div>
-        </div>
 
-        <div class="year-filter">
-            <div class="year-filter-container">
-                <button class="year-btn active" data-year="all">All</button>
-                <button class="year-btn" data-year="1"><i class="fas fa-book-medical"></i> PRE-MED</button>
-                <button class="year-btn" data-year="2"><i class="fas fa-book-medical"></i> INTRODUCTION-MED</button>
-                <button class="year-btn" data-year="3"><i class="fas fa-book-medical"></i> METABOLISM</button>
-                <button class="year-btn" data-year="4"><i class="fas fa-book-medical"></i> HEMATOLOGY</button>
-                <button class="year-btn" data-year="5"><i class="fas fa-book-medical"></i> CVS</button>
-                <button class="year-btn" data-year="6"><i class="fas fa-book-medical"></i> RESPIRATORY</button>
-                <button class="year-btn" data-year="7"><i class="fas fa-book-medical"></i> MUSCULOSKELETAL</button>
+            <!-- Search + theme toggle row -->
+            <div class="row g-3 align-items-center mb-4">
+                <div class="col-md-7 col-lg-6">
+                    <div class="input-group rounded-pill bg-surface border border-custom">
+                        <span class="input-group-text bg-transparent border-0 text-secondary"><i class="fas fa-search"></i></span>
+                        <input type="text" class="form-control bg-transparent border-0 ps-0" id="smartSearch" placeholder="Search quizzes, topics, years...">
+                    </div>
+                </div>
+                <div class="col-md-5 col-lg-6 text-md-end">
+                    <button class="btn btn-outline-secondary rounded-pill px-4 py-2" id="themeToggle">
+                        <i class="fas fa-sun"></i><span class="ms-2">Dark Mode</span>
+                    </button>
+                </div>
             </div>
-        </div>
 
-        <!-- Year Sections (populated dynamically) -->
-        <section class="year-section" data-year="1"><h2 class="year-title"><i class="fas fa-book-medical"></i> PRE-MED</h2><div class="cards-container"></div></section>
-        <section class="year-section" data-year="2"><h2 class="year-title"><i class="fas fa-book-medical"></i> INTRODUCTION-MED</h2><div class="cards-container"></div></section>
-        <section class="year-section" data-year="3"><h2 class="year-title"><i class="fas fa-book-medical"></i> METABOLISM</h2><div class="cards-container"></div></section>
-        <section class="year-section" data-year="4"><h2 class="year-title"><i class="fas fa-book-medical"></i> HEMATOLOGY</h2><div class="cards-container"></div></section>
-        <section class="year-section" data-year="5"><h2 class="year-title"><i class="fas fa-book-medical"></i> CVS</h2><div class="cards-container"></div></section>
-        <section class="year-section" data-year="6"><h2 class="year-title"><i class="fas fa-book-medical"></i> RESPIRATORY</h2><div class="cards-container"></div></section>
-        <section class="year-section" data-year="7"><h2 class="year-title"><i class="fas fa-book-medical"></i> MUSCULOSKELETAL</h2><div class="cards-container"></div></section>
-    </main>
+            <!-- main grid -->
+            <div class="row g-4">
+                <!-- desktop sidebar -->
+                <aside class="col-lg-3 d-none d-lg-block">
+                    <div class="bg-surface p-4 rounded-4 border border-custom sticky-top" style="top:1rem;">
+                        <h5 class="fw-bold mb-3 text-primary-custom"><i class="fas fa-filter me-2"></i>Subjects</h5>
+                        <ul class="list-unstyled" id="sidebarSubjectsList"></ul>
+                    </div>
+                </aside>
 
-    <!-- Access Denied Modal (for verification issues) -->
-    <div id="accessDeniedModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <h2><i class="fas fa-lock"></i> Access Denied</h2>
-            <p id="deniedMessage"></p>
-            <button class="modal-btn" id="closeDeniedBtn">OK</button>
+                <!-- quiz cards column -->
+                <main class="col-lg-9">
+                    <div class="row g-4" id="subjectsGrid"></div>
+                    <!-- no results row -->
+                    <div class="row" id="noResultsRow" style="display: none;">
+                        <div class="col-12">
+                            <div class="bg-surface p-5 rounded-4 text-center border border-custom">
+                                <i class="fas fa-search fs-1 text-secondary"></i>
+                                <p class="mt-3 text-secondary">No matching quizzes — try another term</p>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+
+            <!-- footer -->
+            <footer class="text-center text-secondary border-top border-custom mt-5 pt-4">
+                <p>ALIF · bootstrap medical quiz · data from JSON</p>
+            </footer>
         </div>
     </div>
 
+    <!-- Bootstrap bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         (function() {
-            // ---------- FIREBASE INIT (replace with your config if needed) ----------
-            const firebaseConfig = {
-                apiKey: "YOUR_API_KEY",
-                authDomain: "YOUR_AUTH_DOMAIN",
-                projectId: "YOUR_PROJECT_ID",
-                storageBucket: "YOUR_STORAGE_BUCKET",
-                messagingSenderId: "YOUR_SENDER_ID",
-                appId: "YOUR_APP_ID"
-            };
-            // Initialize Firebase if not already
-            if (!firebase.apps.length) {
-                firebase.initializeApp(firebaseConfig);
-            }
-            const db = firebase.firestore();
-
-            // ---------- QUIZ DATA (same as dashboard) ----------
-            const quizData = {
-                1: [
-                    { id: 6, title: "Organic Chemistry", icon: "fas fa-brain", questions: 30, time: 25, difficulty: "intermediate", rating: 4.6, page: "year2/human-anatomy.html" },
-                    { id: 7, title: "ENTREPRENUERSHIP", icon: "fas fa-heartbeat", questions: 25, time: 20, difficulty: "intermediate", rating: 4.5, page: "year2/physiology-i.html" },
-                    { id: 8, title: "ECONOMICS", icon: "fas fa-microscope", questions: 20, time: 15, difficulty: "intermediate", rating: 4.3, page: "year2/histology.html" },
-                    { id: 9, title: "CIVIC", icon: "fas fa-flask", questions: 28, time: 22, difficulty: "intermediate", rating: 4.4, page: "year2/biochemistry-ii.html" }
-                ],
-                2: [
-                    { id: 4, title: "Pathology", icon: "fas fa-flask", questions: 400, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/pt.html" },
-                    { id: 5, title: "Pharmacology", icon: "fas fa-heartbeat", questions: 400, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/pc.html" },
-                    { id: 6, title: "PCD", icon: "fas fa-heartbeat", questions: 150, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/pcd.html" },
-                    { id: 7, title: "PARASITOLOGY", icon: "fas fa-heartbeat", questions: 180, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/pr.html" },
-                    { id: 8, title: "immunology", icon: "fas fa-heartbeat", questions: 235, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/im.html" },
-                    { id: 9, title: "Microbiology", icon: "fas fa-heartbeat", questions: 320, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/micro.html" },
-                    { id: 1, title: "Anatomy", icon: "fas fa-brain", questions: 700, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/an.html" },
-                    { id: 2, title: "Physiology", icon: "fas fa-microscope", questions: 600, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/ps.html" },
-                    { id: 3, title: "Biochemistry", icon: "fas fa-book", questions: 800, time: 30, difficulty: "intermediate", rating: 4.8, page: "yr1/bc.html" }
-                ],
-                3: [
-                    { id: 13, title: "Metabolism Final Exam 2017", icon: "fas fa-dna", questions: 87, time: 172, difficulty: "intermediate", rating: 4.4, page: "yr3/meta2017.html" },
-                    { id: 10, title: "Metabolism Final Exam 2016", icon: "fas fa-virus", questions: 54, time: 108, difficulty: "intermediate", page: "yr3/meta2016.html", rating: 4.7 },
-                    { id: 11, title: "Metabolism Final Exam 2015", icon: "fas fa-pills", questions: 57, time: 114, difficulty: "intermediate", rating: 4.6, page: "yr3/meta2015.html" },
-                    { id: 12, title: "Metabolism Final Exam 2014", icon: "fas fa-bacteria", questions: 140, time: 280, difficulty: "intermediate", rating: 4.5, page: "yr3/meta2014.html" },
-                    { id: 14, title: "SPH & Other Metabolism Practice Questions", icon: "fas fa-bacteria", questions: 700, time: 280, difficulty: "intermediate", rating: 4.5, page: "yr3/meta.html" }
-                ],
-                4: [
-                    { id: 14, title: "Anatomy", icon: "fas fa-stethoscope", questions: 40, time: 35, difficulty: "advanced", rating: 4.8, page: "year4/clinical-medicine-i.html" },
-                    { id: 15, title: "Physiology", icon: "fas fa-syringe", questions: 35, time: 30, difficulty: "advanced", rating: 4.7, page: "year4/surgery-basics.html" },
-                    { id: 16, title: "Pharmacology", icon: "fas fa-pills", questions: 38, time: 32, difficulty: "advanced", rating: 4.6, page: "year4/pharmacology-ii.html" },
-                    { id: 17, title: "Pathology", icon: "fas fa-virus", questions: 42, time: 35, difficulty: "advanced", rating: 4.7, page: "year4/pathology-ii.html" }
-                ],
-                5: [
-                    { id: 18, title: "Anatomy", icon: "fas fa-stethoscope", questions: 45, time: 40, difficulty: "advanced", rating: 4.8, page: "year5/internal-medicine.html" },
-                    { id: 19, title: "Physiology", icon: "fas fa-syringe", questions: 40, time: 35, difficulty: "advanced", rating: 4.7, page: "year5/surgery.html" },
-                    { id: 20, title: "Pharma", icon: "fas fa-baby", questions: 38, time: 32, difficulty: "advanced", rating: 4.6, page: "year5/pediatrics.html" },
-                    { id: 21, title: "Pathology", icon: "fas fa-female", questions: 42, time: 35, difficulty: "advanced", rating: 4.7, page: "year5/obstetrics-gynecology.html" }
-                ],
-                6: [
-                    { id: 22, title: "Anatomy", icon: "fas fa-hospital-user", questions: 50, time: 45, difficulty: "advanced", rating: 4.9, page: "year6/clinical-rotations-i.html" },
-                    { id: 23, title: "Physiology", icon: "fas fa-ambulance", questions: 45, time: 40, difficulty: "advanced", rating: 4.8, page: "year6/emergency-medicine.html" },
-                    { id: 24, title: "Pharma", icon: "fas fa-brain", questions: 40, time: 35, difficulty: "advanced", rating: 4.7, page: "year6/psychiatry.html" },
-                    { id: 25, title: "Patho", icon: "fas fa-x-ray", questions: 38, time: 32, difficulty: "advanced", rating: 4.6, page: "year6/radiology.html" }
-                ],
-                7: [
-                    { id: 26, title: "Anatomy", icon: "fas fa-hospital-user", questions: 55, time: 50, difficulty: "advanced", rating: 4.9, page: "year7/clinical-rotations-ii.html" },
-                    { id: 27, title: "Physiology", icon: "fas fa-stethoscope", questions: 50, time: 45, difficulty: "advanced", rating: 4.8, page: "year7/specialty-medicine.html" },
-                    { id: 28, title: "Pharma", icon: "fas fa-balance-scale", questions: 35, time: 30, difficulty: "advanced", rating: 4.7, page: "year7/medical-ethics.html" },
-                    { id: 29, title: "Patho", icon: "fas fa-graduation-cap", questions: 60, time: 55, difficulty: "advanced", rating: 4.9, page: "year7/board-exam-prep.html" }
-                ]
+            // Check if user is registered
+            const checkUserRegistration = () => {
+                // Check for registered user in localStorage
+                const registeredUser = localStorage.getItem('medicalUser');
+                const currentUser = localStorage.getItem('currentUser');
+                
+                return !!(registeredUser || currentUser);
             };
 
-            // ---------- CHECK REGISTRATION FIRST ----------
-            const currentUser = localStorage.getItem('currentUser');
+            // Handle registration modal
             const registerModal = document.getElementById('registerModal');
-            const mainContent = document.getElementById('mainContent');
+            const mainApp = document.getElementById('mainApp');
+            const goToRegisterBtn = document.getElementById('goToRegisterBtn');
 
-            function checkRegistration() {
-                if (!currentUser) {
-                    // Show registration modal, hide main content
-                    registerModal.style.display = 'flex';
-                    mainContent.style.display = 'none';
-                } else {
-                    try {
-                        const user = JSON.parse(currentUser);
-                        if (user && user.status === 'verified') {
-                            registerModal.style.display = 'none';
-                            mainContent.style.display = 'block';
-                            initAuthenticatedApp(user);
-                        } else {
-                            // Unverified or invalid user → show modal as well
-                            registerModal.style.display = 'flex';
-                            mainContent.style.display = 'none';
-                        }
-                    } catch (e) {
-                        registerModal.style.display = 'flex';
-                        mainContent.style.display = 'none';
-                    }
-                }
-            }
-
-            // Modal buttons
-            document.getElementById('registerModalBtn').addEventListener('click', () => {
-                window.location.href = 'register.html';
-            });
-            document.getElementById('stayModalBtn').addEventListener('click', () => {
+            // Check if user is registered
+            if (checkUserRegistration()) {
+                // User is registered, hide modal and show app
                 registerModal.style.display = 'none';
-                // Optionally, you could do nothing or keep modal hidden until reload
-            });
-
-            // ---------- AUTHENTICATED APP (only runs if user is verified) ----------
-            async function initAuthenticatedApp(user) {
-                // Theme toggle
-                const themeToggle = document.getElementById('themeToggle');
-                const loadThemePreference = () => {
-                    const savedTheme = localStorage.getItem('theme');
-                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                    if (savedTheme === 'light') {
-                        document.body.classList.remove('dark-mode');
-                        document.body.classList.add('light-mode');
-                        themeToggle.querySelector('i').className = 'fas fa-moon';
-                    } else if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-                        document.body.classList.remove('light-mode');
-                        document.body.classList.add('dark-mode');
-                        themeToggle.querySelector('i').className = 'fas fa-sun';
-                    }
-                };
-                themeToggle.addEventListener('click', () => {
-                    if (document.body.classList.contains('dark-mode')) {
-                        document.body.classList.remove('dark-mode');
-                        document.body.classList.add('light-mode');
-                        themeToggle.querySelector('i').className = 'fas fa-moon';
-                        localStorage.setItem('theme', 'light');
-                    } else {
-                        document.body.classList.remove('light-mode');
-                        document.body.classList.add('dark-mode');
-                        themeToggle.querySelector('i').className = 'fas fa-sun';
-                        localStorage.setItem('theme', 'dark');
-                    }
-                });
-                loadThemePreference();
-
-                // Badges & trial UI (simplified)
-                const headerTrialBadge = document.getElementById('headerTrialBadge');
-                const headerPremiumBadge = document.getElementById('headerPremiumBadge');
-                const trialCard = document.getElementById('trialCard');
-
-                if (user.plan === 'trial') {
-                    headerTrialBadge.style.display = 'inline-flex';
-                    headerPremiumBadge.style.display = 'none';
-                    trialCard.style.display = 'block';
-                    // Start trial countdown (simplified)
-                    let trialEnd = user.trialEndDate || (Date.now() + 72*60*60*1000);
-                    const timerEl = document.getElementById('activeTrialTimer');
-                    setInterval(() => {
-                        const remaining = Math.max(0, trialEnd - Date.now());
-                        const hours = Math.floor(remaining / (1000*60*60));
-                        const mins = Math.floor((remaining % (1000*60*60)) / (1000*60));
-                        const secs = Math.floor((remaining % (1000*60)) / 1000);
-                        timerEl.textContent = `${hours.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
-                    }, 1000);
-                } else if (user.plan === 'premium') {
-                    headerPremiumBadge.style.display = 'inline-flex';
-                    headerTrialBadge.style.display = 'none';
-                    trialCard.style.display = 'none';
-                }
-
-                // Admin button
-                if (user.role === 'admin') {
-                    const adminBtn = document.getElementById('adminBtn');
-                    adminBtn.style.display = 'inline-flex';
-                    adminBtn.addEventListener('click', () => window.location.href = 'admin/index.html');
-                }
-
-                // Render quiz cards
-                function renderQuizCards() {
-                    const userYears = user.registeredYears || [];
-                    const isTrialExpired = (user.plan === 'trial' && user.trialEndDate && Date.now() > user.trialEndDate);
-                    let effectiveYears = userYears;
-                    if (user.plan === 'premium' || (user.plan === 'trial' && !isTrialExpired)) {
-                        effectiveYears = ['1','2','3','4','5','6','7'];
-                    }
-
-                    for (let y = 1; y <= 7; y++) {
-                        const container = document.querySelector(`.year-section[data-year="${y}"] .cards-container`);
-                        if (!container) continue;
-                        container.innerHTML = '';
-                        if (quizData[y]) {
-                            quizData[y].forEach(quiz => {
-                                const card = document.createElement('div');
-                                card.className = 'quiz-card';
-                                card.dataset.year = y.toString();
-                                if (user.plan === 'trial' && !isTrialExpired) card.classList.add('trial');
-                                card.innerHTML = `
-                                    <div class="quiz-icon"><i class="${quiz.icon}"></i></div>
-                                    <h3 class="quiz-title">${quiz.title}</h3>
-                                    <div class="quiz-meta"><span>${quiz.questions} Qs</span><span>${quiz.time} min</span></div>
-                                    <div class="quiz-stats">
-                                        <span class="difficulty ${quiz.difficulty}">${quiz.difficulty}</span>
-                                        <div class="stat"><i class="fas fa-star"></i><span>${quiz.rating}</span></div>
-                                    </div>
-                                `;
-                                const hasAccess = effectiveYears.includes(y.toString()) && user.status === 'verified';
-                                if (!hasAccess) card.classList.add('locked');
-                                card.addEventListener('click', (e) => {
-                                    if (!hasAccess) {
-                                        showAccessDeniedModal(userYears, y.toString());
-                                        return;
-                                    }
-                                    window.location.href = quiz.page;
-                                });
-                                container.appendChild(card);
-                            });
-                        }
-                    }
-                }
-
-                // Access denied modal
-                function showAccessDeniedModal(registeredYears, requestedYear) {
-                    const yearNames = {1:'Pre Med',2:'Intro Med',3:'Meta',4:'Hema',5:'CVS',6:'RESPA',7:'Musclo'};
-                    const programNames = registeredYears.map(y => yearNames[y] || `Year ${y}`);
-                    const requested = yearNames[requestedYear] || `Year ${requestedYear}`;
-                    const msg = `You are registered for: ${programNames.join(', ')}. To access ${requested}, add it in your profile.`;
-                    document.getElementById('deniedMessage').textContent = msg;
-                    document.getElementById('accessDeniedModal').style.display = 'flex';
-                }
-                document.getElementById('closeDeniedBtn').addEventListener('click', () => {
-                    document.getElementById('accessDeniedModal').style.display = 'none';
-                });
-
-                // Year filter
-                const yearButtons = document.querySelectorAll('.year-btn');
-                const yearSections = document.querySelectorAll('.year-section');
-                function applyYearFilter(year) {
-                    yearButtons.forEach(btn => btn.classList.remove('active'));
-                    const activeBtn = document.querySelector(`.year-btn[data-year="${year}"]`);
-                    if (activeBtn) activeBtn.classList.add('active');
-                    yearSections.forEach(section => {
-                        section.style.display = (year === 'all' || section.dataset.year === year) ? 'block' : 'none';
-                    });
-                    localStorage.setItem('activeYearFilter', year);
-                }
-                yearButtons.forEach(btn => {
-                    btn.addEventListener('click', () => applyYearFilter(btn.dataset.year));
-                });
-
-                // Initial render
-                renderQuizCards();
-                const savedFilter = localStorage.getItem('activeYearFilter') || 'all';
-                applyYearFilter(savedFilter);
-
-                // Navigation
-                document.getElementById('profileBtn').addEventListener('click', () => window.location.href = 'profile.html');
-                document.getElementById('logoBtn').addEventListener('click', () => window.scrollTo({top:0,behavior:'smooth'}));
-                document.getElementById('notificationsBtn').addEventListener('click', () => window.location.href = 'notifications.html');
-                // Logout (simplified)
-                document.getElementById('logout').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    localStorage.clear();
+                mainApp.style.display = 'block';
+                initializeApp();
+            } else {
+                // User is not registered, show modal and hide app
+                registerModal.style.display = 'flex';
+                mainApp.style.display = 'none';
+                
+                // Redirect to register page when button is clicked
+                goToRegisterBtn.addEventListener('click', () => {
                     window.location.href = 'register.html';
                 });
-                // Upgrade / view programs (simplified)
-                document.getElementById('upgradeBtn')?.addEventListener('click', () => {
-                    alert('Upgrade flow – redirect to payment page.');
-                });
-                document.getElementById('viewProgramsBtn')?.addEventListener('click', () => {
-                    document.querySelector('.year-filter').scrollIntoView({behavior:'smooth'});
-                });
             }
 
-            // Start: check registration immediately
-            checkRegistration();
+            // App initialization function
+            function initializeApp() {
+                // ---------- JSON master data ----------
+                const quizData = [
+                    { subject: "embryology", icon: "fas fa-egg", display: "Embryology", quizzes: [
+                        { title: "Embryology Practice 1", href: "quiz.html", qCount: 30, type: "practice" },
+                        { title: "Embryology Practice 2", href: "2.html", qCount: 25, type: "practice" },
+                        { title: "Embryology Exam 2014", href: "equiz3.html", qCount: 50, type: "exam" },
+                        { title: "Embryology Quizlet 1", href: "embryoquizlets1.html", qCount: 40, type: "quizlet" },
+                        { title: "Embryology Quizlet 2", href: "embryoquizlets2.html", qCount: 35, type: "quizlet" },
+                        { title: "Embryology Quizlet 3", href: "embryoquizlets3.html", qCount: 45, type: "quizlet" }
+                    ] },
+                    { subject: "anatomy", icon: "fas fa-bone", display: "Anatomy", quizzes: [
+                        { title: "JU Anatomy Exam 2013", href: "anatomy2013.html", qCount: 60, type: "exam" },
+                        { title: "JU Anatomy Exam 2014", href: "anatomy2014.html", qCount: 55, type: "exam" },
+                        { title: "JU Anatomy Exam 2016", href: "anatomy2016.html", qCount: 40, type: "exam" },
+                        { title: "Anatomy Exam 2014", href: "anatquiz1.html", qCount: 50, type: "exam" },
+                        { title: "CVS Anatomy 1", href: "anatomycvs1.html", qCount: 30, type: "practice" },
+                        { title: "CVS Anatomy 2", href: "anatomycvs2.html", qCount: 35, type: "practice" },
+                        { title: "Anatomy Dhaba", href: "anatomydhaba.html", qCount: 25, type: "practice" },
+                        { title: "Anatomy Introduction", href: "anatomyintro1.html", qCount: 20, type: "practice" },
+                        { title: "NS Medicoinfo", href: "anatomymedicoinfo1.html", qCount: 40, type: "quizlet" },
+                        { title: "NS DILAB Part 1", href: "anatomynsdilabpart1.html", qCount: 30, type: "quizlet" },
+                        { title: "NS Full Topic 1", href: "anatomynsfultopic1.html", qCount: 45, type: "quizlet" },
+                        { title: "NS Full Topic 2", href: "anatomynsfultopic2.html", qCount: 40, type: "quizlet" },
+                        { title: "NS Part 1", href: "anatomynspart1.html", qCount: 35, type: "quizlet" },
+                        { title: "NS Part 2", href: "anatomynspart2.html", qCount: 35, type: "quizlet" },
+                        { title: "NS Part 3", href: "anatomynspart3.html", qCount: 35, type: "quizlet" },
+                        { title: "NS Part 4", href: "anatomynspart4.html", qCount: 35, type: "quizlet" },
+                        { title: "Skeletal Anatomy 1", href: "anatomyskeletal1.html", qCount: 40, type: "practice" },
+                        { title: "CVS Quizlet 1", href: "cvsquizlets1.html", qCount: 25, type: "quizlet" },
+                        { title: "Simple CVS", href: "cvsquizlets2.html", qCount: 20, type: "quizlet" },
+                        { title: "Medium CVS", href: "cvsquizlets3.html", qCount: 30, type: "quizlet" },
+                        { title: "Challenging CVS", href: "cvsquizlets4.html", qCount: 35, type: "quizlet" },
+                        { title: "Master NS Part 1", href: "masterplexus.html", qCount: 50, type: "quizlet" }
+                    ] },
+                    { subject: "physiology", icon: "fas fa-heartbeat", display: "Physiology", quizzes: [
+                        { title: "Physiology NS 1", href: "physions1.html", qCount: 40, type: "quizlet" },
+                        { title: "Physiology NS 2", href: "physions2.html", qCount: 35, type: "quizlet" },
+                        { title: "Physiology NS 3", href: "physions3.html", qCount: 45, type: "quizlet" },
+                        { title: "Physiology Exam 2016", href: "PHYSIO2016.html", qCount: 50, type: "exam" },
+                        { title: "Physiology Unique 2015-2016", href: "PHYSIOuniqueto 2015 and 2016.html", qCount: 30, type: "exam" }
+                    ] },
+                    { subject: "biochemistry", icon: "fas fa-flask", display: "Biochemistry", quizzes: [
+                        { title: "Biochemistry Enzymes 1", href: "biochemEN1.html", qCount: 30, type: "practice" },
+                        { title: "Biochemistry Enzymes 2", href: "biochemEN2.html", qCount: 28, type: "practice" },
+                        { title: "Enzymes Concept 3", href: "biochemENCONC3.html", qCount: 25, type: "practice" },
+                        { title: "Enzymes Concept 4", href: "biochemENCONC4.html", qCount: 25, type: "practice" },
+                        { title: "Enzymes Concept 5", href: "biochemENCONC5.html", qCount: 25, type: "practice" },
+                        { title: "Enzymes Page 24", href: "biochemEpage24.html", qCount: 15, type: "exam" },
+                        { title: "Enzymes Page 24.1", href: "biochemEpage24.1.html", qCount: 15, type: "exam" },
+                        { title: "Enzymes Page 50", href: "biochemEpage50.html", qCount: 20, type: "exam" },
+                        { title: "Nucleic Acids 1", href: "biochemNA1.html", qCount: 35, type: "quizlet" },
+                        { title: "Nucleic Acids 2", href: "biochemNA2.html", qCount: 30, type: "quizlet" },
+                        { title: "Nucleic Acids 3", href: "biochemNA3.html", qCount: 25, type: "quizlet" },
+                        { title: "Carbohydrates 1", href: "biochemcarbohydrate1.html", qCount: 30, type: "practice" },
+                        { title: "Carbohydrates 2", href: "biochemcarbohydrate2.html", qCount: 30, type: "practice" },
+                        { title: "Carbohydrates 60", href: "BIOcarbohydrate60.html", qCount: 60, type: "practice" },
+                        { title: "Chatterjea Carbohydrates", href: "chatterjeacarbohydrate.html", qCount: 40, type: "quizlet" },
+                        { title: "Proteins 1", href: "biochemprotein1.html", qCount: 35, type: "quizlet" },
+                        { title: "Proteins 2", href: "biochemprotein2.html", qCount: 30, type: "quizlet" },
+                        { title: "Proteins 3", href: "biochemprotein3.html", qCount: 28, type: "quizlet" },
+                        { title: "Proteins 4", href: "biochemprotein4.html", qCount: 25, type: "quizlet" },
+                        { title: "Proteins 5", href: "biochemprotein5.html", qCount: 30, type: "quizlet" },
+                        { title: "Proteins 6", href: "biochemprotein6.html", qCount: 30, type: "quizlet" },
+                        { title: "Proteins 7", href: "biochemprotein7.html", qCount: 30, type: "quizlet" },
+                        { title: "Proteins 8", href: "biochemprotein8.html", qCount: 30, type: "quizlet" },
+                        { title: "Proteins 9", href: "biochemprotein9.html", qCount: 30, type: "quizlet" }
+                    ] },
+                    { subject: "histopathology", icon: "fas fa-microscope", display: "Histopathology", quizzes: [
+                        { title: "Histopathology Quiz 1", href: "histoquiz1.html", qCount: 25, type: "practice" }
+                    ] },
+                    { subject: "renal", icon: "fas fa-tint", display: "Renal", quizzes: [
+                        { title: "Renal Physiology Quiz", href: "renal.html", qCount: 30, type: "practice" }
+                    ] }
+                ];
 
-            // Also listen for storage changes (if user logs in elsewhere)
-            window.addEventListener('storage', (e) => {
-                if (e.key === 'currentUser') {
-                    checkRegistration();
+                // stats
+                const totalQuizzes = quizData.reduce((acc, s) => acc + s.quizzes.length, 0);
+                const totalQuestions = quizData.reduce((acc, s) => acc + s.quizzes.reduce((qacc, q) => qacc + q.qCount, 0), 0);
+                document.getElementById('statsDisplay').innerHTML = `
+                    <div class="stat-card"><div class="stat-value">${totalQuizzes}</div><div class="small">Quizzes</div></div>
+                    <div class="stat-card"><div class="stat-value">${totalQuestions}+</div><div class="small">Questions</div></div>
+                    <div class="stat-card"><div class="stat-value">${quizData.length}</div><div class="small">Subjects</div></div>
+                `;
+
+                let currentFilter = 'all';
+                let currentSearch = '';
+
+                // helpers
+                function setFilter(filter) {
+                    currentFilter = filter;
+                    renderAllFilters();
+                    renderCards();
+                    const subj = quizData.find(s => s.subject === filter);
+                    document.getElementById('mobileActiveFilter').innerText = !filter || filter==='all' ? 'All subjects' : (subj?.display || filter);
+                    const offcanvasEl = document.getElementById('subjectOffcanvas');
+                    const bsOffcanvas = bootstrap.Offcanvas.getInstance(offcanvasEl);
+                    if (bsOffcanvas) bsOffcanvas.hide();
                 }
-            });
+
+                // render filter lists
+                function renderAllFilters() {
+                    const allCount = quizData.reduce((acc, s) => acc + s.quizzes.length, 0);
+                    let html = `<li class="mb-2"><button class="filter-btn d-flex align-items-center ${currentFilter==='all'?'active':''}" data-filter="all"><i class="fas fa-th me-2"></i> All subjects <span class="filter-count ms-auto">${allCount}</span></button></li>`;
+                    quizData.forEach(s => {
+                        html += `<li class="mb-2"><button class="filter-btn d-flex align-items-center ${currentFilter===s.subject?'active':''}" data-filter="${s.subject}"><i class="${s.icon} me-2"></i> ${s.display} <span class="filter-count ms-auto">${s.quizzes.length}</span></button></li>`;
+                    });
+                    document.getElementById('sidebarSubjectsList').innerHTML = html;
+                    document.querySelectorAll('#sidebarSubjectsList .filter-btn').forEach(btn => {
+                        btn.addEventListener('click', () => setFilter(btn.dataset.filter));
+                    });
+
+                    let drawerHtml = `<li class="mb-2"><button class="filter-btn d-flex align-items-center ${currentFilter==='all'?'active':''}" data-filter="all"><i class="fas fa-th me-2"></i> All subjects <span class="filter-count ms-auto">${allCount}</span></button></li>`;
+                    quizData.forEach(s => {
+                        drawerHtml += `<li class="mb-2"><button class="filter-btn d-flex align-items-center ${currentFilter===s.subject?'active':''}" data-filter="${s.subject}"><i class="${s.icon} me-2"></i> ${s.display} <span class="filter-count ms-auto">${s.quizzes.length}</span></button></li>`;
+                    });
+                    document.getElementById('drawerSubjectsList').innerHTML = drawerHtml;
+                    document.querySelectorAll('#drawerSubjectsList .filter-btn').forEach(btn => {
+                        btn.addEventListener('click', () => setFilter(btn.dataset.filter));
+                    });
+                }
+
+                // highlight
+                function highlightText(text, term) {
+                    if (!term) return text;
+                    const regex = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
+                    return text.replace(regex, '<mark>$1</mark>');
+                }
+
+                function renderCards() {
+                    const term = currentSearch.trim().toLowerCase();
+                    let anyVisible = false;
+                    let cardsHtml = '';
+
+                    quizData.forEach(subject => {
+                        if (currentFilter !== 'all' && subject.subject !== currentFilter) return;
+                        const filtered = subject.quizzes.filter(q => !term || q.title.toLowerCase().includes(term) || subject.subject.toLowerCase().includes(term));
+                        if (filtered.length === 0 && term !== '') return;
+                        anyVisible = true;
+
+                        const itemsHtml = filtered.map(q => {
+                            const titleDisplay = term ? highlightText(q.title, term) : q.title;
+                            let badgeClass = 'bg-secondary';
+                            if (q.type === 'exam') badgeClass = 'badge-exam';
+                            else if (q.type === 'practice') badgeClass = 'badge-practice';
+                            else if (q.type === 'quizlet') badgeClass = 'badge-quizlet';
+                            return `<li class="quiz-item">
+                                <a href="${q.href}" class="quiz-link">
+                                    <span class="d-flex align-items-center gap-2">
+                                        <span class="quiz-icon"><i class="fas ${q.type==='exam'?'fa-file-alt':(q.type==='practice'?'fa-play-circle':'fa-code')}"></i></span>
+                                        <span class="quiz-title">${titleDisplay}</span>
+                                    </span>
+                                    <span class="d-flex align-items-center gap-2">
+                                        <span class="badge ${badgeClass} rounded-pill">${q.qCount}</span>
+                                        <i class="fas fa-arrow-right text-secondary"></i>
+                                    </span>
+                                </a>
+                            </li>`;
+                        }).join('');
+
+                        const tooMany = subject.quizzes.length > 6;
+                        cardsHtml += `<div class="col-md-6 col-xl-4">
+                            <div class="subject-card rounded-4 p-0">
+                                <div class="p-3 d-flex align-items-center gap-3 border-bottom border-custom" style="background:linear-gradient(135deg, rgba(96,165,250,0.05), rgba(59,130,246,0.05));">
+                                    <div class="bg-primary bg-opacity-10 p-3 rounded-3"><i class="${subject.icon} fs-3 text-primary-custom"></i></div>
+                                    <div><h3 class="h5 mb-0">${subject.display}</h3><span class="small text-secondary">${subject.quizzes.length} quizzes</span></div>
+                                    <span class="badge bg-primary rounded-pill ms-auto">${subject.quizzes.length}</span>
+                                </div>
+                                <div class="p-3">
+                                    <ul class="list-unstyled quiz-list ${tooMany?'collapsed':''}">${itemsHtml}</ul>
+                                </div>
+                                ${tooMany ? `<button class="view-all-btn btn btn-link w-100 text-decoration-none border-top border-custom py-2" style="color:var(--primary);"><span>View all quizzes</span> <i class="fas fa-chevron-down"></i></button>` : ''}
+                            </div>
+                        </div>`;
+                    });
+
+                    document.getElementById('subjectsGrid').innerHTML = cardsHtml;
+                    document.getElementById('noResultsRow').style.display = anyVisible ? 'none' : 'flex';
+
+                    document.querySelectorAll('.view-all-btn').forEach(btn => {
+                        const card = btn.closest('.subject-card');
+                        const list = card.querySelector('.quiz-list');
+                        btn.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            const expanded = list.classList.toggle('expanded');
+                            btn.querySelector('span').innerText = expanded ? 'Show less' : 'View all quizzes';
+                            btn.querySelector('i').classList.toggle('fa-chevron-down', !expanded);
+                            btn.querySelector('i').classList.toggle('fa-chevron-up', expanded);
+                        });
+                    });
+                }
+
+                // search debounce
+                const searchInput = document.getElementById('smartSearch');
+                let timeout;
+                searchInput.addEventListener('input', () => {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => {
+                        currentSearch = searchInput.value;
+                        renderCards();
+                    }, 150);
+                });
+
+                // theme toggle
+                const toggle = document.getElementById('themeToggle');
+                const body = document.body;
+                const icon = toggle.querySelector('i');
+                const span = toggle.querySelector('span');
+                
+                if (localStorage.getItem('theme') === 'dark') {
+                    body.classList.replace('light-mode','dark-mode'); 
+                    icon.className = 'fas fa-sun'; 
+                    span.textContent = ' Dark Mode';
+                } else if (localStorage.getItem('theme') === 'light') {
+                    body.classList.replace('dark-mode','light-mode'); 
+                    icon.className = 'fas fa-moon'; 
+                    span.textContent = ' Light Mode';
+                }
+
+                toggle.addEventListener('click', () => {
+                    if (body.classList.contains('light-mode')) {
+                        body.classList.replace('light-mode','dark-mode'); 
+                        icon.className = 'fas fa-sun'; 
+                        span.textContent = ' Dark Mode';
+                        localStorage.setItem('theme','dark');
+                    } else {
+                        body.classList.replace('dark-mode','light-mode'); 
+                        icon.className = 'fas fa-moon'; 
+                        span.textContent = ' Light Mode';
+                        localStorage.setItem('theme','light');
+                    }
+                });
+
+                document.getElementById('logoHome').addEventListener('click', () => window.scrollTo({ top:0, behavior:'smooth' }));
+
+                // init
+                renderAllFilters();
+                renderCards();
+                setFilter('all');
+            }
         })();
     </script>
 </body>
