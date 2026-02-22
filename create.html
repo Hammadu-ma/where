@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>⚡ QUIZ BUILDER · horizontal JSON</title>
+  <title>⚡ QUIZ BUILDER · offline + cache</title>
   <!-- Bootstrap 5 + icons + fontawesome 6 (free) -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -14,6 +14,26 @@
     body {
       background: linear-gradient(145deg, #eef2f9 0%, #ffffff 100%);
       padding: 2rem 1.5rem;
+      transition: background 0.2s;
+    }
+    /* offline / cache banners */
+    .offline-banner {
+      background: #f39c12;
+      color: white;
+      border-radius: 60px;
+      padding: 0.5rem 1.5rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+      box-shadow: 0 5px 15px #e67e2240;
+    }
+    .cached-badge {
+      background: #27ae60;
+      color: white;
+      border-radius: 40px;
+      padding: 0.2rem 1rem;
+      font-size: 0.8rem;
     }
     .glass-ultra {
       background: rgba(255,255,255,0.8);
@@ -28,15 +48,6 @@
       -webkit-text-fill-color: transparent;
       font-weight: 800;
       letter-spacing: -0.02em;
-    }
-    .floating-action {
-      border-radius: 60px;
-      background: #1d3a78;
-      color: white;
-      border: none;
-      padding: 0.8rem 2.2rem;
-      font-weight: 600;
-      box-shadow: 0 15px 25px -10px #14317a;
     }
     .subject-slot {
       background: rgba(255,255,255,0.9);
@@ -105,7 +116,7 @@
       text-transform: uppercase;
       color: #3c5b96;
     }
-    /* ----- HORIZONTAL JSON OUTPUT (no wrap, scrollable) ----- */
+    /* horizontal JSON output */
     .json-output {
       background: #0b1d3a;
       border-radius: 48px;
@@ -114,8 +125,8 @@
       font-family: 'SF Mono', 'Fira Code', monospace;
       font-size: 0.85rem;
       border: 1px solid #2d4d83;
-      overflow-x: auto;                /* horizontal scroll */
-      white-space: pre;                 /* keep in one line (preserve formatting but scroll) */
+      overflow-x: auto;
+      white-space: pre;
     }
     .json-output pre {
       background: transparent;
@@ -125,7 +136,7 @@
       margin: 0;
       padding: 0;
       border: none;
-      white-space: pre;                 /* force single-line scroll */
+      white-space: pre;
       width: fit-content;
       min-width: 100%;
     }
@@ -142,20 +153,32 @@
       padding: 0.7rem 1.7rem;
       border: 1px solid white;
     }
+    .cache-control {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .offline-indicator {
+      background: #95a5a6;
+      transition: all 0.2s;
+    }
+    .online-dot {
+      color: #2ecc71;
+    }
   </style>
 </head>
 <body>
 
 <div class="container-xl">
-  <!-- top bar with exact schema indicator -->
-  <div class="d-flex flex-wrap align-items-center justify-content-between gap-4 mb-5">
+  <!-- top bar with offline/cache status + manual controls -->
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-4 mb-4">
     <div class="d-flex align-items-center gap-3">
-      <div style="background: #1b3b77; border-radius: 30px; padding: 0.8rem 1.2rem; color:white; box-shadow: 0 10px 20px #142d57;"><i class="fas fa-code"></i></div>
+      <div style="background: #1b3b77; border-radius: 30px; padding: 0.8rem 1.2rem; color:white; box-shadow: 0 10px 20px #142d57;"><i class="fas fa-database"></i></div>
       <div>
-        <h1 class="display-5 fw-bold heading-glow"><i class="fas fa-pen-ruler me-2"></i>schema<span style="font-weight:300;">builder</span></h1>
-        <div class="d-flex gap-2 mt-1">
-          <span class="badge-schema"><i class="fas fa-check-circle me-1"></i>strict: subject, icon, display, quizzes</span>
-          <span class="badge-schema"><i class="fas fa-list-check"></i> qCount, type, difficulty</span>
+        <h1 class="display-5 fw-bold heading-glow"><i class="fas fa-cloud me-2"></i>offline<span style="font-weight:300;">builder</span></h1>
+        <div class="d-flex gap-2 mt-1 flex-wrap">
+          <span class="badge-schema" id="connectionStatus"><i class="fas fa-wifi"></i> online</span>
+          <span class="badge-schema" id="cacheStatus" style="background:#1f5e3a;"><i class="fas fa-database"></i> cached</span>
         </div>
       </div>
     </div>
@@ -167,12 +190,24 @@
     </div>
   </div>
 
+  <!-- offline/cache manual bar -->
+  <div class="d-flex flex-wrap align-items-center gap-3 mb-4">
+    <div class="cache-control glass-ultra rounded-5 px-4 py-2">
+      <i class="fas fa-history text-primary"></i>
+      <span class="fw-semibold">cache:</span>
+      <button class="btn btn-sm btn-outline-success rounded-5" id="saveCacheBtn"><i class="fas fa-save"></i> manual save</button>
+      <button class="btn btn-sm btn-outline-secondary rounded-5" id="loadCacheBtn"><i class="fas fa-rotate-left"></i> load cache</button>
+      <button class="btn btn-sm btn-outline-warning rounded-5" id="clearCacheBtn"><i class="fas fa-trash-alt"></i> clear</button>
+    </div>
+    <div id="liveOfflineBadge" style="display:none;" class="offline-banner"><i class="fas fa-exclamation-triangle"></i> you are offline — changes saved locally</div>
+  </div>
+
   <!-- dynamic subjects container -->
   <div id="subjectsContainer" class="mb-5"></div>
 
   <!-- live json panel with horizontal scrolling -->
   <div class="json-output mt-5">
-    <div class="d-flex align-items-center justify-content-between mb-3">
+    <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap">
       <span class="fw-semibold"><i class="fas fa-brackets-curly me-2"></i>EXACT JSON OUTPUT (horizontal scroll)</span>
       <div>
         <button class="btn btn-sm btn-outline-light rounded-5 me-2" id="copyJson"><i class="fas fa-copy"></i> copy</button>
@@ -210,7 +245,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
   (function() {
-    // ---------- EXACT ICON SET (fontawesome 6 "fas" style) ----------
+    // ---------- MASTER ICON SET ----------
     const fasIcons = [
       "fas fa-egg", "fas fa-bone", "fas fa-heartbeat", "fas fa-flask", "fas fa-microscope", "fas fa-tint",
       "fas fa-brain", "fas fa-heart", "fas fa-lungs", "fas fa-dna", "fas fa-vial", "fas fa-capsules",
@@ -241,16 +276,79 @@
       "fas fa-award", "fas fa-certificate"
     ];
 
-    // ---------- current data ----------
+    // ---------- current data (starting demo) ----------
     let subjects = [];
 
-    // function to update json preview (horizontal scroll)
-    function updateJsonPreview() {
-      const previewEl = document.getElementById('jsonPreview');
-      previewEl.innerText = JSON.stringify(subjects, null, 2);
+    // ---------- CACHE & OFFLINE ----------
+    const CACHE_KEY = 'quizbuilder_offline_data';
+
+    // save to localStorage
+    function saveToCache() {
+      try {
+        const data = {
+          subjects: subjects,
+          timestamp: Date.now()
+        };
+        localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+        document.getElementById('cacheStatus').innerHTML = '<i class="fas fa-check-circle"></i> cached ' + new Date().toLocaleTimeString();
+        return true;
+      } catch (e) {
+        console.warn('cache failed', e);
+        return false;
+      }
     }
 
-    // render everything
+    // load from cache
+    function loadFromCache() {
+      try {
+        const raw = localStorage.getItem(CACHE_KEY);
+        if (!raw) return null;
+        const data = JSON.parse(raw);
+        if (data && Array.isArray(data.subjects)) {
+          subjects = data.subjects;
+          document.getElementById('cacheStatus').innerHTML = '<i class="fas fa-database"></i> restored from ' + new Date(data.timestamp).toLocaleTimeString();
+          return true;
+        }
+      } catch (e) { console.warn('load cache error'); }
+      return false;
+    }
+
+    // clear cache
+    function clearCache() {
+      localStorage.removeItem(CACHE_KEY);
+      document.getElementById('cacheStatus').innerHTML = '<i class="fas fa-database"></i> no cache';
+    }
+
+    // update connection status UI & auto-save on changes
+    function updateOnlineStatus() {
+      const online = navigator.onLine;
+      const statusEl = document.getElementById('connectionStatus');
+      const badgeEl = document.getElementById('liveOfflineBadge');
+      if (online) {
+        statusEl.innerHTML = '<i class="fas fa-wifi"></i> online';
+        statusEl.style.background = '#22478b';
+        badgeEl.style.display = 'none';
+      } else {
+        statusEl.innerHTML = '<i class="fas fa-wifi-slash"></i> offline';
+        statusEl.style.background = '#b85e00';
+        badgeEl.style.display = 'inline-flex';
+      }
+    }
+
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+    updateOnlineStatus(); // initial
+
+    // auto-save to cache after EVERY render (data change)
+    function autoSaveCache() {
+      saveToCache();
+    }
+
+    // ---------- render & json preview ----------
+    function updateJsonPreview() {
+      document.getElementById('jsonPreview').innerText = JSON.stringify(subjects, null, 2);
+    }
+
     function render() {
       const container = document.getElementById('subjectsContainer');
       let html = '';
@@ -258,10 +356,8 @@
       subjects.forEach((subj, sIdx) => {
         const icon = subj.icon || 'fas fa-question';
         html += `<div class="subject-slot" data-index="${sIdx}">`;
-        // header with icon picker
         html += `<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">`;
         html += `<div class="d-flex align-items-center gap-3 flex-wrap">`;
-        // icon ring trigger
         html += `<div class="icon-ring" data-bs-toggle="modal" data-bs-target="#iconModal${sIdx}"><i class="${icon} fs-3"></i> <span class="small fw-semibold">change</span></div>`;
         html += `<input class="form-control rounded-5 border-0 bg-white shadow-sm" style="width:180px;" placeholder="display name" value="${subj.display || ''}" data-field="display" data-subject="${sIdx}">`;
         html += `<input class="form-control rounded-5 border-0 bg-white shadow-sm" style="width:160px;" placeholder="subject key" value="${subj.subject || ''}" data-field="subject" data-subject="${sIdx}">`;
@@ -270,14 +366,12 @@
         html += `<button class="btn btn-outline-danger rounded-5 btn-sm delete-subject" data-index="${sIdx}"><i class="fas fa-trash-alt"></i> subject</button>`;
         html += `</div></div>`;
 
-        // quizzes area
         html += `<div id="quizzes-${sIdx}">`;
         subj.quizzes.forEach((quiz, qIdx) => {
           html += renderQuizRow(sIdx, qIdx, quiz);
         });
         html += `</div>`;
 
-        // subject action buttons
         html += `<div class="d-flex flex-wrap gap-2 mt-3">`;
         html += `<button class="btn btn-sm btn-primary rounded-5 add-quiz" data-subject="${sIdx}"><i class="fas fa-plus-circle me-1"></i>add quiz</button>`;
         html += `<button class="btn btn-sm btn-outline-secondary rounded-5 add-bulk-quiz" data-subject="${sIdx}"><i class="fas fa-layer-group"></i> bulk +3</button>`;
@@ -285,7 +379,6 @@
         html += `</div>`;
         html += `</div>`;
 
-        // modal for icons
         html += `<div class="modal fade" id="iconModal${sIdx}" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content" style="border-radius:48px;">`;
         html += `<div class="modal-header"><h5 class="fw-bold"><i class="fas fa-icons me-2"></i>choose icon (fas)</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>`;
         html += `<div class="modal-body icon-grid">`;
@@ -301,34 +394,33 @@
 
       container.innerHTML = html;
       updateJsonPreview();
+      autoSaveCache(); // <-- AUTO CACHE AFTER EVERY RENDER
 
-      // input listeners
+      // attach listeners
       document.querySelectorAll('input[data-field="display"]').forEach(inp => {
         inp.addEventListener('input', (e) => {
           const idx = e.target.dataset.subject;
           if (subjects[idx]) subjects[idx].display = e.target.value;
-          updateJsonPreview();
+          updateJsonPreview(); autoSaveCache();
         });
       });
       document.querySelectorAll('input[data-field="subject"]').forEach(inp => {
         inp.addEventListener('input', (e) => {
           const idx = e.target.dataset.subject;
           if (subjects[idx]) subjects[idx].subject = e.target.value;
-          updateJsonPreview();
+          updateJsonPreview(); autoSaveCache();
         });
       });
 
-      // icon pick
       document.querySelectorAll('.icon-cell').forEach(el => {
         el.addEventListener('click', (e) => {
           const sIdx = e.currentTarget.dataset.subject;
           const icon = e.currentTarget.dataset.icon;
           if (subjects[sIdx]) subjects[sIdx].icon = icon;
-          render();
+          render(); // render triggers autosave
         });
       });
 
-      // delete subject
       document.querySelectorAll('.delete-subject').forEach(btn => {
         btn.addEventListener('click', (e) => {
           const idx = e.currentTarget.dataset.index;
@@ -337,7 +429,6 @@
         });
       });
 
-      // add quiz
       document.querySelectorAll('.add-quiz').forEach(btn => {
         btn.addEventListener('click', (e) => {
           const sIdx = e.currentTarget.dataset.subject;
@@ -346,7 +437,6 @@
         });
       });
 
-      // bulk +3
       document.querySelectorAll('.add-bulk-quiz').forEach(btn => {
         btn.addEventListener('click', (e) => {
           const sIdx = e.currentTarget.dataset.subject;
@@ -357,7 +447,6 @@
         });
       });
 
-      // clear quizzes
       document.querySelectorAll('.clear-subject-quizzes').forEach(btn => {
         btn.addEventListener('click', (e) => {
           const sIdx = e.currentTarget.dataset.subject;
@@ -366,41 +455,40 @@
         });
       });
 
-      // quiz fields
       document.querySelectorAll('.quiz-title').forEach(inp => {
         inp.addEventListener('input', (e) => {
           const s = e.target.dataset.subjectIdx, q = e.target.dataset.quizIdx;
           if (subjects[s]?.quizzes[q]) subjects[s].quizzes[q].title = e.target.value;
-          updateJsonPreview();
+          updateJsonPreview(); autoSaveCache();
         });
       });
       document.querySelectorAll('.quiz-href').forEach(inp => {
         inp.addEventListener('input', (e) => {
           const s = e.target.dataset.subjectIdx, q = e.target.dataset.quizIdx;
           if (subjects[s]?.quizzes[q]) subjects[s].quizzes[q].href = e.target.value;
-          updateJsonPreview();
+          updateJsonPreview(); autoSaveCache();
         });
       });
       document.querySelectorAll('.quiz-qcount').forEach(inp => {
         inp.addEventListener('input', (e) => {
           const s = e.target.dataset.subjectIdx, q = e.target.dataset.quizIdx;
-          const val = parseInt(e.target.value, 10);
+          const val = parseInt(e.target.value,10);
           if (subjects[s]?.quizzes[q]) subjects[s].quizzes[q].qCount = isNaN(val) ? 0 : val;
-          updateJsonPreview();
+          updateJsonPreview(); autoSaveCache();
         });
       });
       document.querySelectorAll('.quiz-type').forEach(sel => {
         sel.addEventListener('change', (e) => {
           const s = e.target.dataset.subjectIdx, q = e.target.dataset.quizIdx;
           if (subjects[s]?.quizzes[q]) subjects[s].quizzes[q].type = e.target.value;
-          updateJsonPreview();
+          updateJsonPreview(); autoSaveCache();
         });
       });
       document.querySelectorAll('.quiz-difficulty').forEach(sel => {
         sel.addEventListener('change', (e) => {
           const s = e.target.dataset.subjectIdx, q = e.target.dataset.quizIdx;
           if (subjects[s]?.quizzes[q]) subjects[s].quizzes[q].difficulty = e.target.value;
-          updateJsonPreview();
+          updateJsonPreview(); autoSaveCache();
         });
       });
       document.querySelectorAll('.delete-quiz').forEach(btn => {
@@ -433,7 +521,7 @@
       </div>`;
     }
 
-    // ---------- button handlers ----------
+    // ---------- BUTTON HANDLERS ----------
     document.getElementById('addSubjectBtn').addEventListener('click', ()=>{
       subjects.push({ subject: '', icon: 'fas fa-folder', display: '', quizzes: [] });
       render();
@@ -444,19 +532,10 @@
         { subject: "embryology", icon: "fas fa-egg", display: "Embryology", quizzes: [
           { title: "Embryology Practice 1", href: "quiz.html", qCount: 30, type: "practice", difficulty: "beginner" },
           { title: "Embryology Practice 2", href: "2.html", qCount: 25, type: "practice", difficulty: "beginner" },
-          { title: "Embryology Exam 2014", href: "equiz3.html", qCount: 50, type: "exam", difficulty: "advanced" },
-          { title: "Embryology Quizlet 1", href: "embryoquizlets1.html", qCount: 40, type: "quizlet", difficulty: "intermediate" },
-          { title: "Embryology Quizlet 2", href: "embryoquizlets2.html", qCount: 35, type: "quizlet", difficulty: "intermediate" },
-          { title: "Embryology Quizlet 3", href: "embryoquizlets3.html", qCount: 45, type: "quizlet", difficulty: "advanced" }
+          { title: "Embryology Exam 2014", href: "equiz3.html", qCount: 50, type: "exam", difficulty: "advanced" }
         ] },
         { subject: "anatomy", icon: "fas fa-bone", display: "Anatomy", quizzes: [
-          { title: "JU Anatomy Exam 2013", href: "anatomy2013.html", qCount: 60, type: "exam", difficulty: "advanced" },
-          { title: "JU Anatomy Exam 2014", href: "anatomy2014.html", qCount: 55, type: "exam", difficulty: "advanced" },
-          { title: "JU Anatomy Exam 2016", href: "anatomy2016.html", qCount: 40, type: "exam", difficulty: "intermediate" },
-          { title: "Anatomy Exam 2014", href: "anatquiz1.html", qCount: 50, type: "exam", difficulty: "advanced" }
-        ] },
-        { subject: "physiology", icon: "fas fa-heartbeat", display: "Physiology", quizzes: [
-          { title: "Physiology NS 1", href: "physions1.html", qCount: 40, type: "quizlet", difficulty: "intermediate" }
+          { title: "JU Anatomy Exam 2013", href: "anatomy2013.html", qCount: 60, type: "exam", difficulty: "advanced" }
         ] }
       ];
       render();
@@ -465,13 +544,11 @@
     document.getElementById('copyJson').addEventListener('click', ()=>{
       navigator.clipboard.writeText(JSON.stringify(subjects, null, 2)).then(()=>alert('copied!'));
     });
-
     document.getElementById('refreshPreview').addEventListener('click', updateJsonPreview);
-
     document.getElementById('exportJson').addEventListener('click', ()=>{
-      const blob = new Blob([JSON.stringify(subjects, null, 2)], {type: 'application/json'});
+      const blob = new Blob([JSON.stringify(subjects, null, 2)], {type:'application/json'});
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href = url; a.download = 'strict_quiz_data.json'; a.click();
+      const a = document.createElement('a'); a.href = url; a.download = 'quiz_data.json'; a.click();
     });
 
     // import
@@ -493,16 +570,26 @@
       } catch (e) { alert('Invalid JSON: '+e.message); }
     });
 
-    // initial demo (subset of exact)
-    subjects = [
-      { subject: "embryology", icon: "fas fa-egg", display: "Embryology", quizzes: [
-        { title: "Embryology Practice 1", href: "quiz.html", qCount: 30, type: "practice", difficulty: "beginner" },
-        { title: "Embryology Practice 2", href: "2.html", qCount: 25, type: "practice", difficulty: "beginner" }
-      ] },
-      { subject: "anatomy", icon: "fas fa-bone", display: "Anatomy", quizzes: [
-        { title: "JU Anatomy Exam 2013", href: "anatomy2013.html", qCount: 60, type: "exam", difficulty: "advanced" }
-      ] }
-    ];
+    // manual cache buttons
+    document.getElementById('saveCacheBtn').addEventListener('click', ()=>{
+      saveToCache(); alert('manually saved to cache');
+    });
+    document.getElementById('loadCacheBtn').addEventListener('click', ()=>{
+      if (loadFromCache()) render();
+      else alert('no cache found');
+    });
+    document.getElementById('clearCacheBtn').addEventListener('click', ()=>{
+      clearCache(); alert('cache cleared');
+    });
+
+    // try to load cache at startup, else demo
+    if (!loadFromCache()) {
+      subjects = [
+        { subject: "embryology", icon: "fas fa-egg", display: "Embryology", quizzes: [
+          { title: "Embryology Practice 1", href: "quiz.html", qCount: 30, type: "practice", difficulty: "beginner" }
+        ] }
+      ];
+    }
     render();
   })();
 </script>
