@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>⚡ QUIZ BUILDER · strict schema</title>
+  <!-- Bootstrap 5 + icons + fontawesome 6 (free) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+    body {
+      background: linear-gradient(145deg, #eef2f9 0%, #ffffff 100%);
+      padding: 2rem 1.5rem;
+    }
+    .glass-ultra {
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.7);
+      box-shadow: 0 20px 45px -20px #142a4e;
+    }
+    .heading-glow {
+      background: linear-gradient(135deg, #0b2450, #264e9e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .floating-action {
+      border-radius: 60px;
+      background: #1d3a78;
+      color: white;
+      border: none;
+      padding: 0.8rem 2.2rem;
+      font-weight: 600;
+      box-shadow: 0 15px 25px -10px #14317a;
+    }
+    .subject-slot {
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(8px);
+      border-radius: 56px;
+      padding: 2rem 2.2rem;
+      margin-bottom: 2.5rem;
+      border: 1px solid rgba(255,255,255,0.9);
+      box-shadow: 0 20px 40px -20px #1f3b6b;
+    }
+    .quiz-row {
+      background: white;
+      border-radius: 40px;
+      padding: 1rem 1.8rem;
+      margin-bottom: 0.8rem;
+      border: 1px solid #e1edff;
+      display: grid;
+      grid-template-columns: 2.2fr 1.4fr 0.9fr 1.2fr 1.2fr 0.4fr;
+      gap: 0.8rem;
+      align-items: center;
+      transition: all 0.15s;
+    }
+    .quiz-row:hover {
+      border-color: #4e8dfc;
+      background: #f3f9ff;
+    }
+    @media (max-width: 1100px) {
+      .quiz-row { grid-template-columns: 1fr 1fr 1fr; }
+    }
+    @media (max-width: 700px) {
+      .quiz-row { grid-template-columns: 1fr; }
+    }
+    .icon-ring {
+      background: #ebf2ff;
+      border-radius: 50px;
+      padding: 0.4rem 1.2rem 0.4rem 0.8rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      cursor: pointer;
+      border: 1px solid #ccdcf5;
+    }
+    .icon-grid {
+      display: grid;
+      grid-template-columns: repeat(8,1fr);
+      gap: 0.5rem;
+      max-height: 270px;
+      overflow-y: auto;
+      padding: 1rem;
+    }
+    .icon-cell {
+      background: #f3f7ff;
+      border-radius: 20px;
+      width: 52px; height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      color: #12337c;
+      cursor: pointer;
+    }
+    .icon-cell:hover { background: #2d63d3; color: white; transform: scale(1.06); }
+    .field-badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #3c5b96;
+    }
+    .json-output {
+      background: #0b1d3a;
+      border-radius: 48px;
+      padding: 2rem;
+      color: #aad0ff;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.85rem;
+      border: 1px solid #2d4d83;
+      white-space: pre-wrap;
+    }
+    .badge-schema {
+      background: #22478b;
+      color: white;
+      border-radius: 40px;
+      padding: 0.3rem 1.3rem;
+    }
+    .bulk-panel {
+      background: #ffffffcc;
+      backdrop-filter: blur(12px);
+      border-radius: 80px;
+      padding: 0.7rem 1.7rem;
+      border: 1px solid white;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container-xl">
+  <!-- top bar with exact schema indicator -->
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-4 mb-5">
+    <div class="d-flex align-items-center gap-3">
+      <div style="background: #1b3b77; border-radius: 30px; padding: 0.8rem 1.2rem; color:white; box-shadow: 0 10px 20px #142d57;"><i class="fas fa-code"></i></div>
+      <div>
+        <h1 class="display-5 fw-bold heading-glow"><i class="fas fa-pen-ruler me-2"></i>schema<span style="font-weight:300;">builder</span></h1>
+        <div class="d-flex gap-2 mt-1">
+          <span class="badge-schema"><i class="fas fa-check-circle me-1"></i>strict: subject, icon, display, quizzes</span>
+          <span class="badge-schema"><i class="fas fa-list-check"></i> qCount, type, difficulty</span>
+        </div>
+      </div>
+    </div>
+    <div class="bulk-panel d-flex flex-wrap gap-2">
+      <button class="btn btn-sm btn-outline-primary rounded-5 px-3" id="addSubjectBtn"><i class="fas fa-plus me-1"></i>subject</button>
+      <button class="btn btn-sm btn-outline-primary rounded-5 px-3" data-bs-toggle="modal" data-bs-target="#importModal"><i class="fas fa-upload"></i> import</button>
+      <button class="btn btn-sm btn-outline-primary rounded-5 px-3" id="exportJson"><i class="fas fa-download"></i> export</button>
+      <button class="btn btn-sm btn-outline-secondary rounded-5 px-3" id="resetToExact"><i class="fas fa-arrow-rotate-left"></i> exact demo</button>
+    </div>
+  </div>
+
+  <!-- dynamic subjects container -->
+  <div id="subjectsContainer" class="mb-5"></div>
+
+  <!-- live json panel -->
+  <div class="json-output mt-5">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <span class="fw-semibold"><i class="fas fa-brackets-curly me-2"></i>EXACT JSON OUTPUT (matches given schema)</span>
+      <div>
+        <button class="btn btn-sm btn-outline-light rounded-5 me-2" id="copyJson"><i class="fas fa-copy"></i> copy</button>
+        <button class="btn btn-sm btn-outline-light rounded-5" id="refreshPreview"><i class="fas fa-sync-alt"></i> refresh</button>
+      </div>
+    </div>
+    <pre id="jsonPreview" style="background:transparent; color:#c3dfff; font-family:monospace; margin:0;">[]</pre>
+  </div>
+
+  <!-- import modal -->
+  <div class="modal fade" id="importModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content" style="border-radius: 48px;">
+        <div class="modal-header border-0">
+          <h5 class="fw-bold"><i class="fas fa-file-import me-2 text-primary"></i>import JSON (strict schema)</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p class="small text-secondary">Paste array with same structure: subject, icon (fas fa-...), display, quizzes.</p>
+          <textarea class="form-control rounded-4" id="importJsonTextarea" rows="7"></textarea>
+          <div class="form-check mt-3">
+            <input class="form-check-input" type="checkbox" id="mergeToggle" checked>
+            <label class="form-check-label small">merge (by subject key) — otherwise replace</label>
+          </div>
+        </div>
+        <div class="modal-footer border-0">
+          <button class="btn btn-outline-secondary rounded-5" data-bs-dismiss="modal">cancel</button>
+          <button class="btn btn-primary rounded-5 px-4" id="confirmImport">import</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  (function() {
+    // ---------- EXACT ICON SET (fontawesome 6 "fas" style) ----------
+    const fasIcons = [
+      "fas fa-egg", "fas fa-bone", "fas fa-heartbeat", "fas fa-flask", "fas fa-microscope", "fas fa-tint",
+      "fas fa-brain", "fas fa-heart", "fas fa-lungs", "fas fa-dna", "fas fa-vial", "fas fa-capsules",
+      "fas fa-tablets", "fas fa-syringe", "fas fa-stethoscope", "fas fa-tooth", "fas fa-eye", "fas fa-ear-deaf",
+      "fas fa-book", "fas fa-graduation-cap", "fas fa-leaf", "fas fa-seedling", "fas fa-atom", "fas fa-calculator",
+      "fas fa-chart-line", "fas fa-globe", "fas fa-mountain", "fas fa-tree", "fas fa-cat", "fas fa-dog",
+      "fas fa-dragon", "fas fa-feather", "fas fa-crow", "fas fa-sun", "fas fa-moon", "fas fa-cloud-sun",
+      "fas fa-cloud-rain", "fas fa-bolt", "fas fa-umbrella", "fas fa-fire", "fas fa-water", "fas fa-wind",
+      "fas fa-bicycle", "fas fa-car", "fas fa-bus", "fas fa-train", "fas fa-plane", "fas fa-rocket",
+      "fas fa-sailboat", "fas fa-ship", "fas fa-truck", "fas fa-tractor", "fas fa-motorcycle", "fas fa-cart-shopping",
+      "fas fa-bag-shopping", "fas fa-gift", "fas fa-cake-candles", "fas fa-champagne-glasses", "fas fa-utensils",
+      "fas fa-mug-hot", "fas fa-cookie", "fas fa-candy-cane", "fas fa-ice-cream", "fas fa-pizza-slice",
+      "fas fa-burger", "fas fa-fish", "fas fa-drumstick-bite", "fas fa-apple-whole", "fas fa-carrot",
+      "fas fa-lemon", "fas fa-pepper-hot", "fas fa-egg", "fas fa-cheese", "fas fa-bread-slice",
+      "fas fa-wine-bottle", "fas fa-whiskey-glass", "fas fa-martini-glass", "fas fa-cocktail", "fas fa-beer-mug-empty",
+      "fas fa-futbol", "fas fa-basketball", "fas fa-baseball", "fas fa-football", "fas fa-golf-ball-tee",
+      "fas fa-table-tennis", "fas fa-volleyball", "fas fa-gamepad", "fas fa-chess", "fas fa-dice",
+      "fas fa-puzzle-piece", "fas fa-chess-king", "fas fa-headphones", "fas fa-guitar", "fas fa-drum",
+      "fas fa-music", "fas fa-radio", "fas fa-microphone", "fas fa-record-vinyl", "fas fa-film",
+      "fas fa-clapperboard", "fas fa-tv", "fas fa-camera", "fas fa-video", "fas fa-image",
+      "fas fa-paintbrush", "fas fa-palette", "fas fa-pen", "fas fa-pencil", "fas fa-marker",
+      "fas fa-highlighter", "fas fa-brush", "fas fa-eraser", "fas fa-ruler", "fas fa-compass-drafting",
+      "fas fa-drafting-compass", "fas fa-crop", "fas fa-scissors", "fas fa-copy", "fas fa-clipboard",
+      "fas fa-print", "fas fa-cloud", "fas fa-database", "fas fa-server", "fas fa-shield", "fas fa-lock",
+      "fas fa-key", "fas fa-lightbulb", "fas fa-bell", "fas fa-envelope", "fas fa-phone", "fas fa-clock",
+      "fas fa-calendar", "fas fa-hourglass", "fas fa-stopwatch", "fas fa-compass", "fas fa-map",
+      "fas fa-location-dot", "fas fa-flag", "fas fa-crown", "fas fa-star", "fas fa-medal", "fas fa-trophy",
+      "fas fa-award", "fas fa-certificate"
+    ];
+
+    // ---------- current data (exact demo structure) ----------
+    let subjects = [];
+
+    // function to update json preview
+    function updateJsonPreview() {
+      document.getElementById('jsonPreview').innerText = JSON.stringify(subjects, null, 2);
+    }
+
+    // render everything
+    function render() {
+      const container = document.getElementById('subjectsContainer');
+      let html = '';
+
+      subjects.forEach((subj, sIdx) => {
+        const icon = subj.icon || 'fas fa-question';
+        html += `<div class="subject-slot" data-index="${sIdx}">`;
+        // header with icon picker
+        html += `<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">`;
+        html += `<div class="d-flex align-items-center gap-3 flex-wrap">`;
+        // icon ring trigger
+        html += `<div class="icon-ring" data-bs-toggle="modal" data-bs-target="#iconModal${sIdx}"><i class="${icon} fs-3"></i> <span class="small fw-semibold">change</span></div>`;
+        html += `<input class="form-control rounded-5 border-0 bg-white shadow-sm" style="width:180px;" placeholder="display name" value="${subj.display || ''}" data-field="display" data-subject="${sIdx}">`;
+        html += `<input class="form-control rounded-5 border-0 bg-white shadow-sm" style="width:160px;" placeholder="subject key" value="${subj.subject || ''}" data-field="subject" data-subject="${sIdx}">`;
+        html += `</div>`;
+        html += `<div class="d-flex gap-2"><span class="badge bg-primary rounded-5 px-3 py-2">${subj.quizzes.length} quizzes</span>`;
+        html += `<button class="btn btn-outline-danger rounded-5 btn-sm delete-subject" data-index="${sIdx}"><i class="fas fa-trash-alt"></i> subject</button>`;
+        html += `</div></div>`;
+
+        // quizzes area
+        html += `<div id="quizzes-${sIdx}">`;
+        subj.quizzes.forEach((quiz, qIdx) => {
+          html += renderQuizRow(sIdx, qIdx, quiz);
+        });
+        html += `</div>`;
+
+        // subject action buttons
+        html += `<div class="d-flex flex-wrap gap-2 mt-3">`;
+        html += `<button class="btn btn-sm btn-primary rounded-5 add-quiz" data-subject="${sIdx}"><i class="fas fa-plus-circle me-1"></i>add quiz</button>`;
+        html += `<button class="btn btn-sm btn-outline-secondary rounded-5 add-bulk-quiz" data-subject="${sIdx}"><i class="fas fa-layer-group"></i> bulk +3</button>`;
+        html += `<button class="btn btn-sm btn-outline-secondary rounded-5 clear-subject-quizzes" data-subject="${sIdx}"><i class="fas fa-eraser"></i> clear all</button>`;
+        html += `</div>`;
+        html += `</div>`;
+
+        // modal for icons
+        html += `<div class="modal fade" id="iconModal${sIdx}" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content" style="border-radius:48px;">`;
+        html += `<div class="modal-header"><h5 class="fw-bold"><i class="fas fa-icons me-2"></i>choose icon (fas)</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>`;
+        html += `<div class="modal-body icon-grid">`;
+        fasIcons.forEach(ic => {
+          html += `<div class="icon-cell" data-bs-dismiss="modal" data-subject="${sIdx}" data-icon="${ic}"><i class="${ic}"></i></div>`;
+        });
+        html += `</div></div></div></div>`;
+      });
+
+      if (subjects.length === 0) {
+        html = `<div class="text-center py-5 glass-ultra rounded-5"><i class="fas fa-folder-open fa-3x text-secondary mb-3"></i><p>No subjects. Click <strong>subject</strong> to start, or use exact demo.</p></div>`;
+      }
+
+      container.innerHTML = html;
+      updateJsonPreview();
+
+      // input listeners
+      document.querySelectorAll('input[data-field="display"]').forEach(inp => {
+        inp.addEventListener('input', (e) => {
+          const idx = e.target.dataset.subject;
+          if (subjects[idx]) subjects[idx].display = e.target.value;
+          updateJsonPreview();
+        });
+      });
+      document.querySelectorAll('input[data-field="subject"]').forEach(inp => {
+        inp.addEventListener('input', (e) => {
+          const idx = e.target.dataset.subject;
+          if (subjects[idx]) subjects[idx].subject = e.target.value;
+          updateJsonPreview();
+        });
+      });
+
+      // icon pick
+      document.querySelectorAll('.icon-cell').forEach(el => {
+        el.addEventListener('click', (e) => {
+          const sIdx = e.currentTarget.dataset.subject;
+          const icon = e.currentTarget.dataset.icon;
+          if (subjects[sIdx]) subjects[sIdx].icon = icon;
+          render();
+        });
+      });
+
+      // delete subject
+      document.querySelectorAll('.delete-subject').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const idx = e.currentTarget.dataset.index;
+          subjects.splice(idx, 1);
+          render();
+        });
+      });
+
+      // add quiz
+      document.querySelectorAll('.add-quiz').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const sIdx = e.currentTarget.dataset.subject;
+          subjects[sIdx].quizzes.push({ title: '', href: '', qCount: 0, type: 'practice', difficulty: 'beginner' });
+          render();
+        });
+      });
+
+      // bulk +3
+      document.querySelectorAll('.add-bulk-quiz').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const sIdx = e.currentTarget.dataset.subject;
+          for (let i=0; i<3; i++) {
+            subjects[sIdx].quizzes.push({ title: `bulk quiz ${i+1}`, href: '#', qCount: 20 + i*5, type: 'practice', difficulty: 'beginner' });
+          }
+          render();
+        });
+      });
+
+      // clear quizzes
+      document.querySelectorAll('.clear-subject-quizzes').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const sIdx = e.currentTarget.dataset.subject;
+          subjects[sIdx].quizzes = [];
+          render();
+        });
+      });
+
+      // quiz fields
+      document.querySelectorAll('.quiz-title').forEach(inp => {
+        inp.addEventListener('input', (e) => {
+          const s = e.target.dataset.subjectIdx, q = e.target.dataset.quizIdx;
+          if (subjects[s]?.quizzes[q]) subjects[s].quizzes[q].title = e.target.value;
+          updateJsonPreview();
+        });
+      });
+      document.querySelectorAll('.quiz-href').forEach(inp => {
+        inp.addEventListener('input', (e) => {
+          const s = e.target.dataset.subjectIdx, q = e.target.dataset.quizIdx;
+          if (subjects[s]?.quizzes[q]) subjects[s].quizzes[q].href = e.target.value;
+          updateJsonPreview();
+        });
+      });
+      document.querySelectorAll('.quiz-qcount').forEach(inp => {
+        inp.addEventListener('input', (e) => {
+          const s = e.target.dataset.subjectIdx, q = e.target.dataset.quizIdx;
+          const val = parseInt(e.target.value, 10);
+          if (subjects[s]?.quizzes[q]) subjects[s].quizzes[q].qCount = isNaN(val) ? 0 : val;
+          updateJsonPreview();
+        });
+      });
+      document.querySelectorAll('.quiz-type').forEach(sel => {
+        sel.addEventListener('change', (e) => {
+          const s = e.target.dataset.subjectIdx, q = e.target.dataset.quizIdx;
+          if (subjects[s]?.quizzes[q]) subjects[s].quizzes[q].type = e.target.value;
+          updateJsonPreview();
+        });
+      });
+      document.querySelectorAll('.quiz-difficulty').forEach(sel => {
+        sel.addEventListener('change', (e) => {
+          const s = e.target.dataset.subjectIdx, q = e.target.dataset.quizIdx;
+          if (subjects[s]?.quizzes[q]) subjects[s].quizzes[q].difficulty = e.target.value;
+          updateJsonPreview();
+        });
+      });
+      document.querySelectorAll('.delete-quiz').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const s = e.currentTarget.dataset.subjectIdx, q = e.currentTarget.dataset.quizIdx;
+          if (subjects[s]?.quizzes[q]) {
+            subjects[s].quizzes.splice(q, 1);
+            render();
+          }
+        });
+      });
+    }
+
+    function renderQuizRow(sIdx, qIdx, quiz) {
+      return `<div class="quiz-row">
+        <div><div class="field-badge"><i class="fas fa-heading me-1"></i>title</div><input class="form-control form-control-sm rounded-5 quiz-title" data-subject-idx="${sIdx}" data-quiz-idx="${qIdx}" value="${quiz.title || ''}"></div>
+        <div><div class="field-badge"><i class="fas fa-link"></i> href</div><input class="form-control form-control-sm rounded-5 quiz-href" data-subject-idx="${sIdx}" data-quiz-idx="${qIdx}" value="${quiz.href || ''}"></div>
+        <div><div class="field-badge"><i class="fas fa-hashtag"></i> qCount</div><input type="number" class="form-control form-control-sm rounded-5 quiz-qcount" data-subject-idx="${sIdx}" data-quiz-idx="${qIdx}" value="${quiz.qCount || 0}" min="0"></div>
+        <div><div class="field-badge"><i class="fas fa-tag"></i> type</div><select class="form-select form-select-sm rounded-5 quiz-type" data-subject-idx="${sIdx}" data-quiz-idx="${qIdx}">
+          <option value="practice" ${quiz.type==='practice'?'selected':''}>practice</option>
+          <option value="exam" ${quiz.type==='exam'?'selected':''}>exam</option>
+          <option value="quizlet" ${quiz.type==='quizlet'?'selected':''}>quizlet</option>
+        </select></div>
+        <div><div class="field-badge"><i class="fas fa-signal"></i> difficulty</div><select class="form-select form-select-sm rounded-5 quiz-difficulty" data-subject-idx="${sIdx}" data-quiz-idx="${qIdx}">
+          <option value="beginner" ${quiz.difficulty==='beginner'?'selected':''}>beginner</option>
+          <option value="intermediate" ${quiz.difficulty==='intermediate'?'selected':''}>intermediate</option>
+          <option value="advanced" ${quiz.difficulty==='advanced'?'selected':''}>advanced</option>
+        </select></div>
+        <div><button class="btn btn-outline-danger btn-sm rounded-5 delete-quiz" data-subject-idx="${sIdx}" data-quiz-idx="${qIdx}"><i class="fas fa-trash-alt"></i></button></div>
+      </div>`;
+    }
+
+    // ---------- button handlers ----------
+    document.getElementById('addSubjectBtn').addEventListener('click', ()=>{
+      subjects.push({ subject: '', icon: 'fas fa-folder', display: '', quizzes: [] });
+      render();
+    });
+
+    document.getElementById('resetToExact').addEventListener('click', ()=>{
+      subjects = [
+        { subject: "embryology", icon: "fas fa-egg", display: "Embryology", quizzes: [
+          { title: "Embryology Practice 1", href: "quiz.html", qCount: 30, type: "practice", difficulty: "beginner" },
+          { title: "Embryology Practice 2", href: "2.html", qCount: 25, type: "practice", difficulty: "beginner" },
+          { title: "Embryology Exam 2014", href: "equiz3.html", qCount: 50, type: "exam", difficulty: "advanced" },
+          { title: "Embryology Quizlet 1", href: "embryoquizlets1.html", qCount: 40, type: "quizlet", difficulty: "intermediate" },
+          { title: "Embryology Quizlet 2", href: "embryoquizlets2.html", qCount: 35, type: "quizlet", difficulty: "intermediate" },
+          { title: "Embryology Quizlet 3", href: "embryoquizlets3.html", qCount: 45, type: "quizlet", difficulty: "advanced" }
+        ] },
+        { subject: "anatomy", icon: "fas fa-bone", display: "Anatomy", quizzes: [
+          { title: "JU Anatomy Exam 2013", href: "anatomy2013.html", qCount: 60, type: "exam", difficulty: "advanced" },
+          { title: "JU Anatomy Exam 2014", href: "anatomy2014.html", qCount: 55, type: "exam", difficulty: "advanced" },
+          { title: "JU Anatomy Exam 2016", href: "anatomy2016.html", qCount: 40, type: "exam", difficulty: "intermediate" },
+          { title: "Anatomy Exam 2014", href: "anatquiz1.html", qCount: 50, type: "exam", difficulty: "advanced" }
+        ] },
+        { subject: "physiology", icon: "fas fa-heartbeat", display: "Physiology", quizzes: [
+          { title: "Physiology NS 1", href: "physions1.html", qCount: 40, type: "quizlet", difficulty: "intermediate" }
+        ] }
+      ];
+      render();
+    });
+
+    document.getElementById('copyJson').addEventListener('click', ()=>{
+      navigator.clipboard.writeText(JSON.stringify(subjects, null, 2)).then(()=>alert('copied!'));
+    });
+
+    document.getElementById('refreshPreview').addEventListener('click', updateJsonPreview);
+
+    document.getElementById('exportJson').addEventListener('click', ()=>{
+      const blob = new Blob([JSON.stringify(subjects, null, 2)], {type: 'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'strict_quiz_data.json'; a.click();
+    });
+
+    // import
+    document.getElementById('confirmImport').addEventListener('click', ()=>{
+      const raw = document.getElementById('importJsonTextarea').value;
+      try {
+        const imported = JSON.parse(raw);
+        if (!Array.isArray(imported)) throw new Error('need array');
+        const merge = document.getElementById('mergeToggle').checked;
+        if (merge) {
+          imported.forEach(inc => {
+            const existing = subjects.find(s => s.subject === inc.subject);
+            if (existing) existing.quizzes.push(...(inc.quizzes || []));
+            else subjects.push(inc);
+          });
+        } else subjects = imported;
+        bootstrap.Modal.getInstance(document.getElementById('importModal')).hide();
+        render();
+      } catch (e) { alert('Invalid JSON: '+e.message); }
+    });
+
+    // initial demo (subset of exact)
+    subjects = [
+      { subject: "embryology", icon: "fas fa-egg", display: "Embryology", quizzes: [
+        { title: "Embryology Practice 1", href: "quiz.html", qCount: 30, type: "practice", difficulty: "beginner" },
+        { title: "Embryology Practice 2", href: "2.html", qCount: 25, type: "practice", difficulty: "beginner" }
+      ] },
+      { subject: "anatomy", icon: "fas fa-bone", display: "Anatomy", quizzes: [
+        { title: "JU Anatomy Exam 2013", href: "anatomy2013.html", qCount: 60, type: "exam", difficulty: "advanced" }
+      ] }
+    ];
+    render();
+  })();
+</script>
+<!-- extra polish -->
+<style>
+  .form-control, .form-select { background: #ffffff; border: 1px solid #dde7f5; }
+  .btn-outline-primary { border-color: #b7cdf5; }
+  .btn-outline-primary:hover { background: #1f4dcc; color: white; }
+  .icon-grid { max-height: 280px; overflow-y: auto; }
+</style>
+</body>
+</html>
