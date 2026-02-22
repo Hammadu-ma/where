@@ -36,6 +36,8 @@
             --text-tertiary: #9ca3af;
             --border: #d1d5db;
             --placeholder: #9ca3af;
+            --input-bg: #ffffff;
+            --hover-bg: rgba(96, 165, 250, 0.05);
         }
         
         .dark-mode {
@@ -43,9 +45,11 @@
             --surface: #1e293b;
             --text-primary: #f9fafb;
             --text-secondary: #d1d5db;
-            --text-tertiary: #94a3b8;
+            --text-tertiary: #6b7280;
             --border: #334155;
-            --placeholder: #94a3b8;
+            --placeholder: #6b7280;
+            --input-bg: #0f172a;
+            --hover-bg: rgba(96, 165, 250, 0.1);
         }
 
         body {
@@ -53,20 +57,6 @@
             color: var(--text-primary);
             transition: var(--transition);
             min-height: 100vh;
-        }
-
-        /* Fix for placeholder visibility in dark mode */
-        input::placeholder {
-            color: var(--placeholder) !important;
-            opacity: 0.8 !important;
-        }
-        
-        input:-ms-input-placeholder {
-            color: var(--placeholder) !important;
-        }
-        
-        input::-ms-input-placeholder {
-            color: var(--placeholder) !important;
         }
 
         /* Custom Header with Back Button and Profile */
@@ -271,58 +261,141 @@
             margin-top: 1rem;
         }
 
-        /* Autocomplete Search Container */
+        /* Main Search Styles */
         .search-container {
             position: relative;
             width: 100%;
         }
         
-        .autocomplete-dropdown {
+        .main-search-wrapper {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: 50px;
+            transition: var(--transition);
+            overflow: hidden;
+        }
+        
+        .main-search-wrapper:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.2);
+        }
+        
+        .main-search-input {
+            background: transparent !important;
+            color: var(--text-primary) !important;
+            font-size: 1rem;
+            padding: 0.75rem 1rem;
+            border: none;
+            outline: none;
+            width: 100%;
+        }
+        
+        .main-search-input::placeholder {
+            color: var(--placeholder);
+            opacity: 0.8;
+            font-weight: 400;
+        }
+        
+        .search-icon-wrapper {
+            background: transparent;
+            border: none;
+            padding: 0 1rem 0 1.5rem;
+            color: var(--text-tertiary);
+        }
+        
+        /* Mini Search Container with Autocomplete */
+        .mini-search-container {
+            position: relative;
+            width: 100%;
+            padding: 0.5rem;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface);
+        }
+        
+        .mini-search-wrapper {
+            position: relative;
+            width: 100%;
+        }
+        
+        .mini-search-input {
+            width: 100%;
+            padding: 0.6rem 1rem;
+            border-radius: 50px;
+            border: 2px solid var(--border);
+            background: var(--input-bg);
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+        
+        .mini-search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+            background: var(--surface);
+        }
+        
+        .mini-search-input::placeholder {
+            color: var(--placeholder);
+            opacity: 0.8;
+        }
+        
+        .dark-mode .mini-search-input {
+            background: var(--background);
+        }
+        
+        .dark-mode .mini-search-input:focus {
+            background: var(--surface);
+        }
+        
+        /* Mini Autocomplete Dropdown */
+        .mini-autocomplete-dropdown {
             position: absolute;
             top: 100%;
             left: 0;
             right: 0;
             background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 0 0 var(--radius) var(--radius);
+            border: 2px solid var(--border);
+            border-radius: 20px;
             max-height: 300px;
             overflow-y: auto;
             z-index: 1000;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
             display: none;
-            margin-top: 5px;
+            margin-top: 8px;
+            padding: 0.5rem;
         }
         
-        .autocomplete-dropdown.show {
+        .mini-autocomplete-dropdown.show {
             display: block;
             animation: slideDown 0.2s ease-out;
         }
         
-        .autocomplete-item {
-            padding: 0.75rem 1rem;
+        .mini-autocomplete-item {
+            padding: 0.6rem 1rem;
             cursor: pointer;
             transition: var(--transition);
-            border-bottom: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 0.25rem;
             display: flex;
             align-items: center;
             gap: 0.75rem;
         }
         
-        .autocomplete-item:last-child {
-            border-bottom: none;
+        .mini-autocomplete-item:last-child {
+            margin-bottom: 0;
         }
         
-        .autocomplete-item:hover {
-            background: var(--hover);
-            background-color: rgba(96, 165, 250, 0.1);
+        .mini-autocomplete-item:hover {
+            background: var(--hover-bg);
         }
         
-        .autocomplete-item.selected {
+        .mini-autocomplete-item.selected {
             background: rgba(96, 165, 250, 0.2);
-            border-left: 3px solid var(--primary);
+            border-left: 4px solid var(--primary);
         }
         
-        .autocomplete-icon {
+        .mini-autocomplete-icon {
             width: 32px;
             height: 32px;
             border-radius: 8px;
@@ -334,18 +407,153 @@
             font-size: 0.9rem;
         }
         
+        .mini-autocomplete-content {
+            flex: 1;
+        }
+        
+        .mini-autocomplete-title {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+        }
+        
+        .mini-autocomplete-subtitle {
+            font-size: 0.7rem;
+            color: var(--text-tertiary);
+            margin-top: 0.1rem;
+        }
+        
+        .mini-autocomplete-badge {
+            padding: 0.15rem 0.5rem;
+            border-radius: 30px;
+            font-size: 0.65rem;
+            font-weight: 600;
+        }
+        
+        .mini-autocomplete-badge.exam {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+        }
+        
+        .mini-autocomplete-badge.practice {
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+        }
+        
+        .mini-autocomplete-badge.quizlet {
+            background: rgba(139, 92, 246, 0.15);
+            color: #8b5cf6;
+        }
+        
+        .mini-autocomplete-category {
+            font-size: 0.65rem;
+            padding: 0.2rem 0.6rem;
+            background: var(--border);
+            border-radius: 30px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .mini-autocomplete-hint {
+            position: absolute;
+            right: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-tertiary);
+            font-size: 0.75rem;
+            background: var(--surface);
+            padding: 0.2rem 0.6rem;
+            border-radius: 30px;
+            border: 1px solid var(--border);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.2rem;
+            z-index: 5;
+        }
+        
+        .mini-autocomplete-hint.show {
+            opacity: 1;
+        }
+        
+        .mini-autocomplete-hint i {
+            color: var(--primary);
+            font-size: 0.7rem;
+        }
+
+        /* Global Autocomplete Dropdown */
+        .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            display: none;
+            margin-top: 10px;
+            padding: 0.5rem;
+        }
+        
+        .autocomplete-dropdown.show {
+            display: block;
+            animation: slideDown 0.2s ease-out;
+        }
+        
+        .autocomplete-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border-radius: 12px;
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .autocomplete-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .autocomplete-item:hover {
+            background: var(--hover-bg);
+        }
+        
+        .autocomplete-item.selected {
+            background: rgba(96, 165, 250, 0.2);
+            border-left: 4px solid var(--primary);
+        }
+        
+        .autocomplete-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+        
         .autocomplete-content {
             flex: 1;
         }
         
         .autocomplete-title {
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             color: var(--text-primary);
         }
         
         .autocomplete-subtitle {
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             color: var(--text-tertiary);
             display: flex;
             gap: 1rem;
@@ -355,60 +563,60 @@
         .autocomplete-match {
             background: rgba(96, 165, 250, 0.3);
             color: var(--primary);
-            font-weight: 600;
+            font-weight: 700;
             padding: 0 2px;
-            border-radius: 3px;
+            border-radius: 4px;
         }
         
         .autocomplete-category {
             font-size: 0.7rem;
-            padding: 0.25rem 0.5rem;
+            padding: 0.25rem 0.75rem;
             background: var(--border);
-            border-radius: 12px;
+            border-radius: 30px;
             color: var(--text-secondary);
+            font-weight: 500;
         }
         
         .autocomplete-badge {
-            padding: 0.2rem 0.5rem;
-            border-radius: 12px;
-            font-size: 0.65rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
             font-weight: 600;
         }
         
         .autocomplete-badge.exam {
-            background: rgba(239, 68, 68, 0.1);
+            background: rgba(239, 68, 68, 0.15);
             color: #ef4444;
         }
         
         .autocomplete-badge.practice {
-            background: rgba(34, 197, 94, 0.1);
+            background: rgba(34, 197, 94, 0.15);
             color: #22c55e;
         }
         
         .autocomplete-badge.quizlet {
-            background: rgba(139, 92, 246, 0.1);
+            background: rgba(139, 92, 246, 0.15);
             color: #8b5cf6;
-        }
-        
-        /* Search input with autocomplete indicator */
-        .search-with-autocomplete {
-            position: relative;
         }
         
         .autocomplete-hint {
             position: absolute;
-            right: 40px;
+            right: 50px;
             top: 50%;
             transform: translateY(-50%);
             color: var(--text-tertiary);
             font-size: 0.8rem;
             background: var(--surface);
-            padding: 0.2rem 0.5rem;
-            border-radius: 12px;
+            padding: 0.25rem 0.75rem;
+            border-radius: 30px;
             border: 1px solid var(--border);
             pointer-events: none;
             opacity: 0;
             transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            z-index: 10;
         }
         
         .autocomplete-hint.show {
@@ -416,14 +624,24 @@
         }
         
         .autocomplete-hint i {
-            margin-right: 0.25rem;
             color: var(--primary);
+            font-size: 0.75rem;
         }
-        
+
+        .global-search-count {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-right: 0.5rem;
+        }
+
         /* Subject Cards */
         .subject-card { 
             background-color: var(--surface); 
-            border: 1px solid var(--border); 
+            border: 2px solid var(--border); 
             transition: var(--transition); 
             height: 100%; 
             display: flex; 
@@ -438,161 +656,21 @@
             box-shadow: 0 15px 30px rgba(0,0,0,0.2);
         }
 
-        /* Mini Search Bar with Autocomplete */
-        .mini-search {
-            padding: 0.75rem;
-            border-bottom: 1px solid var(--border);
-            background: var(--surface);
-            position: relative;
-        }
-        
-        .mini-search-wrapper {
-            position: relative;
-            width: 100%;
-        }
-        
-        .mini-search-icon {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-tertiary);
-            font-size: 0.8rem;
-            pointer-events: none;
-            z-index: 2;
-        }
-        
-        .mini-search-input {
-            width: 100%;
-            padding: 0.6rem 1rem 0.6rem 32px;
-            border-radius: 30px;
-            border: 1px solid var(--border);
-            background: var(--background);
-            color: var(--text-primary);
-            font-size: 0.85rem;
-            transition: var(--transition);
-        }
-        
-        .mini-search-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
-        }
-        
-        .mini-search-input::placeholder {
-            color: var(--placeholder);
-            font-size: 0.8rem;
-            opacity: 0.8;
-        }
-        
-        /* Mini Autocomplete Dropdown */
-        .mini-autocomplete-dropdown {
-            position: absolute;
-            top: calc(100% - 5px);
-            left: 0.75rem;
-            right: 0.75rem;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            max-height: 200px;
-            overflow-y: auto;
-            z-index: 100;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            display: none;
-        }
-        
-        .mini-autocomplete-dropdown.show {
-            display: block;
-            animation: slideDown 0.2s ease-out;
-        }
-        
-        .mini-autocomplete-item {
-            padding: 0.6rem 1rem;
-            cursor: pointer;
-            transition: var(--transition);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .mini-autocomplete-item:last-child {
-            border-bottom: none;
-        }
-        
-        .mini-autocomplete-item:hover {
-            background-color: rgba(96, 165, 250, 0.1);
-        }
-        
-        .mini-autocomplete-item.selected {
-            background: rgba(96, 165, 250, 0.2);
-            border-left: 3px solid var(--primary);
-        }
-        
-        .mini-autocomplete-icon {
-            width: 24px;
-            height: 24px;
-            border-radius: 6px;
-            background: var(--gradient);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 0.7rem;
-        }
-        
-        .mini-autocomplete-content {
-            flex: 1;
-        }
-        
-        .mini-autocomplete-title {
-            font-weight: 600;
-            font-size: 0.8rem;
-            color: var(--text-primary);
-        }
-        
-        .mini-autocomplete-subtitle {
-            font-size: 0.65rem;
-            color: var(--text-tertiary);
-        }
-        
-        .mini-autocomplete-badge {
-            padding: 0.15rem 0.4rem;
-            border-radius: 10px;
-            font-size: 0.6rem;
-            font-weight: 600;
-        }
-        
-        .mini-autocomplete-badge.exam {
-            background: rgba(239, 68, 68, 0.1);
-            color: #ef4444;
-        }
-        
-        .mini-autocomplete-badge.practice {
-            background: rgba(34, 197, 94, 0.1);
-            color: #22c55e;
-        }
-        
-        .mini-autocomplete-badge.quizlet {
-            background: rgba(139, 92, 246, 0.1);
-            color: #8b5cf6;
-        }
-
-        /* Mini Filter Buttons */
+        /* Mini Filters */
         .mini-filters {
             display: flex;
-            gap: 0.4rem;
-            padding: 0.75rem;
+            gap: 0.3rem;
+            padding: 0.5rem;
             border-bottom: 1px solid var(--border);
             flex-wrap: wrap;
             background: var(--surface);
         }
         
         .mini-filter-btn {
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            border: 1px solid var(--border);
-            background: var(--background);
+            padding: 0.25rem 0.75rem;
+            border-radius: 30px;
+            border: 2px solid var(--border);
+            background: transparent;
             color: var(--text-secondary);
             font-size: 0.75rem;
             cursor: pointer;
@@ -615,14 +693,10 @@
             color: white;
             border-color: transparent;
         }
-        
-        .mini-filter-btn i {
-            font-size: 0.7rem;
-        }
 
-        /* Mini Sort - Matching Main Style */
+        /* Mini Sort */
         .mini-sort {
-            padding: 0.75rem;
+            padding: 0.5rem;
             border-bottom: 1px solid var(--border);
             background: var(--surface);
         }
@@ -631,22 +705,27 @@
             width: 100%;
             padding: 0.5rem 1rem;
             border-radius: 30px;
-            border: 1px solid var(--border);
-            background: var(--background);
+            border: 2px solid var(--border);
+            background: var(--input-bg);
             color: var(--text-primary);
             font-size: 0.8rem;
             cursor: pointer;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 12px center;
-            background-size: 16px;
+            transition: var(--transition);
+            font-weight: 500;
         }
         
         .mini-sort-select:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+        }
+        
+        .dark-mode .mini-sort-select {
+            background: var(--background);
+        }
+        
+        .dark-mode .mini-sort-select:focus {
+            background: var(--surface);
         }
         
         .mini-sort-select option {
@@ -663,24 +742,22 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: var(--surface);
+            background: rgba(96, 165, 250, 0.05);
         }
         
         .clear-search {
             color: var(--primary);
             cursor: pointer;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
+            font-weight: 600;
             padding: 0.2rem 0.5rem;
-            border-radius: 12px;
-            background: var(--background);
-            border: 1px solid var(--border);
+            border-radius: 30px;
+            background: rgba(96, 165, 250, 0.1);
             transition: var(--transition);
         }
         
         .clear-search:hover {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
+            background: rgba(96, 165, 250, 0.2);
         }
 
         .quiz-list { 
@@ -697,7 +774,7 @@
         .quiz-item { 
             border-radius: var(--radius); 
             transition: var(--transition); 
-            margin-bottom: 0.2rem;
+            margin-bottom: 0.25rem;
         }
         
         .quiz-item:hover { 
@@ -711,18 +788,19 @@
             display: flex; 
             align-items: center; 
             justify-content: space-between; 
-            padding: 0.5rem 0.75rem; 
+            padding: 0.6rem 0.75rem; 
         }
         
         .quiz-icon { 
-            width: 28px; 
-            height: 28px; 
+            width: 32px; 
+            height: 32px; 
             background: var(--surface); 
             border-radius: 8px; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
             color: var(--primary); 
+            border: 1px solid var(--border);
         }
         
         .quiz-title mark { 
@@ -891,16 +969,6 @@
             from { opacity: 1; }
             to { opacity: 0; }
         }
-
-        /* Main search input fix */
-        #smartSearch {
-            color: var(--text-primary);
-        }
-        
-        #smartSearch::placeholder {
-            color: var(--placeholder);
-            opacity: 1;
-        }
     </style>
 </head>
 <body class="dark-mode">
@@ -995,14 +1063,16 @@
             <div class="row g-3 align-items-center mb-4">
                 <div class="col-12">
                     <div class="search-container">
-                        <div class="input-group rounded-pill bg-surface border border-custom search-with-autocomplete">
-                            <span class="input-group-text bg-transparent border-0 text-secondary"><i class="fas fa-search"></i></span>
-                            <input type="text" class="form-control bg-transparent border-0 ps-0" id="smartSearch" placeholder="🔍 Search quizzes, topics, subjects..." autocomplete="off">
+                        <div class="main-search-wrapper d-flex align-items-center">
+                            <span class="search-icon-wrapper">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            <input type="text" class="main-search-input" id="smartSearch" placeholder="Search quizzes, topics, subjects..." autocomplete="off">
                             <span class="autocomplete-hint" id="autocompleteHint">
                                 <i class="fas fa-lightbulb"></i>
                                 <span id="hintText"></span>
                             </span>
-                            <span class="input-group-text bg-transparent border-0" id="globalSearchCount" style="display: none;"></span>
+                            <span id="globalSearchCount" class="me-2"></span>
                         </div>
                         
                         <!-- Autocomplete Dropdown -->
@@ -1045,7 +1115,7 @@
 
     <!-- Bootstrap bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
+  <script>
         (function() {
             // Check if user is registered
             const checkUserRegistration = () => {
@@ -1185,14 +1255,14 @@
                 const miniSearchStates = {};
                 const miniFilterStates = {};
                 const miniSortStates = {};
-                const miniSelectedSuggestionIndex = {};
+                const miniSelectedSuggestionIndices = {}; // Track selected suggestion per mini search
 
                 // Initialize states for each subject
                 quizData.forEach(subject => {
                     miniSearchStates[subject.subject] = '';
                     miniFilterStates[subject.subject] = 'all';
                     miniSortStates[subject.subject] = 'default';
-                    miniSelectedSuggestionIndex[subject.subject] = -1;
+                    miniSelectedSuggestionIndices[subject.subject] = -1;
                 });
 
                 // Back button functionality
@@ -1329,17 +1399,6 @@
                     return quizzes.filter(q => q.type === filterType);
                 }
 
-                // Search quizzes
-                function searchQuizzes(quizzes, searchTerm) {
-                    if (!searchTerm) return quizzes;
-                    const term = searchTerm.toLowerCase();
-                    return quizzes.filter(q => 
-                        q.title.toLowerCase().includes(term) || 
-                        q.type.toLowerCase().includes(term) ||
-                        (q.difficulty && q.difficulty.toLowerCase().includes(term))
-                    );
-                }
-
                 // Update global search count
                 function updateGlobalSearchCount() {
                     const globalCountEl = document.getElementById('globalSearchCount');
@@ -1353,16 +1412,174 @@
                                 totalMatches += matches;
                             }
                         });
-                        globalCountEl.innerHTML = `<span class="badge bg-primary">${totalMatches} matches</span>`;
-                        globalCountEl.style.display = 'inline';
+                        globalCountEl.innerHTML = `<span class="global-search-count">${totalMatches} matches</span>`;
                     } else {
-                        globalCountEl.style.display = 'none';
+                        globalCountEl.innerHTML = '';
                     }
                 }
 
-                // Autocomplete functions for main search
+                // Get mini autocomplete suggestions for a specific subject
+                function getMiniAutocompleteSuggestions(query, subjectData) {
+                    if (!query || query.length < 1) return []; // Start suggesting from 1 character
+                    
+                    const lowercaseQuery = query.toLowerCase();
+                    const suggestions = [];
+                    
+                    // Search in quiz titles within this subject
+                    subjectData.quizzes.forEach(quiz => {
+                        if (quiz.title.toLowerCase().includes(lowercaseQuery)) {
+                            suggestions.push({
+                                type: 'quiz',
+                                title: quiz.title,
+                                subtitle: `${quiz.qCount} questions`,
+                                icon: subjectData.icon,
+                                badge: quiz.type,
+                                href: quiz.href
+                            });
+                        }
+                    });
+                    
+                    // Search by quiz type within this subject
+                    ['practice', 'exam', 'quizlet'].forEach(type => {
+                        if (type.includes(lowercaseQuery)) {
+                            const count = subjectData.quizzes.filter(q => q.type === type).length;
+                            if (count > 0) {
+                                suggestions.push({
+                                    type: 'filter',
+                                    title: type.charAt(0).toUpperCase() + type.slice(1),
+                                    subtitle: `${count} quizzes`,
+                                    icon: type === 'practice' ? 'fas fa-play-circle' : 
+                                          type === 'exam' ? 'fas fa-file-alt' : 'fas fa-code',
+                                    filter: type
+                                });
+                            }
+                        }
+                    });
+                    
+                    // Search by difficulty within this subject
+                    ['beginner', 'intermediate', 'advanced'].forEach(difficulty => {
+                        if (difficulty.includes(lowercaseQuery)) {
+                            const count = subjectData.quizzes.filter(q => q.difficulty === difficulty).length;
+                            if (count > 0) {
+                                suggestions.push({
+                                    type: 'difficulty',
+                                    title: difficulty.charAt(0).toUpperCase() + difficulty.slice(1),
+                                    subtitle: `${count} quizzes`,
+                                    icon: 'fas fa-signal',
+                                    difficulty: difficulty
+                                });
+                            }
+                        }
+                    });
+                    
+                    // Remove duplicates and limit
+                    const unique = suggestions.filter((v, i, a) => 
+                        a.findIndex(t => t.title === v.title) === i
+                    ).slice(0, 5);
+                    
+                    return unique;
+                }
+
+                // Render mini autocomplete dropdown
+                function renderMiniAutocompleteDropdown(subject, suggestions, query, dropdownId, hintId) {
+                    const dropdown = document.getElementById(dropdownId);
+                    const hint = document.getElementById(hintId);
+                    
+                    if (!suggestions || suggestions.length === 0) {
+                        if (dropdown) dropdown.classList.remove('show');
+                        if (hint) hint.classList.remove('show');
+                        return;
+                    }
+                    
+                    // Show first suggestion as hint
+                    if (suggestions.length > 0 && hint) {
+                        hint.querySelector('span').textContent = suggestions[0].title;
+                        hint.classList.add('show');
+                    }
+                    
+                    let html = '';
+                    suggestions.forEach((suggestion, index) => {
+                        const isSelected = index === miniSelectedSuggestionIndices[subject];
+                        const selectedClass = isSelected ? 'selected' : '';
+                        
+                        if (suggestion.type === 'quiz') {
+                            html += `
+                                <div class="mini-autocomplete-item ${selectedClass}" data-type="quiz" data-href="${suggestion.href}">
+                                    <div class="mini-autocomplete-icon"><i class="${suggestion.icon}"></i></div>
+                                    <div class="mini-autocomplete-content">
+                                        <div class="mini-autocomplete-title">${highlightText(suggestion.title, query)}</div>
+                                        <div class="mini-autocomplete-subtitle">${suggestion.subtitle}</div>
+                                    </div>
+                                    <span class="mini-autocomplete-badge ${suggestion.badge}">${suggestion.badge}</span>
+                                </div>
+                            `;
+                        } else if (suggestion.type === 'filter') {
+                            html += `
+                                <div class="mini-autocomplete-item ${selectedClass}" data-type="filter" data-filter="${suggestion.filter}" data-subject="${subject}">
+                                    <div class="mini-autocomplete-icon"><i class="${suggestion.icon}"></i></div>
+                                    <div class="mini-autocomplete-content">
+                                        <div class="mini-autocomplete-title">${highlightText(suggestion.title, query)}</div>
+                                        <div class="mini-autocomplete-subtitle">${suggestion.subtitle}</div>
+                                    </div>
+                                    <span class="mini-autocomplete-category">Filter</span>
+                                </div>
+                            `;
+                        } else if (suggestion.type === 'difficulty') {
+                            html += `
+                                <div class="mini-autocomplete-item ${selectedClass}" data-type="difficulty" data-difficulty="${suggestion.difficulty}" data-subject="${subject}">
+                                    <div class="mini-autocomplete-icon"><i class="${suggestion.icon}"></i></div>
+                                    <div class="mini-autocomplete-content">
+                                        <div class="mini-autocomplete-title">${highlightText(suggestion.title, query)}</div>
+                                        <div class="mini-autocomplete-subtitle">${suggestion.subtitle}</div>
+                                    </div>
+                                    <span class="mini-autocomplete-category">Difficulty</span>
+                                </div>
+                            `;
+                        }
+                    });
+                    
+                    dropdown.innerHTML = html;
+                    dropdown.classList.add('show');
+                    
+                    // Add click handlers to mini autocomplete items
+                    document.querySelectorAll(`#${dropdownId} .mini-autocomplete-item`).forEach(item => {
+                        item.addEventListener('click', () => {
+                            const type = item.dataset.type;
+                            const subject = item.dataset.subject;
+                            
+                            if (type === 'quiz') {
+                                window.location.href = item.dataset.href;
+                            } else if (type === 'filter') {
+                                // Apply filter to this subject
+                                miniFilterStates[subject] = item.dataset.filter;
+                                // Clear the mini search
+                                const input = document.querySelector(`.mini-search-input[data-subject="${subject}"]`);
+                                if (input) {
+                                    input.value = '';
+                                    miniSearchStates[subject] = '';
+                                }
+                                // Update just this subject
+                                updateSubjectQuizzes(subject, '');
+                            } else if (type === 'difficulty') {
+                                // Clear the search
+                                const input = document.querySelector(`.mini-search-input[data-subject="${subject}"]`);
+                                if (input) {
+                                    input.value = '';
+                                    miniSearchStates[subject] = '';
+                                }
+                                // Update just this subject
+                                updateSubjectQuizzes(subject, '');
+                            }
+                            
+                            dropdown.classList.remove('show');
+                            if (hint) hint.classList.remove('show');
+                        });
+                    });
+                }
+
+                // Global autocomplete functions
                 function getAutocompleteSuggestions(query) {
-                    if (!query || query.length < 1) return [];
+                    if (!query || query.length < 2) return [];
                     
                     const lowercaseQuery = query.toLowerCase();
                     const suggestions = [];
@@ -1436,117 +1653,6 @@
                     return unique;
                 }
 
-                // Mini autocomplete for subject-specific search
-                function getMiniAutocompleteSuggestions(subject, query) {
-                    if (!query || query.length < 1) return [];
-                    
-                    const lowercaseQuery = query.toLowerCase();
-                    const subjectData = quizData.find(s => s.subject === subject);
-                    if (!subjectData) return [];
-                    
-                    const suggestions = [];
-                    
-                    // Search in quiz titles for this subject
-                    subjectData.quizzes.forEach(quiz => {
-                        if (quiz.title.toLowerCase().includes(lowercaseQuery)) {
-                            suggestions.push({
-                                title: quiz.title,
-                                subtitle: `${quiz.qCount} questions • ${quiz.difficulty}`,
-                                icon: subjectData.icon,
-                                badge: quiz.type,
-                                href: quiz.href
-                            });
-                        }
-                    });
-                    
-                    // Search by type
-                    ['practice', 'exam', 'quizlet'].forEach(type => {
-                        if (type.includes(lowercaseQuery)) {
-                            const count = subjectData.quizzes.filter(q => q.type === type).length;
-                            if (count > 0) {
-                                suggestions.push({
-                                    title: type.charAt(0).toUpperCase() + type.slice(1),
-                                    subtitle: `${count} quizzes of this type`,
-                                    icon: type === 'practice' ? 'fas fa-play-circle' : 
-                                          type === 'exam' ? 'fas fa-file-alt' : 'fas fa-code',
-                                    isFilter: true,
-                                    filter: type
-                                });
-                            }
-                        }
-                    });
-                    
-                    // Search by difficulty
-                    ['beginner', 'intermediate', 'advanced'].forEach(difficulty => {
-                        if (difficulty.includes(lowercaseQuery)) {
-                            const count = subjectData.quizzes.filter(q => q.difficulty === difficulty).length;
-                            if (count > 0) {
-                                suggestions.push({
-                                    title: difficulty.charAt(0).toUpperCase() + difficulty.slice(1),
-                                    subtitle: `${count} quizzes at this level`,
-                                    icon: 'fas fa-signal',
-                                    isDifficulty: true,
-                                    difficulty: difficulty
-                                });
-                            }
-                        }
-                    });
-                    
-                    return suggestions.slice(0, 5);
-                }
-
-                function renderMiniAutocompleteDropdown(subject, suggestions, query, dropdownId) {
-                    const dropdown = document.getElementById(dropdownId);
-                    
-                    if (!suggestions || suggestions.length === 0) {
-                        dropdown.classList.remove('show');
-                        return;
-                    }
-                    
-                    let html = '';
-                    suggestions.forEach((suggestion, index) => {
-                        const isSelected = index === miniSelectedSuggestionIndex[subject];
-                        const selectedClass = isSelected ? 'selected' : '';
-                        
-                        if (suggestion.isFilter) {
-                            html += `
-                                <div class="mini-autocomplete-item ${selectedClass}" data-type="filter" data-filter="${suggestion.filter}" data-subject="${subject}">
-                                    <div class="mini-autocomplete-icon"><i class="${suggestion.icon}"></i></div>
-                                    <div class="mini-autocomplete-content">
-                                        <div class="mini-autocomplete-title">${highlightText(suggestion.title, query)}</div>
-                                        <div class="mini-autocomplete-subtitle">${suggestion.subtitle}</div>
-                                    </div>
-                                </div>
-                            `;
-                        } else if (suggestion.isDifficulty) {
-                            html += `
-                                <div class="mini-autocomplete-item ${selectedClass}" data-type="difficulty" data-difficulty="${suggestion.difficulty}" data-subject="${subject}">
-                                    <div class="mini-autocomplete-icon"><i class="${suggestion.icon}"></i></div>
-                                    <div class="mini-autocomplete-content">
-                                        <div class="mini-autocomplete-title">${highlightText(suggestion.title, query)} level</div>
-                                        <div class="mini-autocomplete-subtitle">${suggestion.subtitle}</div>
-                                    </div>
-                                </div>
-                            `;
-                        } else {
-                            html += `
-                                <div class="mini-autocomplete-item ${selectedClass}" data-type="quiz" data-href="${suggestion.href}">
-                                    <div class="mini-autocomplete-icon"><i class="${suggestion.icon}"></i></div>
-                                    <div class="mini-autocomplete-content">
-                                        <div class="mini-autocomplete-title">${highlightText(suggestion.title, query)}</div>
-                                        <div class="mini-autocomplete-subtitle">${suggestion.subtitle}</div>
-                                    </div>
-                                    <span class="mini-autocomplete-badge ${suggestion.badge}">${suggestion.badge}</span>
-                                </div>
-                            `;
-                        }
-                    });
-                    
-                    dropdown.innerHTML = html;
-                    dropdown.classList.add('show');
-                }
-
-                // Main search autocomplete
                 function renderAutocompleteDropdown(suggestions, query) {
                     const dropdown = document.getElementById('autocompleteDropdown');
                     const hint = document.getElementById('autocompleteHint');
@@ -1649,172 +1755,130 @@
                     });
                 }
 
-                // Separate function to attach all mini search listeners
-                function attachMiniSearchListeners() {
-                    document.querySelectorAll('.mini-search-input').forEach(input => {
-                        const subject = input.dataset.subject;
-                        const dropdownId = `miniDropdown-${subject}`;
-                        let miniTimeout;
-                        
-                        // Remove existing listeners to prevent duplicates
-                        input.removeEventListener('input', handleMiniInput);
-                        input.removeEventListener('keydown', handleMiniKeydown);
-                        
-                        // Add input listener
-                        input.addEventListener('input', handleMiniInput);
-                        
-                        // Add keyboard navigation
-                        input.addEventListener('keydown', handleMiniKeydown);
-                        
-                        function handleMiniInput(e) {
-                            const query = e.target.value;
-                            miniSearchStates[subject] = query;
-                            
-                            // Clear previous timeout
-                            if (miniTimeout) clearTimeout(miniTimeout);
-                            
-                            // Get suggestions
-                            const suggestions = getMiniAutocompleteSuggestions(subject, query);
-                            
-                            // Reset selection
-                            miniSelectedSuggestionIndex[subject] = -1;
-                            
-                            // Render dropdown
-                            renderMiniAutocompleteDropdown(subject, suggestions, query, dropdownId);
-                            
-                            // Update search results with debounce - but don't re-render on every keystroke
-                            // Only re-render after a short delay to avoid keyboard closing
-                            miniTimeout = setTimeout(() => {
-                                renderCards();
-                            }, 300); // Increased delay to reduce re-renders
+                // NEW FUNCTION: Update only a specific subject's quizzes without full re-render
+                function updateSubjectQuizzes(subjectKey, searchTerm) {
+                    const subject = quizData.find(s => s.subject === subjectKey);
+                    if (!subject) return;
+                    
+                    // Find the card container for this subject
+                    const cards = document.querySelectorAll('.subject-card');
+                    let targetCard = null;
+                    
+                    for (let card of cards) {
+                        const header = card.querySelector('h3');
+                        if (header && header.textContent === subject.display) {
+                            targetCard = card;
+                            break;
                         }
+                    }
+                    
+                    if (!targetCard) return;
+                    
+                    // Get current filters
+                    const miniTerm = searchTerm.toLowerCase();
+                    const filterType = miniFilterStates[subjectKey] || 'all';
+                    const sortType = miniSortStates[subjectKey] || 'default';
+                    
+                    // Filter and sort quizzes
+                    let filtered = subject.quizzes;
+                    
+                    if (miniTerm) {
+                        filtered = filtered.filter(q => q.title.toLowerCase().includes(miniTerm));
+                    }
+                    
+                    filtered = filterByType(filtered, filterType);
+                    filtered = sortQuizzes(filtered, sortType);
+                    
+                    // Update the badge count
+                    const badge = targetCard.querySelector('.badge.bg-primary');
+                    if (badge) {
+                        badge.textContent = `${filtered.length}/${subject.quizzes.length}`;
+                    }
+                    
+                    // Update the quiz list
+                    const quizList = targetCard.querySelector('.quiz-list');
+                    if (!quizList) return;
+                    
+                    const itemsHtml = filtered.map(q => {
+                        const highlightTerm = miniTerm;
+                        const titleDisplay = highlightTerm ? highlightText(q.title, highlightTerm) : q.title;
                         
-                        function handleMiniKeydown(e) {
-                            const dropdown = document.getElementById(dropdownId);
-                            const items = dropdown.querySelectorAll('.mini-autocomplete-item');
+                        let badgeClass = 'bg-secondary';
+                        if (q.type === 'exam') badgeClass = 'badge-exam';
+                        else if (q.type === 'practice') badgeClass = 'badge-practice';
+                        else if (q.type === 'quizlet') badgeClass = 'badge-quizlet';
+                        
+                        return `<li class="quiz-item">
+                            <a href="${q.href}" class="quiz-link">
+                                <span class="d-flex align-items-center gap-2">
+                                    <span class="quiz-icon"><i class="fas ${q.type==='exam'?'fa-file-alt':(q.type==='practice'?'fa-play-circle':'fa-code')}"></i></span>
+                                    <span class="quiz-title">${titleDisplay}</span>
+                                </span>
+                                <span class="d-flex align-items-center gap-2">
+                                    <span class="badge ${badgeClass} rounded-pill">${q.qCount}</span>
+                                    <i class="fas fa-arrow-right text-secondary"></i>
+                                </span>
+                            </a>
+                        </li>`;
+                    }).join('');
+                    
+                    const noResultsHtml = filtered.length === 0 ? `
+                        <div class="no-results-mini">
+                            <i class="fas fa-search"></i>
+                            <p>No matching quizzes</p>
+                        </div>
+                    ` : '';
+                    
+                    quizList.innerHTML = itemsHtml || noResultsHtml;
+                    
+                    // Update search stats
+                    const existingStats = targetCard.querySelector('.search-stats');
+                    if (miniTerm) {
+                        if (existingStats) {
+                            const span = existingStats.querySelector('span:first-child');
+                            if (span) span.innerHTML = `<i class="fas fa-search"></i> ${filtered.length} results`;
+                        } else {
+                            // Create search stats if it doesn't exist
+                            const statsDiv = document.createElement('div');
+                            statsDiv.className = 'search-stats';
+                            statsDiv.innerHTML = `
+                                <span><i class="fas fa-search"></i> ${filtered.length} results</span>
+                                <span class="clear-search" data-subject="${subjectKey}">Clear ✕</span>
+                            `;
                             
-                            if (items.length === 0) return;
-                            
-                            if (e.key === 'ArrowDown') {
-                                e.preventDefault();
-                                miniSelectedSuggestionIndex[subject] = (miniSelectedSuggestionIndex[subject] + 1) % items.length;
-                                updateMiniSelectedSuggestion(subject);
-                            } else if (e.key === 'ArrowUp') {
-                                e.preventDefault();
-                                miniSelectedSuggestionIndex[subject] = miniSelectedSuggestionIndex[subject] <= 0 ? items.length - 1 : miniSelectedSuggestionIndex[subject] - 1;
-                                updateMiniSelectedSuggestion(subject);
-                            } else if (e.key === 'Enter' && miniSelectedSuggestionIndex[subject] >= 0) {
-                                e.preventDefault();
-                                items[miniSelectedSuggestionIndex[subject]].click();
-                            } else if (e.key === 'Escape') {
-                                dropdown.classList.remove('show');
+                            // Insert after sort select
+                            const sortDiv = targetCard.querySelector('.mini-sort');
+                            if (sortDiv) {
+                                sortDiv.insertAdjacentElement('afterend', statsDiv);
                             }
-                        }
-                        
-                        function updateMiniSelectedSuggestion(subject) {
-                            const dropdown = document.getElementById(dropdownId);
-                            const items = dropdown.querySelectorAll('.mini-autocomplete-item');
-                            items.forEach((item, index) => {
-                                if (index === miniSelectedSuggestionIndex[subject]) {
-                                    item.classList.add('selected');
-                                } else {
-                                    item.classList.remove('selected');
+                            
+                            // Add clear handler
+                            statsDiv.querySelector('.clear-search').addEventListener('click', () => {
+                                miniSearchStates[subjectKey] = '';
+                                const input = document.querySelector(`.mini-search-input[data-subject="${subjectKey}"]`);
+                                if (input) {
+                                    input.value = '';
                                 }
+                                
+                                // Hide dropdown and hint
+                                const dropdown = document.getElementById(`miniDropdown-${subjectKey}`);
+                                const hint = document.getElementById(`miniHint-${subjectKey}`);
+                                if (dropdown) dropdown.classList.remove('show');
+                                if (hint) hint.classList.remove('show');
+                                
+                                // Update this subject only
+                                updateSubjectQuizzes(subjectKey, '');
                             });
                         }
-                        
-                        // Close dropdown when clicking outside
-                        document.addEventListener('click', (e) => {
-                            const dropdown = document.getElementById(dropdownId);
-                            if (!input.contains(e.target) && !dropdown.contains(e.target)) {
-                                dropdown.classList.remove('show');
-                            }
-                        });
-                        
-                        // Add click handlers to mini autocomplete items
-                        setTimeout(() => {
-                            const dropdown = document.getElementById(dropdownId);
-                            if (dropdown) {
-                                dropdown.querySelectorAll('.mini-autocomplete-item').forEach(item => {
-                                    item.addEventListener('click', (e) => {
-                                        const type = item.dataset.type;
-                                        
-                                        if (type === 'quiz') {
-                                            window.location.href = item.dataset.href;
-                                        } else if (type === 'filter') {
-                                            miniFilterStates[subject] = item.dataset.filter;
-                                            miniSearchStates[subject] = '';
-                                            input.value = '';
-                                            renderCards();
-                                        } else if (type === 'difficulty') {
-                                            // You can implement difficulty filtering here
-                                            miniSearchStates[subject] = '';
-                                            input.value = '';
-                                            renderCards();
-                                        }
-                                        
-                                        dropdown.classList.remove('show');
-                                    });
-                                });
-                            }
-                        }, 100);
-                    });
-                    
-                    // Attach mini filter event listeners
-                    document.querySelectorAll('.mini-filter-btn').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            const subject = e.target.dataset.subject;
-                            const filter = e.target.dataset.filter;
-                            miniFilterStates[subject] = filter;
-                            renderCards();
-                        });
-                    });
-                    
-                    // Attach mini sort event listeners
-                    document.querySelectorAll('.mini-sort-select').forEach(select => {
-                        select.addEventListener('change', (e) => {
-                            const subject = e.target.dataset.subject;
-                            miniSortStates[subject] = e.target.value;
-                            renderCards();
-                        });
-                    });
-                    
-                    // Attach clear search listeners
-                    document.querySelectorAll('.clear-search').forEach(clear => {
-                        clear.addEventListener('click', (e) => {
-                            const subject = e.target.dataset.subject;
-                            miniSearchStates[subject] = '';
-                            const input = document.getElementById(`miniSearch-${subject}`);
-                            if (input) input.value = '';
-                            renderCards();
-                        });
-                    });
-
-                    // Expand/collapse
-                    document.querySelectorAll('.view-all-btn').forEach(btn => {
-                        const card = btn.closest('.subject-card');
-                        const list = card.querySelector('.quiz-list');
-                        btn.addEventListener('click', (e) => {
-                            e.preventDefault();
-                            const expanded = list.classList.toggle('expanded');
-                            btn.querySelector('span').innerText = expanded ? 'Show less' : 'View all quizzes';
-                            btn.querySelector('i').classList.toggle('fa-chevron-down', !expanded);
-                            btn.querySelector('i').classList.toggle('fa-chevron-up', expanded);
-                        });
-                    });
+                    } else if (existingStats) {
+                        existingStats.remove();
+                    }
                 }
 
-                // Modified renderCards function with focus preservation
                 function renderCards() {
                     const term = currentSearch.trim().toLowerCase();
                     let anyVisible = false;
                     let cardsHtml = '';
-
-                    // Store current focus information before re-rendering
-                    const activeElement = document.activeElement;
-                    const activeSubject = activeElement?.dataset?.subject;
-                    const activeSelectionStart = activeElement?.selectionStart;
-                    const activeSelectionEnd = activeElement?.selectionEnd;
 
                     quizData.forEach(subject => {
                         if (currentFilter !== 'all' && subject.subject !== currentFilter) return;
@@ -1842,6 +1906,7 @@
                         anyVisible = true;
 
                         const itemsHtml = filtered.map(q => {
+                            // Determine which search term to highlight (prioritize mini search, then global)
                             const highlightTerm = miniTerm || term;
                             const titleDisplay = highlightTerm ? highlightText(q.title, highlightTerm) : q.title;
                             
@@ -1872,6 +1937,8 @@
                         ` : '';
 
                         const tooMany = subject.quizzes.length > 6;
+                        const dropdownId = `miniDropdown-${subject.subject}`;
+                        const hintId = `miniHint-${subject.subject}`;
                         
                         cardsHtml += `<div class="col-md-6 col-xl-4">
                             <div class="subject-card rounded-4 p-0">
@@ -1881,20 +1948,22 @@
                                     <span class="badge bg-primary rounded-pill ms-auto">${filtered.length}/${subject.quizzes.length}</span>
                                 </div>
                                 
-                                <!-- Mini Search Bar with Autocomplete -->
-                                <div class="mini-search">
+                                <!-- Mini Search with Autocomplete -->
+                                <div class="mini-search-container">
                                     <div class="mini-search-wrapper">
-                                        <i class="fas fa-search mini-search-icon"></i>
                                         <input type="text" class="mini-search-input" 
-                                            placeholder="🔍 Search in ${subject.display}..." 
+                                            placeholder="Search in ${subject.display}..." 
                                             data-subject="${subject.subject}"
-                                            id="miniSearch-${subject.subject}"
                                             value="${miniSearchStates[subject.subject] || ''}"
                                             autocomplete="off">
+                                        <span class="mini-autocomplete-hint" id="${hintId}">
+                                            <i class="fas fa-lightbulb"></i>
+                                            <span></span>
+                                        </span>
                                     </div>
                                     
                                     <!-- Mini Autocomplete Dropdown -->
-                                    <div class="mini-autocomplete-dropdown" id="miniDropdown-${subject.subject}"></div>
+                                    <div class="mini-autocomplete-dropdown" id="${dropdownId}"></div>
                                 </div>
                                 
                                 <!-- Mini Filters -->
@@ -1926,13 +1995,7 @@
                                     </select>
                                 </div>
                                 
-                                <!-- Search Stats -->
-                                ${miniSearchStates[subject.subject] ? `
-                                    <div class="search-stats">
-                                        <span><i class="fas fa-search"></i> ${filtered.length} results</span>
-                                        <span class="clear-search" data-subject="${subject.subject}">Clear ✕</span>
-                                    </div>
-                                ` : ''}
+                                <!-- Search Stats will be dynamically added here -->
                                 
                                 <div class="p-3">
                                     <ul class="list-unstyled quiz-list ${tooMany?'collapsed':''}">
@@ -1951,20 +2014,152 @@
                     // Update global search count
                     updateGlobalSearchCount();
                     
-                    // Restore focus to the active input if it exists
-                    if (activeSubject) {
-                        const newInput = document.getElementById(`miniSearch-${activeSubject}`);
-                        if (newInput && activeSubject === newInput.dataset.subject) {
-                            newInput.focus();
-                            // Restore cursor position if possible
-                            if (activeSelectionStart !== undefined && activeSelectionEnd !== undefined) {
-                                newInput.setSelectionRange(activeSelectionStart, activeSelectionEnd);
+                    // FIXED: Attach mini search event listeners with autocomplete (without full re-render)
+                    document.querySelectorAll('.mini-search-input').forEach(input => {
+                        const subject = input.dataset.subject;
+                        const dropdownId = `miniDropdown-${subject}`;
+                        const hintId = `miniHint-${subject}`;
+                        
+                        let timeout;
+                        let suggestionTimeout;
+                        
+                        input.addEventListener('input', (e) => {
+                            const query = e.target.value;
+                            
+                            // Reset selection for this subject
+                            miniSelectedSuggestionIndices[subject] = -1;
+                            
+                            // Clear previous suggestion timeout
+                            clearTimeout(suggestionTimeout);
+                            
+                            // Get and show suggestions immediately (without re-render)
+                            suggestionTimeout = setTimeout(() => {
+                                const subjectData = quizData.find(s => s.subject === subject);
+                                const suggestions = getMiniAutocompleteSuggestions(query, subjectData);
+                                renderMiniAutocompleteDropdown(subject, suggestions, query, dropdownId, hintId);
+                            }, 50); // Small delay for smoothness
+                            
+                            // Update search results with debounce - but DON'T re-render everything
+                            clearTimeout(timeout);
+                            timeout = setTimeout(() => {
+                                // Only update the state
+                                miniSearchStates[subject] = query;
+                                
+                                // Instead of full re-render, update just the quiz list for this subject
+                                updateSubjectQuizzes(subject, query);
+                            }, 300); // Longer delay for actual search
+                        });
+
+                        // Handle focus to show suggestions if there's already text
+                        input.addEventListener('focus', (e) => {
+                            const query = e.target.value;
+                            if (query.length > 0) {
+                                const subjectData = quizData.find(s => s.subject === subject);
+                                const suggestions = getMiniAutocompleteSuggestions(query, subjectData);
+                                renderMiniAutocompleteDropdown(subject, suggestions, query, dropdownId, hintId);
                             }
-                        }
-                    }
+                        });
+
+                        // Keyboard navigation for mini autocomplete
+                        input.addEventListener('keydown', (e) => {
+                            const dropdown = document.getElementById(dropdownId);
+                            const items = dropdown ? dropdown.querySelectorAll('.mini-autocomplete-item') : [];
+                            
+                            if (items.length === 0) return;
+                            
+                            if (e.key === 'ArrowDown') {
+                                e.preventDefault();
+                                miniSelectedSuggestionIndices[subject] = (miniSelectedSuggestionIndices[subject] + 1) % items.length;
+                                updateMiniSelectedSuggestion(subject, dropdownId, hintId);
+                            } else if (e.key === 'ArrowUp') {
+                                e.preventDefault();
+                                miniSelectedSuggestionIndices[subject] = miniSelectedSuggestionIndices[subject] <= 0 ? items.length - 1 : miniSelectedSuggestionIndices[subject] - 1;
+                                updateMiniSelectedSuggestion(subject, dropdownId, hintId);
+                            } else if (e.key === 'Enter' && miniSelectedSuggestionIndices[subject] >= 0) {
+                                e.preventDefault();
+                                items[miniSelectedSuggestionIndices[subject]].click();
+                            } else if (e.key === 'Escape') {
+                                dropdown.classList.remove('show');
+                                const hint = document.getElementById(hintId);
+                                if (hint) hint.classList.remove('show');
+                            }
+                        });
+
+                        // Close dropdown when clicking outside
+                        document.addEventListener('click', (e) => {
+                            const dropdown = document.getElementById(dropdownId);
+                            const hint = document.getElementById(hintId);
+                            if (!input.contains(e.target) && dropdown && !dropdown.contains(e.target)) {
+                                dropdown.classList.remove('show');
+                                if (hint) hint.classList.remove('show');
+                            }
+                        });
+                    });
                     
-                    // Attach all mini search listeners
-                    attachMiniSearchListeners();
+                    // Attach mini filter event listeners
+                    document.querySelectorAll('.mini-filter-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            const subject = e.target.dataset.subject;
+                            const filter = e.target.dataset.filter;
+                            miniFilterStates[subject] = filter;
+                            
+                            // Update just this subject without full re-render
+                            const searchTerm = miniSearchStates[subject] || '';
+                            updateSubjectQuizzes(subject, searchTerm);
+                        });
+                    });
+                    
+                    // Attach mini sort event listeners
+                    document.querySelectorAll('.mini-sort-select').forEach(select => {
+                        select.addEventListener('change', (e) => {
+                            const subject = e.target.dataset.subject;
+                            miniSortStates[subject] = e.target.value;
+                            
+                            // Update just this subject without full re-render
+                            const searchTerm = miniSearchStates[subject] || '';
+                            updateSubjectQuizzes(subject, searchTerm);
+                        });
+                    });
+
+                    // Expand/collapse
+                    document.querySelectorAll('.view-all-btn').forEach(btn => {
+                        const card = btn.closest('.subject-card');
+                        const list = card.querySelector('.quiz-list');
+                        
+                        // Remove existing listener to prevent duplicates
+                        btn.replaceWith(btn.cloneNode(true));
+                        const newBtn = card.querySelector('.view-all-btn');
+                        
+                        newBtn.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            const expanded = list.classList.toggle('expanded');
+                            newBtn.querySelector('span').innerText = expanded ? 'Show less' : 'View all quizzes';
+                            newBtn.querySelector('i').classList.toggle('fa-chevron-down', !expanded);
+                            newBtn.querySelector('i').classList.toggle('fa-chevron-up', expanded);
+                        });
+                    });
+                }
+
+                function updateMiniSelectedSuggestion(subject, dropdownId, hintId) {
+                    const dropdown = document.getElementById(dropdownId);
+                    if (!dropdown) return;
+                    
+                    const items = dropdown.querySelectorAll('.mini-autocomplete-item');
+                    const hint = document.getElementById(hintId);
+                    
+                    items.forEach((item, index) => {
+                        if (index === miniSelectedSuggestionIndices[subject]) {
+                            item.classList.add('selected');
+                            // Update hint
+                            const title = item.querySelector('.mini-autocomplete-title').innerText.replace(/<[^>]*>/g, '');
+                            if (hint) {
+                                hint.querySelector('span').textContent = title;
+                                hint.classList.add('show');
+                            }
+                        } else {
+                            item.classList.remove('selected');
+                        }
+                    });
                 }
 
                 // Global search with autocomplete
@@ -1972,9 +2167,9 @@
                 const dropdown = document.getElementById('autocompleteDropdown');
                 const hint = document.getElementById('autocompleteHint');
                 
-                let globalTimeout;
+                let timeout;
                 searchInput.addEventListener('input', () => {
-                    clearTimeout(globalTimeout);
+                    clearTimeout(timeout);
                     const query = searchInput.value;
                     
                     // Reset selection
@@ -1985,13 +2180,13 @@
                     renderAutocompleteDropdown(suggestions, query);
                     
                     // Update search results
-                    globalTimeout = setTimeout(() => {
+                    timeout = setTimeout(() => {
                         currentSearch = query;
                         renderCards();
                     }, 150);
                 });
 
-                // Keyboard navigation for main autocomplete
+                // Keyboard navigation for autocomplete
                 searchInput.addEventListener('keydown', (e) => {
                     const items = document.querySelectorAll('.autocomplete-item');
                     
@@ -2028,7 +2223,7 @@
                     });
                 }
 
-                // Close main dropdown when clicking outside
+                // Close dropdown when clicking outside
                 document.addEventListener('click', (e) => {
                     if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
                         dropdown.classList.remove('show');
