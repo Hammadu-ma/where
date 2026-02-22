@@ -1505,7 +1505,7 @@
         }
     </style>
 </head>
-<body>
+<body class="dark-mode">
     <!-- Connection Status -->
     <div id="connectionStatus" class="connection-status online" style="display: none;">
         <i class="fas fa-wifi"></i>
@@ -2298,30 +2298,68 @@
                     window.location.href = 'profile.html';
                 });
 
-                // Theme toggle in header
-                const themeToggleHeader = document.getElementById('themeToggleHeader');
-                const body = document.body;
-                const icon = themeToggleHeader.querySelector('i');
-                
-                if (localStorage.getItem('theme') === 'dark') {
-                    body.classList.replace('light-mode','dark-mode'); 
-                    icon.className = 'fas fa-sun'; 
-                } else if (localStorage.getItem('theme') === 'light') {
-                    body.classList.replace('dark-mode','light-mode'); 
-                    icon.className = 'fas fa-moon'; 
-                }
+                // Theme toggle in header with auto mode
+const themeToggleHeader = document.getElementById('themeToggleHeader');
+const body = document.body;
+const icon = themeToggleHeader.querySelector('i');
 
-                themeToggleHeader.addEventListener('click', () => {
-                    if (body.classList.contains('light-mode')) {
-                        body.classList.replace('light-mode','dark-mode'); 
-                        icon.className = 'fas fa-sun'; 
-                        localStorage.setItem('theme','dark');
-                    } else {
-                        body.classList.replace('dark-mode','light-mode'); 
-                        icon.className = 'fas fa-moon'; 
-                        localStorage.setItem('theme','light');
-                    }
-                });
+// Auto theme based on system preference
+function setAutoTheme() {
+    // Check system preference
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    if (prefersDark) {
+        body.classList.remove('light-mode');
+        body.classList.add('dark-mode');
+        icon.className = 'fas fa-sun';
+    } else {
+        body.classList.remove('dark-mode');
+        body.classList.add('light-mode');
+        icon.className = 'fas fa-moon';
+    }
+}
+
+// Check if there's a saved theme preference
+const savedTheme = localStorage.getItem('theme');
+
+if (savedTheme === 'dark') {
+    body.classList.replace('light-mode', 'dark-mode');
+    icon.className = 'fas fa-sun';
+} else if (savedTheme === 'light') {
+    body.classList.replace('dark-mode', 'light-mode');
+    icon.className = 'fas fa-moon';
+} else {
+    // No saved preference - use auto (system preference)
+    setAutoTheme();
+}
+
+// Listen for system theme changes when in auto mode
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    // Only auto-update if no theme is saved (auto mode)
+    if (!localStorage.getItem('theme')) {
+        setAutoTheme();
+    }
+});
+
+// Theme toggle cycles: light -> dark -> auto
+themeToggleHeader.addEventListener('click', () => {
+    if (body.classList.contains('light-mode')) {
+        // Switch to dark
+        body.classList.replace('light-mode', 'dark-mode');
+        icon.className = 'fas fa-sun';
+        localStorage.setItem('theme', 'dark');
+    } else if (body.classList.contains('dark-mode')) {
+        // Switch to auto (remove stored preference)
+        body.classList.remove('dark-mode');
+        setAutoTheme(); // This will set based on system
+        localStorage.removeItem('theme');
+    } else {
+        // Switch to light (fallback)
+        body.classList.add('light-mode');
+        icon.className = 'fas fa-moon';
+        localStorage.setItem('theme', 'light');
+    }
+});
 
                 // helpers
                 function setFilter(filter) {
