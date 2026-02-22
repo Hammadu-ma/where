@@ -31,6 +31,8 @@
             --radius: 12px;
             --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             --gradient: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+            --skeleton-base: #e2e8f0;
+            --skeleton-highlight: #f0f3f7;
         }
         
         .light-mode {
@@ -43,10 +45,8 @@
             --placeholder: #9ca3af;
             --input-bg: #ffffff;
             --hover-bg: rgba(96, 165, 250, 0.05);
-            /* Light mode skeleton colors */
-            --skeleton-base: #e5e7eb;
-            --skeleton-highlight: #f3f4f6;
-            --skeleton-shimmer: rgba(255, 255, 255, 0.3);
+            --skeleton-base: #e2e8f0;
+            --skeleton-highlight: #f0f3f7;
         }
         
         .dark-mode {
@@ -59,10 +59,8 @@
             --placeholder: #6b7280;
             --input-bg: #0f172a;
             --hover-bg: rgba(96, 165, 250, 0.1);
-            /* Dark mode skeleton colors */
-            --skeleton-base: #2d3748;
-            --skeleton-highlight: #4a5568;
-            --skeleton-shimmer: rgba(255, 255, 255, 0.1);
+            --skeleton-base: #2d3a4f;
+            --skeleton-highlight: #3a4a62;
         }
 
         body {
@@ -382,7 +380,7 @@
             margin-top: 1rem;
         }
 
-        /* ========== THEME-AWARE SKELETON LOADER STYLES ========== */
+        /* ========== MODERN SKELETON LOADER STYLES ========== */
         .skeleton-loader {
             background: linear-gradient(
                 90deg,
@@ -409,7 +407,6 @@
             border-bottom: 1px solid var(--border);
             padding: 0.75rem 1rem;
             margin-bottom: 1rem;
-            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
         .skeleton-header-container {
@@ -431,8 +428,6 @@
             height: 40px;
             border-radius: 12px;
             background: var(--skeleton-base);
-            position: relative;
-            overflow: hidden;
         }
 
         .skeleton-logo {
@@ -440,8 +435,6 @@
             height: 36px;
             border-radius: 10px;
             background: var(--skeleton-base);
-            position: relative;
-            overflow: hidden;
         }
 
         .skeleton-logo-text {
@@ -449,8 +442,6 @@
             height: 24px;
             border-radius: 6px;
             background: var(--skeleton-base);
-            position: relative;
-            overflow: hidden;
         }
 
         .skeleton-header-right {
@@ -464,8 +455,6 @@
             height: 40px;
             border-radius: 12px;
             background: var(--skeleton-base);
-            position: relative;
-            overflow: hidden;
         }
 
         .skeleton-profile {
@@ -473,42 +462,6 @@
             height: 40px;
             border-radius: 40px;
             background: var(--skeleton-base);
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Shimmer effect for all skeleton elements */
-        .skeleton-back-btn::after,
-        .skeleton-logo::after,
-        .skeleton-logo-text::after,
-        .skeleton-icon::after,
-        .skeleton-profile::after,
-        .skeleton-gradient-header::after,
-        .skeleton-search::after,
-        .skeleton-filter-btn::after,
-        .skeleton-sidebar-title::after,
-        .skeleton-sidebar-item::after,
-        .skeleton-card::after,
-        .skeleton-mini-search-input::after,
-        .skeleton-mini-filter::after,
-        .skeleton-mini-select::after,
-        .skeleton-quiz-item::after,
-        .skeleton-view-all-btn::after,
-        .skeleton-footer-text::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(
-                90deg,
-                transparent 25%,
-                var(--skeleton-shimmer) 50%,
-                transparent 75%
-            );
-            animation: loading 1.5s infinite;
-            pointer-events: none;
         }
 
         /* Skeleton Gradient Header */
@@ -522,6 +475,22 @@
             min-height: 180px;
         }
 
+        .skeleton-gradient-header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                90deg,
+                transparent 25%,
+                rgba(255,255,255,0.1) 50%,
+                transparent 75%
+            );
+            animation: loading 1.5s infinite;
+        }
+
         /* Skeleton Search Bar */
         .skeleton-search {
             height: 56px;
@@ -530,6 +499,22 @@
             margin-bottom: 1.5rem;
             position: relative;
             overflow: hidden;
+        }
+
+        .skeleton-search::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                90deg,
+                transparent 25%,
+                rgba(255,255,255,0.1) 50%,
+                transparent 75%
+            );
+            animation: loading 1.5s infinite;
         }
 
         /* Skeleton Mobile Filter Bar */
@@ -553,6 +538,22 @@
             width: 100px;
         }
 
+        .skeleton-filter-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                90deg,
+                transparent 25%,
+                rgba(255,255,255,0.1) 50%,
+                transparent 75%
+            );
+            animation: loading 1.5s infinite;
+        }
+
         /* Skeleton Sidebar */
         .skeleton-sidebar {
             background: var(--surface);
@@ -560,7 +561,6 @@
             border-radius: 24px;
             padding: 1.5rem;
             height: 100%;
-            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
         .skeleton-sidebar-title {
@@ -573,12 +573,27 @@
             overflow: hidden;
         }
 
+        .skeleton-sidebar-title::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                90deg,
+                transparent 25%,
+                rgba(255,255,255,0.1) 50%,
+                transparent 75%
+            );
+            animation: loading 1.5s infinite;
+        }
+
         .skeleton-sidebar-item {
             display: flex;
             align-items: center;
             gap: 0.75rem;
             margin-bottom: 1rem;
-            position: relative;
         }
 
         .skeleton-sidebar-icon {
@@ -586,8 +601,6 @@
             height: 24px;
             border-radius: 6px;
             background: var(--skeleton-base);
-            position: relative;
-            overflow: hidden;
         }
 
         .skeleton-sidebar-text {
@@ -595,8 +608,6 @@
             height: 20px;
             border-radius: 4px;
             background: var(--skeleton-base);
-            position: relative;
-            overflow: hidden;
         }
 
         .skeleton-sidebar-badge {
@@ -604,8 +615,6 @@
             height: 20px;
             border-radius: 30px;
             background: var(--skeleton-base);
-            position: relative;
-            overflow: hidden;
         }
 
         /* Skeleton Grid */
@@ -621,7 +630,6 @@
             border-radius: 24px;
             overflow: hidden;
             position: relative;
-            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
         .skeleton-card-header {
@@ -637,8 +645,6 @@
             height: 50px;
             border-radius: 12px;
             background: var(--skeleton-base);
-            position: relative;
-            overflow: hidden;
         }
 
         .skeleton-card-title {
@@ -651,8 +657,6 @@
             border-radius: 4px;
             background: var(--skeleton-base);
             margin-bottom: 0.5rem;
-            position: relative;
-            overflow: hidden;
         }
 
         .skeleton-card-title-line.short {
@@ -664,8 +668,6 @@
             height: 24px;
             border-radius: 30px;
             background: var(--skeleton-base);
-            position: relative;
-            overflow: hidden;
         }
 
         .skeleton-mini-search {
@@ -678,8 +680,6 @@
             height: 40px;
             border-radius: 50px;
             background: var(--skeleton-base);
-            position: relative;
-            overflow: hidden;
         }
 
         .skeleton-mini-filters {
@@ -695,8 +695,6 @@
             height: 30px;
             border-radius: 30px;
             background: var(--skeleton-base);
-            position: relative;
-            overflow: hidden;
         }
 
         .skeleton-mini-sort {
@@ -709,8 +707,6 @@
             height: 40px;
             border-radius: 30px;
             background: var(--skeleton-base);
-            position: relative;
-            overflow: hidden;
         }
 
         .skeleton-quiz-list {
@@ -718,13 +714,39 @@
         }
 
         .skeleton-quiz-item {
-            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            padding: 0.5rem;
             background: var(--skeleton-base);
             border-radius: 12px;
-            margin-bottom: 0.75rem;
-            position: relative;
-            overflow: hidden;
             opacity: 0.7;
+        }
+
+        .skeleton-quiz-item.left {
+            width: 60%;
+        }
+
+        .skeleton-quiz-item.right {
+            width: 20%;
+        }
+
+        .skeleton-quiz-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                90deg,
+                transparent 25%,
+                rgba(255,255,255,0.1) 50%,
+                transparent 75%
+            );
+            animation: loading 1.5s infinite;
+            pointer-events: none;
         }
 
         .skeleton-view-all {
@@ -739,8 +761,6 @@
             border-radius: 30px;
             background: var(--skeleton-base);
             margin: 0 auto;
-            position: relative;
-            overflow: hidden;
         }
 
         /* Skeleton Footer */
@@ -757,8 +777,6 @@
             border-radius: 4px;
             background: var(--skeleton-base);
             margin: 0 auto;
-            position: relative;
-            overflow: hidden;
         }
 
         /* Existing styles continue below... */
@@ -1617,9 +1635,9 @@
                                 <div class="skeleton-mini-select"></div>
                             </div>
                             <div class="skeleton-quiz-list">
-                                <div class="skeleton-quiz-item"></div>
-                                <div class="skeleton-quiz-item"></div>
-                                <div class="skeleton-quiz-item"></div>
+                                <div class="skeleton-quiz-item" style="height: 40px;"></div>
+                                <div class="skeleton-quiz-item" style="height: 40px;"></div>
+                                <div class="skeleton-quiz-item" style="height: 40px;"></div>
                             </div>
                             <div class="skeleton-view-all">
                                 <div class="skeleton-view-all-btn"></div>
@@ -1648,9 +1666,9 @@
                                 <div class="skeleton-mini-select"></div>
                             </div>
                             <div class="skeleton-quiz-list">
-                                <div class="skeleton-quiz-item"></div>
-                                <div class="skeleton-quiz-item"></div>
-                                <div class="skeleton-quiz-item"></div>
+                                <div class="skeleton-quiz-item" style="height: 40px;"></div>
+                                <div class="skeleton-quiz-item" style="height: 40px;"></div>
+                                <div class="skeleton-quiz-item" style="height: 40px;"></div>
                             </div>
                             <div class="skeleton-view-all">
                                 <div class="skeleton-view-all-btn"></div>
@@ -1679,9 +1697,9 @@
                                 <div class="skeleton-mini-select"></div>
                             </div>
                             <div class="skeleton-quiz-list">
-                                <div class="skeleton-quiz-item"></div>
-                                <div class="skeleton-quiz-item"></div>
-                                <div class="skeleton-quiz-item"></div>
+                                <div class="skeleton-quiz-item" style="height: 40px;"></div>
+                                <div class="skeleton-quiz-item" style="height: 40px;"></div>
+                                <div class="skeleton-quiz-item" style="height: 40px;"></div>
                             </div>
                             <div class="skeleton-view-all">
                                 <div class="skeleton-view-all-btn"></div>
@@ -2295,17 +2313,12 @@
                 const body = document.body;
                 const icon = themeToggleHeader.querySelector('i');
                 
-                // Load saved theme
                 if (localStorage.getItem('theme') === 'dark') {
                     body.classList.replace('light-mode','dark-mode'); 
                     icon.className = 'fas fa-sun'; 
                 } else if (localStorage.getItem('theme') === 'light') {
                     body.classList.replace('dark-mode','light-mode'); 
                     icon.className = 'fas fa-moon'; 
-                } else {
-                    // Default to dark mode
-                    body.classList.add('dark-mode');
-                    icon.className = 'fas fa-sun';
                 }
 
                 themeToggleHeader.addEventListener('click', () => {
