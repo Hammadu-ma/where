@@ -62,6 +62,54 @@
             min-height: 100vh;
         }
 
+        /* Connection Status */
+        .connection-status {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+            font-size: 0.8rem;
+            font-weight: 600;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+        }
+        .connection-status.online {
+            background: var(--success);
+            color: white;
+        }
+        .connection-status.offline {
+            background: var(--error);
+            color: white;
+        }
+        .connection-status.syncing {
+            background: var(--warning);
+            color: white;
+        }
+
+        /* Offline Indicator */
+        .offline-indicator {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow);
+            z-index: 9998;
+            backdrop-filter: blur(10px);
+        }
+
         /* Custom Header */
         .app-header {
             position: sticky;
@@ -213,8 +261,8 @@
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            margin-left: 0.5rem;
             animation: pulse 2s infinite;
+            box-shadow: 0 2px 10px rgba(139, 92, 246, 0.5);
         }
 
         .gold-badge {
@@ -228,7 +276,8 @@
             align-items: center;
             gap: 0.5rem;
             margin-left: 0.5rem;
-            box-shadow: 0 2px 10px rgba(245, 158, 11, 0.3);
+            box-shadow: 0 2px 10px rgba(245, 158, 11, 0.5);
+            animation: pulse 2s infinite;
         }
 
         @keyframes pulse {
@@ -650,6 +699,22 @@
             transform: translateY(-2px);
         }
 
+        /* Offline Cache Info */
+        .cache-info {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .cache-info i {
+            color: var(--primary);
+        }
+
         footer {
             text-align: center;
             color: var(--text-tertiary);
@@ -660,6 +725,19 @@
     </style>
 </head>
 <body class="dark-mode">
+    <!-- Connection Status -->
+    <div id="connectionStatus" class="connection-status online" style="display: none;">
+        <i class="fas fa-wifi"></i>
+        <span>Connected</span>
+    </div>
+
+    <!-- Offline Indicator -->
+    <div id="offlineIndicator" class="offline-indicator" style="display: none;">
+        <i class="fas fa-cloud" style="color: var(--warning);"></i>
+        <span>Working in offline mode</span>
+        <span id="cacheTimestamp" style="font-size: 0.7rem; opacity: 0.8;"></span>
+    </div>
+
     <!-- Loading State -->
     <div id="loadingScreen" class="loading-spinner">
         <div class="spinner"></div>
@@ -700,10 +778,20 @@
         </header>
 
         <div class="container-lg py-4">
+            <!-- Cache Info (shown when offline) -->
+            <div id="cacheInfo" class="cache-info" style="display: none;">
+                <div>
+                    <i class="fas fa-database"></i>
+                    <span>You're viewing cached data from </span>
+                    <span id="cacheDate"></span>
+                </div>
+                <span class="badge bg-warning">Offline Mode</span>
+            </div>
+
             <!-- Message Banner (Dynamic) -->
             <div id="messageBanner" class="message-banner" style="display: none;"></div>
 
-            <!-- Hero Section (Conditional) -->
+            <!-- Hero Section -->
             <div id="heroSection" class="hero-section">
                 <div class="hero-content">
                     <h1 class="hero-title" id="heroTitle">Welcome Back!</h1>
@@ -731,7 +819,7 @@
         </div>
 
         <footer>
-            <p>ALIF · Medical Quiz Platform · Smart Dashboard v2.0</p>
+            <p>ALIF · Medical Quiz Platform · Smart Dashboard v3.0</p>
         </footer>
     </div>
 
@@ -753,13 +841,29 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // Smart Dashboard Manager
+        // Enable offline persistence
+        db.enablePersistence({
+            synchronizeTabs: true
+        }).catch((err) => {
+            if (err.code === 'failed-precondition') {
+                console.log('Persistence failed: Multiple tabs open');
+            } else if (err.code === 'unimplemented') {
+                console.log('Persistence not supported');
+            }
+        });
+
+        // Smart Dashboard Manager with Auto-Badge & Offline Support
         class SmartDashboardManager {
             constructor() {
                 this.currentUser = null;
                 this.userData = null;
                 this.registeredYears = [];
                 this.allYears = ['1', '2', '3', '4', '5', '6'];
+                this.badgeType = null;
+                this.recentYears = [];
+                this.isOnline = navigator.onLine;
+                this.syncInProgress = false;
+                this.cacheKey = 'dashboard_cache';
                 this.yearsData = {
                     '1': {
                         title: "First Year",
@@ -810,9 +914,6 @@
                         questions: 5200
                     }
                 };
-                this.badgeType = null; // 'premium', 'gold', or null
-                this.recentYears = [];
-                this.messageBanner = null;
             }
 
             async initialize() {
@@ -820,6 +921,9 @@
                 document.getElementById('loadingScreen').style.display = 'flex';
                 
                 try {
+                    // Initialize connection monitoring
+                    this.initConnectionMonitoring();
+                    
                     // Check if user is logged in
                     const storedUser = localStorage.getItem('currentUser');
                     if (!storedUser) {
@@ -829,52 +933,135 @@
 
                     this.currentUser = JSON.parse(storedUser);
                     
-                    // Fetch fresh user data from Firebase
-                    await this.fetchUserData();
+                    // Try to load from cache first (for offline)
+                    this.loadFromCache();
                     
-                    // Check user status from Firebase
-                    if (this.userData.status !== 'verified' && this.userData.status !== 'premium') {
-                        if (this.userData.status === 'banned') {
-                            this.showMessage('Your account has been banned. Please contact support.', 'error');
-                            setTimeout(() => window.location.href = 'register.html', 3000);
-                            return;
-                        }
-                        if (this.userData.status === 'pending') {
-                            this.showMessage('Your account is pending verification. Please wait for admin approval.', 'warning');
-                        }
+                    // Try to fetch fresh data from Firebase
+                    if (this.isOnline) {
+                        await this.fetchUserData();
+                    } else {
+                        this.showOfflineMessage();
                     }
-
-                    // Get registered years
-                    this.registeredYears = this.userData.registeredYears || [];
                     
-                    // Check if user has access to any years
-                    if (this.registeredYears.length === 0) {
-                        this.showNoAccess();
-                        return;
-                    }
-
-                    // Determine badge type
-                    this.determineBadgeType();
-
-                    // Load recent years
-                    this.recentYears = JSON.parse(localStorage.getItem('recentYears') || '[]')
-                        .filter(year => this.registeredYears.includes(year.toString()));
-
-                    // Handle single year case - auto redirect
-                    if (this.registeredYears.length === 1) {
-                        this.autoRedirectToYear(this.registeredYears[0]);
-                        return;
-                    }
-
-                    // Multiple years - show dashboard
-                    this.buildDashboard();
-
+                    // Process user data and determine badge
+                    await this.processUserData();
+                    
                 } catch (error) {
                     console.error('Dashboard initialization error:', error);
-                    this.showMessage('Error loading dashboard. Please try again.', 'error');
+                    // Try to load from cache as fallback
+                    if (this.loadFromCache()) {
+                        this.showOfflineMessage();
+                        await this.processUserData();
+                    } else {
+                        this.showErrorMessage('Error loading dashboard. Please check your connection.');
+                    }
                 } finally {
                     document.getElementById('loadingScreen').style.display = 'none';
                     document.getElementById('mainApp').style.display = 'block';
+                }
+            }
+
+            initConnectionMonitoring() {
+                window.addEventListener('online', () => this.handleConnectionRestored());
+                window.addEventListener('offline', () => this.handleConnectionLost());
+                this.updateConnectionStatus(navigator.onLine);
+            }
+
+            updateConnectionStatus(isOnline) {
+                this.isOnline = isOnline;
+                const statusDiv = document.getElementById('connectionStatus');
+                const offlineIndicator = document.getElementById('offlineIndicator');
+                const cacheInfo = document.getElementById('cacheInfo');
+
+                if (isOnline) {
+                    statusDiv.className = 'connection-status online';
+                    statusDiv.innerHTML = '<i class="fas fa-wifi"></i><span>Connected</span>';
+                    statusDiv.style.display = 'flex';
+                    offlineIndicator.style.display = 'none';
+                    cacheInfo.style.display = 'none';
+                    
+                    setTimeout(() => {
+                        if (this.isOnline) {
+                            statusDiv.style.display = 'none';
+                        }
+                    }, 3000);
+                } else {
+                    statusDiv.className = 'connection-status offline';
+                    statusDiv.innerHTML = '<i class="fas fa-wifi-slash"></i><span>Offline Mode</span>';
+                    statusDiv.style.display = 'flex';
+                    offlineIndicator.style.display = 'flex';
+                    
+                    // Show cache info
+                    const cache = this.loadFromCache();
+                    if (cache) {
+                        cacheInfo.style.display = 'flex';
+                        document.getElementById('cacheDate').textContent = 
+                            new Date(cache.timestamp).toLocaleString();
+                    }
+                }
+            }
+
+            handleConnectionLost() {
+                console.log('Connection lost - switching to offline mode');
+                this.updateConnectionStatus(false);
+                this.showMessage('You are offline. Using cached data.', 'warning');
+            }
+
+            async handleConnectionRestored() {
+                console.log('Connection restored - syncing data');
+                this.updateConnectionStatus(true);
+                
+                const statusDiv = document.getElementById('connectionStatus');
+                statusDiv.className = 'connection-status syncing';
+                statusDiv.innerHTML = '<i class="fas fa-sync-alt fa-spin"></i><span>Syncing...</span>';
+                statusDiv.style.display = 'flex';
+                
+                this.syncInProgress = true;
+                
+                try {
+                    await this.fetchUserData();
+                    await this.processUserData();
+                    this.showMessage('Data synced successfully!', 'success');
+                } catch (error) {
+                    console.error('Sync error:', error);
+                    this.showMessage('Error syncing data. Using cached version.', 'error');
+                } finally {
+                    this.syncInProgress = false;
+                    setTimeout(() => {
+                        if (this.isOnline && !this.syncInProgress) {
+                            statusDiv.style.display = 'none';
+                        }
+                    }, 2000);
+                }
+            }
+
+            loadFromCache() {
+                try {
+                    const cached = localStorage.getItem(this.cacheKey);
+                    if (cached) {
+                        const data = JSON.parse(cached);
+                        this.userData = data.userData;
+                        this.registeredYears = data.registeredYears || [];
+                        console.log('Loaded from cache:', new Date(data.timestamp).toLocaleString());
+                        return data;
+                    }
+                } catch (error) {
+                    console.error('Error loading from cache:', error);
+                }
+                return null;
+            }
+
+            saveToCache() {
+                try {
+                    const cacheData = {
+                        userData: this.userData,
+                        registeredYears: this.registeredYears,
+                        timestamp: Date.now()
+                    };
+                    localStorage.setItem(this.cacheKey, JSON.stringify(cacheData));
+                    console.log('Saved to cache');
+                } catch (error) {
+                    console.error('Error saving to cache:', error);
                 }
             }
 
@@ -883,45 +1070,93 @@
                     const userDoc = await db.collection('users').doc(this.currentUser.id).get();
                     if (userDoc.exists) {
                         this.userData = userDoc.data();
+                        
                         // Update localStorage
                         localStorage.setItem('currentUser', JSON.stringify({
                             ...this.currentUser,
                             ...this.userData
                         }));
+                        
+                        // Save to cache
+                        this.saveToCache();
                     } else {
-                        // Fallback to localStorage data
+                        // Fallback to localStorage
                         this.userData = this.currentUser;
                     }
                 } catch (error) {
                     console.error('Error fetching user data:', error);
                     // Fallback to localStorage
                     this.userData = this.currentUser;
+                    
+                    // Try to load from cache
+                    this.loadFromCache();
                 }
             }
 
-            determineBadgeType() {
-                // Check if user has premium status from admin panel
-                if (this.userData.status === 'premium' || this.userData.plan === 'premium') {
-                    this.badgeType = 'premium';
-                }
-                // Check if user has all years
-                else if (this.hasAllYears()) {
-                    this.badgeType = 'premium';
-                    // Auto-upgrade to premium in Firebase if they have all years but not premium status
-                    this.upgradeToPremium();
-                }
-                // Check if user has more than half the years
-                else if (this.registeredYears.length >= 4) {
-                    this.badgeType = 'gold';
-                }
+            async processUserData() {
+                // Get registered years (handle both string and number formats)
+                this.registeredYears = (this.userData.registeredYears || [])
+                    .map(y => y.toString());
                 
-                this.updateHeaderBadge();
+                console.log('Registered years:', this.registeredYears);
+                
+                // Check if user has access to any years
+                if (this.registeredYears.length === 0) {
+                    this.showNoAccess();
+                    return;
+                }
+
+                // Determine and apply badge
+                await this.determineAndApplyBadge();
+
+                // Load recent years
+                this.recentYears = JSON.parse(localStorage.getItem('recentYears') || '[]')
+                    .filter(year => this.registeredYears.includes(year.toString()));
+
+                // Handle single year case
+                if (this.registeredYears.length === 1) {
+                    this.autoRedirectToYear(this.registeredYears[0]);
+                    return;
+                }
+
+                // Build dashboard for multiple years
+                this.buildDashboard();
             }
 
-            hasAllYears() {
-                return this.allYears.every(year => 
-                    this.registeredYears.includes(year)
-                );
+            async determineAndApplyBadge() {
+                console.log('Determining badge for years:', this.registeredYears.length);
+                
+                const yearCount = this.registeredYears.length;
+                
+                // Check if user has premium status from admin
+                const isPremiumFromAdmin = 
+                    this.userData.status === 'premium' ||
+                    this.userData.role === 'premium' ||
+                    this.userData.plan === 'premium' ||
+                    this.userData.membership === 'premium';
+
+                // PREMIUM BADGE: Admin premium OR all 6 years
+                if (isPremiumFromAdmin || yearCount === 6) {
+                    this.badgeType = 'premium';
+                    console.log('🎯 PREMIUM badge awarded');
+                    
+                    // Auto-upgrade to premium if they have all years but not premium status
+                    if (yearCount === 6 && !isPremiumFromAdmin && this.isOnline) {
+                        await this.upgradeToPremium();
+                    }
+                }
+                // GOLD BADGE: 4 or 5 years
+                else if (yearCount >= 4) {
+                    this.badgeType = 'gold';
+                    console.log('🥇 GOLD badge awarded');
+                }
+                // NO BADGE: 1-3 years
+                else {
+                    this.badgeType = null;
+                    console.log('No badge for', yearCount, 'years');
+                }
+
+                this.updateHeaderBadge();
             }
 
             async upgradeToPremium() {
@@ -929,16 +1164,28 @@
                     await db.collection('users').doc(this.currentUser.id).update({
                         status: 'premium',
                         plan: 'premium',
-                        premiumSince: Date.now()
+                        membership: 'premium',
+                        premiumSince: Date.now(),
+                        badge: 'premium'
                     });
-                    console.log('User auto-upgraded to premium');
+                    
+                    // Update local data
+                    this.userData.status = 'premium';
+                    this.userData.plan = 'premium';
+                    
+                    console.log('✅ Auto-upgraded to premium in Firebase');
+                    
+                    // Show congratulatory message
+                    this.showMessage('🎉 Congratulations! You\'ve been upgraded to PREMIUM!', 'success');
+                    
                 } catch (error) {
-                    console.error('Error upgrading to premium:', error);
+                    console.log('Auto-upgrade failed:', error);
                 }
             }
 
             updateHeaderBadge() {
                 const profileRole = document.getElementById('profileRole');
+                const profileBtn = document.querySelector('.profile-btn');
                 
                 if (this.badgeType === 'premium') {
                     profileRole.innerHTML = `
@@ -946,14 +1193,20 @@
                             <i class="fas fa-crown"></i> PREMIUM
                         </span>
                     `;
-                } else if (this.badgeType === 'gold') {
+                    profileBtn.style.background = 'linear-gradient(135deg, #8b5cf6, #ec4899)';
+                } 
+                else if (this.badgeType === 'gold') {
                     profileRole.innerHTML = `
                         <span class="gold-badge">
                             <i class="fas fa-star"></i> GOLD
                         </span>
                     `;
-                } else {
-                    profileRole.textContent = `${this.registeredYears.length} Year${this.registeredYears.length > 1 ? 's' : ''} Registered`;
+                    profileBtn.style.background = 'linear-gradient(135deg, #fbbf24, #f59e0b)';
+                } 
+                else {
+                    const yearCount = this.registeredYears.length;
+                    profileRole.textContent = `${yearCount} Year${yearCount > 1 ? 's' : ''}`;
+                    profileBtn.style.background = 'linear-gradient(135deg, #3b82f6, #60a5fa)';
                 }
             }
 
@@ -964,8 +1217,9 @@
                     return;
                 }
 
-                // Check if admin has blocked access to this year
-                if (this.userData.blockedYears && this.userData.blockedYears.includes(year)) {
+                // Check if admin has blocked access
+                if (this.userData.blockedYears && 
+                    this.userData.blockedYears.includes(year)) {
                     this.showMessage(`Access to Year ${year} has been blocked by admin.`, 'error');
                     return;
                 }
@@ -988,13 +1242,13 @@
             buildDashboard() {
                 // Update profile info
                 document.getElementById('profileName').textContent = 
-                    this.userData.name.split(' ')[0] || 'Medical Student';
+                    this.userData.name?.split(' ')[0] || 'Medical Student';
                 document.getElementById('profileAvatar').innerHTML = 
-                    this.userData.name.charAt(0).toUpperCase() || '<i class="fas fa-user"></i>';
+                    this.userData.name?.charAt(0).toUpperCase() || '<i class="fas fa-user"></i>';
 
                 // Update hero section
                 document.getElementById('heroTitle').textContent = 
-                    `Welcome back, ${this.userData.name.split(' ')[0]}!`;
+                    `Welcome back, ${this.userData.name?.split(' ')[0] || 'Student'}!`;
                 
                 const yearCount = this.registeredYears.length;
                 document.getElementById('heroSubtitle').textContent = 
@@ -1003,7 +1257,7 @@
                 // Show years title
                 document.getElementById('yearsTitle').style.display = 'flex';
 
-                // Filter years data to only show registered years
+                // Filter available years
                 const availableYears = this.allYears.filter(year => 
                     this.registeredYears.includes(year) && 
                     (!this.userData.blockedYears || !this.userData.blockedYears.includes(year))
@@ -1012,7 +1266,7 @@
                 // Render years grid
                 this.renderYearsGrid(availableYears);
 
-                // Show quick access if there are recent years
+                // Show quick access
                 if (this.recentYears.length > 0) {
                     this.renderRecentYears();
                 }
@@ -1045,7 +1299,6 @@
                     const yearData = this.yearsData[year];
                     if (!yearData) return;
 
-                    // Check if year is blocked by admin
                     const isBlocked = this.userData.blockedYears && 
                                      this.userData.blockedYears.includes(year);
                     
@@ -1121,6 +1374,18 @@
                     <i class="fas fa-times" onclick="this.parentElement.style.display='none'" style="cursor: pointer;"></i>
                 `;
                 banner.style.display = 'flex';
+                
+                setTimeout(() => {
+                    banner.style.display = 'none';
+                }, 5000);
+            }
+
+            showOfflineMessage() {
+                this.showMessage('You are in offline mode. Some features may be limited.', 'warning');
+            }
+
+            showErrorMessage(message) {
+                this.showMessage(message, 'error');
             }
 
             showNoAccess() {
@@ -1141,8 +1406,9 @@
             }
 
             async checkAdminMessages() {
+                if (!this.isOnline) return;
+                
                 try {
-                    // Check for admin messages targeting this user
                     const messagesSnapshot = await db.collection('userMessages')
                         .where('userId', '==', this.currentUser.id)
                         .where('read', '==', false)
