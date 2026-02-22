@@ -224,12 +224,37 @@
             color: var(--primary);
             font-size: 1.1rem;
             font-weight: 600;
+            position: relative;
+        }
+        
+        /* Premium Crown on Avatar */
+        .premium-crown {
+            position: absolute;
+            top: -12px;
+            right: -8px;
+            font-size: 1.2rem;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+            animation: crownFloat 3s ease-in-out infinite;
+            z-index: 10;
+        }
+        
+        @keyframes crownFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-3px) rotate(5deg); }
+        }
+        
+        .premium-crown i {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         .profile-info {
             display: none;
             color: white;
             text-align: left;
+            position: relative;
         }
         
         @media (min-width: 768px) {
@@ -576,28 +601,39 @@
         
         .recent-years {
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
             gap: 1rem;
         }
         
         .recent-year-btn {
             background: var(--background);
             border: 1px solid var(--border);
-            border-radius: 40px;
-            padding: 0.75rem 1.5rem;
+            border-radius: 16px;
+            padding: 1rem 1.5rem;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 1rem;
             cursor: pointer;
             transition: var(--transition);
-            flex: 1 1 auto;
-            min-width: 200px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .recent-year-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--card-gradient);
         }
         
         .recent-year-btn:hover {
+            transform: translateX(5px);
             background: var(--gradient);
             border-color: transparent;
-            transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         }
         
@@ -605,16 +641,59 @@
             color: white !important;
         }
         
+        .recent-year-btn:hover::before {
+            background: white;
+        }
+        
         .recent-year-icon {
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             border-radius: 12px;
             background: var(--gradient);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        
+        .recent-year-info {
+            flex-grow: 1;
+        }
+        
+        .recent-year-info h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0 0 0.25rem 0;
+            color: var(--text-primary);
+        }
+        
+        .recent-year-info p {
+            font-size: 0.85rem;
+            color: var(--text-tertiary);
+            margin: 0;
+        }
+        
+        .recent-year-time {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            margin-top: 0.25rem;
+        }
+        
+        .recent-year-arrow {
+            color: var(--text-tertiary);
             font-size: 1.2rem;
+            transition: transform 0.3s;
+            flex-shrink: 0;
+        }
+        
+        .recent-year-btn:hover .recent-year-arrow {
+            transform: translateX(5px);
+            color: white;
         }
 
         /* Message Banner */
@@ -767,6 +846,7 @@
                     <button class="profile-btn" id="profileBtn">
                         <div class="profile-avatar" id="profileAvatar">
                             <i class="fas fa-user"></i>
+                            <!-- Premium Crown will be inserted here dynamically -->
                         </div>
                         <div class="profile-info">
                             <div class="profile-name" id="profileName">Medical Student</div>
@@ -852,7 +932,7 @@
             }
         });
 
-        // Smart Dashboard Manager with Auto-Badge & Offline Support
+        // Smart Dashboard Manager with Premium Crown & Recent Years
         class SmartDashboardManager {
             constructor() {
                 this.currentUser = null;
@@ -864,6 +944,7 @@
                 this.isOnline = navigator.onLine;
                 this.syncInProgress = false;
                 this.cacheKey = 'dashboard_cache';
+                this.recentYearsKey = 'recent_years';
                 this.yearsData = {
                     '1': {
                         title: "First Year",
@@ -871,7 +952,8 @@
                         icon: "fas fa-dna",
                         subjects: ["Anatomy", "Physiology", "Biochemistry", "Embryology", "Histology"],
                         quizzes: 180,
-                        questions: 3200
+                        questions: 3200,
+                        color: "gradient-1"
                     },
                     '2': {
                         title: "Second Year",
@@ -879,7 +961,8 @@
                         icon: "fas fa-vial",
                         subjects: ["Pathology", "Pharmacology", "Microbiology", "Immunology", "Genetics"],
                         quizzes: 210,
-                        questions: 3800
+                        questions: 3800,
+                        color: "gradient-2"
                     },
                     '3': {
                         title: "Third Year",
@@ -887,7 +970,8 @@
                         icon: "fas fa-heartbeat",
                         subjects: ["Medicine", "Surgery", "Pediatrics", "OB/GYN", "Psychiatry"],
                         quizzes: 250,
-                        questions: 4500
+                        questions: 4500,
+                        color: "gradient-3"
                     },
                     '4': {
                         title: "Fourth Year",
@@ -895,7 +979,8 @@
                         icon: "fas fa-stethoscope",
                         subjects: ["Internal Medicine", "Surgery", "Pediatrics", "Emergency", "Family Medicine"],
                         quizzes: 220,
-                        questions: 4000
+                        questions: 4000,
+                        color: "gradient-4"
                     },
                     '5': {
                         title: "Fifth Year",
@@ -903,7 +988,8 @@
                         icon: "fas fa-user-md",
                         subjects: ["Cardiology", "Neurology", "Oncology", "Rheumatology", "Endocrinology"],
                         quizzes: 190,
-                        questions: 3500
+                        questions: 3500,
+                        color: "gradient-5"
                     },
                     '6': {
                         title: "Sixth Year",
@@ -911,7 +997,8 @@
                         icon: "fas fa-book-medical",
                         subjects: ["Board Review", "Clinical Skills", "Ethics", "Public Health", "Research"],
                         quizzes: 280,
-                        questions: 5200
+                        questions: 5200,
+                        color: "gradient-6"
                     }
                 };
             }
@@ -946,12 +1033,16 @@
                     // Process user data and determine badge
                     await this.processUserData();
                     
+                    // Load recent years from localStorage
+                    this.loadRecentYears();
+                    
                 } catch (error) {
                     console.error('Dashboard initialization error:', error);
                     // Try to load from cache as fallback
                     if (this.loadFromCache()) {
                         this.showOfflineMessage();
                         await this.processUserData();
+                        this.loadRecentYears();
                     } else {
                         this.showErrorMessage('Error loading dashboard. Please check your connection.');
                     }
@@ -1065,6 +1156,73 @@
                 }
             }
 
+            // Recent Years Management
+            loadRecentYears() {
+                try {
+                    const stored = localStorage.getItem(this.recentYearsKey);
+                    if (stored) {
+                        this.recentYears = JSON.parse(stored);
+                        // Filter out years user no longer has access to
+                        this.recentYears = this.recentYears.filter(year => 
+                            this.registeredYears.includes(year.toString())
+                        );
+                        this.saveRecentYears(); // Save filtered list
+                    }
+                } catch (error) {
+                    console.error('Error loading recent years:', error);
+                    this.recentYears = [];
+                }
+            }
+
+            saveRecentYears() {
+                try {
+                    localStorage.setItem(this.recentYearsKey, JSON.stringify(this.recentYears));
+                } catch (error) {
+                    console.error('Error saving recent years:', error);
+                }
+            }
+
+            addToRecentYears(year) {
+                // Convert to string for consistency
+                const yearStr = year.toString();
+                
+                // Remove if already exists
+                this.recentYears = this.recentYears.filter(y => y !== yearStr);
+                
+                // Add to beginning
+                this.recentYears.unshift(yearStr);
+                
+                // Keep only last 5
+                if (this.recentYears.length > 5) {
+                    this.recentYears.pop();
+                }
+                
+                // Save to localStorage
+                this.saveRecentYears();
+                
+                // Update UI if visible
+                if (this.recentYears.length > 0) {
+                    this.renderRecentYears();
+                }
+            }
+
+            getTimeAgo(timestamp) {
+                if (!timestamp) return 'Recently';
+                
+                const now = Date.now();
+                const diff = now - timestamp;
+                
+                const minutes = Math.floor(diff / 60000);
+                const hours = Math.floor(diff / 3600000);
+                const days = Math.floor(diff / 86400000);
+                
+                if (minutes < 1) return 'Just now';
+                if (minutes < 60) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+                if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+                if (days < 7) return `${days} day${days > 1 ? 's' : ''} ago`;
+                return new Date(timestamp).toLocaleDateString();
+            }
+
             async fetchUserData() {
                 try {
                     const userDoc = await db.collection('users').doc(this.currentUser.id).get();
@@ -1108,10 +1266,6 @@
 
                 // Determine and apply badge
                 await this.determineAndApplyBadge();
-
-                // Load recent years
-                this.recentYears = JSON.parse(localStorage.getItem('recentYears') || '[]')
-                    .filter(year => this.registeredYears.includes(year.toString()));
 
                 // Handle single year case
                 if (this.registeredYears.length === 1) {
@@ -1186,8 +1340,22 @@
             updateHeaderBadge() {
                 const profileRole = document.getElementById('profileRole');
                 const profileBtn = document.querySelector('.profile-btn');
+                const profileAvatar = document.getElementById('profileAvatar');
+                
+                // Clear existing crown
+                const existingCrown = profileAvatar.querySelector('.premium-crown');
+                if (existingCrown) {
+                    existingCrown.remove();
+                }
                 
                 if (this.badgeType === 'premium') {
+                    // Add beautiful crown to avatar
+                    const crown = document.createElement('span');
+                    crown.className = 'premium-crown';
+                    crown.innerHTML = '<i class="fas fa-crown"></i>';
+                    profileAvatar.appendChild(crown);
+                    
+                    // Update role text
                     profileRole.innerHTML = `
                         <span class="premium-badge">
                             <i class="fas fa-crown"></i> PREMIUM
@@ -1224,27 +1392,30 @@
                     return;
                 }
 
-                // Add to recent years
+                // Add to recent years before redirect
                 this.addToRecentYears(year);
                 
                 // Redirect to year-specific page
                 window.location.href = `year${year}.html`;
             }
 
-            addToRecentYears(year) {
-                let recent = JSON.parse(localStorage.getItem('recentYears') || '[]');
-                recent = recent.filter(y => y !== year);
-                recent.unshift(year);
-                if (recent.length > 3) recent.pop();
-                localStorage.setItem('recentYears', JSON.stringify(recent));
-            }
-
             buildDashboard() {
                 // Update profile info
                 document.getElementById('profileName').textContent = 
                     this.userData.name?.split(' ')[0] || 'Medical Student';
-                document.getElementById('profileAvatar').innerHTML = 
-                    this.userData.name?.charAt(0).toUpperCase() || '<i class="fas fa-user"></i>';
+                
+                // Update avatar initial
+                const avatar = document.getElementById('profileAvatar');
+                const initial = this.userData.name?.charAt(0).toUpperCase() || 'U';
+                avatar.innerHTML = initial;
+                
+                // Re-add crown if premium
+                if (this.badgeType === 'premium') {
+                    const crown = document.createElement('span');
+                    crown.className = 'premium-crown';
+                    crown.innerHTML = '<i class="fas fa-crown"></i>';
+                    avatar.appendChild(crown);
+                }
 
                 // Update hero section
                 document.getElementById('heroTitle').textContent = 
@@ -1266,7 +1437,7 @@
                 // Render years grid
                 this.renderYearsGrid(availableYears);
 
-                // Show quick access
+                // Show quick access if there are recent years
                 if (this.recentYears.length > 0) {
                     this.renderRecentYears();
                 }
@@ -1304,7 +1475,7 @@
                     
                     html += `
                         <div class="year-card" data-year="${year}" 
-                             onclick="${isBlocked ? '' : `window.location.href='year${year}.html'`}"
+                             onclick="${isBlocked ? '' : `dashboard.addToRecentYears('${year}'); window.location.href='year${year}.html'`}"
                              style="${isBlocked ? 'opacity: 0.5; pointer-events: none;' : ''}">
                             <div class="year-icon">
                                 <i class="${yearData.icon}"></i>
@@ -1323,7 +1494,7 @@
                                 </div>
                                 ${isBlocked ? 
                                     '<span class="badge bg-danger">Blocked</span>' : 
-                                    '<button class="enter-btn" onclick="event.stopPropagation(); window.location.href=`year' + year + '.html`">Enter <i class="fas fa-arrow-right"></i></button>'
+                                    '<button class="enter-btn" onclick="event.stopPropagation(); dashboard.addToRecentYears(\'' + year + '\'); window.location.href=`year' + year + '.html`">Enter <i class="fas fa-arrow-right"></i></button>'
                                 }
                             </div>
                         </div>
@@ -1345,25 +1516,46 @@
                 quickAccess.style.display = 'block';
                 
                 let html = '';
-                this.recentYears.forEach(year => {
+                this.recentYears.forEach((year, index) => {
                     const yearData = this.yearsData[year];
                     if (!yearData) return;
                     
+                    // Get timestamp from localStorage if available
+                    const accessTime = localStorage.getItem(`year_${year}_last_access`);
+                    const timeAgo = accessTime ? this.getTimeAgo(parseInt(accessTime)) : 'Recently';
+                    
                     html += `
-                        <div class="recent-year-btn" onclick="window.location.href='year${year}.html'">
-                            <div class="recent-year-icon">
+                        <div class="recent-year-btn" data-year="${year}" 
+                             onclick="dashboard.addToRecentYears('${year}'); window.location.href='year${year}.html'">
+                            <div class="recent-year-icon" style="background: linear-gradient(135deg, ${this.getYearColor(year)})">
                                 <i class="${yearData.icon}"></i>
                             </div>
                             <div class="recent-year-info">
                                 <h4>Year ${year}: ${yearData.title}</h4>
                                 <p>${yearData.quizzes} quizzes • ${yearData.questions} questions</p>
+                                <div class="recent-year-time">
+                                    <i class="fas fa-clock"></i>
+                                    <span>${timeAgo}</span>
+                                </div>
                             </div>
-                            <i class="fas fa-chevron-right" style="color: var(--text-tertiary);"></i>
+                            <i class="fas fa-chevron-right recent-year-arrow"></i>
                         </div>
                     `;
                 });
                 
                 container.innerHTML = html;
+            }
+
+            getYearColor(year) {
+                const colors = {
+                    '1': '#667eea, #764ba2',
+                    '2': '#f093fb, #f5576c',
+                    '3': '#4facfe, #00f2fe',
+                    '4': '#43e97b, #38f9d7',
+                    '5': '#fa709a, #fee140',
+                    '6': '#30cfd0, #330867'
+                };
+                return colors[year] || '#3b82f6, #60a5fa';
             }
 
             showMessage(message, type = 'info') {
@@ -1430,8 +1622,9 @@
         }
 
         // Initialize the smart dashboard
+        let dashboard;
         document.addEventListener('DOMContentLoaded', () => {
-            const dashboard = new SmartDashboardManager();
+            dashboard = new SmartDashboardManager();
             dashboard.initialize();
 
             // Theme toggle
