@@ -4,9 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ALIF · Smart Medical Dashboard</title>
-    <!-- Critical CSS inlined for speed -->
+    <!-- Bootstrap 5 + Icons + Fonts -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { font-family: 'Inter', sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
+        
         :root {
             --primary: #60a5fa;
             --primary-dark: #3b82f6;
@@ -25,7 +31,7 @@
             --premium: linear-gradient(135deg, #8b5cf6, #ec4899);
             --shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
             --radius: 12px;
-            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             --gradient: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
         }
         
@@ -52,47 +58,68 @@
         body {
             background-color: var(--background);
             color: var(--text-primary);
-            transition: background-color 0.2s, color 0.2s;
+            transition: var(--transition);
             min-height: 100vh;
-            font-family: 'Inter', sans-serif;
         }
 
-        /* Loading spinner minimal */
-        .loading-spinner {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            background: var(--background);
+        /* Connection Status */
+        .connection-status {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 10000;
+            top: 70px;
+            right: 20px;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+            font-size: 0.8rem;
+            font-weight: 600;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
         }
-        
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid var(--border);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
+        .connection-status.online {
+            background: var(--success);
+            color: white;
         }
-        
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .connection-status.offline {
+            background: var(--error);
+            color: white;
+        }
+        .connection-status.syncing {
+            background: var(--warning);
+            color: white;
+        }
 
-        /* Header minimal */
+        /* Offline Indicator */
+        .offline-indicator {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow);
+            z-index: 9998;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Custom Header */
         .app-header {
             position: sticky;
             top: 0;
             z-index: 1000;
             background: var(--surface);
             border-bottom: 1px solid var(--border);
-            padding: 0.5rem 1rem;
-            backdrop-filter: blur(8px);
+            padding: 0.75rem 1rem;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
         }
         
         .header-container {
@@ -101,6 +128,13 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 1rem;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
         }
         
         .app-title {
@@ -111,121 +145,769 @@
         }
         
         .app-title-icon {
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
             background: var(--gradient);
-            border-radius: 8px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
+            font-size: 1.3rem;
         }
         
         .app-title-text {
             font-weight: 800;
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             color: var(--text-primary);
         }
         
-        .app-title-text span { color: var(--primary); }
-
+        .app-title-text span {
+            color: var(--primary);
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .theme-toggle-header {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--background);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .theme-toggle-header:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        /* Profile Button */
         .profile-btn {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.2rem 0.5rem 0.2rem 0.2rem;
-            border-radius: 30px;
+            gap: 0.75rem;
+            padding: 0.25rem 0.5rem 0.25rem 0.25rem;
+            border-radius: 40px;
             background: var(--gradient);
             border: none;
             cursor: pointer;
-            transition: transform 0.1s;
+            transition: var(--transition);
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+            position: relative;
+        }
+        
+        .profile-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 15px rgba(59, 130, 246, 0.4);
         }
         
         .profile-avatar {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             background: white;
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--primary);
+            font-size: 1.1rem;
             font-weight: 600;
             position: relative;
         }
+        
+        /* Premium Crown on Avatar */
+        .premium-crown {
+            position: absolute;
+            top: -12px;
+            right: -8px;
+            font-size: 1.2rem;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+            animation: crownFloat 3s ease-in-out infinite;
+            z-index: 10;
+        }
+        
+        @keyframes crownFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-3px) rotate(5deg); }
+        }
+        
+        .premium-crown i {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .profile-info {
+            display: none;
+            color: white;
+            text-align: left;
+            position: relative;
+        }
+        
+        @media (min-width: 768px) {
+            .profile-info {
+                display: block;
+                padding-right: 0.5rem;
+            }
+            
+            .profile-name {
+                font-size: 0.9rem;
+                font-weight: 600;
+                line-height: 1.2;
+            }
+            
+            .profile-role {
+                font-size: 0.75rem;
+                opacity: 0.8;
+            }
+        }
 
-        /* Quick CSS for year card */
+        /* Premium Badge */
+        .premium-badge {
+            background: var(--premium);
+            color: white;
+            padding: 0.25rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            animation: pulse 2s infinite;
+            box-shadow: 0 2px 10px rgba(139, 92, 246, 0.5);
+        }
+
+        .gold-badge {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: white;
+            padding: 0.25rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-left: 0.5rem;
+            box-shadow: 0 2px 10px rgba(245, 158, 11, 0.5);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: var(--gradient);
+            border-radius: 30px;
+            padding: 3rem 2rem;
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            transform: rotate(25deg);
+        }
+        
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            bottom: -50%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            transform: rotate(15deg);
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 600px;
+        }
+        
+        .hero-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 2rem;
+        }
+
+        /* Year Cards */
+        .years-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
         .year-card {
             background: var(--card-bg);
             border: 2px solid var(--border);
-            border-radius: 20px;
-            padding: 1.5rem;
+            border-radius: 24px;
+            padding: 2rem 1.5rem;
+            transition: var(--transition);
             cursor: pointer;
-            transition: transform 0.1s, border-color 0.1s;
+            position: relative;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
-            min-height: 250px;
+            min-height: 300px;
+            animation: fadeInUp 0.5s ease-out;
+            animation-fill-mode: both;
         }
         
-        .year-card:active { transform: scale(0.98); }
+        .year-card:nth-child(1) { animation-delay: 0.1s; }
+        .year-card:nth-child(2) { animation-delay: 0.2s; }
+        .year-card:nth-child(3) { animation-delay: 0.3s; }
+        .year-card:nth-child(4) { animation-delay: 0.4s; }
+        .year-card:nth-child(5) { animation-delay: 0.5s; }
+        .year-card:nth-child(6) { animation-delay: 0.6s; }
 
-        /* Hide elements until ready */
-        [data-hidden] { display: none !important; }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
         
-        /* Font loading optional - will load async */
+        .year-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .year-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: var(--card-gradient);
+        }
+        
+        .year-card[data-year="1"] {
+            --card-gradient: linear-gradient(90deg, #667eea, #764ba2);
+        }
+        
+        .year-card[data-year="1"] .year-icon {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+        
+        .year-card[data-year="2"] {
+            --card-gradient: linear-gradient(90deg, #f093fb, #f5576c);
+        }
+        
+        .year-card[data-year="2"] .year-icon {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+        
+        .year-card[data-year="3"] {
+            --card-gradient: linear-gradient(90deg, #4facfe, #00f2fe);
+        }
+        
+        .year-card[data-year="3"] .year-icon {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+        }
+        
+        .year-card[data-year="4"] {
+            --card-gradient: linear-gradient(90deg, #43e97b, #38f9d7);
+        }
+        
+        .year-card[data-year="4"] .year-icon {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+        }
+        
+        .year-card[data-year="5"] {
+            --card-gradient: linear-gradient(90deg, #fa709a, #fee140);
+        }
+        
+        .year-card[data-year="5"] .year-icon {
+            background: linear-gradient(135deg, #fa709a, #fee140);
+        }
+        
+        .year-card[data-year="6"] {
+            --card-gradient: linear-gradient(90deg, #30cfd0, #330867);
+        }
+        
+        .year-card[data-year="6"] .year-icon {
+            background: linear-gradient(135deg, #30cfd0, #330867);
+        }
+        
+        .year-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            color: white;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .year-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+        
+        .year-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .year-description {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+        
+        .year-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+        
+        .year-stat {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .year-stat i {
+            color: var(--primary);
+        }
+        
+        .enter-btn {
+            background: transparent;
+            border: 2px solid var(--border);
+            color: var(--text-primary);
+            padding: 0.5rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .year-card:hover .enter-btn {
+            background: var(--gradient);
+            border-color: transparent;
+            color: white;
+        }
+        
+        .enter-btn i {
+            transition: transform 0.3s;
+        }
+        
+        .year-card:hover .enter-btn i {
+            transform: translateX(5px);
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Quick Access */
+        .quick-access {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .section-title i {
+            color: var(--primary);
+        }
+        
+        .recent-years {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .recent-year-btn {
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .recent-year-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--card-gradient);
+        }
+        
+        .recent-year-btn:hover {
+            transform: translateX(5px);
+            background: var(--gradient);
+            border-color: transparent;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .recent-year-btn:hover * {
+            color: white !important;
+        }
+        
+        .recent-year-btn:hover::before {
+            background: white;
+        }
+        
+        .recent-year-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        
+        .recent-year-info {
+            flex-grow: 1;
+        }
+        
+        .recent-year-info h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0 0 0.25rem 0;
+            color: var(--text-primary);
+        }
+        
+        .recent-year-info p {
+            font-size: 0.85rem;
+            color: var(--text-tertiary);
+            margin: 0;
+        }
+        
+        .recent-year-time {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            margin-top: 0.25rem;
+        }
+        
+        .recent-year-arrow {
+            color: var(--text-tertiary);
+            font-size: 1.2rem;
+            transition: transform 0.3s;
+            flex-shrink: 0;
+        }
+        
+        .recent-year-btn:hover .recent-year-arrow {
+            transform: translateX(5px);
+            color: white;
+        }
+
+        /* Message Banner */
+        .message-banner {
+            background: var(--warning);
+            color: white;
+            padding: 1rem;
+            border-radius: var(--radius);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            animation: slideDown 0.3s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .message-banner.info {
+            background: var(--info);
+        }
+        
+        .message-banner.success {
+            background: var(--success);
+        }
+        
+        .message-banner.warning {
+            background: var(--warning);
+        }
+        
+        .message-banner.error {
+            background: var(--error);
+        }
+
+        /* No Access State */
+        .no-access {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: var(--surface);
+            border-radius: var(--radius);
+            border: 2px dashed var(--border);
+        }
+        
+        .no-access i {
+            font-size: 4rem;
+            color: var(--text-tertiary);
+            margin-bottom: 1rem;
+        }
+        
+        .no-access h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .no-access p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+        
+        .contact-support {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .contact-support:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        /* Offline Cache Info */
+        .cache-info {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .cache-info i {
+            color: var(--primary);
+        }
+
+        footer {
+            text-align: center;
+            color: var(--text-tertiary);
+            padding: 2rem 0;
+            border-top: 1px solid var(--border);
+            margin-top: 3rem;
+        }
     </style>
-    <!-- Preload critical assets -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Load Bootstrap async -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" media="print" onload="this.media='all'">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
-    
-    <!-- Firebase - load immediately but non-blocking -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js" defer></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js" defer></script>
 </head>
 <body class="dark-mode">
-    <!-- Loading Spinner - will be hidden ASAP -->
+    <!-- Connection Status -->
+    <div id="connectionStatus" class="connection-status online" style="display: none;">
+        <i class="fas fa-wifi"></i>
+        <span>Connected</span>
+    </div>
+
+    <!-- Offline Indicator -->
+    <div id="offlineIndicator" class="offline-indicator" style="display: none;">
+        <i class="fas fa-cloud" style="color: var(--warning);"></i>
+        <span>Working in offline mode</span>
+        <span id="cacheTimestamp" style="font-size: 0.7rem; opacity: 0.8;"></span>
+    </div>
+
+    <!-- Loading State -->
     <div id="loadingScreen" class="loading-spinner">
         <div class="spinner"></div>
+        <p>Loading your dashboard...</p>
     </div>
 
     <!-- Main Content (Initially Hidden) -->
-    <div id="mainApp" data-hidden="true">
+    <div id="mainApp" style="display: none;">
         <header class="app-header">
             <div class="header-container">
-                <div class="app-title" id="logoHome">
-                    <div class="app-title-icon"><i class="fas fa-stethoscope"></i></div>
-                    <div class="app-title-text">ALIF<span>Med</span></div>
+                <div class="header-left">
+                    <div class="app-title" id="logoHome">
+                        <div class="app-title-icon">
+                            <i class="fas fa-stethoscope"></i>
+                        </div>
+                        <div class="app-title-text">
+                            ALIF<span>Med</span>
+                        </div>
+                    </div>
                 </div>
                 
-                <button class="profile-btn" id="profileBtn">
-                    <div class="profile-avatar" id="profileAvatar"><i class="fas fa-user"></i></div>
-                    <div class="profile-info d-none d-md-block">
-                        <div class="profile-name" id="profileName">Loading...</div>
-                        <div class="profile-role" id="profileRole"></div>
-                    </div>
-                </button>
+                <div class="header-right">
+                    <button class="theme-toggle-header" id="themeToggleHeader">
+                        <i class="fas fa-sun"></i>
+                    </button>
+                    
+                    <button class="profile-btn" id="profileBtn">
+                        <div class="profile-avatar" id="profileAvatar">
+                            <i class="fas fa-user"></i>
+                            <!-- Premium Crown will be inserted here dynamically -->
+                        </div>
+                        <div class="profile-info">
+                            <div class="profile-name" id="profileName">Medical Student</div>
+                            <div class="profile-role" id="profileRole"></div>
+                        </div>
+                    </button>
+                </div>
             </div>
         </header>
 
-        <div class="container-lg py-3">
-            <!-- Hero Section minimal -->
-            <div class="bg-primary bg-gradient text-white rounded-4 p-4 mb-4" id="heroSection">
-                <h1 class="h3 mb-1" id="heroTitle">Welcome Back!</h1>
-                <p class="mb-0 opacity-75" id="heroSubtitle"></p>
+        <div class="container-lg py-4">
+            <!-- Cache Info (shown when offline) -->
+            <div id="cacheInfo" class="cache-info" style="display: none;">
+                <div>
+                    <i class="fas fa-database"></i>
+                    <span>You're viewing cached data from </span>
+                    <span id="cacheDate"></span>
+                </div>
+                <span class="badge bg-warning">Offline Mode</span>
             </div>
 
-            <!-- Years Container -->
-            <div id="yearsContainer"></div>
+            <!-- Message Banner (Dynamic) -->
+            <div id="messageBanner" class="message-banner" style="display: none;"></div>
+
+            <!-- Hero Section -->
+            <div id="heroSection" class="hero-section">
+                <div class="hero-content">
+                    <h1 class="hero-title" id="heroTitle">Welcome Back!</h1>
+                    <p class="hero-subtitle" id="heroSubtitle">Continue your medical journey</p>
+                </div>
+            </div>
+
+            <!-- Year Selection Title -->
+            <h2 class="section-title" id="yearsTitle" style="display: none;">
+                <i class="fas fa-graduation-cap"></i>
+                Your Registered Years
+            </h2>
+
+            <!-- Years Grid (For multiple years) -->
+            <div class="years-grid" id="yearsGrid"></div>
+
+            <!-- Quick Access -->
+            <div class="quick-access" id="quickAccess" style="display: none;">
+                <h3 class="section-title">
+                    <i class="fas fa-history"></i>
+                    Recently Accessed
+                </h3>
+                <div class="recent-years" id="recentYears"></div>
+            </div>
         </div>
+
+        <footer>
+            <p>ALIF · Medical Quiz Platform · Smart Dashboard v3.0</p>
+        </footer>
     </div>
 
+    <!-- Bootstrap bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
-        // ===== ULTRA-FAST DASHBOARD =====
-        // Configuration
+        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyC4DSMVg4c98kQf5sSF8ueD631QgO4SXn0",
             authDomain: "medical-quiz-40228.firebaseapp.com",
@@ -235,325 +917,752 @@
             appId: "1:483043078873:web:4029dd83e53557f08b04c8"
         };
 
-        // Initialize Firebase immediately
+        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-        
-        // Enable persistence silently
-        db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
 
-        // ===== CACHE KEYS =====
-        const CACHE_KEY = 'dashboard_v3';
-        const RECENT_KEY = 'recent_years_v3';
-        const USER_KEY = 'currentUser';
+        // Enable offline persistence
+        db.enablePersistence({
+            synchronizeTabs: true
+        }).catch((err) => {
+            if (err.code === 'failed-precondition') {
+                console.log('Persistence failed: Multiple tabs open');
+            } else if (err.code === 'unimplemented') {
+                console.log('Persistence not supported');
+            }
+        });
 
-        // ===== MAIN DASHBOARD =====
-        class FastDashboard {
+        // Smart Dashboard Manager with Premium Crown & Recent Years
+        class SmartDashboardManager {
             constructor() {
+                this.currentUser = null;
                 this.userData = null;
                 this.registeredYears = [];
+                this.allYears = ['1', '2', '3', '4', '5', '6'];
+                this.badgeType = null;
                 this.recentYears = [];
+                this.isOnline = navigator.onLine;
+                this.syncInProgress = false;
+                this.cacheKey = 'dashboard_cache';
+                this.recentYearsKey = 'recent_years';
                 this.yearsData = {
-                    '1': { title: "First Year", icon: "fa-dna", quizzes: 180, questions: 3200 },
-                    '2': { title: "Second Year", icon: "fa-vial", quizzes: 210, questions: 3800 },
-                    '3': { title: "Third Year", icon: "fa-heartbeat", quizzes: 250, questions: 4500 },
-                    '4': { title: "Fourth Year", icon: "fa-stethoscope", quizzes: 220, questions: 4000 },
-                    '5': { title: "Fifth Year", icon: "fa-user-md", quizzes: 190, questions: 3500 },
-                    '6': { title: "Sixth Year", icon: "fa-book-medical", quizzes: 280, questions: 5200 }
+                    '1': {
+                        title: "First Year",
+                        description: "Basic sciences, Anatomy, Physiology, Biochemistry",
+                        icon: "fas fa-dna",
+                        subjects: ["Anatomy", "Physiology", "Biochemistry", "Embryology", "Histology"],
+                        quizzes: 180,
+                        questions: 3200,
+                        color: "gradient-1"
+                    },
+                    '2': {
+                        title: "Second Year",
+                        description: "Pathology, Pharmacology, Microbiology, Immunology",
+                        icon: "fas fa-vial",
+                        subjects: ["Pathology", "Pharmacology", "Microbiology", "Immunology", "Genetics"],
+                        quizzes: 210,
+                        questions: 3800,
+                        color: "gradient-2"
+                    },
+                    '3': {
+                        title: "Third Year",
+                        description: "Medicine, Surgery, Pediatrics, Obstetrics & Gynecology",
+                        icon: "fas fa-heartbeat",
+                        subjects: ["Medicine", "Surgery", "Pediatrics", "OB/GYN", "Psychiatry"],
+                        quizzes: 250,
+                        questions: 4500,
+                        color: "gradient-3"
+                    },
+                    '4': {
+                        title: "Fourth Year",
+                        description: "Clinical rotations, Specialties, Emergency Medicine",
+                        icon: "fas fa-stethoscope",
+                        subjects: ["Internal Medicine", "Surgery", "Pediatrics", "Emergency", "Family Medicine"],
+                        quizzes: 220,
+                        questions: 4000,
+                        color: "gradient-4"
+                    },
+                    '5': {
+                        title: "Fifth Year",
+                        description: "Advanced clinical rotations, Sub-specialties",
+                        icon: "fas fa-user-md",
+                        subjects: ["Cardiology", "Neurology", "Oncology", "Rheumatology", "Endocrinology"],
+                        quizzes: 190,
+                        questions: 3500,
+                        color: "gradient-5"
+                    },
+                    '6': {
+                        title: "Sixth Year",
+                        description: "Internship preparation, USMLE/Board review",
+                        icon: "fas fa-book-medical",
+                        subjects: ["Board Review", "Clinical Skills", "Ethics", "Public Health", "Research"],
+                        quizzes: 280,
+                        questions: 5200,
+                        color: "gradient-6"
+                    }
                 };
             }
 
-            // Start instantly
-            async start() {
-                // Check login - immediate redirect if not logged in
-                const stored = localStorage.getItem(USER_KEY);
-                if (!stored) {
-                    window.location.replace('register.html');
-                    return;
-                }
-
-                this.userData = JSON.parse(stored);
+            async initialize() {
+                // Show loading
+                document.getElementById('loadingScreen').style.display = 'flex';
                 
-                // Try to load from cache first (instant display)
-                const cached = this.loadCache();
-                if (cached) {
-                    this.userData = { ...this.userData, ...cached.userData };
-                    this.registeredYears = cached.registeredYears || [];
-                    this.recentYears = cached.recentYears || [];
-                    this.renderInitial();
-                }
-
-                // Hide loading screen immediately
-                document.getElementById('loadingScreen').style.display = 'none';
-                document.getElementById('mainApp').removeAttribute('data-hidden');
-
-                // Check for single year - INSTANT REDIRECT
-                const years = this.getRegisteredYearsFromData();
-                if (years.length === 1) {
-                    const year = years[0];
-                    this.addToRecentYears(year);
-                    window.location.replace(`year${year}.html`);
-                    return;
-                }
-
-                // Load recent years from storage
-                this.loadRecentYears();
-                
-                // Render dashboard (with cache first, then update)
-                this.renderFull();
-                
-                // Try to fetch fresh data in background
-                this.fetchFreshData();
-                
-                // Setup network listeners
-                this.setupNetworkListeners();
-            }
-
-            getRegisteredYearsFromData() {
-                // Extract years from userData (handles multiple formats)
-                return (this.userData.registeredYears || [])
-                    .map(y => y.toString())
-                    .filter(y => y >= '1' && y <= '6');
-            }
-
-            loadCache() {
                 try {
-                    const cached = localStorage.getItem(CACHE_KEY);
-                    return cached ? JSON.parse(cached) : null;
-                } catch {
-                    return null;
+                    // Initialize connection monitoring
+                    this.initConnectionMonitoring();
+                    
+                    // Check if user is logged in
+                    const storedUser = localStorage.getItem('currentUser');
+                    if (!storedUser) {
+                        window.location.href = 'register.html';
+                        return;
+                    }
+
+                    this.currentUser = JSON.parse(storedUser);
+                    
+                    // Try to load from cache first (for offline)
+                    this.loadFromCache();
+                    
+                    // Try to fetch fresh data from Firebase
+                    if (this.isOnline) {
+                        await this.fetchUserData();
+                    } else {
+                        this.showOfflineMessage();
+                    }
+                    
+                    // Process user data and determine badge
+                    await this.processUserData();
+                    
+                    // Load recent years from localStorage
+                    this.loadRecentYears();
+                    
+                } catch (error) {
+                    console.error('Dashboard initialization error:', error);
+                    // Try to load from cache as fallback
+                    if (this.loadFromCache()) {
+                        this.showOfflineMessage();
+                        await this.processUserData();
+                        this.loadRecentYears();
+                    } else {
+                        this.showErrorMessage('Error loading dashboard. Please check your connection.');
+                    }
+                } finally {
+                    document.getElementById('loadingScreen').style.display = 'none';
+                    document.getElementById('mainApp').style.display = 'block';
                 }
             }
 
-            saveCache() {
+            initConnectionMonitoring() {
+                window.addEventListener('online', () => this.handleConnectionRestored());
+                window.addEventListener('offline', () => this.handleConnectionLost());
+                this.updateConnectionStatus(navigator.onLine);
+            }
+
+            updateConnectionStatus(isOnline) {
+                this.isOnline = isOnline;
+                const statusDiv = document.getElementById('connectionStatus');
+                const offlineIndicator = document.getElementById('offlineIndicator');
+                const cacheInfo = document.getElementById('cacheInfo');
+
+                if (isOnline) {
+                    statusDiv.className = 'connection-status online';
+                    statusDiv.innerHTML = '<i class="fas fa-wifi"></i><span>Connected</span>';
+                    statusDiv.style.display = 'flex';
+                    offlineIndicator.style.display = 'none';
+                    cacheInfo.style.display = 'none';
+                    
+                    setTimeout(() => {
+                        if (this.isOnline) {
+                            statusDiv.style.display = 'none';
+                        }
+                    }, 3000);
+                } else {
+                    statusDiv.className = 'connection-status offline';
+                    statusDiv.innerHTML = '<i class="fas fa-wifi-slash"></i><span>Offline Mode</span>';
+                    statusDiv.style.display = 'flex';
+                    offlineIndicator.style.display = 'flex';
+                    
+                    // Show cache info
+                    const cache = this.loadFromCache();
+                    if (cache) {
+                        cacheInfo.style.display = 'flex';
+                        document.getElementById('cacheDate').textContent = 
+                            new Date(cache.timestamp).toLocaleString();
+                    }
+                }
+            }
+
+            handleConnectionLost() {
+                console.log('Connection lost - switching to offline mode');
+                this.updateConnectionStatus(false);
+                this.showMessage('You are offline. Using cached data.', 'warning');
+            }
+
+            async handleConnectionRestored() {
+                console.log('Connection restored - syncing data');
+                this.updateConnectionStatus(true);
+                
+                const statusDiv = document.getElementById('connectionStatus');
+                statusDiv.className = 'connection-status syncing';
+                statusDiv.innerHTML = '<i class="fas fa-sync-alt fa-spin"></i><span>Syncing...</span>';
+                statusDiv.style.display = 'flex';
+                
+                this.syncInProgress = true;
+                
                 try {
-                    localStorage.setItem(CACHE_KEY, JSON.stringify({
+                    await this.fetchUserData();
+                    await this.processUserData();
+                    this.showMessage('Data synced successfully!', 'success');
+                } catch (error) {
+                    console.error('Sync error:', error);
+                    this.showMessage('Error syncing data. Using cached version.', 'error');
+                } finally {
+                    this.syncInProgress = false;
+                    setTimeout(() => {
+                        if (this.isOnline && !this.syncInProgress) {
+                            statusDiv.style.display = 'none';
+                        }
+                    }, 2000);
+                }
+            }
+
+            loadFromCache() {
+                try {
+                    const cached = localStorage.getItem(this.cacheKey);
+                    if (cached) {
+                        const data = JSON.parse(cached);
+                        this.userData = data.userData;
+                        this.registeredYears = data.registeredYears || [];
+                        console.log('Loaded from cache:', new Date(data.timestamp).toLocaleString());
+                        return data;
+                    }
+                } catch (error) {
+                    console.error('Error loading from cache:', error);
+                }
+                return null;
+            }
+
+            saveToCache() {
+                try {
+                    const cacheData = {
                         userData: this.userData,
                         registeredYears: this.registeredYears,
-                        recentYears: this.recentYears,
                         timestamp: Date.now()
-                    }));
-                } catch {}
+                    };
+                    localStorage.setItem(this.cacheKey, JSON.stringify(cacheData));
+                    console.log('Saved to cache');
+                } catch (error) {
+                    console.error('Error saving to cache:', error);
+                }
             }
 
+            // Recent Years Management
             loadRecentYears() {
                 try {
-                    const stored = localStorage.getItem(RECENT_KEY);
+                    const stored = localStorage.getItem(this.recentYearsKey);
                     if (stored) {
                         this.recentYears = JSON.parse(stored);
-                        // Filter to only years user has access to
-                        const validYears = this.getRegisteredYearsFromData();
-                        this.recentYears = this.recentYears.filter(y => validYears.includes(y));
-                        this.saveRecentYears();
+                        // Filter out years user no longer has access to
+                        this.recentYears = this.recentYears.filter(year => 
+                            this.registeredYears.includes(year.toString())
+                        );
+                        this.saveRecentYears(); // Save filtered list
                     }
-                } catch {
+                } catch (error) {
+                    console.error('Error loading recent years:', error);
                     this.recentYears = [];
                 }
             }
 
             saveRecentYears() {
                 try {
-                    localStorage.setItem(RECENT_KEY, JSON.stringify(this.recentYears));
-                } catch {}
+                    localStorage.setItem(this.recentYearsKey, JSON.stringify(this.recentYears));
+                } catch (error) {
+                    console.error('Error saving recent years:', error);
+                }
             }
 
             addToRecentYears(year) {
+                // Convert to string for consistency
                 const yearStr = year.toString();
-                this.recentYears = [yearStr, ...this.recentYears.filter(y => y !== yearStr)].slice(0, 5);
+                
+                // Remove if already exists
+                this.recentYears = this.recentYears.filter(y => y !== yearStr);
+                
+                // Add to beginning
+                this.recentYears.unshift(yearStr);
+                
+                // Keep only last 5
+                if (this.recentYears.length > 5) {
+                    this.recentYears.pop();
+                }
+                
+                // Save to localStorage
                 this.saveRecentYears();
-                localStorage.setItem(`year_${year}_last`, Date.now().toString());
+                
+                // Update UI if visible
+                if (this.recentYears.length > 0) {
+                    this.renderRecentYears();
+                }
             }
 
-            // Initial minimal render (from cache)
-            renderInitial() {
-                const years = this.getRegisteredYearsFromData();
-                if (years.length === 0) return;
+            getTimeAgo(timestamp) {
+                if (!timestamp) return 'Recently';
                 
-                document.getElementById('profileName').textContent = 
-                    this.userData.name?.split(' ')[0] || 'Student';
+                const now = Date.now();
+                const diff = now - timestamp;
                 
-                document.getElementById('heroTitle').textContent = 
-                    `Welcome back, ${this.userData.name?.split(' ')[0] || 'Student'}!`;
+                const minutes = Math.floor(diff / 60000);
+                const hours = Math.floor(diff / 3600000);
+                const days = Math.floor(diff / 86400000);
+                
+                if (minutes < 1) return 'Just now';
+                if (minutes < 60) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+                if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+                if (days < 7) return `${days} day${days > 1 ? 's' : ''} ago`;
+                return new Date(timestamp).toLocaleDateString();
             }
 
-            // Full render with years grid
-            renderFull() {
-                const years = this.getRegisteredYearsFromData();
+            async fetchUserData() {
+                try {
+                    const userDoc = await db.collection('users').doc(this.currentUser.id).get();
+                    if (userDoc.exists) {
+                        this.userData = userDoc.data();
+                        
+                        // Update localStorage
+                        localStorage.setItem('currentUser', JSON.stringify({
+                            ...this.currentUser,
+                            ...this.userData
+                        }));
+                        
+                        // Save to cache
+                        this.saveToCache();
+                    } else {
+                        // Fallback to localStorage
+                        this.userData = this.currentUser;
+                    }
+                } catch (error) {
+                    console.error('Error fetching user data:', error);
+                    // Fallback to localStorage
+                    this.userData = this.currentUser;
+                    
+                    // Try to load from cache
+                    this.loadFromCache();
+                }
+            }
+
+            async processUserData() {
+                // Get registered years (handle both string and number formats)
+                this.registeredYears = (this.userData.registeredYears || [])
+                    .map(y => y.toString());
                 
-                if (years.length === 0) {
-                    this.renderNoAccess();
+                console.log('Registered years:', this.registeredYears);
+                
+                // Check if user has access to any years
+                if (this.registeredYears.length === 0) {
+                    this.showNoAccess();
                     return;
                 }
 
-                if (years.length === 1) return; // Should have redirected
+                // Determine and apply badge
+                await this.determineAndApplyBadge();
 
-                // Update profile
-                const name = this.userData.name?.split(' ')[0] || 'Student';
-                document.getElementById('profileName').textContent = name;
-                document.getElementById('profileRole').textContent = `${years.length} Years`;
-                
-                // Update avatar
-                const avatar = document.getElementById('profileAvatar');
-                avatar.innerHTML = this.userData.name?.charAt(0).toUpperCase() || 'U';
-                
-                // Update hero
-                document.getElementById('heroTitle').textContent = `Welcome back, ${name}!`;
-                document.getElementById('heroSubtitle').textContent = 
-                    `Access to ${years.length} year${years.length > 1 ? 's' : ''}`;
-
-                // Render years grid
-                this.renderYearsGrid(years);
-            }
-
-            renderYearsGrid(years) {
-                const container = document.getElementById('yearsContainer');
-                
-                // Add recent years section if any
-                let recentHtml = '';
-                if (this.recentYears.length > 0) {
-                    const recentItems = this.recentYears
-                        .filter(y => years.includes(y))
-                        .map(y => {
-                            const data = this.yearsData[y];
-                            return `
-                                <div class="d-flex align-items-center gap-3 p-3 bg-surface rounded-3 border mb-2" 
-                                     onclick="dashboard.goToYear('${y}')" style="cursor: pointer">
-                                    <div class="bg-primary bg-gradient rounded-2 p-3 text-white">
-                                        <i class="fas ${data.icon}"></i>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <h4 class="h6 mb-1">Year ${y}: ${data.title}</h4>
-                                        <small class="text-secondary">${data.quizzes} quizzes</small>
-                                    </div>
-                                    <i class="fas fa-chevron-right text-secondary"></i>
-                                </div>
-                            `;
-                        }).join('');
-                    
-                    if (recentItems) {
-                        recentHtml = `
-                            <div class="mb-4">
-                                <h3 class="h5 mb-3"><i class="fas fa-history me-2 text-primary"></i>Recent Years</h3>
-                                ${recentItems}
-                            </div>
-                        `;
-                    }
+                // Handle single year case
+                if (this.registeredYears.length === 1) {
+                    this.autoRedirectToYear(this.registeredYears[0]);
+                    return;
                 }
 
-                // Years grid
-                const gridHtml = years.map(year => {
-                    const data = this.yearsData[year];
-                    return `
-                        <div class="year-card mb-3" onclick="dashboard.goToYear('${year}')">
-                            <div class="d-flex align-items-center gap-3 mb-3">
-                                <div class="bg-primary bg-gradient rounded-3 p-3 text-white">
-                                    <i class="fas ${data.icon} fs-4"></i>
-                                </div>
-                                <div>
-                                    <h3 class="h5 mb-1">Year ${year}</h3>
-                                    <p class="text-secondary small mb-0">${data.title}</p>
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-between text-secondary small">
-                                <span><i class="fas fa-file-alt me-1"></i>${data.quizzes} quizzes</span>
-                                <span><i class="fas fa-question-circle me-1"></i>${data.questions} Qs</span>
+                // Build dashboard for multiple years
+                this.buildDashboard();
+            }
+
+            async determineAndApplyBadge() {
+                console.log('Determining badge for years:', this.registeredYears.length);
+                
+                const yearCount = this.registeredYears.length;
+                
+                // Check if user has premium status from admin
+                const isPremiumFromAdmin = 
+                    this.userData.status === 'premium' ||
+                    this.userData.role === 'premium' ||
+                    this.userData.plan === 'premium' ||
+                    this.userData.membership === 'premium';
+
+                // PREMIUM BADGE: Admin premium OR all 6 years
+                if (isPremiumFromAdmin || yearCount === 6) {
+                    this.badgeType = 'premium';
+                    console.log('🎯 PREMIUM badge awarded');
+                    
+                    // Auto-upgrade to premium if they have all years but not premium status
+                    if (yearCount === 6 && !isPremiumFromAdmin && this.isOnline) {
+                        await this.upgradeToPremium();
+                    }
+                }
+                // GOLD BADGE: 4 or 5 years
+                else if (yearCount >= 4) {
+                    this.badgeType = 'gold';
+                    console.log('🥇 GOLD badge awarded');
+                }
+                // NO BADGE: 1-3 years
+                else {
+                    this.badgeType = null;
+                    console.log('No badge for', yearCount, 'years');
+                }
+
+                this.updateHeaderBadge();
+            }
+
+            async upgradeToPremium() {
+                try {
+                    await db.collection('users').doc(this.currentUser.id).update({
+                        status: 'premium',
+                        plan: 'premium',
+                        membership: 'premium',
+                        premiumSince: Date.now(),
+                        badge: 'premium'
+                    });
+                    
+                    // Update local data
+                    this.userData.status = 'premium';
+                    this.userData.plan = 'premium';
+                    
+                    console.log('✅ Auto-upgraded to premium in Firebase');
+                    
+                    // Show congratulatory message
+                    this.showMessage('🎉 Congratulations! You\'ve been upgraded to PREMIUM!', 'success');
+                    
+                } catch (error) {
+                    console.log('Auto-upgrade failed:', error);
+                }
+            }
+
+            updateHeaderBadge() {
+                const profileRole = document.getElementById('profileRole');
+                const profileBtn = document.querySelector('.profile-btn');
+                const profileAvatar = document.getElementById('profileAvatar');
+                
+                // Clear existing crown
+                const existingCrown = profileAvatar.querySelector('.premium-crown');
+                if (existingCrown) {
+                    existingCrown.remove();
+                }
+                
+                if (this.badgeType === 'premium') {
+                    // Add beautiful crown to avatar
+                    const crown = document.createElement('span');
+                    crown.className = 'premium-crown';
+                    crown.innerHTML = '<i class="fas fa-crown"></i>';
+                    profileAvatar.appendChild(crown);
+                    
+                    // Update role text
+                    profileRole.innerHTML = `
+                        <span class="premium-badge">
+                            <i class="fas fa-crown"></i> PREMIUM
+                        </span>
+                    `;
+                    profileBtn.style.background = 'linear-gradient(135deg, #8b5cf6, #ec4899)';
+                } 
+                else if (this.badgeType === 'gold') {
+                    profileRole.innerHTML = `
+                        <span class="gold-badge">
+                            <i class="fas fa-star"></i> GOLD
+                        </span>
+                    `;
+                    profileBtn.style.background = 'linear-gradient(135deg, #fbbf24, #f59e0b)';
+                } 
+                else {
+                    const yearCount = this.registeredYears.length;
+                    profileRole.textContent = `${yearCount} Year${yearCount > 1 ? 's' : ''}`;
+                    profileBtn.style.background = 'linear-gradient(135deg, #3b82f6, #60a5fa)';
+                }
+            }
+
+            autoRedirectToYear(year) {
+                // Check if year is in user's registered years
+                if (!this.registeredYears.includes(year)) {
+                    console.error('User does not have access to this year');
+                    return;
+                }
+
+                // Check if admin has blocked access
+                if (this.userData.blockedYears && 
+                    this.userData.blockedYears.includes(year)) {
+                    this.showMessage(`Access to Year ${year} has been blocked by admin.`, 'error');
+                    return;
+                }
+
+                // Add to recent years before redirect
+                this.addToRecentYears(year);
+                
+                // Redirect to year-specific page
+                window.location.href = `year${year}.html`;
+            }
+
+            buildDashboard() {
+                // Update profile info
+                document.getElementById('profileName').textContent = 
+                    this.userData.name?.split(' ')[0] || 'Medical Student';
+                
+                // Update avatar initial
+                const avatar = document.getElementById('profileAvatar');
+                const initial = this.userData.name?.charAt(0).toUpperCase() || 'U';
+                avatar.innerHTML = initial;
+                
+                // Re-add crown if premium
+                if (this.badgeType === 'premium') {
+                    const crown = document.createElement('span');
+                    crown.className = 'premium-crown';
+                    crown.innerHTML = '<i class="fas fa-crown"></i>';
+                    avatar.appendChild(crown);
+                }
+
+                // Update hero section
+                document.getElementById('heroTitle').textContent = 
+                    `Welcome back, ${this.userData.name?.split(' ')[0] || 'Student'}!`;
+                
+                const yearCount = this.registeredYears.length;
+                document.getElementById('heroSubtitle').textContent = 
+                    `You have access to ${yearCount} year${yearCount > 1 ? 's' : ''} of medical curriculum.`;
+
+                // Show years title
+                document.getElementById('yearsTitle').style.display = 'flex';
+
+                // Filter available years
+                const availableYears = this.allYears.filter(year => 
+                    this.registeredYears.includes(year) && 
+                    (!this.userData.blockedYears || !this.userData.blockedYears.includes(year))
+                );
+
+                // Render years grid
+                this.renderYearsGrid(availableYears);
+
+                // Show quick access if there are recent years
+                if (this.recentYears.length > 0) {
+                    this.renderRecentYears();
+                }
+
+                // Check for admin messages
+                this.checkAdminMessages();
+            }
+
+            renderYearsGrid(availableYears) {
+                const grid = document.getElementById('yearsGrid');
+                
+                if (availableYears.length === 0) {
+                    grid.innerHTML = `
+                        <div class="no-access">
+                            <i class="fas fa-lock"></i>
+                            <h3>No Access to Any Years</h3>
+                            <p>Your account doesn't have access to any medical years.</p>
+                            <p>Please contact support or purchase access to programs.</p>
+                            <div class="contact-support" onclick="window.location.href='profile.html'">
+                                <i class="fas fa-headset"></i>
+                                <span>Contact Support</span>
                             </div>
                         </div>
                     `;
-                }).join('');
+                    return;
+                }
 
-                container.innerHTML = `
-                    ${recentHtml}
-                    <h3 class="h5 mb-3"><i class="fas fa-graduation-cap me-2 text-primary"></i>Your Years</h3>
-                    <div class="row g-3">
-                        ${gridHtml}
-                    </div>
-                `;
+                let html = '';
+                availableYears.sort().forEach(year => {
+                    const yearData = this.yearsData[year];
+                    if (!yearData) return;
+
+                    const isBlocked = this.userData.blockedYears && 
+                                     this.userData.blockedYears.includes(year);
+                    
+                    html += `
+                        <div class="year-card" data-year="${year}" 
+                             onclick="${isBlocked ? '' : `dashboard.addToRecentYears('${year}'); window.location.href='year${year}.html'`}"
+                             style="${isBlocked ? 'opacity: 0.5; pointer-events: none;' : ''}">
+                            <div class="year-icon">
+                                <i class="${yearData.icon}"></i>
+                            </div>
+                            <div class="year-number">Year ${year}</div>
+                            <div class="year-title">${yearData.title}</div>
+                            <div class="year-description">${yearData.description}</div>
+                            <div class="year-stats">
+                                <div class="year-stat">
+                                    <i class="fas fa-file-alt"></i>
+                                    <span>${yearData.quizzes} quizzes</span>
+                                </div>
+                                <div class="year-stat">
+                                    <i class="fas fa-question-circle"></i>
+                                    <span>${yearData.questions} Qs</span>
+                                </div>
+                                ${isBlocked ? 
+                                    '<span class="badge bg-danger">Blocked</span>' : 
+                                    '<button class="enter-btn" onclick="event.stopPropagation(); dashboard.addToRecentYears(\'' + year + '\'); window.location.href=`year' + year + '.html`">Enter <i class="fas fa-arrow-right"></i></button>'
+                                }
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                grid.innerHTML = html;
             }
 
-            renderNoAccess() {
-                document.getElementById('yearsContainer').innerHTML = `
-                    <div class="text-center p-5 bg-surface rounded-4 border">
-                        <i class="fas fa-lock fa-3x text-secondary mb-3"></i>
-                        <h3 class="h5">No Program Access</h3>
-                        <p class="text-secondary small mb-3">Please contact support to purchase access.</p>
-                        <button class="btn btn-primary" onclick="window.location.href='profile.html'">
-                            <i class="fas fa-headset me-2"></i>Contact Support
+            renderRecentYears() {
+                const container = document.getElementById('recentYears');
+                const quickAccess = document.getElementById('quickAccess');
+                
+                if (this.recentYears.length === 0) {
+                    quickAccess.style.display = 'none';
+                    return;
+                }
+                
+                quickAccess.style.display = 'block';
+                
+                let html = '';
+                this.recentYears.forEach((year, index) => {
+                    const yearData = this.yearsData[year];
+                    if (!yearData) return;
+                    
+                    // Get timestamp from localStorage if available
+                    const accessTime = localStorage.getItem(`year_${year}_last_access`);
+                    const timeAgo = accessTime ? this.getTimeAgo(parseInt(accessTime)) : 'Recently';
+                    
+                    html += `
+                        <div class="recent-year-btn" data-year="${year}" 
+                             onclick="dashboard.addToRecentYears('${year}'); window.location.href='year${year}.html'">
+                            <div class="recent-year-icon" style="background: linear-gradient(135deg, ${this.getYearColor(year)})">
+                                <i class="${yearData.icon}"></i>
+                            </div>
+                            <div class="recent-year-info">
+                                <h4>Year ${year}: ${yearData.title}</h4>
+                                <p>${yearData.quizzes} quizzes • ${yearData.questions} questions</p>
+                                <div class="recent-year-time">
+                                    <i class="fas fa-clock"></i>
+                                    <span>${timeAgo}</span>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right recent-year-arrow"></i>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+            }
+
+            getYearColor(year) {
+                const colors = {
+                    '1': '#667eea, #764ba2',
+                    '2': '#f093fb, #f5576c',
+                    '3': '#4facfe, #00f2fe',
+                    '4': '#43e97b, #38f9d7',
+                    '5': '#fa709a, #fee140',
+                    '6': '#30cfd0, #330867'
+                };
+                return colors[year] || '#3b82f6, #60a5fa';
+            }
+
+            showMessage(message, type = 'info') {
+                const banner = document.getElementById('messageBanner');
+                banner.className = `message-banner ${type}`;
+                banner.innerHTML = `
+                    <span><i class="fas fa-${type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i> ${message}</span>
+                    <i class="fas fa-times" onclick="this.parentElement.style.display='none'" style="cursor: pointer;"></i>
+                `;
+                banner.style.display = 'flex';
+                
+                setTimeout(() => {
+                    banner.style.display = 'none';
+                }, 5000);
+            }
+
+            showOfflineMessage() {
+                this.showMessage('You are in offline mode. Some features may be limited.', 'warning');
+            }
+
+            showErrorMessage(message) {
+                this.showMessage(message, 'error');
+            }
+
+            showNoAccess() {
+                document.getElementById('loadingScreen').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+                
+                document.getElementById('heroSection').innerHTML = `
+                    <div class="no-access">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>No Program Access</h3>
+                        <p>You haven't registered for any medical programs yet.</p>
+                        <p>Please purchase a program or contact support for access.</p>
+                        <button class="modal-btn" onclick="window.location.href='profile.html'">
+                            <i class="fas fa-shopping-cart"></i> Purchase Programs
                         </button>
                     </div>
                 `;
             }
 
-            goToYear(year) {
-                this.addToRecentYears(year);
-                window.location.href = `year${year}.html`;
-            }
-
-            async fetchFreshData() {
-                if (!navigator.onLine) return;
+            async checkAdminMessages() {
+                if (!this.isOnline) return;
                 
                 try {
-                    const doc = await db.collection('users').doc(this.userData.id).get();
-                    if (doc.exists) {
-                        const freshData = doc.data();
-                        this.userData = { ...this.userData, ...freshData };
-                        this.registeredYears = (freshData.registeredYears || []).map(y => y.toString());
+                    const messagesSnapshot = await db.collection('userMessages')
+                        .where('userId', '==', this.currentUser.id)
+                        .where('read', '==', false)
+                        .orderBy('timestamp', 'desc')
+                        .limit(1)
+                        .get();
+
+                    if (!messagesSnapshot.empty) {
+                        const message = messagesSnapshot.docs[0].data();
+                        this.showMessage(message.content, message.type || 'info');
                         
-                        // Update localStorage
-                        localStorage.setItem(USER_KEY, JSON.stringify(this.userData));
-                        
-                        // Save to cache
-                        this.saveCache();
-                        
-                        // Re-render if still on dashboard
-                        const years = this.getRegisteredYearsFromData();
-                        if (years.length === 1) {
-                            this.addToRecentYears(years[0]);
-                            window.location.replace(`year${years[0]}.html`);
-                        } else if (years.length > 1) {
-                            this.renderFull();
-                        }
+                        // Mark as read
+                        await messagesSnapshot.docs[0].ref.update({ read: true });
                     }
                 } catch (error) {
-                    console.log('Background fetch failed, using cache');
+                    console.error('Error checking admin messages:', error);
                 }
-            }
-
-            setupNetworkListeners() {
-                window.addEventListener('online', () => {
-                    this.fetchFreshData();
-                });
             }
         }
 
-        // ===== INSTANT START =====
+        // Initialize the smart dashboard
         let dashboard;
-        
-        // Execute immediately
-        (function init() {
-            dashboard = new FastDashboard();
-            dashboard.start();
+        document.addEventListener('DOMContentLoaded', () => {
+            dashboard = new SmartDashboardManager();
+            dashboard.initialize();
 
-            // Setup theme (lightweight)
-            const savedTheme = localStorage.getItem('theme') || 'dark';
-            document.body.className = savedTheme + '-mode';
+            // Theme toggle
+            const themeToggleHeader = document.getElementById('themeToggleHeader');
+            const body = document.body;
+            const icon = themeToggleHeader.querySelector('i');
             
-            // Logo click
-            document.getElementById('logoHome').addEventListener('click', () => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+            // Load saved theme
+            if (localStorage.getItem('theme') === 'dark') {
+                body.classList.replace('light-mode','dark-mode'); 
+                icon.className = 'fas fa-sun'; 
+            } else if (localStorage.getItem('theme') === 'light') {
+                body.classList.replace('dark-mode','light-mode'); 
+                icon.className = 'fas fa-moon'; 
+            }
+
+            themeToggleHeader.addEventListener('click', () => {
+                if (body.classList.contains('light-mode')) {
+                    body.classList.replace('light-mode','dark-mode'); 
+                    icon.className = 'fas fa-sun'; 
+                    localStorage.setItem('theme','dark');
+                } else {
+                    body.classList.replace('dark-mode','light-mode'); 
+                    icon.className = 'fas fa-moon'; 
+                    localStorage.setItem('theme','light');
+                }
             });
 
-            // Profile click
+            // Profile button
             document.getElementById('profileBtn').addEventListener('click', () => {
                 window.location.href = 'profile.html';
             });
-        })();
 
-        // Expose dashboard globally for onclick handlers
-        window.dashboard = dashboard;
+            // Logo home
+            document.getElementById('logoHome').addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
     </script>
-
-    <!-- Load non-critical JS async -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
 </body>
 </html>
