@@ -31,6 +31,8 @@
             --radius: 12px;
             --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             --gradient: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+            --skeleton-base: #e2e8f0;
+            --skeleton-highlight: #f0f3f7;
         }
         
         .light-mode {
@@ -43,8 +45,8 @@
             --placeholder: #9ca3af;
             --input-bg: #ffffff;
             --hover-bg: rgba(96, 165, 250, 0.05);
-            --skeleton-bg: #e5e7eb;
-            --skeleton-highlight: #f3f4f6;
+            --skeleton-base: #e2e8f0;
+            --skeleton-highlight: #f0f3f7;
         }
         
         .dark-mode {
@@ -57,8 +59,8 @@
             --placeholder: #6b7280;
             --input-bg: #0f172a;
             --hover-bg: rgba(96, 165, 250, 0.1);
-            --skeleton-bg: #2d3748;
-            --skeleton-highlight: #4a5568;
+            --skeleton-base: #2d3a4f;
+            --skeleton-highlight: #3a4a62;
         }
 
         body {
@@ -378,75 +380,406 @@
             margin-top: 1rem;
         }
 
-        /* Skeleton Loader Styles */
+        /* ========== MODERN SKELETON LOADER STYLES ========== */
         .skeleton-loader {
-            background: linear-gradient(90deg, 
-                var(--skeleton-bg) 25%, 
-                var(--skeleton-highlight) 50%, 
-                var(--skeleton-bg) 75%
+            background: linear-gradient(
+                90deg,
+                var(--skeleton-base) 25%,
+                var(--skeleton-highlight) 50%,
+                var(--skeleton-base) 75%
             );
             background-size: 200% 100%;
             animation: loading 1.5s infinite;
             border-radius: var(--radius);
         }
-        
+
         @keyframes loading {
             0% { background-position: 200% 0; }
             100% { background-position: -200% 0; }
         }
-        
-        .skeleton-card {
-            height: 400px;
+
+        /* Skeleton Header */
+        .skeleton-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 0.75rem 1rem;
             margin-bottom: 1rem;
         }
-        
-        .skeleton-header {
-            height: 80px;
-            border-radius: var(--radius) var(--radius) 0 0;
+
+        .skeleton-header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
-        
-        .skeleton-content {
-            padding: 1rem;
+
+        .skeleton-header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
-        
-        .skeleton-line {
-            height: 20px;
-            margin-bottom: 0.5rem;
-            border-radius: 4px;
-        }
-        
-        .skeleton-line.short {
-            width: 60%;
-        }
-        
-        .skeleton-line.medium {
-            width: 80%;
-        }
-        
-        .skeleton-icon {
-            width: 50px;
-            height: 50px;
+
+        .skeleton-back-btn {
+            width: 40px;
+            height: 40px;
             border-radius: 12px;
-            margin-bottom: 0.5rem;
+            background: var(--skeleton-base);
         }
-        
+
+        .skeleton-logo {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--skeleton-base);
+        }
+
+        .skeleton-logo-text {
+            width: 80px;
+            height: 24px;
+            border-radius: 6px;
+            background: var(--skeleton-base);
+        }
+
+        .skeleton-header-right {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .skeleton-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: var(--skeleton-base);
+        }
+
+        .skeleton-profile {
+            width: 120px;
+            height: 40px;
+            border-radius: 40px;
+            background: var(--skeleton-base);
+        }
+
+        /* Skeleton Gradient Header */
+        .skeleton-gradient-header {
+            background: var(--skeleton-base);
+            border-radius: 30px;
+            padding: 3rem 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            min-height: 180px;
+        }
+
+        .skeleton-gradient-header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                90deg,
+                transparent 25%,
+                rgba(255,255,255,0.1) 50%,
+                transparent 75%
+            );
+            animation: loading 1.5s infinite;
+        }
+
+        /* Skeleton Search Bar */
+        .skeleton-search {
+            height: 56px;
+            border-radius: 50px;
+            background: var(--skeleton-base);
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skeleton-search::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                90deg,
+                transparent 25%,
+                rgba(255,255,255,0.1) 50%,
+                transparent 75%
+            );
+            animation: loading 1.5s infinite;
+        }
+
+        /* Skeleton Mobile Filter Bar */
+        .skeleton-mobile-filter {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .skeleton-filter-btn {
+            width: 150px;
+            height: 40px;
+            border-radius: 30px;
+            background: var(--skeleton-base);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skeleton-filter-btn.small {
+            width: 100px;
+        }
+
+        .skeleton-filter-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                90deg,
+                transparent 25%,
+                rgba(255,255,255,0.1) 50%,
+                transparent 75%
+            );
+            animation: loading 1.5s infinite;
+        }
+
+        /* Skeleton Sidebar */
+        .skeleton-sidebar {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: 24px;
+            padding: 1.5rem;
+            height: 100%;
+        }
+
+        .skeleton-sidebar-title {
+            width: 100px;
+            height: 24px;
+            border-radius: 6px;
+            background: var(--skeleton-base);
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skeleton-sidebar-title::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                90deg,
+                transparent 25%,
+                rgba(255,255,255,0.1) 50%,
+                transparent 75%
+            );
+            animation: loading 1.5s infinite;
+        }
+
+        .skeleton-sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .skeleton-sidebar-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            background: var(--skeleton-base);
+        }
+
+        .skeleton-sidebar-text {
+            flex: 1;
+            height: 20px;
+            border-radius: 4px;
+            background: var(--skeleton-base);
+        }
+
+        .skeleton-sidebar-badge {
+            width: 30px;
+            height: 20px;
+            border-radius: 30px;
+            background: var(--skeleton-base);
+        }
+
+        /* Skeleton Grid */
         .skeleton-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 1.5rem;
-            margin-bottom: 3rem;
         }
-        
-        .skeleton-filter-btn {
-            width: 100px;
+
+        .skeleton-card {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: 24px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .skeleton-card-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .skeleton-card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: var(--skeleton-base);
+        }
+
+        .skeleton-card-title {
+            flex: 1;
+        }
+
+        .skeleton-card-title-line {
+            width: 120px;
+            height: 20px;
+            border-radius: 4px;
+            background: var(--skeleton-base);
+            margin-bottom: 0.5rem;
+        }
+
+        .skeleton-card-title-line.short {
+            width: 80px;
+        }
+
+        .skeleton-card-badge {
+            width: 40px;
+            height: 24px;
+            border-radius: 30px;
+            background: var(--skeleton-base);
+        }
+
+        .skeleton-mini-search {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .skeleton-mini-search-input {
+            width: 100%;
+            height: 40px;
+            border-radius: 50px;
+            background: var(--skeleton-base);
+        }
+
+        .skeleton-mini-filters {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .skeleton-mini-filter {
+            width: 70px;
+            height: 30px;
+            border-radius: 30px;
+            background: var(--skeleton-base);
+        }
+
+        .skeleton-mini-sort {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .skeleton-mini-select {
+            width: 100%;
+            height: 40px;
+            border-radius: 30px;
+            background: var(--skeleton-base);
+        }
+
+        .skeleton-quiz-list {
+            padding: 1rem;
+        }
+
+        .skeleton-quiz-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            padding: 0.5rem;
+            background: var(--skeleton-base);
+            border-radius: 12px;
+            opacity: 0.7;
+        }
+
+        .skeleton-quiz-item.left {
+            width: 60%;
+        }
+
+        .skeleton-quiz-item.right {
+            width: 20%;
+        }
+
+        .skeleton-quiz-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                90deg,
+                transparent 25%,
+                rgba(255,255,255,0.1) 50%,
+                transparent 75%
+            );
+            animation: loading 1.5s infinite;
+            pointer-events: none;
+        }
+
+        .skeleton-view-all {
+            border-top: 1px solid var(--border);
+            padding: 0.75rem;
+            text-align: center;
+        }
+
+        .skeleton-view-all-btn {
+            width: 150px;
             height: 36px;
             border-radius: 30px;
-            margin-right: 0.5rem;
-            margin-bottom: 0.5rem;
-            display: inline-block;
+            background: var(--skeleton-base);
+            margin: 0 auto;
         }
-        
-        /* Main Search Styles */
+
+        /* Skeleton Footer */
+        .skeleton-footer {
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .skeleton-footer-text {
+            width: 250px;
+            height: 20px;
+            border-radius: 4px;
+            background: var(--skeleton-base);
+            margin: 0 auto;
+        }
+
+        /* Existing styles continue below... */
         .search-container {
             position: relative;
             width: 100%;
@@ -1170,35 +1503,9 @@
         .cache-info i {
             color: var(--primary);
         }
-        /* Add these Bootstrap-like utility classes */
-.bg-surface {
-    background-color: var(--surface);
-}
-
-.border-custom {
-    border-color: var(--border) !important;
-}
-
-.text-primary-custom {
-    color: var(--primary) !important;
-}
-
-/* Make sure the skeleton loader has proper positioning */
-#skeletonLoader {
-    position: relative;
-    z-index: 1000;
-    background: var(--background);
-    min-height: 100vh;
-    padding: 1rem 0;
-}
-
-/* Ensure the skeleton loader is visible when shown */
-#skeletonLoader[style*="display: block"] {
-    display: block !important;
-}
     </style>
 </head>
-<body class="light-mode">
+<body class="dark-mode">
     <!-- Connection Status -->
     <div id="connectionStatus" class="connection-status online" style="display: none;">
         <i class="fas fa-wifi"></i>
@@ -1226,49 +1533,180 @@
         </div>
     </div>
 
-    <!-- Skeleton Loader - MOVED OUTSIDE mainApp -->
-    <div id="skeletonLoader" style="display: none;">
+    <!-- Skeleton Loader (Initially Visible) -->
+    <div id="skeletonLoader">
+        <!-- Skeleton Header -->
+        <div class="skeleton-header">
+            <div class="skeleton-header-container">
+                <div class="skeleton-header-left">
+                    <div class="skeleton-back-btn"></div>
+                    <div class="skeleton-logo"></div>
+                    <div class="skeleton-logo-text"></div>
+                </div>
+                <div class="skeleton-header-right">
+                    <div class="skeleton-icon"></div>
+                    <div class="skeleton-profile"></div>
+                </div>
+            </div>
+        </div>
+
         <div class="container-lg py-3 py-md-4">
-            <!-- Main Search Skeleton -->
-            <div class="row g-3 align-items-center mb-4">
-                <div class="col-12">
-                    <div class="skeleton-loader" style="height: 56px; border-radius: 50px;"></div>
+            <!-- Skeleton Gradient Header -->
+            <div class="skeleton-gradient-header"></div>
+
+            <!-- Skeleton Search Bar -->
+            <div class="skeleton-search"></div>
+
+            <!-- Skeleton Mobile Filter Bar -->
+            <div class="d-flex d-lg-none">
+                <div class="skeleton-mobile-filter">
+                    <div class="skeleton-filter-btn"></div>
+                    <div class="skeleton-filter-btn small"></div>
                 </div>
             </div>
 
-            <!-- Mobile filter bar skeleton -->
-            <div class="d-flex d-lg-none align-items-center gap-3 mb-4">
-                <div class="skeleton-loader" style="width: 150px; height: 40px; border-radius: 30px;"></div>
-                <div class="skeleton-loader" style="width: 100px; height: 20px; border-radius: 30px;"></div>
-            </div>
-
-            <!-- Desktop sidebar skeleton (hidden on mobile) -->
+            <!-- Desktop skeleton layout -->
             <div class="row g-4">
+                <!-- Skeleton Sidebar (hidden on mobile) -->
                 <aside class="col-lg-3 d-none d-lg-block">
-                    <div class="bg-surface p-4 rounded-4 border border-custom">
-                        <div class="skeleton-loader" style="width: 100px; height: 24px; margin-bottom: 1rem;"></div>
-                        <div class="skeleton-filter-btn"></div>
-                        <div class="skeleton-filter-btn" style="width: 120px;"></div>
-                        <div class="skeleton-filter-btn" style="width: 90px;"></div>
-                        <div class="skeleton-filter-btn" style="width: 110px;"></div>
-                        <div class="skeleton-filter-btn" style="width: 130px;"></div>
-                        <div class="skeleton-filter-btn" style="width: 80px;"></div>
+                    <div class="skeleton-sidebar">
+                        <div class="skeleton-sidebar-title"></div>
+                        <!-- Sidebar items -->
+                        <div class="skeleton-sidebar-item">
+                            <div class="skeleton-sidebar-icon"></div>
+                            <div class="skeleton-sidebar-text"></div>
+                            <div class="skeleton-sidebar-badge"></div>
+                        </div>
+                        <div class="skeleton-sidebar-item">
+                            <div class="skeleton-sidebar-icon"></div>
+                            <div class="skeleton-sidebar-text"></div>
+                            <div class="skeleton-sidebar-badge"></div>
+                        </div>
+                        <div class="skeleton-sidebar-item">
+                            <div class="skeleton-sidebar-icon"></div>
+                            <div class="skeleton-sidebar-text"></div>
+                            <div class="skeleton-sidebar-badge"></div>
+                        </div>
+                        <div class="skeleton-sidebar-item">
+                            <div class="skeleton-sidebar-icon"></div>
+                            <div class="skeleton-sidebar-text"></div>
+                            <div class="skeleton-sidebar-badge"></div>
+                        </div>
+                        <div class="skeleton-sidebar-item">
+                            <div class="skeleton-sidebar-icon"></div>
+                            <div class="skeleton-sidebar-text"></div>
+                            <div class="skeleton-sidebar-badge"></div>
+                        </div>
                     </div>
                 </aside>
 
-                <!-- Cards skeleton grid -->
+                <!-- Skeleton Cards Grid -->
                 <main class="col-lg-9">
                     <div class="skeleton-grid">
-                        <div class="skeleton-card skeleton-loader"></div>
-                        <div class="skeleton-card skeleton-loader"></div>
-                        <div class="skeleton-card skeleton-loader"></div>
+                        <!-- Card 1 -->
+                        <div class="skeleton-card">
+                            <div class="skeleton-card-header">
+                                <div class="skeleton-card-icon"></div>
+                                <div class="skeleton-card-title">
+                                    <div class="skeleton-card-title-line"></div>
+                                    <div class="skeleton-card-title-line short"></div>
+                                </div>
+                                <div class="skeleton-card-badge"></div>
+                            </div>
+                            <div class="skeleton-mini-search">
+                                <div class="skeleton-mini-search-input"></div>
+                            </div>
+                            <div class="skeleton-mini-filters">
+                                <div class="skeleton-mini-filter"></div>
+                                <div class="skeleton-mini-filter"></div>
+                                <div class="skeleton-mini-filter"></div>
+                            </div>
+                            <div class="skeleton-mini-sort">
+                                <div class="skeleton-mini-select"></div>
+                            </div>
+                            <div class="skeleton-quiz-list">
+                                <div class="skeleton-quiz-item" style="height: 40px;"></div>
+                                <div class="skeleton-quiz-item" style="height: 40px;"></div>
+                                <div class="skeleton-quiz-item" style="height: 40px;"></div>
+                            </div>
+                            <div class="skeleton-view-all">
+                                <div class="skeleton-view-all-btn"></div>
+                            </div>
+                        </div>
+
+                        <!-- Card 2 -->
+                        <div class="skeleton-card">
+                            <div class="skeleton-card-header">
+                                <div class="skeleton-card-icon"></div>
+                                <div class="skeleton-card-title">
+                                    <div class="skeleton-card-title-line"></div>
+                                    <div class="skeleton-card-title-line short"></div>
+                                </div>
+                                <div class="skeleton-card-badge"></div>
+                            </div>
+                            <div class="skeleton-mini-search">
+                                <div class="skeleton-mini-search-input"></div>
+                            </div>
+                            <div class="skeleton-mini-filters">
+                                <div class="skeleton-mini-filter"></div>
+                                <div class="skeleton-mini-filter"></div>
+                                <div class="skeleton-mini-filter"></div>
+                            </div>
+                            <div class="skeleton-mini-sort">
+                                <div class="skeleton-mini-select"></div>
+                            </div>
+                            <div class="skeleton-quiz-list">
+                                <div class="skeleton-quiz-item" style="height: 40px;"></div>
+                                <div class="skeleton-quiz-item" style="height: 40px;"></div>
+                                <div class="skeleton-quiz-item" style="height: 40px;"></div>
+                            </div>
+                            <div class="skeleton-view-all">
+                                <div class="skeleton-view-all-btn"></div>
+                            </div>
+                        </div>
+
+                        <!-- Card 3 -->
+                        <div class="skeleton-card">
+                            <div class="skeleton-card-header">
+                                <div class="skeleton-card-icon"></div>
+                                <div class="skeleton-card-title">
+                                    <div class="skeleton-card-title-line"></div>
+                                    <div class="skeleton-card-title-line short"></div>
+                                </div>
+                                <div class="skeleton-card-badge"></div>
+                            </div>
+                            <div class="skeleton-mini-search">
+                                <div class="skeleton-mini-search-input"></div>
+                            </div>
+                            <div class="skeleton-mini-filters">
+                                <div class="skeleton-mini-filter"></div>
+                                <div class="skeleton-mini-filter"></div>
+                                <div class="skeleton-mini-filter"></div>
+                            </div>
+                            <div class="skeleton-mini-sort">
+                                <div class="skeleton-mini-select"></div>
+                            </div>
+                            <div class="skeleton-quiz-list">
+                                <div class="skeleton-quiz-item" style="height: 40px;"></div>
+                                <div class="skeleton-quiz-item" style="height: 40px;"></div>
+                                <div class="skeleton-quiz-item" style="height: 40px;"></div>
+                            </div>
+                            <div class="skeleton-view-all">
+                                <div class="skeleton-view-all-btn"></div>
+                            </div>
+                        </div>
                     </div>
                 </main>
+            </div>
+
+            <!-- Skeleton Footer -->
+            <div class="skeleton-footer">
+                <div class="skeleton-footer-text"></div>
             </div>
         </div>
     </div>
 
-    <!-- Main Content -->
+    <!-- Main Content (Initially Hidden) -->
     <div id="mainApp" style="display: none;">
         <!-- New Header with Back Button and Profile -->
         <header class="app-header">
@@ -1443,7 +1881,7 @@
                 return !!(registeredUser || currentUser);
             };
 
-            // Handle registration modal
+            // Handle registration modal and skeleton loader
             const registerModal = document.getElementById('registerModal');
             const mainApp = document.getElementById('mainApp');
             const skeletonLoader = document.getElementById('skeletonLoader');
