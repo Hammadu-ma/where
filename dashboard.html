@@ -255,6 +255,155 @@
             margin-top: 1rem;
         }
 
+        /* Autocomplete Search Container */
+        .search-container {
+            position: relative;
+            width: 100%;
+        }
+        
+        .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 0 0 var(--radius) var(--radius);
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            display: none;
+            margin-top: 5px;
+        }
+        
+        .autocomplete-dropdown.show {
+            display: block;
+            animation: slideDown 0.2s ease-out;
+        }
+        
+        .autocomplete-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .autocomplete-item:last-child {
+            border-bottom: none;
+        }
+        
+        .autocomplete-item:hover {
+            background: var(--hover);
+            background-color: rgba(96, 165, 250, 0.1);
+        }
+        
+        .autocomplete-item.selected {
+            background: rgba(96, 165, 250, 0.2);
+            border-left: 3px solid var(--primary);
+        }
+        
+        .autocomplete-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.9rem;
+        }
+        
+        .autocomplete-content {
+            flex: 1;
+        }
+        
+        .autocomplete-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+        
+        .autocomplete-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.2rem;
+        }
+        
+        .autocomplete-match {
+            background: rgba(96, 165, 250, 0.3);
+            color: var(--primary);
+            font-weight: 600;
+            padding: 0 2px;
+            border-radius: 3px;
+        }
+        
+        .autocomplete-category {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
+            background: var(--border);
+            border-radius: 12px;
+            color: var(--text-secondary);
+        }
+        
+        .autocomplete-badge {
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.65rem;
+            font-weight: 600;
+        }
+        
+        .autocomplete-badge.exam {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+        
+        .autocomplete-badge.practice {
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+        }
+        
+        .autocomplete-badge.quizlet {
+            background: rgba(139, 92, 246, 0.1);
+            color: #8b5cf6;
+        }
+        
+        /* Search input with autocomplete indicator */
+        .search-with-autocomplete {
+            position: relative;
+        }
+        
+        .autocomplete-hint {
+            position: absolute;
+            right: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-tertiary);
+            font-size: 0.8rem;
+            background: var(--surface);
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .autocomplete-hint.show {
+            opacity: 1;
+        }
+        
+        .autocomplete-hint i {
+            margin-right: 0.25rem;
+            color: var(--primary);
+        }
+        
         /* Subject Cards */
         .subject-card { 
             background-color: var(--surface); 
@@ -566,6 +715,16 @@
             color: var(--text-primary); 
             width: 280px; 
         }
+        
+        @keyframes slideDown {
+            from { transform: translateY(-10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
     </style>
 </head>
 <body class="dark-mode">
@@ -656,13 +815,22 @@
                 </div>
             </div>
 
-            <!-- Main Search -->
+            <!-- Main Search with Autocomplete -->
             <div class="row g-3 align-items-center mb-4">
                 <div class="col-12">
-                    <div class="input-group rounded-pill bg-surface border border-custom">
-                        <span class="input-group-text bg-transparent border-0 text-secondary"><i class="fas fa-search"></i></span>
-                        <input type="text" class="form-control bg-transparent border-0 ps-0" id="smartSearch" placeholder="🔍 Global search across all subjects...">
-                        <span class="input-group-text bg-transparent border-0" id="globalSearchCount" style="display: none;"></span>
+                    <div class="search-container">
+                        <div class="input-group rounded-pill bg-surface border border-custom search-with-autocomplete">
+                            <span class="input-group-text bg-transparent border-0 text-secondary"><i class="fas fa-search"></i></span>
+                            <input type="text" class="form-control bg-transparent border-0 ps-0" id="smartSearch" placeholder="🔍 Type to search quizzes, topics, subjects..." autocomplete="off">
+                            <span class="autocomplete-hint" id="autocompleteHint">
+                                <i class="fas fa-lightbulb"></i>
+                                <span id="hintText"></span>
+                            </span>
+                            <span class="input-group-text bg-transparent border-0" id="globalSearchCount" style="display: none;"></span>
+                        </div>
+                        
+                        <!-- Autocomplete Dropdown -->
+                        <div class="autocomplete-dropdown" id="autocompleteDropdown"></div>
                     </div>
                 </div>
             </div>
@@ -835,6 +1003,7 @@
 
                 let currentFilter = 'all';
                 let currentSearch = '';
+                let selectedSuggestionIndex = -1;
                 
                 // Store mini search states per subject
                 const miniSearchStates = {};
@@ -851,14 +1020,11 @@
                 // Back button functionality
                 const backButton = document.getElementById('backButton');
                 backButton.addEventListener('click', () => {
-                    // Check if there's history to go back to
                     if (window.history.length > 1) {
                         window.history.back();
                     } else {
-                        // If no history, scroll to top or show confirmation
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                         
-                        // Optional: Show a toast or notification
                         const toast = document.createElement('div');
                         toast.style.cssText = `
                             position: fixed;
@@ -894,10 +1060,6 @@
                 const themeToggleHeader = document.getElementById('themeToggleHeader');
                 const body = document.body;
                 const icon = themeToggleHeader.querySelector('i');
-                
-                // Remove old theme toggle if exists
-                const oldThemeToggle = document.getElementById('themeToggle');
-                if (oldThemeToggle) oldThemeToggle.style.display = 'none';
                 
                 if (localStorage.getItem('theme') === 'dark') {
                     body.classList.replace('light-mode','dark-mode'); 
@@ -957,7 +1119,7 @@
                 function highlightText(text, term) {
                     if (!term) return text;
                     const regex = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
-                    return text.replace(regex, '<mark>$1</mark>');
+                    return text.replace(regex, '<span class="autocomplete-match">$1</span>');
                 }
 
                 // Apply sorting to quizzes
@@ -1018,6 +1180,186 @@
                     } else {
                         globalCountEl.style.display = 'none';
                     }
+                }
+
+                // Autocomplete functions
+                function getAutocompleteSuggestions(query) {
+                    if (!query || query.length < 2) return [];
+                    
+                    const lowercaseQuery = query.toLowerCase();
+                    const suggestions = [];
+                    
+                    // Search in quiz titles
+                    quizData.forEach(subject => {
+                        subject.quizzes.forEach(quiz => {
+                            if (quiz.title.toLowerCase().includes(lowercaseQuery)) {
+                                suggestions.push({
+                                    type: 'quiz',
+                                    title: quiz.title,
+                                    subtitle: `${subject.display} • ${quiz.qCount} questions`,
+                                    icon: subject.icon,
+                                    badge: quiz.type,
+                                    subject: subject.subject,
+                                    href: quiz.href
+                                });
+                            }
+                        });
+                    });
+                    
+                    // Search in subject names
+                    quizData.forEach(subject => {
+                        if (subject.display.toLowerCase().includes(lowercaseQuery)) {
+                            suggestions.push({
+                                type: 'subject',
+                                title: subject.display,
+                                subtitle: `${subject.quizzes.length} quizzes available`,
+                                icon: subject.icon,
+                                subject: subject.subject
+                            });
+                        }
+                    });
+                    
+                    // Search by quiz type
+                    ['practice', 'exam', 'quizlet'].forEach(type => {
+                        if (type.includes(lowercaseQuery)) {
+                            const count = quizData.reduce((acc, subject) => 
+                                acc + subject.quizzes.filter(q => q.type === type).length, 0);
+                            suggestions.push({
+                                type: 'filter',
+                                title: type.charAt(0).toUpperCase() + type.slice(1),
+                                subtitle: `${count} quizzes of this type`,
+                                icon: type === 'practice' ? 'fas fa-play-circle' : 
+                                      type === 'exam' ? 'fas fa-file-alt' : 'fas fa-code',
+                                filter: type
+                            });
+                        }
+                    });
+                    
+                    // Search by difficulty
+                    ['beginner', 'intermediate', 'advanced'].forEach(difficulty => {
+                        if (difficulty.includes(lowercaseQuery)) {
+                            const count = quizData.reduce((acc, subject) => 
+                                acc + subject.quizzes.filter(q => q.difficulty === difficulty).length, 0);
+                            suggestions.push({
+                                type: 'difficulty',
+                                title: difficulty.charAt(0).toUpperCase() + difficulty.slice(1),
+                                subtitle: `${count} quizzes with this difficulty`,
+                                icon: 'fas fa-signal',
+                                difficulty: difficulty
+                            });
+                        }
+                    });
+                    
+                    // Remove duplicates (by title) and limit
+                    const unique = suggestions.filter((v, i, a) => 
+                        a.findIndex(t => t.title === v.title) === i
+                    ).slice(0, 8);
+                    
+                    return unique;
+                }
+
+                function renderAutocompleteDropdown(suggestions, query) {
+                    const dropdown = document.getElementById('autocompleteDropdown');
+                    const hint = document.getElementById('autocompleteHint');
+                    const hintText = document.getElementById('hintText');
+                    
+                    if (!suggestions || suggestions.length === 0) {
+                        dropdown.classList.remove('show');
+                        hint.classList.remove('show');
+                        return;
+                    }
+                    
+                    // Show first suggestion as hint
+                    if (suggestions.length > 0) {
+                        hintText.textContent = suggestions[0].title;
+                        hint.classList.add('show');
+                    }
+                    
+                    let html = '';
+                    suggestions.forEach((suggestion, index) => {
+                        const isSelected = index === selectedSuggestionIndex;
+                        const selectedClass = isSelected ? 'selected' : '';
+                        
+                        if (suggestion.type === 'quiz') {
+                            html += `
+                                <div class="autocomplete-item ${selectedClass}" data-type="quiz" data-href="${suggestion.href}">
+                                    <div class="autocomplete-icon"><i class="${suggestion.icon}"></i></div>
+                                    <div class="autocomplete-content">
+                                        <div class="autocomplete-title">${highlightText(suggestion.title, query)}</div>
+                                        <div class="autocomplete-subtitle">
+                                            <span>${suggestion.subtitle}</span>
+                                            <span class="autocomplete-badge ${suggestion.badge}">${suggestion.badge}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        } else if (suggestion.type === 'subject') {
+                            html += `
+                                <div class="autocomplete-item ${selectedClass}" data-type="subject" data-subject="${suggestion.subject}">
+                                    <div class="autocomplete-icon"><i class="${suggestion.icon}"></i></div>
+                                    <div class="autocomplete-content">
+                                        <div class="autocomplete-title">${highlightText(suggestion.title, query)}</div>
+                                        <div class="autocomplete-subtitle">${suggestion.subtitle}</div>
+                                    </div>
+                                    <span class="autocomplete-category">Subject</span>
+                                </div>
+                            `;
+                        } else if (suggestion.type === 'filter') {
+                            html += `
+                                <div class="autocomplete-item ${selectedClass}" data-type="filter" data-filter="${suggestion.filter}">
+                                    <div class="autocomplete-icon"><i class="${suggestion.icon}"></i></div>
+                                    <div class="autocomplete-content">
+                                        <div class="autocomplete-title">${highlightText(suggestion.title, query)} quizzes</div>
+                                        <div class="autocomplete-subtitle">${suggestion.subtitle}</div>
+                                    </div>
+                                    <span class="autocomplete-category">Filter</span>
+                                </div>
+                            `;
+                        } else if (suggestion.type === 'difficulty') {
+                            html += `
+                                <div class="autocomplete-item ${selectedClass}" data-type="difficulty" data-difficulty="${suggestion.difficulty}">
+                                    <div class="autocomplete-icon"><i class="${suggestion.icon}"></i></div>
+                                    <div class="autocomplete-content">
+                                        <div class="autocomplete-title">${highlightText(suggestion.title, query)} level</div>
+                                        <div class="autocomplete-subtitle">${suggestion.subtitle}</div>
+                                    </div>
+                                    <span class="autocomplete-category">Difficulty</span>
+                                </div>
+                            `;
+                        }
+                    });
+                    
+                    dropdown.innerHTML = html;
+                    dropdown.classList.add('show');
+                    
+                    // Add click handlers to autocomplete items
+                    document.querySelectorAll('.autocomplete-item').forEach(item => {
+                        item.addEventListener('click', () => {
+                            const type = item.dataset.type;
+                            
+                            if (type === 'quiz') {
+                                window.location.href = item.dataset.href;
+                            } else if (type === 'subject') {
+                                setFilter(item.dataset.subject);
+                                document.getElementById('smartSearch').value = '';
+                                currentSearch = '';
+                                renderCards();
+                            } else if (type === 'filter') {
+                                // Apply filter to all cards (you can implement this)
+                                document.getElementById('smartSearch').value = '';
+                                currentSearch = '';
+                                renderCards();
+                            } else if (type === 'difficulty') {
+                                // You can implement difficulty filtering
+                                document.getElementById('smartSearch').value = '';
+                                currentSearch = '';
+                                renderCards();
+                            }
+                            
+                            dropdown.classList.remove('show');
+                            hint.classList.remove('show');
+                        });
+                    });
                 }
 
                 function renderCards() {
@@ -1204,15 +1546,73 @@
                     });
                 }
 
-                // Global search debounce
+                // Global search with autocomplete
                 const searchInput = document.getElementById('smartSearch');
+                const dropdown = document.getElementById('autocompleteDropdown');
+                const hint = document.getElementById('autocompleteHint');
+                
                 let timeout;
                 searchInput.addEventListener('input', () => {
                     clearTimeout(timeout);
+                    const query = searchInput.value;
+                    
+                    // Reset selection
+                    selectedSuggestionIndex = -1;
+                    
+                    // Get and show suggestions
+                    const suggestions = getAutocompleteSuggestions(query);
+                    renderAutocompleteDropdown(suggestions, query);
+                    
+                    // Update search results
                     timeout = setTimeout(() => {
-                        currentSearch = searchInput.value;
+                        currentSearch = query;
                         renderCards();
                     }, 150);
+                });
+
+                // Keyboard navigation for autocomplete
+                searchInput.addEventListener('keydown', (e) => {
+                    const items = document.querySelectorAll('.autocomplete-item');
+                    
+                    if (items.length === 0) return;
+                    
+                    if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        selectedSuggestionIndex = (selectedSuggestionIndex + 1) % items.length;
+                        updateSelectedSuggestion();
+                    } else if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        selectedSuggestionIndex = selectedSuggestionIndex <= 0 ? items.length - 1 : selectedSuggestionIndex - 1;
+                        updateSelectedSuggestion();
+                    } else if (e.key === 'Enter' && selectedSuggestionIndex >= 0) {
+                        e.preventDefault();
+                        items[selectedSuggestionIndex].click();
+                    } else if (e.key === 'Escape') {
+                        dropdown.classList.remove('show');
+                        hint.classList.remove('show');
+                    }
+                });
+
+                function updateSelectedSuggestion() {
+                    const items = document.querySelectorAll('.autocomplete-item');
+                    items.forEach((item, index) => {
+                        if (index === selectedSuggestionIndex) {
+                            item.classList.add('selected');
+                            // Update hint
+                            const title = item.querySelector('.autocomplete-title').innerText.replace(/<[^>]*>/g, '');
+                            document.getElementById('hintText').textContent = title;
+                        } else {
+                            item.classList.remove('selected');
+                        }
+                    });
+                }
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+                        dropdown.classList.remove('show');
+                        hint.classList.remove('show');
+                    }
                 });
 
                 document.getElementById('logoHome').addEventListener('click', () => window.scrollTo({ top:0, behavior:'smooth' }));
@@ -1221,20 +1621,6 @@
                 renderAllFilters();
                 renderCards();
                 setFilter('all');
-
-                // Add animation styles
-                const style = document.createElement('style');
-                style.textContent = `
-                    @keyframes slideDown {
-                        from { transform: translate(-50%, -20px); opacity: 0; }
-                        to { transform: translate(-50%, 0); opacity: 1; }
-                    }
-                    @keyframes fadeOut {
-                        from { opacity: 1; }
-                        to { opacity: 0; }
-                    }
-                `;
-                document.head.appendChild(style);
             }
         })();
     </script>
