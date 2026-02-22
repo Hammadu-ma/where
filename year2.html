@@ -8,6 +8,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <style>
         * { font-family: 'Inter', sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -22,6 +24,9 @@
             --info: #0ea5e9;
             --purple: #8b5cf6;
             --pink: #ec4899;
+            --gold: #fbbf24;
+            --gold-dark: #d97706;
+            --premium: linear-gradient(135deg, #8b5cf6, #ec4899);
             --shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
             --radius: 12px;
             --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -57,6 +62,71 @@
             color: var(--text-primary);
             transition: var(--transition);
             min-height: 100vh;
+        }
+
+        /* Connection Status */
+        .connection-status {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+            font-size: 0.8rem;
+            font-weight: 600;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+        }
+        .connection-status.online {
+            background: var(--success);
+            color: white;
+        }
+        .connection-status.offline {
+            background: var(--error);
+            color: white;
+        }
+        .connection-status.syncing {
+            background: var(--warning);
+            color: white;
+        }
+
+        /* Offline Indicator */
+        .offline-indicator {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow);
+            z-index: 9998;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Cache Info */
+        .cache-info {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.85rem;
+        }
+        
+        .cache-info i {
+            color: var(--primary);
         }
 
         /* Custom Header with Back Button and Profile */
@@ -209,6 +279,7 @@
             cursor: pointer;
             transition: var(--transition);
             box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+            position: relative;
         }
         
         .profile-btn:hover {
@@ -227,12 +298,37 @@
             color: var(--primary);
             font-size: 1.1rem;
             font-weight: 600;
+            position: relative;
+        }
+        
+        /* Premium Crown on Avatar */
+        .premium-crown {
+            position: absolute;
+            top: -12px;
+            right: -8px;
+            font-size: 1.2rem;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+            animation: crownFloat 3s ease-in-out infinite;
+            z-index: 10;
+        }
+        
+        @keyframes crownFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-3px) rotate(5deg); }
+        }
+        
+        .premium-crown i {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         .profile-info {
             display: none;
             color: white;
             text-align: left;
+            position: relative;
         }
         
         @media (min-width: 768px) {
@@ -252,7 +348,55 @@
                 opacity: 0.8;
             }
         }
-        
+
+        /* Premium Badge */
+        .premium-badge {
+            background: var(--premium);
+            color: white;
+            padding: 0.25rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            animation: pulse 2s infinite;
+            box-shadow: 0 2px 10px rgba(139, 92, 246, 0.5);
+        }
+
+        .gold-badge {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: white;
+            padding: 0.25rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 2px 10px rgba(245, 158, 11, 0.5);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Year Access Badge */
+        .year-badge {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            margin-left: 0.5rem;
+        }
+
         /* Gradient Header (for stats) */
         .gradient-header { 
             background: var(--gradient);
@@ -969,9 +1113,47 @@
             from { opacity: 1; }
             to { opacity: 0; }
         }
+
+        /* Admin Messages */
+        .admin-message {
+            background: var(--info);
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            animation: slideDown 0.3s ease-out;
+        }
+        
+        .admin-message.warning {
+            background: var(--warning);
+        }
+        
+        .admin-message.error {
+            background: var(--error);
+        }
+        
+        .admin-message.success {
+            background: var(--success);
+        }
     </style>
 </head>
 <body class="dark-mode">
+    <!-- Connection Status -->
+    <div id="connectionStatus" class="connection-status online" style="display: none;">
+        <i class="fas fa-wifi"></i>
+        <span>Connected</span>
+    </div>
+
+    <!-- Offline Indicator -->
+    <div id="offlineIndicator" class="offline-indicator" style="display: none;">
+        <i class="fas fa-cloud" style="color: var(--warning);"></i>
+        <span>Working in offline mode</span>
+        <span id="cacheTimestamp" style="font-size: 0.7rem; opacity: 0.8;"></span>
+    </div>
+
     <!-- Registration Required Modal -->
     <div id="registerModal" class="modal" style="display: flex;">
         <div class="modal-content">
@@ -1029,12 +1211,25 @@
         </header>
 
         <div class="container-lg py-3 py-md-4">
+            <!-- Cache Info (shown when offline) -->
+            <div id="cacheInfo" class="cache-info" style="display: none;">
+                <div>
+                    <i class="fas fa-database"></i>
+                    <span>You're viewing cached data from </span>
+                    <span id="cacheDate"></span>
+                </div>
+                <span class="badge bg-warning">Offline Mode</span>
+            </div>
+
+            <!-- Admin Message Banner -->
+            <div id="adminMessageBanner" class="admin-message" style="display: none;"></div>
+
             <!-- Header with stats -->
             <div class="gradient-header rounded-4 p-4 p-md-5 mb-4 position-relative overflow-hidden">
                 <div class="position-relative z-1 d-flex flex-wrap align-items-center justify-content-between gap-3">
                     <div>
                         <h1 class="display-6 fw-bold mb-0">Medical Quiz Dashboard</h1>
-                        <p class="mb-0 opacity-75">smart · adaptive · bootstrap</p>
+                        <p class="mb-0 opacity-75" id="yearAccessInfo"></p>
                     </div>
                     <div class="d-flex gap-3" id="statsDisplay"></div>
                 </div>
@@ -1108,63 +1303,408 @@
 
             <!-- footer -->
             <footer class="text-center text-secondary border-top border-custom mt-5 pt-4">
-                <p>ALIF · bootstrap medical quiz · data from JSON</p>
+                <p>ALIF · bootstrap medical quiz · offline ready v3.0</p>
             </footer>
         </div>
     </div>
 
     <!-- Bootstrap bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-        (function() {
-            // Check if user is registered
-            const checkUserRegistration = () => {
-                const registeredUser = localStorage.getItem('medicalUser');
-                const currentUser = localStorage.getItem('currentUser');
-                return !!(registeredUser || currentUser);
-            };
+    
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyC4DSMVg4c98kQf5sSF8ueD631QgO4SXn0",
+            authDomain: "medical-quiz-40228.firebaseapp.com",
+            projectId: "medical-quiz-40228",
+            storageBucket: "medical-quiz-40228.firebasestorage.app",
+            messagingSenderId: "483043078873",
+            appId: "1:483043078873:web:4029dd83e53557f08b04c8"
+        };
 
-            // Handle registration modal
-            const registerModal = document.getElementById('registerModal');
-            const mainApp = document.getElementById('mainApp');
-            const goToRegisterBtn = document.getElementById('goToRegisterBtn');
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
-            // Check if user is registered
-            if (checkUserRegistration()) {
-                registerModal.style.display = 'none';
-                mainApp.style.display = 'block';
-                initializeApp();
-            } else {
-                registerModal.style.display = 'flex';
-                mainApp.style.display = 'none';
-                
-                goToRegisterBtn.addEventListener('click', () => {
-                    window.location.href = 'register.html';
-                });
+        // Enable offline persistence
+        db.enablePersistence({
+            synchronizeTabs: true
+        }).catch((err) => {
+            if (err.code === 'failed-precondition') {
+                console.log('Persistence failed: Multiple tabs open');
+            } else if (err.code === 'unimplemented') {
+                console.log('Persistence not supported');
+            }
+        });
+
+        // Main Application Class
+        class QuizApp {
+            constructor() {
+                this.currentUser = null;
+                this.userData = null;
+                this.registeredYears = [];
+                this.allYears = ['1', '2', '3', '4', '5', '6'];
+                this.badgeType = null;
+                this.isOnline = navigator.onLine;
+                this.cacheKey = 'quiz_data_cache';
+                this.quizData = null;
+                this.currentFilter = 'all';
+                this.currentSearch = '';
+                this.selectedSuggestionIndex = -1;
+                this.miniSearchStates = {};
+                this.miniFilterStates = {};
+                this.miniSortStates = {};
+                this.miniSelectedSuggestionIndices = {};
             }
 
-            // App initialization function
-            function initializeApp() {
-                // Get user data for profile
-                const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            async initialize() {
+                // Show loading
+                document.getElementById('loadingScreen').style.display = 'flex';
+                
+                try {
+                    // Initialize connection monitoring
+                    this.initConnectionMonitoring();
+                    
+                    // Check if user is logged in
+                    const storedUser = localStorage.getItem('currentUser');
+                    if (!storedUser) {
+                        document.getElementById('registerModal').style.display = 'flex';
+                        document.getElementById('mainApp').style.display = 'none';
+                        return;
+                    }
+
+                    this.currentUser = JSON.parse(storedUser);
+                    
+                    // Try to load from cache first
+                    this.loadFromCache();
+                    
+                    // Try to fetch fresh data from Firebase
+                    if (this.isOnline) {
+                        await this.fetchUserData();
+                    } else {
+                        this.showOfflineMessage();
+                    }
+                    
+                    // Initialize quiz data
+                    this.initQuizData();
+                    
+                    // Process user data and determine badge
+                    await this.processUserData();
+                    
+                    // Hide registration modal and show main app
+                    document.getElementById('registerModal').style.display = 'none';
+                    document.getElementById('mainApp').style.display = 'block';
+                    
+                    // Initialize the app
+                    this.initializeApp();
+                    
+                } catch (error) {
+                    console.error('Initialization error:', error);
+                    if (this.loadFromCache()) {
+                        this.showOfflineMessage();
+                        this.initQuizData();
+                        this.initializeApp();
+                    } else {
+                        this.showErrorMessage('Error loading dashboard. Please check your connection.');
+                    }
+                } finally {
+                    document.getElementById('loadingScreen').style.display = 'none';
+                }
+            }
+
+            initConnectionMonitoring() {
+                window.addEventListener('online', () => this.handleConnectionRestored());
+                window.addEventListener('offline', () => this.handleConnectionLost());
+                this.updateConnectionStatus(navigator.onLine);
+            }
+
+            updateConnectionStatus(isOnline) {
+                this.isOnline = isOnline;
+                const statusDiv = document.getElementById('connectionStatus');
+                const offlineIndicator = document.getElementById('offlineIndicator');
+                const cacheInfo = document.getElementById('cacheInfo');
+
+                if (isOnline) {
+                    statusDiv.className = 'connection-status online';
+                    statusDiv.innerHTML = '<i class="fas fa-wifi"></i><span>Connected</span>';
+                    statusDiv.style.display = 'flex';
+                    offlineIndicator.style.display = 'none';
+                    cacheInfo.style.display = 'none';
+                    
+                    setTimeout(() => {
+                        if (this.isOnline) {
+                            statusDiv.style.display = 'none';
+                        }
+                    }, 3000);
+                } else {
+                    statusDiv.className = 'connection-status offline';
+                    statusDiv.innerHTML = '<i class="fas fa-wifi-slash"></i><span>Offline Mode</span>';
+                    statusDiv.style.display = 'flex';
+                    offlineIndicator.style.display = 'flex';
+                    
+                    const cache = this.loadFromCache();
+                    if (cache) {
+                        cacheInfo.style.display = 'flex';
+                        document.getElementById('cacheDate').textContent = 
+                            new Date(cache.timestamp).toLocaleString();
+                    }
+                }
+            }
+
+            handleConnectionLost() {
+                console.log('Connection lost - switching to offline mode');
+                this.updateConnectionStatus(false);
+                this.showMessage('You are offline. Using cached data.', 'warning');
+            }
+
+            async handleConnectionRestored() {
+                console.log('Connection restored - syncing data');
+                this.updateConnectionStatus(true);
+                
+                const statusDiv = document.getElementById('connectionStatus');
+                statusDiv.className = 'connection-status syncing';
+                statusDiv.innerHTML = '<i class="fas fa-sync-alt fa-spin"></i><span>Syncing...</span>';
+                statusDiv.style.display = 'flex';
+                
+                try {
+                    await this.fetchUserData();
+                    await this.processUserData();
+                    this.showMessage('Data synced successfully!', 'success');
+                } catch (error) {
+                    console.error('Sync error:', error);
+                    this.showMessage('Error syncing data. Using cached version.', 'error');
+                } finally {
+                    setTimeout(() => {
+                        if (this.isOnline) {
+                            statusDiv.style.display = 'none';
+                        }
+                    }, 2000);
+                }
+            }
+
+            loadFromCache() {
+                try {
+                    const cached = localStorage.getItem(this.cacheKey);
+                    if (cached) {
+                        const data = JSON.parse(cached);
+                        this.userData = data.userData;
+                        this.registeredYears = data.registeredYears || [];
+                        console.log('Loaded from cache:', new Date(data.timestamp).toLocaleString());
+                        return data;
+                    }
+                } catch (error) {
+                    console.error('Error loading from cache:', error);
+                }
+                return null;
+            }
+
+            saveToCache() {
+                try {
+                    const cacheData = {
+                        userData: this.userData,
+                        registeredYears: this.registeredYears,
+                        timestamp: Date.now()
+                    };
+                    localStorage.setItem(this.cacheKey, JSON.stringify(cacheData));
+                    console.log('Saved to cache');
+                } catch (error) {
+                    console.error('Error saving to cache:', error);
+                }
+            }
+
+            async fetchUserData() {
+                try {
+                    const userDoc = await db.collection('users').doc(this.currentUser.id).get();
+                    if (userDoc.exists) {
+                        this.userData = userDoc.data();
+                        
+                        // Update localStorage
+                        localStorage.setItem('currentUser', JSON.stringify({
+                            ...this.currentUser,
+                            ...this.userData
+                        }));
+                        
+                        // Save to cache
+                        this.saveToCache();
+                    } else {
+                        // Fallback to localStorage
+                        this.userData = this.currentUser;
+                    }
+                } catch (error) {
+                    console.error('Error fetching user data:', error);
+                    // Fallback to localStorage
+                    this.userData = this.currentUser;
+                    
+                    // Try to load from cache
+                    this.loadFromCache();
+                }
+            }
+
+            async processUserData() {
+                // Get registered years (handle both string and number formats)
+                this.registeredYears = (this.userData.registeredYears || [])
+                    .map(y => y.toString());
+                
+                console.log('Registered years:', this.registeredYears);
+                
+                // Determine badge type
+                await this.determineBadge();
+                
+                // Update profile display
+                this.updateProfile();
+                
+                // Update year access info
+                this.updateYearAccessInfo();
+                
+                // Check for admin messages
+                await this.checkAdminMessages();
+            }
+
+            async determineBadge() {
+                const yearCount = this.registeredYears.length;
+                
+                // Check if user has premium status from admin
+                const isPremiumFromAdmin = 
+                    this.userData.status === 'premium' ||
+                    this.userData.role === 'premium' ||
+                    this.userData.plan === 'premium' ||
+                    this.userData.membership === 'premium';
+
+                // PREMIUM BADGE: Admin premium OR all 6 years
+                if (isPremiumFromAdmin || yearCount === 6) {
+                    this.badgeType = 'premium';
+                    console.log('🎯 PREMIUM badge awarded');
+                }
+                // GOLD BADGE: 4 or 5 years
+                else if (yearCount >= 4) {
+                    this.badgeType = 'gold';
+                    console.log('🥇 GOLD badge awarded');
+                }
+                // NO BADGE: 1-3 years
+                else {
+                    this.badgeType = null;
+                }
+            }
+
+            updateProfile() {
                 const profileName = document.getElementById('profileName');
                 const profileRole = document.getElementById('profileRole');
                 const profileAvatar = document.getElementById('profileAvatar');
                 
-                // Update profile with user data
-                if (currentUser.name) {
-                    profileName.textContent = currentUser.name.split(' ')[0] || 'Medical Student';
-                    profileAvatar.innerHTML = currentUser.name.charAt(0).toUpperCase() || '<i class="fas fa-user"></i>';
+                // Update name
+                if (this.userData.name) {
+                    profileName.textContent = this.userData.name.split(' ')[0] || 'Medical Student';
+                    profileAvatar.innerHTML = this.userData.name.charAt(0).toUpperCase();
                 }
                 
-                if (currentUser.role) {
-                    profileRole.textContent = currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1);
-                } else if (currentUser.plan) {
-                    profileRole.textContent = currentUser.plan === 'premium' ? 'Premium User' : 'Trial User';
+                // Update role with badge
+                if (this.badgeType === 'premium') {
+                    profileRole.innerHTML = `
+                        <span class="premium-badge">
+                            <i class="fas fa-crown"></i> PREMIUM
+                        </span>
+                    `;
+                    
+                    // Add crown to avatar
+                    const existingCrown = profileAvatar.querySelector('.premium-crown');
+                    if (!existingCrown) {
+                        const crown = document.createElement('span');
+                        crown.className = 'premium-crown';
+                        crown.innerHTML = '<i class="fas fa-crown"></i>';
+                        profileAvatar.appendChild(crown);
+                    }
+                } 
+                else if (this.badgeType === 'gold') {
+                    profileRole.innerHTML = `
+                        <span class="gold-badge">
+                            <i class="fas fa-star"></i> GOLD
+                        </span>
+                    `;
+                } 
+                else {
+                    profileRole.textContent = `${this.registeredYears.length} Year${this.registeredYears.length > 1 ? 's' : ''}`;
                 }
+            }
 
+            updateYearAccessInfo() {
+                const yearInfo = document.getElementById('yearAccessInfo');
+                if (this.registeredYears.length === 0) {
+                    yearInfo.textContent = 'No years registered';
+                } else {
+                    const years = this.registeredYears.sort().join(', ');
+                    yearInfo.textContent = `Access: Year ${years}`;
+                    
+                    // Add badge based on count
+                    if (this.badgeType === 'premium') {
+                        yearInfo.innerHTML += ` <span class="premium-badge" style="font-size: 0.7rem;"><i class="fas fa-crown"></i> Premium</span>`;
+                    } else if (this.badgeType === 'gold') {
+                        yearInfo.innerHTML += ` <span class="gold-badge" style="font-size: 0.7rem;"><i class="fas fa-star"></i> Gold</span>`;
+                    }
+                }
+            }
+
+            async checkAdminMessages() {
+                if (!this.isOnline) return;
+                
+                try {
+                    const messagesSnapshot = await db.collection('userMessages')
+                        .where('userId', '==', this.currentUser.id)
+                        .where('read', '==', false)
+                        .orderBy('timestamp', 'desc')
+                        .limit(1)
+                        .get();
+
+                    if (!messagesSnapshot.empty) {
+                        const message = messagesSnapshot.docs[0].data();
+                        this.showAdminMessage(message.content, message.type || 'info');
+                        
+                        // Mark as read
+                        await messagesSnapshot.docs[0].ref.update({ read: true });
+                    }
+                } catch (error) {
+                    console.error('Error checking admin messages:', error);
+                }
+            }
+
+            showAdminMessage(message, type = 'info') {
+                const banner = document.getElementById('adminMessageBanner');
+                banner.className = `admin-message ${type}`;
+                banner.innerHTML = `
+                    <span><i class="fas fa-${type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i> ${message}</span>
+                    <i class="fas fa-times" onclick="this.parentElement.style.display='none'" style="cursor: pointer;"></i>
+                `;
+                banner.style.display = 'flex';
+                
+                setTimeout(() => {
+                    banner.style.display = 'none';
+                }, 5000);
+            }
+
+            showMessage(message, type = 'info') {
+                const banner = document.getElementById('adminMessageBanner');
+                banner.className = `admin-message ${type}`;
+                banner.innerHTML = `
+                    <span><i class="fas fa-${type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i> ${message}</span>
+                    <i class="fas fa-times" onclick="this.parentElement.style.display='none'" style="cursor: pointer;"></i>
+                `;
+                banner.style.display = 'flex';
+                
+                setTimeout(() => {
+                    banner.style.display = 'none';
+                }, 5000);
+            }
+
+            showOfflineMessage() {
+                this.showMessage('You are in offline mode. Some features may be limited.', 'warning');
+            }
+
+            showErrorMessage(message) {
+                this.showMessage(message, 'error');
+            }
+
+            initQuizData() {
                 // ---------- JSON master data ----------
-                const quizData = [
+                this.quizData = [
                     { subject: "embryology", icon: "fas fa-egg", display: "Embryology", quizzes: [
                         { title: "Embryology Practice 1", href: "quiz.html", qCount: 30, type: "practice", difficulty: "beginner" },
                         { title: "Embryology Practice 2", href: "2.html", qCount: 25, type: "practice", difficulty: "beginner" },
@@ -1238,32 +1778,24 @@
                     ] }
                 ];
 
+                // Initialize states for each subject
+                this.quizData.forEach(subject => {
+                    this.miniSearchStates[subject.subject] = '';
+                    this.miniFilterStates[subject.subject] = 'all';
+                    this.miniSortStates[subject.subject] = 'default';
+                    this.miniSelectedSuggestionIndices[subject.subject] = -1;
+                });
+            }
+
+            initializeApp() {
                 // stats
-                const totalQuizzes = quizData.reduce((acc, s) => acc + s.quizzes.length, 0);
-                const totalQuestions = quizData.reduce((acc, s) => acc + s.quizzes.reduce((qacc, q) => qacc + q.qCount, 0), 0);
+                const totalQuizzes = this.quizData.reduce((acc, s) => acc + s.quizzes.length, 0);
+                const totalQuestions = this.quizData.reduce((acc, s) => acc + s.quizzes.reduce((qacc, q) => qacc + q.qCount, 0), 0);
                 document.getElementById('statsDisplay').innerHTML = `
                     <div class="stat-card"><div class="stat-value">${totalQuizzes}</div><div class="small">Quizzes</div></div>
                     <div class="stat-card"><div class="stat-value">${totalQuestions}+</div><div class="small">Questions</div></div>
-                    <div class="stat-card"><div class="stat-value">${quizData.length}</div><div class="small">Subjects</div></div>
+                    <div class="stat-card"><div class="stat-value">${this.quizData.length}</div><div class="small">Subjects</div></div>
                 `;
-
-                let currentFilter = 'all';
-                let currentSearch = '';
-                let selectedSuggestionIndex = -1;
-                
-                // Store mini search states per subject
-                const miniSearchStates = {};
-                const miniFilterStates = {};
-                const miniSortStates = {};
-                const miniSelectedSuggestionIndices = {}; // Track selected suggestion per mini search
-
-                // Initialize states for each subject
-                quizData.forEach(subject => {
-                    miniSearchStates[subject.subject] = '';
-                    miniFilterStates[subject.subject] = 'all';
-                    miniSortStates[subject.subject] = 'default';
-                    miniSelectedSuggestionIndices[subject.subject] = -1;
-                });
 
                 // Back button functionality
                 const backButton = document.getElementById('backButton');
@@ -1272,29 +1804,6 @@
                         window.history.back();
                     } else {
                         window.scrollTo({ top: 0, behavior: 'smooth' });
-                        
-                        const toast = document.createElement('div');
-                        toast.style.cssText = `
-                            position: fixed;
-                            top: 80px;
-                            left: 50%;
-                            transform: translateX(-50%);
-                            background: var(--gradient);
-                            color: white;
-                            padding: 0.5rem 1.5rem;
-                            border-radius: 30px;
-                            font-size: 0.9rem;
-                            z-index: 9999;
-                            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-                            animation: slideDown 0.3s ease-out;
-                        `;
-                        toast.innerHTML = '<i class="fas fa-arrow-up me-2"></i>Scrolled to top';
-                        document.body.appendChild(toast);
-                        
-                        setTimeout(() => {
-                            toast.style.animation = 'fadeOut 0.3s ease-out';
-                            setTimeout(() => toast.remove(), 300);
-                        }, 2000);
                     }
                 });
 
@@ -1330,48 +1839,48 @@
                 });
 
                 // helpers
-                function setFilter(filter) {
-                    currentFilter = filter;
-                    renderAllFilters();
-                    renderCards();
-                    const subj = quizData.find(s => s.subject === filter);
+                this.setFilter = (filter) => {
+                    this.currentFilter = filter;
+                    this.renderAllFilters();
+                    this.renderCards();
+                    const subj = this.quizData.find(s => s.subject === filter);
                     document.getElementById('mobileActiveFilter').innerText = !filter || filter==='all' ? 'All subjects' : (subj?.display || filter);
                     const offcanvasEl = document.getElementById('subjectOffcanvas');
                     const bsOffcanvas = bootstrap.Offcanvas.getInstance(offcanvasEl);
                     if (bsOffcanvas) bsOffcanvas.hide();
-                }
+                };
 
                 // render filter lists
-                function renderAllFilters() {
-                    const allCount = quizData.reduce((acc, s) => acc + s.quizzes.length, 0);
-                    let html = `<li class="mb-2"><button class="filter-btn d-flex align-items-center ${currentFilter==='all'?'active':''}" data-filter="all"><i class="fas fa-th me-2"></i> All subjects <span class="filter-count ms-auto">${allCount}</span></button></li>`;
-                    quizData.forEach(s => {
-                        html += `<li class="mb-2"><button class="filter-btn d-flex align-items-center ${currentFilter===s.subject?'active':''}" data-filter="${s.subject}"><i class="${s.icon} me-2"></i> ${s.display} <span class="filter-count ms-auto">${s.quizzes.length}</span></button></li>`;
+                this.renderAllFilters = () => {
+                    const allCount = this.quizData.reduce((acc, s) => acc + s.quizzes.length, 0);
+                    let html = `<li class="mb-2"><button class="filter-btn d-flex align-items-center ${this.currentFilter==='all'?'active':''}" data-filter="all"><i class="fas fa-th me-2"></i> All subjects <span class="filter-count ms-auto">${allCount}</span></button></li>`;
+                    this.quizData.forEach(s => {
+                        html += `<li class="mb-2"><button class="filter-btn d-flex align-items-center ${this.currentFilter===s.subject?'active':''}" data-filter="${s.subject}"><i class="${s.icon} me-2"></i> ${s.display} <span class="filter-count ms-auto">${s.quizzes.length}</span></button></li>`;
                     });
                     document.getElementById('sidebarSubjectsList').innerHTML = html;
                     document.querySelectorAll('#sidebarSubjectsList .filter-btn').forEach(btn => {
-                        btn.addEventListener('click', () => setFilter(btn.dataset.filter));
+                        btn.addEventListener('click', () => this.setFilter(btn.dataset.filter));
                     });
 
-                    let drawerHtml = `<li class="mb-2"><button class="filter-btn d-flex align-items-center ${currentFilter==='all'?'active':''}" data-filter="all"><i class="fas fa-th me-2"></i> All subjects <span class="filter-count ms-auto">${allCount}</span></button></li>`;
-                    quizData.forEach(s => {
-                        drawerHtml += `<li class="mb-2"><button class="filter-btn d-flex align-items-center ${currentFilter===s.subject?'active':''}" data-filter="${s.subject}"><i class="${s.icon} me-2"></i> ${s.display} <span class="filter-count ms-auto">${s.quizzes.length}</span></button></li>`;
+                    let drawerHtml = `<li class="mb-2"><button class="filter-btn d-flex align-items-center ${this.currentFilter==='all'?'active':''}" data-filter="all"><i class="fas fa-th me-2"></i> All subjects <span class="filter-count ms-auto">${allCount}</span></button></li>`;
+                    this.quizData.forEach(s => {
+                        drawerHtml += `<li class="mb-2"><button class="filter-btn d-flex align-items-center ${this.currentFilter===s.subject?'active':''}" data-filter="${s.subject}"><i class="${s.icon} me-2"></i> ${s.display} <span class="filter-count ms-auto">${s.quizzes.length}</span></button></li>`;
                     });
                     document.getElementById('drawerSubjectsList').innerHTML = drawerHtml;
                     document.querySelectorAll('#drawerSubjectsList .filter-btn').forEach(btn => {
-                        btn.addEventListener('click', () => setFilter(btn.dataset.filter));
+                        btn.addEventListener('click', () => this.setFilter(btn.dataset.filter));
                     });
-                }
+                };
 
                 // highlight text
-                function highlightText(text, term) {
+                this.highlightText = (text, term) => {
                     if (!term) return text;
                     const regex = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
                     return text.replace(regex, '<span class="autocomplete-match">$1</span>');
-                }
+                };
 
                 // Apply sorting to quizzes
-                function sortQuizzes(quizzes, sortType) {
+                this.sortQuizzes = (quizzes, sortType) => {
                     const sorted = [...quizzes];
                     
                     switch(sortType) {
@@ -1391,23 +1900,23 @@
                         default:
                             return sorted;
                     }
-                }
+                };
 
                 // Filter quizzes by type
-                function filterByType(quizzes, filterType) {
+                this.filterByType = (quizzes, filterType) => {
                     if (filterType === 'all') return quizzes;
                     return quizzes.filter(q => q.type === filterType);
-                }
+                };
 
                 // Update global search count
-                function updateGlobalSearchCount() {
+                this.updateGlobalSearchCount = () => {
                     const globalCountEl = document.getElementById('globalSearchCount');
-                    if (currentSearch) {
+                    if (this.currentSearch) {
                         let totalMatches = 0;
-                        quizData.forEach(subject => {
-                            if (currentFilter === 'all' || subject.subject === currentFilter) {
+                        this.quizData.forEach(subject => {
+                            if (this.currentFilter === 'all' || subject.subject === this.currentFilter) {
                                 const matches = subject.quizzes.filter(q => 
-                                    q.title.toLowerCase().includes(currentSearch.toLowerCase())
+                                    q.title.toLowerCase().includes(this.currentSearch.toLowerCase())
                                 ).length;
                                 totalMatches += matches;
                             }
@@ -1416,11 +1925,11 @@
                     } else {
                         globalCountEl.innerHTML = '';
                     }
-                }
+                };
 
                 // Get mini autocomplete suggestions for a specific subject
-                function getMiniAutocompleteSuggestions(query, subjectData) {
-                    if (!query || query.length < 1) return []; // Start suggesting from 1 character
+                this.getMiniAutocompleteSuggestions = (query, subjectData) => {
+                    if (!query || query.length < 1) return [];
                     
                     const lowercaseQuery = query.toLowerCase();
                     const suggestions = [];
@@ -1478,10 +1987,10 @@
                     ).slice(0, 5);
                     
                     return unique;
-                }
+                };
 
                 // Render mini autocomplete dropdown
-                function renderMiniAutocompleteDropdown(subject, suggestions, query, dropdownId, hintId) {
+                this.renderMiniAutocompleteDropdown = (subject, suggestions, query, dropdownId, hintId) => {
                     const dropdown = document.getElementById(dropdownId);
                     const hint = document.getElementById(hintId);
                     
@@ -1499,7 +2008,7 @@
                     
                     let html = '';
                     suggestions.forEach((suggestion, index) => {
-                        const isSelected = index === miniSelectedSuggestionIndices[subject];
+                        const isSelected = index === this.miniSelectedSuggestionIndices[subject];
                         const selectedClass = isSelected ? 'selected' : '';
                         
                         if (suggestion.type === 'quiz') {
@@ -1507,7 +2016,7 @@
                                 <div class="mini-autocomplete-item ${selectedClass}" data-type="quiz" data-href="${suggestion.href}">
                                     <div class="mini-autocomplete-icon"><i class="${suggestion.icon}"></i></div>
                                     <div class="mini-autocomplete-content">
-                                        <div class="mini-autocomplete-title">${highlightText(suggestion.title, query)}</div>
+                                        <div class="mini-autocomplete-title">${this.highlightText(suggestion.title, query)}</div>
                                         <div class="mini-autocomplete-subtitle">${suggestion.subtitle}</div>
                                     </div>
                                     <span class="mini-autocomplete-badge ${suggestion.badge}">${suggestion.badge}</span>
@@ -1518,7 +2027,7 @@
                                 <div class="mini-autocomplete-item ${selectedClass}" data-type="filter" data-filter="${suggestion.filter}" data-subject="${subject}">
                                     <div class="mini-autocomplete-icon"><i class="${suggestion.icon}"></i></div>
                                     <div class="mini-autocomplete-content">
-                                        <div class="mini-autocomplete-title">${highlightText(suggestion.title, query)}</div>
+                                        <div class="mini-autocomplete-title">${this.highlightText(suggestion.title, query)}</div>
                                         <div class="mini-autocomplete-subtitle">${suggestion.subtitle}</div>
                                     </div>
                                     <span class="mini-autocomplete-category">Filter</span>
@@ -1529,7 +2038,7 @@
                                 <div class="mini-autocomplete-item ${selectedClass}" data-type="difficulty" data-difficulty="${suggestion.difficulty}" data-subject="${subject}">
                                     <div class="mini-autocomplete-icon"><i class="${suggestion.icon}"></i></div>
                                     <div class="mini-autocomplete-content">
-                                        <div class="mini-autocomplete-title">${highlightText(suggestion.title, query)}</div>
+                                        <div class="mini-autocomplete-title">${this.highlightText(suggestion.title, query)}</div>
                                         <div class="mini-autocomplete-subtitle">${suggestion.subtitle}</div>
                                     </div>
                                     <span class="mini-autocomplete-category">Difficulty</span>
@@ -1542,7 +2051,7 @@
                     dropdown.classList.add('show');
                     
                     // Add click handlers to mini autocomplete items
-                    document.querySelectorAll(`#${dropdownId} .mini-autocomplete-item`).forEach(item => {
+                    dropdown.querySelectorAll('.mini-autocomplete-item').forEach(item => {
                         item.addEventListener('click', () => {
                             const type = item.dataset.type;
                             const subject = item.dataset.subject;
@@ -1551,41 +2060,41 @@
                                 window.location.href = item.dataset.href;
                             } else if (type === 'filter') {
                                 // Apply filter to this subject
-                                miniFilterStates[subject] = item.dataset.filter;
+                                this.miniFilterStates[subject] = item.dataset.filter;
                                 // Clear the mini search
                                 const input = document.querySelector(`.mini-search-input[data-subject="${subject}"]`);
                                 if (input) {
                                     input.value = '';
-                                    miniSearchStates[subject] = '';
+                                    this.miniSearchStates[subject] = '';
                                 }
                                 // Update just this subject
-                                updateSubjectQuizzes(subject, '');
+                                this.updateSubjectQuizzes(subject, '');
                             } else if (type === 'difficulty') {
                                 // Clear the search
                                 const input = document.querySelector(`.mini-search-input[data-subject="${subject}"]`);
                                 if (input) {
                                     input.value = '';
-                                    miniSearchStates[subject] = '';
+                                    this.miniSearchStates[subject] = '';
                                 }
                                 // Update just this subject
-                                updateSubjectQuizzes(subject, '');
+                                this.updateSubjectQuizzes(subject, '');
                             }
                             
                             dropdown.classList.remove('show');
                             if (hint) hint.classList.remove('show');
                         });
                     });
-                }
+                };
 
                 // Global autocomplete functions
-                function getAutocompleteSuggestions(query) {
+                this.getAutocompleteSuggestions = (query) => {
                     if (!query || query.length < 2) return [];
                     
                     const lowercaseQuery = query.toLowerCase();
                     const suggestions = [];
                     
                     // Search in quiz titles
-                    quizData.forEach(subject => {
+                    this.quizData.forEach(subject => {
                         subject.quizzes.forEach(quiz => {
                             if (quiz.title.toLowerCase().includes(lowercaseQuery)) {
                                 suggestions.push({
@@ -1602,7 +2111,7 @@
                     });
                     
                     // Search in subject names
-                    quizData.forEach(subject => {
+                    this.quizData.forEach(subject => {
                         if (subject.display.toLowerCase().includes(lowercaseQuery)) {
                             suggestions.push({
                                 type: 'subject',
@@ -1617,7 +2126,7 @@
                     // Search by quiz type
                     ['practice', 'exam', 'quizlet'].forEach(type => {
                         if (type.includes(lowercaseQuery)) {
-                            const count = quizData.reduce((acc, subject) => 
+                            const count = this.quizData.reduce((acc, subject) => 
                                 acc + subject.quizzes.filter(q => q.type === type).length, 0);
                             suggestions.push({
                                 type: 'filter',
@@ -1633,7 +2142,7 @@
                     // Search by difficulty
                     ['beginner', 'intermediate', 'advanced'].forEach(difficulty => {
                         if (difficulty.includes(lowercaseQuery)) {
-                            const count = quizData.reduce((acc, subject) => 
+                            const count = this.quizData.reduce((acc, subject) => 
                                 acc + subject.quizzes.filter(q => q.difficulty === difficulty).length, 0);
                             suggestions.push({
                                 type: 'difficulty',
@@ -1651,9 +2160,9 @@
                     ).slice(0, 8);
                     
                     return unique;
-                }
+                };
 
-                function renderAutocompleteDropdown(suggestions, query) {
+                this.renderAutocompleteDropdown = (suggestions, query) => {
                     const dropdown = document.getElementById('autocompleteDropdown');
                     const hint = document.getElementById('autocompleteHint');
                     const hintText = document.getElementById('hintText');
@@ -1672,7 +2181,7 @@
                     
                     let html = '';
                     suggestions.forEach((suggestion, index) => {
-                        const isSelected = index === selectedSuggestionIndex;
+                        const isSelected = index === this.selectedSuggestionIndex;
                         const selectedClass = isSelected ? 'selected' : '';
                         
                         if (suggestion.type === 'quiz') {
@@ -1680,7 +2189,7 @@
                                 <div class="autocomplete-item ${selectedClass}" data-type="quiz" data-href="${suggestion.href}">
                                     <div class="autocomplete-icon"><i class="${suggestion.icon}"></i></div>
                                     <div class="autocomplete-content">
-                                        <div class="autocomplete-title">${highlightText(suggestion.title, query)}</div>
+                                        <div class="autocomplete-title">${this.highlightText(suggestion.title, query)}</div>
                                         <div class="autocomplete-subtitle">
                                             <span>${suggestion.subtitle}</span>
                                             <span class="autocomplete-badge ${suggestion.badge}">${suggestion.badge}</span>
@@ -1693,7 +2202,7 @@
                                 <div class="autocomplete-item ${selectedClass}" data-type="subject" data-subject="${suggestion.subject}">
                                     <div class="autocomplete-icon"><i class="${suggestion.icon}"></i></div>
                                     <div class="autocomplete-content">
-                                        <div class="autocomplete-title">${highlightText(suggestion.title, query)}</div>
+                                        <div class="autocomplete-title">${this.highlightText(suggestion.title, query)}</div>
                                         <div class="autocomplete-subtitle">${suggestion.subtitle}</div>
                                     </div>
                                     <span class="autocomplete-category">Subject</span>
@@ -1704,7 +2213,7 @@
                                 <div class="autocomplete-item ${selectedClass}" data-type="filter" data-filter="${suggestion.filter}">
                                     <div class="autocomplete-icon"><i class="${suggestion.icon}"></i></div>
                                     <div class="autocomplete-content">
-                                        <div class="autocomplete-title">${highlightText(suggestion.title, query)} quizzes</div>
+                                        <div class="autocomplete-title">${this.highlightText(suggestion.title, query)} quizzes</div>
                                         <div class="autocomplete-subtitle">${suggestion.subtitle}</div>
                                     </div>
                                     <span class="autocomplete-category">Filter</span>
@@ -1715,7 +2224,7 @@
                                 <div class="autocomplete-item ${selectedClass}" data-type="difficulty" data-difficulty="${suggestion.difficulty}">
                                     <div class="autocomplete-icon"><i class="${suggestion.icon}"></i></div>
                                     <div class="autocomplete-content">
-                                        <div class="autocomplete-title">${highlightText(suggestion.title, query)} level</div>
+                                        <div class="autocomplete-title">${this.highlightText(suggestion.title, query)} level</div>
                                         <div class="autocomplete-subtitle">${suggestion.subtitle}</div>
                                     </div>
                                     <span class="autocomplete-category">Difficulty</span>
@@ -1728,36 +2237,36 @@
                     dropdown.classList.add('show');
                     
                     // Add click handlers to autocomplete items
-                    document.querySelectorAll('.autocomplete-item').forEach(item => {
+                    dropdown.querySelectorAll('.autocomplete-item').forEach(item => {
                         item.addEventListener('click', () => {
                             const type = item.dataset.type;
                             
                             if (type === 'quiz') {
                                 window.location.href = item.dataset.href;
                             } else if (type === 'subject') {
-                                setFilter(item.dataset.subject);
+                                this.setFilter(item.dataset.subject);
                                 document.getElementById('smartSearch').value = '';
-                                currentSearch = '';
-                                renderCards();
+                                this.currentSearch = '';
+                                this.renderCards();
                             } else if (type === 'filter') {
                                 document.getElementById('smartSearch').value = '';
-                                currentSearch = '';
-                                renderCards();
+                                this.currentSearch = '';
+                                this.renderCards();
                             } else if (type === 'difficulty') {
                                 document.getElementById('smartSearch').value = '';
-                                currentSearch = '';
-                                renderCards();
+                                this.currentSearch = '';
+                                this.renderCards();
                             }
                             
                             dropdown.classList.remove('show');
                             hint.classList.remove('show');
                         });
                     });
-                }
+                };
 
-                // NEW FUNCTION: Update only a specific subject's quizzes without full re-render
-                function updateSubjectQuizzes(subjectKey, searchTerm) {
-                    const subject = quizData.find(s => s.subject === subjectKey);
+                // Update only a specific subject's quizzes without full re-render
+                this.updateSubjectQuizzes = (subjectKey, searchTerm) => {
+                    const subject = this.quizData.find(s => s.subject === subjectKey);
                     if (!subject) return;
                     
                     // Find the card container for this subject
@@ -1776,8 +2285,8 @@
                     
                     // Get current filters
                     const miniTerm = searchTerm.toLowerCase();
-                    const filterType = miniFilterStates[subjectKey] || 'all';
-                    const sortType = miniSortStates[subjectKey] || 'default';
+                    const filterType = this.miniFilterStates[subjectKey] || 'all';
+                    const sortType = this.miniSortStates[subjectKey] || 'default';
                     
                     // Filter and sort quizzes
                     let filtered = subject.quizzes;
@@ -1786,8 +2295,8 @@
                         filtered = filtered.filter(q => q.title.toLowerCase().includes(miniTerm));
                     }
                     
-                    filtered = filterByType(filtered, filterType);
-                    filtered = sortQuizzes(filtered, sortType);
+                    filtered = this.filterByType(filtered, filterType);
+                    filtered = this.sortQuizzes(filtered, sortType);
                     
                     // Update the badge count
                     const badge = targetCard.querySelector('.badge.bg-primary');
@@ -1801,7 +2310,7 @@
                     
                     const itemsHtml = filtered.map(q => {
                         const highlightTerm = miniTerm;
-                        const titleDisplay = highlightTerm ? highlightText(q.title, highlightTerm) : q.title;
+                        const titleDisplay = highlightTerm ? this.highlightText(q.title, highlightTerm) : q.title;
                         
                         let badgeClass = 'bg-secondary';
                         if (q.type === 'exam') badgeClass = 'badge-exam';
@@ -1854,7 +2363,7 @@
                             
                             // Add clear handler
                             statsDiv.querySelector('.clear-search').addEventListener('click', () => {
-                                miniSearchStates[subjectKey] = '';
+                                this.miniSearchStates[subjectKey] = '';
                                 const input = document.querySelector(`.mini-search-input[data-subject="${subjectKey}"]`);
                                 if (input) {
                                     input.value = '';
@@ -1867,21 +2376,21 @@
                                 if (hint) hint.classList.remove('show');
                                 
                                 // Update this subject only
-                                updateSubjectQuizzes(subjectKey, '');
+                                this.updateSubjectQuizzes(subjectKey, '');
                             });
                         }
                     } else if (existingStats) {
                         existingStats.remove();
                     }
-                }
+                };
 
-                function renderCards() {
-                    const term = currentSearch.trim().toLowerCase();
+                this.renderCards = () => {
+                    const term = this.currentSearch.trim().toLowerCase();
                     let anyVisible = false;
                     let cardsHtml = '';
 
-                    quizData.forEach(subject => {
-                        if (currentFilter !== 'all' && subject.subject !== currentFilter) return;
+                    this.quizData.forEach(subject => {
+                        if (this.currentFilter !== 'all' && subject.subject !== this.currentFilter) return;
                         
                         // Apply global search filter
                         let filtered = subject.quizzes;
@@ -1890,16 +2399,16 @@
                         }
                         
                         // Apply mini search
-                        const miniTerm = miniSearchStates[subject.subject]?.toLowerCase() || '';
+                        const miniTerm = this.miniSearchStates[subject.subject]?.toLowerCase() || '';
                         if (miniTerm) {
                             filtered = filtered.filter(q => q.title.toLowerCase().includes(miniTerm));
                         }
                         
                         // Apply mini filter
-                        filtered = filterByType(filtered, miniFilterStates[subject.subject] || 'all');
+                        filtered = this.filterByType(filtered, this.miniFilterStates[subject.subject] || 'all');
                         
                         // Apply mini sort
-                        filtered = sortQuizzes(filtered, miniSortStates[subject.subject] || 'default');
+                        filtered = this.sortQuizzes(filtered, this.miniSortStates[subject.subject] || 'default');
                         
                         if (filtered.length === 0 && term === '' && miniTerm === '') return;
                         if (filtered.length === 0 && term !== '') return;
@@ -1908,7 +2417,7 @@
                         const itemsHtml = filtered.map(q => {
                             // Determine which search term to highlight (prioritize mini search, then global)
                             const highlightTerm = miniTerm || term;
-                            const titleDisplay = highlightTerm ? highlightText(q.title, highlightTerm) : q.title;
+                            const titleDisplay = highlightTerm ? this.highlightText(q.title, highlightTerm) : q.title;
                             
                             let badgeClass = 'bg-secondary';
                             if (q.type === 'exam') badgeClass = 'badge-exam';
@@ -1954,7 +2463,7 @@
                                         <input type="text" class="mini-search-input" 
                                             placeholder="Search in ${subject.display}..." 
                                             data-subject="${subject.subject}"
-                                            value="${miniSearchStates[subject.subject] || ''}"
+                                            value="${this.miniSearchStates[subject.subject] || ''}"
                                             autocomplete="off">
                                         <span class="mini-autocomplete-hint" id="${hintId}">
                                             <i class="fas fa-lightbulb"></i>
@@ -1968,16 +2477,16 @@
                                 
                                 <!-- Mini Filters -->
                                 <div class="mini-filters">
-                                    <button class="mini-filter-btn ${miniFilterStates[subject.subject] === 'all' ? 'active' : ''}" data-subject="${subject.subject}" data-filter="all">
+                                    <button class="mini-filter-btn ${this.miniFilterStates[subject.subject] === 'all' ? 'active' : ''}" data-subject="${subject.subject}" data-filter="all">
                                         <i class="fas fa-list"></i> All
                                     </button>
-                                    <button class="mini-filter-btn ${miniFilterStates[subject.subject] === 'practice' ? 'active' : ''}" data-subject="${subject.subject}" data-filter="practice">
+                                    <button class="mini-filter-btn ${this.miniFilterStates[subject.subject] === 'practice' ? 'active' : ''}" data-subject="${subject.subject}" data-filter="practice">
                                         <i class="fas fa-play-circle"></i> Practice
                                     </button>
-                                    <button class="mini-filter-btn ${miniFilterStates[subject.subject] === 'exam' ? 'active' : ''}" data-subject="${subject.subject}" data-filter="exam">
+                                    <button class="mini-filter-btn ${this.miniFilterStates[subject.subject] === 'exam' ? 'active' : ''}" data-subject="${subject.subject}" data-filter="exam">
                                         <i class="fas fa-file-alt"></i> Exam
                                     </button>
-                                    <button class="mini-filter-btn ${miniFilterStates[subject.subject] === 'quizlet' ? 'active' : ''}" data-subject="${subject.subject}" data-filter="quizlet">
+                                    <button class="mini-filter-btn ${this.miniFilterStates[subject.subject] === 'quizlet' ? 'active' : ''}" data-subject="${subject.subject}" data-filter="quizlet">
                                         <i class="fas fa-code"></i> Quizlet
                                     </button>
                                 </div>
@@ -1985,13 +2494,13 @@
                                 <!-- Mini Sort -->
                                 <div class="mini-sort">
                                     <select class="mini-sort-select" data-subject="${subject.subject}">
-                                        <option value="default" ${miniSortStates[subject.subject] === 'default' ? 'selected' : ''}>📊 Default order</option>
-                                        <option value="title-asc" ${miniSortStates[subject.subject] === 'title-asc' ? 'selected' : ''}>📝 Title A-Z</option>
-                                        <option value="title-desc" ${miniSortStates[subject.subject] === 'title-desc' ? 'selected' : ''}>📝 Title Z-A</option>
-                                        <option value="qcount-asc" ${miniSortStates[subject.subject] === 'qcount-asc' ? 'selected' : ''}>🔢 Questions (low to high)</option>
-                                        <option value="qcount-desc" ${miniSortStates[subject.subject] === 'qcount-desc' ? 'selected' : ''}>🔢 Questions (high to low)</option>
-                                        <option value="type" ${miniSortStates[subject.subject] === 'type' ? 'selected' : ''}>🏷️ By type</option>
-                                        <option value="difficulty" ${miniSortStates[subject.subject] === 'difficulty' ? 'selected' : ''}>⭐ By difficulty</option>
+                                        <option value="default" ${this.miniSortStates[subject.subject] === 'default' ? 'selected' : ''}>📊 Default order</option>
+                                        <option value="title-asc" ${this.miniSortStates[subject.subject] === 'title-asc' ? 'selected' : ''}>📝 Title A-Z</option>
+                                        <option value="title-desc" ${this.miniSortStates[subject.subject] === 'title-desc' ? 'selected' : ''}>📝 Title Z-A</option>
+                                        <option value="qcount-asc" ${this.miniSortStates[subject.subject] === 'qcount-asc' ? 'selected' : ''}>🔢 Questions (low to high)</option>
+                                        <option value="qcount-desc" ${this.miniSortStates[subject.subject] === 'qcount-desc' ? 'selected' : ''}>🔢 Questions (high to low)</option>
+                                        <option value="type" ${this.miniSortStates[subject.subject] === 'type' ? 'selected' : ''}>🏷️ By type</option>
+                                        <option value="difficulty" ${this.miniSortStates[subject.subject] === 'difficulty' ? 'selected' : ''}>⭐ By difficulty</option>
                                     </select>
                                 </div>
                                 
@@ -2012,143 +2521,21 @@
                     document.getElementById('noResultsRow').style.display = anyVisible ? 'none' : 'flex';
                     
                     // Update global search count
-                    updateGlobalSearchCount();
+                    this.updateGlobalSearchCount();
                     
-                 // Replace the mini search event listener section in renderCards() with this:
-
-// Attach mini search event listeners with autocomplete (without full re-render)
-document.querySelectorAll('.mini-search-input').forEach(input => {
-    const subject = input.dataset.subject;
-    const dropdownId = `miniDropdown-${subject}`;
-    const hintId = `miniHint-${subject}`;
-    const dropdown = document.getElementById(dropdownId);
-    
-    let timeout;
-    let suggestionTimeout;
-    let hideDropdownTimeout;
-    
-    input.addEventListener('input', (e) => {
-        const query = e.target.value;
-        
-        // Reset selection for this subject
-        miniSelectedSuggestionIndices[subject] = -1;
-        
-        // Clear previous timeouts
-        clearTimeout(suggestionTimeout);
-        clearTimeout(hideDropdownTimeout);
-        
-        if (query.length === 0) {
-            // If query is empty, hide dropdown after a short delay
-            hideDropdownTimeout = setTimeout(() => {
-                if (dropdown) dropdown.classList.remove('show');
-                const hint = document.getElementById(hintId);
-                if (hint) hint.classList.remove('show');
-            }, 200);
-            return;
-        }
-        
-        // Get and show suggestions with a slight delay for better performance
-        suggestionTimeout = setTimeout(() => {
-            const subjectData = quizData.find(s => s.subject === subject);
-            const suggestions = getMiniAutocompleteSuggestions(query, subjectData);
-            renderMiniAutocompleteDropdown(subject, suggestions, query, dropdownId, hintId);
-        }, 100); // Increased delay for smoother typing
-        
-        // Update search results with debounce
-        clearTimeout(timeout);
-        timeout = setTimeout(() => {
-            // Only update the state
-            miniSearchStates[subject] = query;
-            
-            // Update just the quiz list for this subject
-            updateSubjectQuizzes(subject, query);
-        }, 400); // Slightly longer delay for actual search
-    });
-
-    // Handle focus to show suggestions if there's already text
-    input.addEventListener('focus', (e) => {
-        const query = e.target.value;
-        if (query.length > 0) {
-            clearTimeout(hideDropdownTimeout);
-            const subjectData = quizData.find(s => s.subject === subject);
-            const suggestions = getMiniAutocompleteSuggestions(query, subjectData);
-            renderMiniAutocompleteDropdown(subject, suggestions, query, dropdownId, hintId);
-        }
-    });
-
-    // Keyboard navigation for mini autocomplete
-    input.addEventListener('keydown', (e) => {
-        const dropdown = document.getElementById(dropdownId);
-        const items = dropdown ? dropdown.querySelectorAll('.mini-autocomplete-item') : [];
-        
-        if (items.length === 0) return;
-        
-        if (e.key === 'ArrowDown') {
-            e.preventDefault();
-            miniSelectedSuggestionIndices[subject] = (miniSelectedSuggestionIndices[subject] + 1) % items.length;
-            updateMiniSelectedSuggestion(subject, dropdownId, hintId);
-        } else if (e.key === 'ArrowUp') {
-            e.preventDefault();
-            miniSelectedSuggestionIndices[subject] = miniSelectedSuggestionIndices[subject] <= 0 ? items.length - 1 : miniSelectedSuggestionIndices[subject] - 1;
-            updateMiniSelectedSuggestion(subject, dropdownId, hintId);
-        } else if (e.key === 'Enter' && miniSelectedSuggestionIndices[subject] >= 0) {
-            e.preventDefault();
-            items[miniSelectedSuggestionIndices[subject]].click();
-        } else if (e.key === 'Escape') {
-            if (dropdown) dropdown.classList.remove('show');
-            const hint = document.getElementById(hintId);
-            if (hint) hint.classList.remove('show');
-        }
-    });
-
-    // Handle input blur (when focus leaves the input)
-    input.addEventListener('blur', (e) => {
-        // Don't hide immediately - give time for clicking on dropdown items
-        hideDropdownTimeout = setTimeout(() => {
-            // Check if the dropdown is still focused
-            const dropdown = document.getElementById(dropdownId);
-            if (dropdown && !dropdown.matches(':hover')) {
-                dropdown.classList.remove('show');
-                const hint = document.getElementById(hintId);
-                if (hint) hint.classList.remove('show');
-            }
-        }, 300); // Increased delay to allow clicking on dropdown items
-    });
-
-    // Prevent dropdown from hiding when clicking on it
-    if (dropdown) {
-        dropdown.addEventListener('mousedown', (e) => {
-            // Prevent blur event from firing when clicking on dropdown
-            e.preventDefault();
-        });
-        
-        dropdown.addEventListener('click', (e) => {
-            // Allow clicks on dropdown items
-            clearTimeout(hideDropdownTimeout);
-        });
-    }
-
-    // Close dropdown when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!input.contains(e.target) && dropdown && !dropdown.contains(e.target)) {
-            clearTimeout(hideDropdownTimeout);
-            dropdown.classList.remove('show');
-            const hint = document.getElementById(hintId);
-            if (hint) hint.classList.remove('show');
-        }
-    });
-});
+                    // Attach mini search event listeners
+                    this.attachMiniSearchListeners();
                     
                     // Attach mini filter event listeners
                     document.querySelectorAll('.mini-filter-btn').forEach(btn => {
                         btn.addEventListener('click', (e) => {
                             const subject = e.target.dataset.subject;
                             const filter = e.target.dataset.filter;
-                            miniFilterStates[subject] = filter;
+                            this.miniFilterStates[subject] = filter;
                             
                             // Update just this subject without full re-render
-                            const searchTerm = miniSearchStates[subject] || '';
-                            updateSubjectQuizzes(subject, searchTerm);
+                            const searchTerm = this.miniSearchStates[subject] || '';
+                            this.updateSubjectQuizzes(subject, searchTerm);
                         });
                     });
                     
@@ -2156,11 +2543,11 @@ document.querySelectorAll('.mini-search-input').forEach(input => {
                     document.querySelectorAll('.mini-sort-select').forEach(select => {
                         select.addEventListener('change', (e) => {
                             const subject = e.target.dataset.subject;
-                            miniSortStates[subject] = e.target.value;
+                            this.miniSortStates[subject] = e.target.value;
                             
                             // Update just this subject without full re-render
-                            const searchTerm = miniSearchStates[subject] || '';
-                            updateSubjectQuizzes(subject, searchTerm);
+                            const searchTerm = this.miniSearchStates[subject] || '';
+                            this.updateSubjectQuizzes(subject, searchTerm);
                         });
                     });
 
@@ -2181,9 +2568,133 @@ document.querySelectorAll('.mini-search-input').forEach(input => {
                             newBtn.querySelector('i').classList.toggle('fa-chevron-up', expanded);
                         });
                     });
-                }
+                };
 
-                function updateMiniSelectedSuggestion(subject, dropdownId, hintId) {
+                this.attachMiniSearchListeners = () => {
+                    document.querySelectorAll('.mini-search-input').forEach(input => {
+                        const subject = input.dataset.subject;
+                        const dropdownId = `miniDropdown-${subject}`;
+                        const hintId = `miniHint-${subject}`;
+                        const dropdown = document.getElementById(dropdownId);
+                        
+                        let timeout;
+                        let suggestionTimeout;
+                        let hideDropdownTimeout;
+                        
+                        // Remove existing listeners by cloning
+                        const newInput = input.cloneNode(true);
+                        input.parentNode.replaceChild(newInput, input);
+                        
+                        newInput.addEventListener('input', (e) => {
+                            const query = e.target.value;
+                            
+                            // Reset selection for this subject
+                            this.miniSelectedSuggestionIndices[subject] = -1;
+                            
+                            // Clear previous timeouts
+                            clearTimeout(suggestionTimeout);
+                            clearTimeout(hideDropdownTimeout);
+                            
+                            if (query.length === 0) {
+                                // If query is empty, hide dropdown after a short delay
+                                hideDropdownTimeout = setTimeout(() => {
+                                    if (dropdown) dropdown.classList.remove('show');
+                                    const hint = document.getElementById(hintId);
+                                    if (hint) hint.classList.remove('show');
+                                }, 200);
+                                return;
+                            }
+                            
+                            // Get and show suggestions with a slight delay
+                            suggestionTimeout = setTimeout(() => {
+                                const subjectData = this.quizData.find(s => s.subject === subject);
+                                const suggestions = this.getMiniAutocompleteSuggestions(query, subjectData);
+                                this.renderMiniAutocompleteDropdown(subject, suggestions, query, dropdownId, hintId);
+                            }, 100);
+                            
+                            // Update search results with debounce
+                            clearTimeout(timeout);
+                            timeout = setTimeout(() => {
+                                // Only update the state
+                                this.miniSearchStates[subject] = query;
+                                
+                                // Update just the quiz list for this subject
+                                this.updateSubjectQuizzes(subject, query);
+                            }, 400);
+                        });
+
+                        // Handle focus to show suggestions if there's already text
+                        newInput.addEventListener('focus', (e) => {
+                            const query = e.target.value;
+                            if (query.length > 0) {
+                                clearTimeout(hideDropdownTimeout);
+                                const subjectData = this.quizData.find(s => s.subject === subject);
+                                const suggestions = this.getMiniAutocompleteSuggestions(query, subjectData);
+                                this.renderMiniAutocompleteDropdown(subject, suggestions, query, dropdownId, hintId);
+                            }
+                        });
+
+                        // Keyboard navigation for mini autocomplete
+                        newInput.addEventListener('keydown', (e) => {
+                            const dropdown = document.getElementById(dropdownId);
+                            const items = dropdown ? dropdown.querySelectorAll('.mini-autocomplete-item') : [];
+                            
+                            if (items.length === 0) return;
+                            
+                            if (e.key === 'ArrowDown') {
+                                e.preventDefault();
+                                this.miniSelectedSuggestionIndices[subject] = (this.miniSelectedSuggestionIndices[subject] + 1) % items.length;
+                                this.updateMiniSelectedSuggestion(subject, dropdownId, hintId);
+                            } else if (e.key === 'ArrowUp') {
+                                e.preventDefault();
+                                this.miniSelectedSuggestionIndices[subject] = this.miniSelectedSuggestionIndices[subject] <= 0 ? items.length - 1 : this.miniSelectedSuggestionIndices[subject] - 1;
+                                this.updateMiniSelectedSuggestion(subject, dropdownId, hintId);
+                            } else if (e.key === 'Enter' && this.miniSelectedSuggestionIndices[subject] >= 0) {
+                                e.preventDefault();
+                                items[this.miniSelectedSuggestionIndices[subject]].click();
+                            } else if (e.key === 'Escape') {
+                                if (dropdown) dropdown.classList.remove('show');
+                                const hint = document.getElementById(hintId);
+                                if (hint) hint.classList.remove('show');
+                            }
+                        });
+
+                        // Handle input blur
+                        newInput.addEventListener('blur', (e) => {
+                            hideDropdownTimeout = setTimeout(() => {
+                                const dropdown = document.getElementById(dropdownId);
+                                if (dropdown && !dropdown.matches(':hover')) {
+                                    dropdown.classList.remove('show');
+                                    const hint = document.getElementById(hintId);
+                                    if (hint) hint.classList.remove('show');
+                                }
+                            }, 300);
+                        });
+
+                        // Prevent dropdown from hiding when clicking on it
+                        if (dropdown) {
+                            dropdown.addEventListener('mousedown', (e) => {
+                                e.preventDefault();
+                            });
+                            
+                            dropdown.addEventListener('click', (e) => {
+                                clearTimeout(hideDropdownTimeout);
+                            });
+                        }
+
+                        // Close dropdown when clicking outside
+                        document.addEventListener('click', (e) => {
+                            if (!newInput.contains(e.target) && dropdown && !dropdown.contains(e.target)) {
+                                clearTimeout(hideDropdownTimeout);
+                                dropdown.classList.remove('show');
+                                const hint = document.getElementById(hintId);
+                                if (hint) hint.classList.remove('show');
+                            }
+                        });
+                    });
+                };
+
+                this.updateMiniSelectedSuggestion = (subject, dropdownId, hintId) => {
                     const dropdown = document.getElementById(dropdownId);
                     if (!dropdown) return;
                     
@@ -2191,7 +2702,7 @@ document.querySelectorAll('.mini-search-input').forEach(input => {
                     const hint = document.getElementById(hintId);
                     
                     items.forEach((item, index) => {
-                        if (index === miniSelectedSuggestionIndices[subject]) {
+                        if (index === this.miniSelectedSuggestionIndices[subject]) {
                             item.classList.add('selected');
                             // Update hint
                             const title = item.querySelector('.mini-autocomplete-title').innerText.replace(/<[^>]*>/g, '');
@@ -2203,7 +2714,7 @@ document.querySelectorAll('.mini-search-input').forEach(input => {
                             item.classList.remove('selected');
                         }
                     });
-                }
+                };
 
                 // Global search with autocomplete
                 const searchInput = document.getElementById('smartSearch');
@@ -2216,16 +2727,16 @@ document.querySelectorAll('.mini-search-input').forEach(input => {
                     const query = searchInput.value;
                     
                     // Reset selection
-                    selectedSuggestionIndex = -1;
+                    this.selectedSuggestionIndex = -1;
                     
                     // Get and show suggestions
-                    const suggestions = getAutocompleteSuggestions(query);
-                    renderAutocompleteDropdown(suggestions, query);
+                    const suggestions = this.getAutocompleteSuggestions(query);
+                    this.renderAutocompleteDropdown(suggestions, query);
                     
                     // Update search results
                     timeout = setTimeout(() => {
-                        currentSearch = query;
-                        renderCards();
+                        this.currentSearch = query;
+                        this.renderCards();
                     }, 150);
                 });
 
@@ -2237,25 +2748,25 @@ document.querySelectorAll('.mini-search-input').forEach(input => {
                     
                     if (e.key === 'ArrowDown') {
                         e.preventDefault();
-                        selectedSuggestionIndex = (selectedSuggestionIndex + 1) % items.length;
-                        updateSelectedSuggestion();
+                        this.selectedSuggestionIndex = (this.selectedSuggestionIndex + 1) % items.length;
+                        this.updateSelectedSuggestion();
                     } else if (e.key === 'ArrowUp') {
                         e.preventDefault();
-                        selectedSuggestionIndex = selectedSuggestionIndex <= 0 ? items.length - 1 : selectedSuggestionIndex - 1;
-                        updateSelectedSuggestion();
-                    } else if (e.key === 'Enter' && selectedSuggestionIndex >= 0) {
+                        this.selectedSuggestionIndex = this.selectedSuggestionIndex <= 0 ? items.length - 1 : this.selectedSuggestionIndex - 1;
+                        this.updateSelectedSuggestion();
+                    } else if (e.key === 'Enter' && this.selectedSuggestionIndex >= 0) {
                         e.preventDefault();
-                        items[selectedSuggestionIndex].click();
+                        items[this.selectedSuggestionIndex].click();
                     } else if (e.key === 'Escape') {
                         dropdown.classList.remove('show');
                         hint.classList.remove('show');
                     }
                 });
 
-                function updateSelectedSuggestion() {
+                this.updateSelectedSuggestion = () => {
                     const items = document.querySelectorAll('.autocomplete-item');
                     items.forEach((item, index) => {
-                        if (index === selectedSuggestionIndex) {
+                        if (index === this.selectedSuggestionIndex) {
                             item.classList.add('selected');
                             // Update hint
                             const title = item.querySelector('.autocomplete-title').innerText.replace(/<[^>]*>/g, '');
@@ -2264,7 +2775,7 @@ document.querySelectorAll('.mini-search-input').forEach(input => {
                             item.classList.remove('selected');
                         }
                     });
-                }
+                };
 
                 // Close dropdown when clicking outside
                 document.addEventListener('click', (e) => {
@@ -2277,12 +2788,15 @@ document.querySelectorAll('.mini-search-input').forEach(input => {
                 document.getElementById('logoHome').addEventListener('click', () => window.scrollTo({ top:0, behavior:'smooth' }));
 
                 // init
-                renderAllFilters();
-                renderCards();
-                setFilter('all');
+                this.renderAllFilters();
+                this.renderCards();
+                this.setFilter('all');
             }
-        })();
+        }
+
+        // Initialize the app
+        const app = new QuizApp();
+        app.initialize();
     </script>
 </body>
 </html>
-
