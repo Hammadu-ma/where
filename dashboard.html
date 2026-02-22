@@ -35,6 +35,7 @@
             --text-secondary: #4b5563;
             --text-tertiary: #9ca3af;
             --border: #d1d5db;
+            --placeholder: #9ca3af;
         }
         
         .dark-mode {
@@ -42,8 +43,9 @@
             --surface: #1e293b;
             --text-primary: #f9fafb;
             --text-secondary: #d1d5db;
-            --text-tertiary: #6b7280;
+            --text-tertiary: #94a3b8;
             --border: #334155;
+            --placeholder: #94a3b8;
         }
 
         body {
@@ -51,6 +53,20 @@
             color: var(--text-primary);
             transition: var(--transition);
             min-height: 100vh;
+        }
+
+        /* Fix for placeholder visibility in dark mode */
+        input::placeholder {
+            color: var(--placeholder) !important;
+            opacity: 0.8 !important;
+        }
+        
+        input:-ms-input-placeholder {
+            color: var(--placeholder) !important;
+        }
+        
+        input::-ms-input-placeholder {
+            color: var(--placeholder) !important;
         }
 
         /* Custom Header with Back Button and Profile */
@@ -422,58 +438,86 @@
             box-shadow: 0 15px 30px rgba(0,0,0,0.2);
         }
 
-        /* Mini Search Bar */
+        /* Mini Search Bar - Matching Main Search Style */
         .mini-search {
-            padding: 0.5rem;
+            padding: 0.75rem;
             border-bottom: 1px solid var(--border);
             background: var(--surface);
         }
         
         .mini-search-input {
             width: 100%;
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
+            padding: 0.6rem 1rem;
+            border-radius: 30px;
             border: 1px solid var(--border);
             background: var(--background);
             color: var(--text-primary);
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             transition: var(--transition);
         }
         
         .mini-search-input:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.2);
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+        }
+        
+        .mini-search-input::placeholder {
+            color: var(--placeholder);
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+        
+        /* Search icon container for mini search */
+        .mini-search-wrapper {
+            position: relative;
+            width: 100%;
+        }
+        
+        .mini-search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-tertiary);
+            font-size: 0.8rem;
+            pointer-events: none;
+        }
+        
+        .mini-search-input.with-icon {
+            padding-left: 32px;
         }
 
         /* Mini Filter Buttons */
         .mini-filters {
             display: flex;
-            gap: 0.3rem;
-            padding: 0.5rem;
+            gap: 0.4rem;
+            padding: 0.75rem;
             border-bottom: 1px solid var(--border);
             flex-wrap: wrap;
             background: var(--surface);
         }
         
         .mini-filter-btn {
-            padding: 0.2rem 0.6rem;
-            border-radius: 15px;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
             border: 1px solid var(--border);
-            background: transparent;
+            background: var(--background);
             color: var(--text-secondary);
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             cursor: pointer;
             transition: var(--transition);
             display: flex;
             align-items: center;
-            gap: 0.2rem;
+            gap: 0.3rem;
+            font-weight: 500;
         }
         
         .mini-filter-btn:hover {
             background: var(--primary-light);
             color: var(--primary-dark);
             border-color: var(--primary);
+            transform: translateY(-1px);
         }
         
         .mini-filter-btn.active {
@@ -481,40 +525,72 @@
             color: white;
             border-color: transparent;
         }
+        
+        .mini-filter-btn i {
+            font-size: 0.7rem;
+        }
 
-        /* Mini Sort */
+        /* Mini Sort - Matching Main Style */
         .mini-sort {
-            padding: 0.5rem;
+            padding: 0.75rem;
             border-bottom: 1px solid var(--border);
             background: var(--surface);
         }
         
         .mini-sort-select {
             width: 100%;
-            padding: 0.3rem 0.6rem;
-            border-radius: 15px;
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
             border: 1px solid var(--border);
             background: var(--background);
             color: var(--text-primary);
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+        }
+        
+        .mini-sort-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+        }
+        
+        .mini-sort-select option {
+            background: var(--surface);
+            color: var(--text-primary);
         }
 
         /* Search Stats */
         .search-stats {
-            padding: 0.3rem 0.5rem;
-            font-size: 0.7rem;
+            padding: 0.4rem 0.75rem;
+            font-size: 0.75rem;
             color: var(--text-tertiary);
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            background: var(--surface);
         }
         
         .clear-search {
             color: var(--primary);
             cursor: pointer;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            background: var(--background);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+        
+        .clear-search:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
         }
 
         .quiz-list { 
@@ -725,6 +801,16 @@
             from { opacity: 1; }
             to { opacity: 0; }
         }
+
+        /* Main search input fix */
+        #smartSearch {
+            color: var(--text-primary);
+        }
+        
+        #smartSearch::placeholder {
+            color: var(--placeholder);
+            opacity: 1;
+        }
     </style>
 </head>
 <body class="dark-mode">
@@ -821,7 +907,7 @@
                     <div class="search-container">
                         <div class="input-group rounded-pill bg-surface border border-custom search-with-autocomplete">
                             <span class="input-group-text bg-transparent border-0 text-secondary"><i class="fas fa-search"></i></span>
-                            <input type="text" class="form-control bg-transparent border-0 ps-0" id="smartSearch" placeholder="🔍 Type to search quizzes, topics, subjects..." autocomplete="off">
+                            <input type="text" class="form-control bg-transparent border-0 ps-0" id="smartSearch" placeholder="🔍 Search quizzes, topics, subjects..." autocomplete="off">
                             <span class="autocomplete-hint" id="autocompleteHint">
                                 <i class="fas fa-lightbulb"></i>
                                 <span id="hintText"></span>
@@ -1433,12 +1519,15 @@
                                     <span class="badge bg-primary rounded-pill ms-auto">${filtered.length}/${subject.quizzes.length}</span>
                                 </div>
                                 
-                                <!-- Mini Search Bar -->
+                                <!-- Mini Search Bar - Matching Main Style -->
                                 <div class="mini-search">
-                                    <input type="text" class="mini-search-input" 
-                                        placeholder="🔍 Search in ${subject.display}..." 
-                                        data-subject="${subject.subject}"
-                                        value="${miniSearchStates[subject.subject] || ''}">
+                                    <div class="mini-search-wrapper">
+                                        <i class="fas fa-search mini-search-icon"></i>
+                                        <input type="text" class="mini-search-input with-icon" 
+                                            placeholder="🔍 Search in ${subject.display}..." 
+                                            data-subject="${subject.subject}"
+                                            value="${miniSearchStates[subject.subject] || ''}">
+                                    </div>
                                 </div>
                                 
                                 <!-- Mini Filters -->
