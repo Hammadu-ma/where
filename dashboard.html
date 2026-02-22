@@ -2014,87 +2014,130 @@
                     // Update global search count
                     updateGlobalSearchCount();
                     
-                    // FIXED: Attach mini search event listeners with autocomplete (without full re-render)
-                    document.querySelectorAll('.mini-search-input').forEach(input => {
-                        const subject = input.dataset.subject;
-                        const dropdownId = `miniDropdown-${subject}`;
-                        const hintId = `miniHint-${subject}`;
-                        
-                        let timeout;
-                        let suggestionTimeout;
-                        
-                        input.addEventListener('input', (e) => {
-                            const query = e.target.value;
-                            
-                            // Reset selection for this subject
-                            miniSelectedSuggestionIndices[subject] = -1;
-                            
-                            // Clear previous suggestion timeout
-                            clearTimeout(suggestionTimeout);
-                            
-                            // Get and show suggestions immediately (without re-render)
-                            suggestionTimeout = setTimeout(() => {
-                                const subjectData = quizData.find(s => s.subject === subject);
-                                const suggestions = getMiniAutocompleteSuggestions(query, subjectData);
-                                renderMiniAutocompleteDropdown(subject, suggestions, query, dropdownId, hintId);
-                            }, 50); // Small delay for smoothness
-                            
-                            // Update search results with debounce - but DON'T re-render everything
-                            clearTimeout(timeout);
-                            timeout = setTimeout(() => {
-                                // Only update the state
-                                miniSearchStates[subject] = query;
-                                
-                                // Instead of full re-render, update just the quiz list for this subject
-                                updateSubjectQuizzes(subject, query);
-                            }, 300); // Longer delay for actual search
-                        });
+                 // Replace the mini search event listener section in renderCards() with this:
 
-                        // Handle focus to show suggestions if there's already text
-                        input.addEventListener('focus', (e) => {
-                            const query = e.target.value;
-                            if (query.length > 0) {
-                                const subjectData = quizData.find(s => s.subject === subject);
-                                const suggestions = getMiniAutocompleteSuggestions(query, subjectData);
-                                renderMiniAutocompleteDropdown(subject, suggestions, query, dropdownId, hintId);
-                            }
-                        });
+// Attach mini search event listeners with autocomplete (without full re-render)
+document.querySelectorAll('.mini-search-input').forEach(input => {
+    const subject = input.dataset.subject;
+    const dropdownId = `miniDropdown-${subject}`;
+    const hintId = `miniHint-${subject}`;
+    const dropdown = document.getElementById(dropdownId);
+    
+    let timeout;
+    let suggestionTimeout;
+    let hideDropdownTimeout;
+    
+    input.addEventListener('input', (e) => {
+        const query = e.target.value;
+        
+        // Reset selection for this subject
+        miniSelectedSuggestionIndices[subject] = -1;
+        
+        // Clear previous timeouts
+        clearTimeout(suggestionTimeout);
+        clearTimeout(hideDropdownTimeout);
+        
+        if (query.length === 0) {
+            // If query is empty, hide dropdown after a short delay
+            hideDropdownTimeout = setTimeout(() => {
+                if (dropdown) dropdown.classList.remove('show');
+                const hint = document.getElementById(hintId);
+                if (hint) hint.classList.remove('show');
+            }, 200);
+            return;
+        }
+        
+        // Get and show suggestions with a slight delay for better performance
+        suggestionTimeout = setTimeout(() => {
+            const subjectData = quizData.find(s => s.subject === subject);
+            const suggestions = getMiniAutocompleteSuggestions(query, subjectData);
+            renderMiniAutocompleteDropdown(subject, suggestions, query, dropdownId, hintId);
+        }, 100); // Increased delay for smoother typing
+        
+        // Update search results with debounce
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            // Only update the state
+            miniSearchStates[subject] = query;
+            
+            // Update just the quiz list for this subject
+            updateSubjectQuizzes(subject, query);
+        }, 400); // Slightly longer delay for actual search
+    });
 
-                        // Keyboard navigation for mini autocomplete
-                        input.addEventListener('keydown', (e) => {
-                            const dropdown = document.getElementById(dropdownId);
-                            const items = dropdown ? dropdown.querySelectorAll('.mini-autocomplete-item') : [];
-                            
-                            if (items.length === 0) return;
-                            
-                            if (e.key === 'ArrowDown') {
-                                e.preventDefault();
-                                miniSelectedSuggestionIndices[subject] = (miniSelectedSuggestionIndices[subject] + 1) % items.length;
-                                updateMiniSelectedSuggestion(subject, dropdownId, hintId);
-                            } else if (e.key === 'ArrowUp') {
-                                e.preventDefault();
-                                miniSelectedSuggestionIndices[subject] = miniSelectedSuggestionIndices[subject] <= 0 ? items.length - 1 : miniSelectedSuggestionIndices[subject] - 1;
-                                updateMiniSelectedSuggestion(subject, dropdownId, hintId);
-                            } else if (e.key === 'Enter' && miniSelectedSuggestionIndices[subject] >= 0) {
-                                e.preventDefault();
-                                items[miniSelectedSuggestionIndices[subject]].click();
-                            } else if (e.key === 'Escape') {
-                                dropdown.classList.remove('show');
-                                const hint = document.getElementById(hintId);
-                                if (hint) hint.classList.remove('show');
-                            }
-                        });
+    // Handle focus to show suggestions if there's already text
+    input.addEventListener('focus', (e) => {
+        const query = e.target.value;
+        if (query.length > 0) {
+            clearTimeout(hideDropdownTimeout);
+            const subjectData = quizData.find(s => s.subject === subject);
+            const suggestions = getMiniAutocompleteSuggestions(query, subjectData);
+            renderMiniAutocompleteDropdown(subject, suggestions, query, dropdownId, hintId);
+        }
+    });
 
-                        // Close dropdown when clicking outside
-                        document.addEventListener('click', (e) => {
-                            const dropdown = document.getElementById(dropdownId);
-                            const hint = document.getElementById(hintId);
-                            if (!input.contains(e.target) && dropdown && !dropdown.contains(e.target)) {
-                                dropdown.classList.remove('show');
-                                if (hint) hint.classList.remove('show');
-                            }
-                        });
-                    });
+    // Keyboard navigation for mini autocomplete
+    input.addEventListener('keydown', (e) => {
+        const dropdown = document.getElementById(dropdownId);
+        const items = dropdown ? dropdown.querySelectorAll('.mini-autocomplete-item') : [];
+        
+        if (items.length === 0) return;
+        
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            miniSelectedSuggestionIndices[subject] = (miniSelectedSuggestionIndices[subject] + 1) % items.length;
+            updateMiniSelectedSuggestion(subject, dropdownId, hintId);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            miniSelectedSuggestionIndices[subject] = miniSelectedSuggestionIndices[subject] <= 0 ? items.length - 1 : miniSelectedSuggestionIndices[subject] - 1;
+            updateMiniSelectedSuggestion(subject, dropdownId, hintId);
+        } else if (e.key === 'Enter' && miniSelectedSuggestionIndices[subject] >= 0) {
+            e.preventDefault();
+            items[miniSelectedSuggestionIndices[subject]].click();
+        } else if (e.key === 'Escape') {
+            if (dropdown) dropdown.classList.remove('show');
+            const hint = document.getElementById(hintId);
+            if (hint) hint.classList.remove('show');
+        }
+    });
+
+    // Handle input blur (when focus leaves the input)
+    input.addEventListener('blur', (e) => {
+        // Don't hide immediately - give time for clicking on dropdown items
+        hideDropdownTimeout = setTimeout(() => {
+            // Check if the dropdown is still focused
+            const dropdown = document.getElementById(dropdownId);
+            if (dropdown && !dropdown.matches(':hover')) {
+                dropdown.classList.remove('show');
+                const hint = document.getElementById(hintId);
+                if (hint) hint.classList.remove('show');
+            }
+        }, 300); // Increased delay to allow clicking on dropdown items
+    });
+
+    // Prevent dropdown from hiding when clicking on it
+    if (dropdown) {
+        dropdown.addEventListener('mousedown', (e) => {
+            // Prevent blur event from firing when clicking on dropdown
+            e.preventDefault();
+        });
+        
+        dropdown.addEventListener('click', (e) => {
+            // Allow clicks on dropdown items
+            clearTimeout(hideDropdownTimeout);
+        });
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!input.contains(e.target) && dropdown && !dropdown.contains(e.target)) {
+            clearTimeout(hideDropdownTimeout);
+            dropdown.classList.remove('show');
+            const hint = document.getElementById(hintId);
+            if (hint) hint.classList.remove('show');
+        }
+    });
+});
                     
                     // Attach mini filter event listeners
                     document.querySelectorAll('.mini-filter-btn').forEach(btn => {
