@@ -31,6 +31,7 @@
             --radius: 12px;
             --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             --gradient: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+            
         }
         
         .light-mode {
@@ -378,7 +379,20 @@
             margin-top: 1rem;
         }
 
-       /* Skeleton Loader Styles */
+/* Define skeleton colors at the root level with default values */
+:root {
+    /* Light mode default */
+    --skeleton-bg: #e5e7eb;
+    --skeleton-highlight: #f9fafb;
+}
+
+/* Override for dark mode when body has dark-mode class */
+body.dark-mode {
+    --skeleton-bg: #2d3748;
+    --skeleton-highlight: #4a5568;
+}
+
+/* Skeleton Loader Styles */
 .skeleton-loader {
     background: linear-gradient(
         90deg, 
@@ -389,18 +403,6 @@
     background-size: 200% 100%;
     animation: loading 1.5s infinite;
     border-radius: var(--radius);
-}
-
-/* Light mode skeleton colors */
-.light-mode {
-    --skeleton-bg: #e5e7eb;        /* Light gray */
-    --skeleton-highlight: #f9fafb;  /* Almost white */
-}
-
-/* Dark mode skeleton colors */
-.dark-mode {
-    --skeleton-bg: #2d3748;         /* Dark gray */
-    --skeleton-highlight: #4a5568;   /* Lighter dark gray */
 }
 
 @keyframes loading {
