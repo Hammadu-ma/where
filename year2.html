@@ -31,6 +31,8 @@
             --radius: 12px;
             --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             --gradient: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+            --skeleton-base: #e2e8f0;
+            --skeleton-highlight: #edf2f7;
         }
         
         .light-mode {
@@ -43,6 +45,8 @@
             --placeholder: #9ca3af;
             --input-bg: #ffffff;
             --hover-bg: rgba(96, 165, 250, 0.05);
+            --skeleton-base: #e2e8f0;
+            --skeleton-highlight: #edf2f7;
         }
         
         .dark-mode {
@@ -55,6 +59,8 @@
             --placeholder: #6b7280;
             --input-bg: #0f172a;
             --hover-bg: rgba(96, 165, 250, 0.1);
+            --skeleton-base: #1e293b;
+            --skeleton-highlight: #2d3a4f;
         }
 
         body {
@@ -112,42 +118,50 @@
             backdrop-filter: blur(10px);
         }
 
-        /* Premium Badge */
-        .premium-badge {
-            background: var(--premium);
-            color: white;
-            padding: 0.25rem 1rem;
-            border-radius: 30px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            animation: pulse 2s infinite;
-            box-shadow: 0 2px 10px rgba(139, 92, 246, 0.5);
+        /* Premium Crown on Avatar */
+        .premium-crown {
+            position: absolute;
+            top: -12px;
+            right: -8px;
+            font-size: 1.2rem;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+            animation: crownFloat 3s ease-in-out infinite;
+            z-index: 10;
+        }
+        
+        @keyframes crownFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-3px) rotate(5deg); }
+        }
+        
+        .premium-crown i {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
+        /* Gold Badge */
         .gold-badge {
             background: linear-gradient(135deg, #fbbf24, #f59e0b);
             color: white;
             padding: 0.25rem 1rem;
             border-radius: 30px;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             font-weight: 600;
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            margin-left: 0.5rem;
+            gap: 0.3rem;
             box-shadow: 0 2px 10px rgba(245, 158, 11, 0.5);
             animation: pulse 2s infinite;
         }
-
+        
         @keyframes pulse {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.05); }
         }
 
-        /* Custom Header with Back Button and Profile */
+        /* Custom Header */
         .app-header {
             position: sticky;
             top: 0;
@@ -157,7 +171,6 @@
             padding: 0.75rem 1rem;
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            background-color: rgba(var(--surface-rgb), 0.8);
         }
         
         .header-container {
@@ -175,7 +188,6 @@
             gap: 0.75rem;
         }
         
-        /* Beautiful Back Button */
         .back-btn {
             width: 40px;
             height: 40px;
@@ -213,20 +225,8 @@
         
         .back-btn:hover {
             transform: scale(1.05);
-            box-shadow: 0 6px 15px rgba(59, 130, 246, 0.4);
         }
         
-        .back-btn:active {
-            transform: scale(0.95);
-        }
-        
-        .back-btn i {
-            font-size: 1.2rem;
-            position: relative;
-            z-index: 1;
-        }
-        
-        /* App Logo/Title */
         .app-title {
             display: flex;
             align-items: center;
@@ -256,14 +256,12 @@
             color: var(--primary);
         }
         
-        /* Header Right */
         .header-right {
             display: flex;
             align-items: center;
             gap: 0.75rem;
         }
         
-        /* Theme Toggle in Header */
         .theme-toggle-header {
             width: 40px;
             height: 40px;
@@ -285,7 +283,6 @@
             transform: translateY(-2px);
         }
         
-        /* Profile Button */
         .profile-btn {
             display: flex;
             align-items: center;
@@ -297,11 +294,11 @@
             cursor: pointer;
             transition: var(--transition);
             box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+            position: relative;
         }
         
         .profile-btn:hover {
             transform: scale(1.02);
-            box-shadow: 0 6px 15px rgba(59, 130, 246, 0.4);
         }
         
         .profile-avatar {
@@ -315,6 +312,7 @@
             color: var(--primary);
             font-size: 1.1rem;
             font-weight: 600;
+            position: relative;
         }
         
         .profile-info {
@@ -341,7 +339,60 @@
             }
         }
         
-        /* Gradient Header (for stats) */
+        /* Skeleton Loaders */
+        .skeleton-container {
+            padding: 1rem;
+        }
+        
+        .skeleton-header {
+            width: 100%;
+            height: 120px;
+            background: linear-gradient(90deg, 
+                var(--skeleton-base) 25%, 
+                var(--skeleton-highlight) 50%, 
+                var(--skeleton-base) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+        }
+        
+        .skeleton-search {
+            width: 100%;
+            height: 50px;
+            background: linear-gradient(90deg, 
+                var(--skeleton-base) 25%, 
+                var(--skeleton-highlight) 50%, 
+                var(--skeleton-base) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 50px;
+            margin-bottom: 2rem;
+        }
+        
+        .skeleton-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .skeleton-card {
+            background: linear-gradient(90deg, 
+                var(--skeleton-base) 25%, 
+                var(--skeleton-highlight) 50%, 
+                var(--skeleton-base) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            height: 300px;
+            border-radius: 20px;
+        }
+        
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        /* Gradient Header */
         .gradient-header { 
             background: var(--gradient);
             color: white; 
@@ -349,7 +400,7 @@
             margin-top: 1rem;
         }
 
-        /* Main Search Styles */
+        /* Search Styles */
         .search-container {
             position: relative;
             width: 100%;
@@ -381,7 +432,6 @@
         .main-search-input::placeholder {
             color: var(--placeholder);
             opacity: 0.8;
-            font-weight: 400;
         }
         
         .search-icon-wrapper {
@@ -390,8 +440,8 @@
             padding: 0 1rem 0 1.5rem;
             color: var(--text-tertiary);
         }
-        
-        /* Mini Search Container with Autocomplete */
+
+        /* Mini Search */
         .mini-search-container {
             position: relative;
             width: 100%;
@@ -423,11 +473,6 @@
             background: var(--surface);
         }
         
-        .mini-search-input::placeholder {
-            color: var(--placeholder);
-            opacity: 0.8;
-        }
-        
         .dark-mode .mini-search-input {
             background: var(--background);
         }
@@ -436,7 +481,35 @@
             background: var(--surface);
         }
         
-        /* Mini Autocomplete Dropdown */
+        .mini-autocomplete-hint {
+            position: absolute;
+            right: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-tertiary);
+            font-size: 0.75rem;
+            background: var(--surface);
+            padding: 0.2rem 0.6rem;
+            border-radius: 30px;
+            border: 1px solid var(--border);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.2rem;
+            z-index: 5;
+        }
+        
+        .mini-autocomplete-hint.show {
+            opacity: 1;
+        }
+        
+        .mini-autocomplete-hint i {
+            color: var(--primary);
+            font-size: 0.7rem;
+        }
+        
         .mini-autocomplete-dropdown {
             position: absolute;
             top: 100%;
@@ -468,10 +541,6 @@
             display: flex;
             align-items: center;
             gap: 0.75rem;
-        }
-        
-        .mini-autocomplete-item:last-child {
-            margin-bottom: 0;
         }
         
         .mini-autocomplete-item:hover {
@@ -541,37 +610,8 @@
             color: var(--text-secondary);
             font-weight: 500;
         }
-        
-        .mini-autocomplete-hint {
-            position: absolute;
-            right: 40px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-tertiary);
-            font-size: 0.75rem;
-            background: var(--surface);
-            padding: 0.2rem 0.6rem;
-            border-radius: 30px;
-            border: 1px solid var(--border);
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 0.2rem;
-            z-index: 5;
-        }
-        
-        .mini-autocomplete-hint.show {
-            opacity: 1;
-        }
-        
-        .mini-autocomplete-hint i {
-            color: var(--primary);
-            font-size: 0.7rem;
-        }
 
-        /* Global Autocomplete Dropdown */
+        /* Autocomplete Dropdown */
         .autocomplete-dropdown {
             position: absolute;
             top: 100%;
@@ -603,10 +643,6 @@
             display: flex;
             align-items: center;
             gap: 0.75rem;
-        }
-        
-        .autocomplete-item:last-child {
-            margin-bottom: 0;
         }
         
         .autocomplete-item:hover {
@@ -654,37 +690,6 @@
             font-weight: 700;
             padding: 0 2px;
             border-radius: 4px;
-        }
-        
-        .autocomplete-category {
-            font-size: 0.7rem;
-            padding: 0.25rem 0.75rem;
-            background: var(--border);
-            border-radius: 30px;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-        
-        .autocomplete-badge {
-            padding: 0.2rem 0.6rem;
-            border-radius: 30px;
-            font-size: 0.7rem;
-            font-weight: 600;
-        }
-        
-        .autocomplete-badge.exam {
-            background: rgba(239, 68, 68, 0.15);
-            color: #ef4444;
-        }
-        
-        .autocomplete-badge.practice {
-            background: rgba(34, 197, 94, 0.15);
-            color: #22c55e;
-        }
-        
-        .autocomplete-badge.quizlet {
-            background: rgba(139, 92, 246, 0.15);
-            color: #8b5cf6;
         }
         
         .autocomplete-hint {
@@ -744,7 +749,34 @@
             box-shadow: 0 15px 30px rgba(0,0,0,0.2);
         }
 
-        /* Mini Filters */
+        .badge-exam { 
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white; 
+        }
+        
+        .badge-practice { 
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: white; 
+        }
+        
+        .badge-quizlet { 
+            background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+            color: white; 
+        }
+
+        .stat-card { 
+            background: rgba(255,255,255,0.15); 
+            border-radius: 20px; 
+            padding: 0.4rem 1rem; 
+            text-align: center; 
+        }
+        
+        .stat-value { 
+            font-size: 1.6rem; 
+            font-weight: 700; 
+            line-height: 1.2; 
+        }
+
         .mini-filters {
             display: flex;
             gap: 0.3rem;
@@ -782,7 +814,6 @@
             border-color: transparent;
         }
 
-        /* Mini Sort */
         .mini-sort {
             padding: 0.5rem;
             border-bottom: 1px solid var(--border);
@@ -807,21 +838,7 @@
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
         }
-        
-        .dark-mode .mini-sort-select {
-            background: var(--background);
-        }
-        
-        .dark-mode .mini-sort-select:focus {
-            background: var(--surface);
-        }
-        
-        .mini-sort-select option {
-            background: var(--surface);
-            color: var(--text-primary);
-        }
 
-        /* Search Stats */
         .search-stats {
             padding: 0.4rem 0.75rem;
             font-size: 0.75rem;
@@ -890,13 +907,6 @@
             color: var(--primary); 
             border: 1px solid var(--border);
         }
-        
-        .quiz-title mark { 
-            background: rgba(96, 165, 250, 0.3); 
-            color: inherit; 
-            padding: 0 2px; 
-            border-radius: 4px; 
-        }
 
         .filter-btn { 
             width: 100%; 
@@ -934,35 +944,7 @@
             color: white; 
         }
 
-        .badge-exam { 
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white; 
-        }
-        
-        .badge-practice { 
-            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-            color: white; 
-        }
-        
-        .badge-quizlet { 
-            background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
-            color: white; 
-        }
-
-        .stat-card { 
-            background: rgba(255,255,255,0.15); 
-            border-radius: 20px; 
-            padding: 0.4rem 1rem; 
-            text-align: center; 
-        }
-        
-        .stat-value { 
-            font-size: 1.6rem; 
-            font-weight: 700; 
-            line-height: 1.2; 
-        }
-
-        /* Modal styles */
+        /* Modal */
         .modal {
             position: fixed;
             top: 0;
@@ -1041,7 +1023,6 @@
             opacity: 0.5;
         }
 
-        /* Offcanvas */
         .offcanvas.offcanvas-start { 
             background-color: var(--surface); 
             color: var(--text-primary); 
@@ -1056,24 +1037,6 @@
         @keyframes fadeOut {
             from { opacity: 1; }
             to { opacity: 0; }
-        }
-
-        /* Cache Info */
-        .cache-info {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 0.75rem 1rem;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 0.85rem;
-        }
-        
-        .cache-info i {
-            color: var(--primary);
-            margin-right: 0.5rem;
         }
     </style>
 </head>
@@ -1105,28 +1068,31 @@
         </div>
     </div>
 
+    <!-- Skeleton Loader (Shown while loading) -->
+    <div id="skeletonLoader" style="display: none;">
+        <div class="skeleton-container">
+            <div class="skeleton-header"></div>
+            <div class="skeleton-search"></div>
+            <div class="skeleton-grid">
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+            </div>
+        </div>
+    </div>
+
     <!-- Main Content (Initially Hidden) -->
     <div id="mainApp" style="display: none;">
-        <!-- Cache Info (shown when offline) -->
-        <div id="cacheInfo" class="cache-info" style="display: none;">
-            <div>
-                <i class="fas fa-database"></i>
-                <span>You're viewing cached data from </span>
-                <span id="cacheDate"></span>
-            </div>
-            <span class="badge bg-warning">Offline Mode</span>
-        </div>
-
-        <!-- New Header with Back Button and Profile -->
         <header class="app-header">
             <div class="header-container">
                 <div class="header-left">
-                    <!-- Beautiful Back Button -->
                     <button class="back-btn" id="backButton" title="Go back">
                         <i class="fas fa-arrow-left"></i>
                     </button>
                     
-                    <!-- App Logo/Title -->
                     <div class="app-title" id="logoHome">
                         <div class="app-title-icon">
                             <i class="fas fa-stethoscope"></i>
@@ -1138,19 +1104,17 @@
                 </div>
                 
                 <div class="header-right">
-                    <!-- Theme Toggle -->
                     <button class="theme-toggle-header" id="themeToggleHeader" title="Toggle theme">
                         <i class="fas fa-sun"></i>
                     </button>
                     
-                    <!-- Profile Button -->
                     <button class="profile-btn" id="profileBtn">
                         <div class="profile-avatar" id="profileAvatar">
                             <i class="fas fa-user"></i>
                         </div>
                         <div class="profile-info">
                             <div class="profile-name" id="profileName">Medical Student</div>
-                            <div class="profile-role" id="profileRole">Learner</div>
+                            <div class="profile-role" id="profileRole"></div>
                         </div>
                     </button>
                 </div>
@@ -1158,7 +1122,6 @@
         </header>
 
         <div class="container-lg py-3 py-md-4">
-            <!-- Header with stats -->
             <div class="gradient-header rounded-4 p-4 p-md-5 mb-4 position-relative overflow-hidden">
                 <div class="position-relative z-1 d-flex flex-wrap align-items-center justify-content-between gap-3">
                     <div>
@@ -1169,18 +1132,16 @@
                 </div>
             </div>
 
-            <!-- Mobile filter bar + offcanvas toggle -->
             <div class="d-flex d-lg-none align-items-center gap-3 mb-4">
-                <button class="btn btn-outline-secondary d-flex align-items-center gap-2 py-2 px-4 rounded-pill" type="button" data-bs-toggle="offcanvas" data-bs-target="#subjectOffcanvas" aria-controls="subjectOffcanvas">
+                <button class="btn btn-outline-secondary d-flex align-items-center gap-2 py-2 px-4 rounded-pill" type="button" data-bs-toggle="offcanvas" data-bs-target="#subjectOffcanvas">
                     <i class="fas fa-sliders-h"></i> Subjects filter
                 </button>
                 <span class="text-secondary small" id="mobileActiveFilter">All subjects</span>
             </div>
 
-            <!-- Offcanvas (mobile sidebar) -->
-            <div class="offcanvas offcanvas-start" tabindex="-1" id="subjectOffcanvas" aria-labelledby="offcanvasLabel">
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="subjectOffcanvas">
                 <div class="offcanvas-header">
-                    <h5 class="offcanvas-title fw-bold" id="offcanvasLabel"><i class="fas fa-filter me-2"></i>Subjects</h5>
+                    <h5 class="offcanvas-title fw-bold"><i class="fas fa-filter me-2"></i>Subjects</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                 </div>
                 <div class="offcanvas-body">
@@ -1188,7 +1149,6 @@
                 </div>
             </div>
 
-            <!-- Main Search with Autocomplete -->
             <div class="row g-3 align-items-center mb-4">
                 <div class="col-12">
                     <div class="search-container">
@@ -1204,15 +1164,12 @@
                             <span id="globalSearchCount" class="me-2"></span>
                         </div>
                         
-                        <!-- Autocomplete Dropdown -->
                         <div class="autocomplete-dropdown" id="autocompleteDropdown"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- main grid -->
             <div class="row g-4">
-                <!-- desktop sidebar -->
                 <aside class="col-lg-3 d-none d-lg-block">
                     <div class="bg-surface p-4 rounded-4 border border-custom sticky-top" style="top:1rem;">
                         <h5 class="fw-bold mb-3 text-primary-custom"><i class="fas fa-filter me-2"></i>Subjects</h5>
@@ -1220,10 +1177,8 @@
                     </div>
                 </aside>
 
-                <!-- quiz cards column -->
                 <main class="col-lg-9">
                     <div class="row g-4" id="subjectsGrid"></div>
-                    <!-- no results row -->
                     <div class="row" id="noResultsRow" style="display: none;">
                         <div class="col-12">
                             <div class="bg-surface p-5 rounded-4 text-center border border-custom">
@@ -1235,9 +1190,8 @@
                 </main>
             </div>
 
-            <!-- footer -->
             <footer class="text-center text-secondary border-top border-custom mt-5 pt-4">
-                <p>ALIF · bootstrap medical quiz · data from JSON</p>
+                <p>ALIF · bootstrap medical quiz · offline ready</p>
             </footer>
         </div>
     </div>
@@ -1246,7 +1200,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        // Firebase Configuration (unchanged)
+        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyC4DSMVg4c98kQf5sSF8ueD631QgO4SXn0",
             authDomain: "medical-quiz-40228.firebaseapp.com",
@@ -1260,7 +1214,7 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // Enable offline persistence (same as before)
+        // Enable offline persistence
         db.enablePersistence({
             synchronizeTabs: true
         }).catch((err) => {
@@ -1271,169 +1225,258 @@
             }
         });
 
-        (function() {
-            // Connection monitoring
-            let isOnline = navigator.onLine;
-            const connectionStatus = document.getElementById('connectionStatus');
-            const offlineIndicator = document.getElementById('offlineIndicator');
-            const cacheInfo = document.getElementById('cacheInfo');
-            const cacheDate = document.getElementById('cacheDate');
-            const cacheTimestamp = document.getElementById('cacheTimestamp');
+        // Enhanced App Manager with Offline & Badge Support
+        class AppManager {
+            constructor() {
+                this.currentUser = null;
+                this.userData = null;
+                this.registeredYears = [];
+                this.isOnline = navigator.onLine;
+                this.syncInProgress = false;
+                this.cacheKey = 'quiz_data_cache';
+                this.quizData = null;
+                this.badgeType = null; // 'premium', 'gold', or null
+            }
 
-            function updateConnectionStatus(online) {
-                isOnline = online;
+            async initialize() {
+                // Show skeleton loader
+                this.showSkeletonLoader();
                 
-                if (online) {
-                    connectionStatus.className = 'connection-status online';
-                    connectionStatus.innerHTML = '<i class="fas fa-wifi"></i><span>Connected</span>';
-                    connectionStatus.style.display = 'flex';
+                try {
+                    // Initialize connection monitoring
+                    this.initConnectionMonitoring();
+                    
+                    // Check if user is registered
+                    const storedUser = localStorage.getItem('currentUser');
+                    if (!storedUser) {
+                        document.getElementById('registerModal').style.display = 'flex';
+                        document.getElementById('skeletonLoader').style.display = 'none';
+                        return;
+                    }
+
+                    this.currentUser = JSON.parse(storedUser);
+                    
+                    // Try to load from cache first
+                    await this.loadFromCache();
+                    
+                    // Try to fetch fresh data from Firebase
+                    if (this.isOnline) {
+                        await this.fetchUserData();
+                    } else {
+                        this.showOfflineMessage();
+                    }
+                    
+                    // Update profile with badge
+                    await this.updateProfileWithBadge();
+                    
+                    // Load quiz data (from cache or default)
+                    await this.loadQuizData();
+                    
+                    // Initialize the main app
+                    this.initializeMainApp();
+                    
+                } catch (error) {
+                    console.error('Initialization error:', error);
+                    // If all else fails, load default quiz data
+                    this.quizData = this.getDefaultQuizData();
+                    this.initializeMainApp();
+                } finally {
+                    // Hide skeleton loader
+                    document.getElementById('skeletonLoader').style.display = 'none';
+                    document.getElementById('mainApp').style.display = 'block';
+                }
+            }
+
+            showSkeletonLoader() {
+                document.getElementById('registerModal').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'none';
+                document.getElementById('skeletonLoader').style.display = 'block';
+            }
+
+            initConnectionMonitoring() {
+                window.addEventListener('online', () => this.handleConnectionRestored());
+                window.addEventListener('offline', () => this.handleConnectionLost());
+                this.updateConnectionStatus(navigator.onLine);
+            }
+
+            updateConnectionStatus(isOnline) {
+                this.isOnline = isOnline;
+                const statusDiv = document.getElementById('connectionStatus');
+                const offlineIndicator = document.getElementById('offlineIndicator');
+
+                if (isOnline) {
+                    statusDiv.className = 'connection-status online';
+                    statusDiv.innerHTML = '<i class="fas fa-wifi"></i><span>Connected</span>';
+                    statusDiv.style.display = 'flex';
                     offlineIndicator.style.display = 'none';
-                    cacheInfo.style.display = 'none';
                     
                     setTimeout(() => {
-                        if (isOnline) {
-                            connectionStatus.style.display = 'none';
+                        if (this.isOnline) {
+                            statusDiv.style.display = 'none';
                         }
                     }, 3000);
                 } else {
-                    connectionStatus.className = 'connection-status offline';
-                    connectionStatus.innerHTML = '<i class="fas fa-wifi-slash"></i><span>Offline Mode</span>';
-                    connectionStatus.style.display = 'flex';
+                    statusDiv.className = 'connection-status offline';
+                    statusDiv.innerHTML = '<i class="fas fa-wifi-slash"></i><span>Offline Mode</span>';
+                    statusDiv.style.display = 'flex';
                     offlineIndicator.style.display = 'flex';
                     
-                    // Show cache info with timestamp
-                    const cache = localStorage.getItem('userCache');
+                    // Show cache timestamp
+                    const cache = localStorage.getItem(this.cacheKey);
                     if (cache) {
-                        try {
-                            const cacheData = JSON.parse(cache);
-                            if (cacheData.timestamp) {
-                                cacheDate.textContent = new Date(cacheData.timestamp).toLocaleString();
-                                cacheTimestamp.textContent = `Last updated: ${new Date(cacheData.timestamp).toLocaleTimeString()}`;
-                            }
-                        } catch (e) {}
-                        cacheInfo.style.display = 'flex';
+                        const data = JSON.parse(cache);
+                        document.getElementById('cacheTimestamp').textContent = 
+                            `Last updated: ${new Date(data.timestamp).toLocaleTimeString()}`;
                     }
                 }
             }
 
-            window.addEventListener('online', () => updateConnectionStatus(true));
-            window.addEventListener('offline', () => updateConnectionStatus(false));
-            updateConnectionStatus(navigator.onLine);
-
-            // Check if user is registered
-            const checkUserRegistration = () => {
-                const registeredUser = localStorage.getItem('medicalUser');
-                const currentUser = localStorage.getItem('currentUser');
-                return !!(registeredUser || currentUser);
-            };
-
-            // Handle registration modal
-            const registerModal = document.getElementById('registerModal');
-            const mainApp = document.getElementById('mainApp');
-            const goToRegisterBtn = document.getElementById('goToRegisterBtn');
-
-            // Check if user is registered
-            if (checkUserRegistration()) {
-                registerModal.style.display = 'none';
-                mainApp.style.display = 'block';
-                initializeApp();
-            } else {
-                registerModal.style.display = 'flex';
-                mainApp.style.display = 'none';
-                
-                goToRegisterBtn.addEventListener('click', () => {
-                    window.location.href = 'register.html';
-                });
+            handleConnectionLost() {
+                console.log('Connection lost - switching to offline mode');
+                this.updateConnectionStatus(false);
+                this.showMessage('You are offline. Using cached data.', 'warning');
             }
 
-            // App initialization function
-            async function initializeApp() {
-                // Get user data from localStorage (for offline)
-                let currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            async handleConnectionRestored() {
+                console.log('Connection restored - syncing data');
+                this.updateConnectionStatus(true);
                 
-                // Try to fetch fresh user data if online
-                if (isOnline && currentUser.id) {
-                    try {
-                        const userDoc = await db.collection('users').doc(currentUser.id).get();
-                        if (userDoc.exists) {
-                            currentUser = { ...currentUser, ...userDoc.data() };
-                            localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                            
-                            // Cache user data for offline
-                            const cacheData = {
-                                userData: currentUser,
-                                timestamp: Date.now()
-                            };
-                            localStorage.setItem('userCache', JSON.stringify(cacheData));
+                const statusDiv = document.getElementById('connectionStatus');
+                statusDiv.className = 'connection-status syncing';
+                statusDiv.innerHTML = '<i class="fas fa-sync-alt fa-spin"></i><span>Syncing...</span>';
+                statusDiv.style.display = 'flex';
+                
+                this.syncInProgress = true;
+                
+                try {
+                    await this.fetchUserData();
+                    await this.updateProfileWithBadge();
+                    this.showMessage('Data synced successfully!', 'success');
+                } catch (error) {
+                    console.error('Sync error:', error);
+                } finally {
+                    this.syncInProgress = false;
+                    setTimeout(() => {
+                        if (this.isOnline && !this.syncInProgress) {
+                            statusDiv.style.display = 'none';
                         }
-                    } catch (error) {
-                        console.log('Error fetching user data, using cached version');
-                        // Try to load from cache
-                        const cache = localStorage.getItem('userCache');
-                        if (cache) {
-                            try {
-                                const cacheData = JSON.parse(cache);
-                                currentUser = cacheData.userData;
-                            } catch (e) {}
-                        }
+                    }, 2000);
+                }
+            }
+
+            async loadFromCache() {
+                try {
+                    const cached = localStorage.getItem(this.cacheKey);
+                    if (cached) {
+                        const data = JSON.parse(cached);
+                        this.userData = data.userData;
+                        console.log('Loaded from cache:', new Date(data.timestamp).toLocaleString());
                     }
+                } catch (error) {
+                    console.error('Error loading from cache:', error);
+                }
+            }
+
+            saveToCache() {
+                try {
+                    const cacheData = {
+                        userData: this.userData,
+                        timestamp: Date.now()
+                    };
+                    localStorage.setItem(this.cacheKey, JSON.stringify(cacheData));
+                } catch (error) {
+                    console.error('Error saving to cache:', error);
+                }
+            }
+
+            async fetchUserData() {
+                try {
+                    const userDoc = await db.collection('users').doc(this.currentUser.id).get();
+                    if (userDoc.exists) {
+                        this.userData = userDoc.data();
+                        
+                        // Update localStorage
+                        localStorage.setItem('currentUser', JSON.stringify({
+                            ...this.currentUser,
+                            ...this.userData
+                        }));
+                        
+                        // Save to cache
+                        this.saveToCache();
+                    } else {
+                        // Fallback to localStorage
+                        this.userData = this.currentUser;
+                    }
+                } catch (error) {
+                    console.error('Error fetching user data:', error);
+                    // Fallback to localStorage
+                    this.userData = this.currentUser;
+                    
+                    // Try to load from cache
+                    await this.loadFromCache();
+                }
+            }
+
+            async updateProfileWithBadge() {
+                // Get registered years
+                this.registeredYears = (this.userData?.registeredYears || [])
+                    .map(y => y.toString());
+                
+                console.log('Registered years:', this.registeredYears);
+                
+                // Determine badge type
+                const yearCount = this.registeredYears.length;
+                
+                // Check for premium from admin
+                const isPremiumFromAdmin = 
+                    this.userData?.status === 'premium' ||
+                    this.userData?.role === 'premium' ||
+                    this.userData?.plan === 'premium';
+
+                if (isPremiumFromAdmin || yearCount === 6) {
+                    this.badgeType = 'premium';
+                    console.log('🎯 PREMIUM badge awarded');
+                } else if (yearCount >= 4) {
+                    this.badgeType = 'gold';
+                    console.log('🥇 GOLD badge awarded');
                 } else {
-                    // Offline: load from cache
-                    const cache = localStorage.getItem('userCache');
-                    if (cache) {
-                        try {
-                            const cacheData = JSON.parse(cache);
-                            currentUser = cacheData.userData;
-                        } catch (e) {}
-                    }
+                    this.badgeType = null;
                 }
 
-                // Update profile with user data
+                // Update UI
                 const profileName = document.getElementById('profileName');
                 const profileRole = document.getElementById('profileRole');
                 const profileAvatar = document.getElementById('profileAvatar');
                 
-                if (currentUser.name) {
-                    profileName.textContent = currentUser.name.split(' ')[0] || 'Medical Student';
-                    profileAvatar.innerHTML = currentUser.name.charAt(0).toUpperCase() || '<i class="fas fa-user"></i>';
+                // Set name
+                if (this.userData?.name) {
+                    profileName.textContent = this.userData.name.split(' ')[0] || 'Medical Student';
+                    profileAvatar.innerHTML = this.userData.name.charAt(0).toUpperCase();
                 }
                 
-                // Determine badge based on registered years
-                const registeredYears = currentUser.registeredYears || [];
-                const yearCount = registeredYears.length;
-                
-                // Check for premium status (admin can set status or plan)
-                const isPremium = currentUser.status === 'premium' || 
-                                 currentUser.plan === 'premium' || 
-                                 currentUser.role === 'premium';
-                
-                if (isPremium || yearCount === 6) {
-                    // Premium badge
-                    profileRole.innerHTML = `
-                        <span class="premium-badge">
-                            <i class="fas fa-crown"></i> PREMIUM
-                        </span>
-                    `;
-                    document.querySelector('.profile-btn').style.background = 
-                        'linear-gradient(135deg, #8b5cf6, #ec4899)';
-                } else if (yearCount >= 4) {
-                    // Gold badge
-                    profileRole.innerHTML = `
-                        <span class="gold-badge">
-                            <i class="fas fa-star"></i> GOLD
-                        </span>
-                    `;
-                    document.querySelector('.profile-btn').style.background = 
-                        'linear-gradient(135deg, #fbbf24, #f59e0b)';
+                // Add crown for premium
+                if (this.badgeType === 'premium') {
+                    // Remove existing crown
+                    const existingCrown = profileAvatar.querySelector('.premium-crown');
+                    if (existingCrown) existingCrown.remove();
+                    
+                    // Add new crown
+                    const crown = document.createElement('span');
+                    crown.className = 'premium-crown';
+                    crown.innerHTML = '<i class="fas fa-crown"></i>';
+                    profileAvatar.appendChild(crown);
+                    
+                    // Update role text
+                    profileRole.innerHTML = '<span class="gold-badge"><i class="fas fa-crown"></i> PREMIUM</span>';
+                } else if (this.badgeType === 'gold') {
+                    profileRole.innerHTML = '<span class="gold-badge"><i class="fas fa-star"></i> GOLD</span>';
                 } else {
-                    // No badge
-                    profileRole.textContent = currentUser.role ? 
-                        currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1) : 
-                        (currentUser.plan === 'premium' ? 'Premium User' : 'Trial User');
+                    profileRole.textContent = this.userData?.role || 'Learner';
                 }
+            }
 
-                // ---------- JSON master data (unchanged) ----------
-                const quizData = [
+            getDefaultQuizData() {
+                return [
                     { subject: "embryology", icon: "fas fa-egg", display: "Embryology", quizzes: [
                         { title: "Embryology Practice 1", href: "quiz.html", qCount: 30, type: "practice", difficulty: "beginner" },
                         { title: "Embryology Practice 2", href: "2.html", qCount: 25, type: "practice", difficulty: "beginner" },
@@ -1447,57 +1490,18 @@
                         { title: "JU Anatomy Exam 2014", href: "anatomy2014.html", qCount: 55, type: "exam", difficulty: "advanced" },
                         { title: "JU Anatomy Exam 2016", href: "anatomy2016.html", qCount: 40, type: "exam", difficulty: "intermediate" },
                         { title: "Anatomy Exam 2014", href: "anatquiz1.html", qCount: 50, type: "exam", difficulty: "advanced" },
-                        { title: "CVS Anatomy 1", href: "anatomycvs1.html", qCount: 30, type: "practice", difficulty: "beginner" },
-                        { title: "CVS Anatomy 2", href: "anatomycvs2.html", qCount: 35, type: "practice", difficulty: "intermediate" },
-                        { title: "Anatomy Dhaba", href: "anatomydhaba.html", qCount: 25, type: "practice", difficulty: "beginner" },
-                        { title: "Anatomy Introduction", href: "anatomyintro1.html", qCount: 20, type: "practice", difficulty: "beginner" },
-                        { title: "NS Medicoinfo", href: "anatomymedicoinfo1.html", qCount: 40, type: "quizlet", difficulty: "intermediate" },
-                        { title: "NS DILAB Part 1", href: "anatomynsdilabpart1.html", qCount: 30, type: "quizlet", difficulty: "beginner" },
-                        { title: "NS Full Topic 1", href: "anatomynsfultopic1.html", qCount: 45, type: "quizlet", difficulty: "advanced" },
-                        { title: "NS Full Topic 2", href: "anatomynsfultopic2.html", qCount: 40, type: "quizlet", difficulty: "intermediate" },
-                        { title: "NS Part 1", href: "anatomynspart1.html", qCount: 35, type: "quizlet", difficulty: "beginner" },
-                        { title: "NS Part 2", href: "anatomynspart2.html", qCount: 35, type: "quizlet", difficulty: "intermediate" },
-                        { title: "NS Part 3", href: "anatomynspart3.html", qCount: 35, type: "quizlet", difficulty: "intermediate" },
-                        { title: "NS Part 4", href: "anatomynspart4.html", qCount: 35, type: "quizlet", difficulty: "advanced" },
-                        { title: "Skeletal Anatomy 1", href: "anatomyskeletal1.html", qCount: 40, type: "practice", difficulty: "intermediate" },
-                        { title: "CVS Quizlet 1", href: "cvsquizlets1.html", qCount: 25, type: "quizlet", difficulty: "beginner" },
-                        { title: "Simple CVS", href: "cvsquizlets2.html", qCount: 20, type: "quizlet", difficulty: "beginner" },
-                        { title: "Medium CVS", href: "cvsquizlets3.html", qCount: 30, type: "quizlet", difficulty: "intermediate" },
-                        { title: "Challenging CVS", href: "cvsquizlets4.html", qCount: 35, type: "quizlet", difficulty: "advanced" },
-                        { title: "Master NS Part 1", href: "masterplexus.html", qCount: 50, type: "quizlet", difficulty: "advanced" }
+                        { title: "CVS Anatomy 1", href: "anatomycvs1.html", qCount: 30, type: "practice", difficulty: "beginner" }
                     ] },
                     { subject: "physiology", icon: "fas fa-heartbeat", display: "Physiology", quizzes: [
                         { title: "Physiology NS 1", href: "physions1.html", qCount: 40, type: "quizlet", difficulty: "intermediate" },
                         { title: "Physiology NS 2", href: "physions2.html", qCount: 35, type: "quizlet", difficulty: "intermediate" },
-                        { title: "Physiology NS 3", href: "physions3.html", qCount: 45, type: "quizlet", difficulty: "advanced" },
-                        { title: "Physiology Exam 2016", href: "PHYSIO2016.html", qCount: 50, type: "exam", difficulty: "advanced" },
-                        { title: "Physiology Unique 2015-2016", href: "PHYSIOuniqueto 2015 and 2016.html", qCount: 30, type: "exam", difficulty: "intermediate" }
+                        { title: "Physiology Exam 2016", href: "PHYSIO2016.html", qCount: 50, type: "exam", difficulty: "advanced" }
                     ] },
                     { subject: "biochemistry", icon: "fas fa-flask", display: "Biochemistry", quizzes: [
                         { title: "Biochemistry Enzymes 1", href: "biochemEN1.html", qCount: 30, type: "practice", difficulty: "beginner" },
                         { title: "Biochemistry Enzymes 2", href: "biochemEN2.html", qCount: 28, type: "practice", difficulty: "beginner" },
-                        { title: "Enzymes Concept 3", href: "biochemENCONC3.html", qCount: 25, type: "practice", difficulty: "intermediate" },
-                        { title: "Enzymes Concept 4", href: "biochemENCONC4.html", qCount: 25, type: "practice", difficulty: "intermediate" },
-                        { title: "Enzymes Concept 5", href: "biochemENCONC5.html", qCount: 25, type: "practice", difficulty: "advanced" },
-                        { title: "Enzymes Page 24", href: "biochemEpage24.html", qCount: 15, type: "exam", difficulty: "beginner" },
-                        { title: "Enzymes Page 24.1", href: "biochemEpage24.1.html", qCount: 15, type: "exam", difficulty: "beginner" },
-                        { title: "Enzymes Page 50", href: "biochemEpage50.html", qCount: 20, type: "exam", difficulty: "intermediate" },
                         { title: "Nucleic Acids 1", href: "biochemNA1.html", qCount: 35, type: "quizlet", difficulty: "intermediate" },
-                        { title: "Nucleic Acids 2", href: "biochemNA2.html", qCount: 30, type: "quizlet", difficulty: "intermediate" },
-                        { title: "Nucleic Acids 3", href: "biochemNA3.html", qCount: 25, type: "quizlet", difficulty: "beginner" },
-                        { title: "Carbohydrates 1", href: "biochemcarbohydrate1.html", qCount: 30, type: "practice", difficulty: "beginner" },
-                        { title: "Carbohydrates 2", href: "biochemcarbohydrate2.html", qCount: 30, type: "practice", difficulty: "intermediate" },
-                        { title: "Carbohydrates 60", href: "BIOcarbohydrate60.html", qCount: 60, type: "practice", difficulty: "advanced" },
-                        { title: "Chatterjea Carbohydrates", href: "chatterjeacarbohydrate.html", qCount: 40, type: "quizlet", difficulty: "advanced" },
-                        { title: "Proteins 1", href: "biochemprotein1.html", qCount: 35, type: "quizlet", difficulty: "beginner" },
-                        { title: "Proteins 2", href: "biochemprotein2.html", qCount: 30, type: "quizlet", difficulty: "beginner" },
-                        { title: "Proteins 3", href: "biochemprotein3.html", qCount: 28, type: "quizlet", difficulty: "intermediate" },
-                        { title: "Proteins 4", href: "biochemprotein4.html", qCount: 25, type: "quizlet", difficulty: "intermediate" },
-                        { title: "Proteins 5", href: "biochemprotein5.html", qCount: 30, type: "quizlet", difficulty: "advanced" },
-                        { title: "Proteins 6", href: "biochemprotein6.html", qCount: 30, type: "quizlet", difficulty: "advanced" },
-                        { title: "Proteins 7", href: "biochemprotein7.html", qCount: 30, type: "quizlet", difficulty: "intermediate" },
-                        { title: "Proteins 8", href: "biochemprotein8.html", qCount: 30, type: "quizlet", difficulty: "advanced" },
-                        { title: "Proteins 9", href: "biochemprotein9.html", qCount: 30, type: "quizlet", difficulty: "advanced" }
+                        { title: "Proteins 1", href: "biochemprotein1.html", qCount: 35, type: "quizlet", difficulty: "beginner" }
                     ] },
                     { subject: "histopathology", icon: "fas fa-microscope", display: "Histopathology", quizzes: [
                         { title: "Histopathology Quiz 1", href: "histoquiz1.html", qCount: 25, type: "practice", difficulty: "intermediate" }
@@ -1506,10 +1510,63 @@
                         { title: "Renal Physiology Quiz", href: "renal.html", qCount: 30, type: "practice", difficulty: "intermediate" }
                     ] }
                 ];
+            }
 
-                // stats
+            async loadQuizData() {
+                // For now, use default data
+                // In a real app, you'd fetch this from Firebase or an API
+                this.quizData = this.getDefaultQuizData();
+                
+                // Try to load from cache if available
+                try {
+                    const cached = localStorage.getItem('quiz_data');
+                    if (cached) {
+                        this.quizData = JSON.parse(cached);
+                    } else {
+                        // Save to cache for offline use
+                        localStorage.setItem('quiz_data', JSON.stringify(this.quizData));
+                    }
+                } catch (error) {
+                    console.error('Error loading quiz data:', error);
+                }
+            }
+
+            showMessage(message, type = 'info') {
+                // Create toast notification
+                const toast = document.createElement('div');
+                toast.style.cssText = `
+                    position: fixed;
+                    top: 80px;
+                    right: 20px;
+                    background: ${type === 'success' ? '#22c55e' : type === 'warning' ? '#eab308' : '#ef4444'};
+                    color: white;
+                    padding: 1rem 1.5rem;
+                    border-radius: 12px;
+                    font-size: 0.9rem;
+                    z-index: 10000;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+                    animation: slideIn 0.3s ease-out;
+                `;
+                toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>${message}`;
+                document.body.appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.style.animation = 'fadeOut 0.3s ease-out';
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+
+            showOfflineMessage() {
+                this.showMessage('You are in offline mode. Some features may be limited.', 'warning');
+            }
+
+            initializeMainApp() {
+                const quizData = this.quizData;
+                
+                // Calculate stats
                 const totalQuizzes = quizData.reduce((acc, s) => acc + s.quizzes.length, 0);
                 const totalQuestions = quizData.reduce((acc, s) => acc + s.quizzes.reduce((qacc, q) => qacc + q.qCount, 0), 0);
+                
                 document.getElementById('statsDisplay').innerHTML = `
                     <div class="stat-card"><div class="stat-value">${totalQuizzes}</div><div class="small">Quizzes</div></div>
                     <div class="stat-card"><div class="stat-value">${totalQuestions}+</div><div class="small">Questions</div></div>
@@ -1520,13 +1577,11 @@
                 let currentSearch = '';
                 let selectedSuggestionIndex = -1;
                 
-                // Store mini search states per subject
                 const miniSearchStates = {};
                 const miniFilterStates = {};
                 const miniSortStates = {};
                 const miniSelectedSuggestionIndices = {};
 
-                // Initialize states for each subject
                 quizData.forEach(subject => {
                     miniSearchStates[subject.subject] = '';
                     miniFilterStates[subject.subject] = 'all';
@@ -1534,9 +1589,8 @@
                     miniSelectedSuggestionIndices[subject.subject] = -1;
                 });
 
-                // Back button functionality
-                const backButton = document.getElementById('backButton');
-                backButton.addEventListener('click', () => {
+                // Back button
+                document.getElementById('backButton').addEventListener('click', () => {
                     if (window.history.length > 1) {
                         window.history.back();
                     } else {
@@ -1568,12 +1622,11 @@
                 });
 
                 // Profile button
-                const profileBtn = document.getElementById('profileBtn');
-                profileBtn.addEventListener('click', () => {
+                document.getElementById('profileBtn').addEventListener('click', () => {
                     window.location.href = 'profile.html';
                 });
 
-                // Theme toggle in header
+                // Theme toggle
                 const themeToggleHeader = document.getElementById('themeToggleHeader');
                 const body = document.body;
                 const icon = themeToggleHeader.querySelector('i');
@@ -1598,7 +1651,7 @@
                     }
                 });
 
-                // helpers
+                // Filter functions
                 function setFilter(filter) {
                     currentFilter = filter;
                     renderAllFilters();
@@ -1610,7 +1663,6 @@
                     if (bsOffcanvas) bsOffcanvas.hide();
                 }
 
-                // render filter lists
                 function renderAllFilters() {
                     const allCount = quizData.reduce((acc, s) => acc + s.quizzes.length, 0);
                     let html = `<li class="mb-2"><button class="filter-btn d-flex align-items-center ${currentFilter==='all'?'active':''}" data-filter="all"><i class="fas fa-th me-2"></i> All subjects <span class="filter-count ms-auto">${allCount}</span></button></li>`;
@@ -1632,43 +1684,28 @@
                     });
                 }
 
-                // highlight text
                 function highlightText(text, term) {
                     if (!term) return text;
                     const regex = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
                     return text.replace(regex, '<span class="autocomplete-match">$1</span>');
                 }
 
-                // Apply sorting to quizzes
                 function sortQuizzes(quizzes, sortType) {
                     const sorted = [...quizzes];
-                    
                     switch(sortType) {
-                        case 'title-asc':
-                            return sorted.sort((a, b) => a.title.localeCompare(b.title));
-                        case 'title-desc':
-                            return sorted.sort((a, b) => b.title.localeCompare(a.title));
-                        case 'qcount-asc':
-                            return sorted.sort((a, b) => a.qCount - b.qCount);
-                        case 'qcount-desc':
-                            return sorted.sort((a, b) => b.qCount - a.qCount);
-                        case 'type':
-                            return sorted.sort((a, b) => a.type.localeCompare(b.type));
-                        case 'difficulty':
-                            const difficultyOrder = { 'beginner': 1, 'intermediate': 2, 'advanced': 3 };
-                            return sorted.sort((a, b) => (difficultyOrder[a.difficulty] || 0) - (difficultyOrder[b.difficulty] || 0));
-                        default:
-                            return sorted;
+                        case 'title-asc': return sorted.sort((a, b) => a.title.localeCompare(b.title));
+                        case 'title-desc': return sorted.sort((a, b) => b.title.localeCompare(a.title));
+                        case 'qcount-asc': return sorted.sort((a, b) => a.qCount - b.qCount);
+                        case 'qcount-desc': return sorted.sort((a, b) => b.qCount - a.qCount);
+                        default: return sorted;
                     }
                 }
 
-                // Filter quizzes by type
                 function filterByType(quizzes, filterType) {
                     if (filterType === 'all') return quizzes;
                     return quizzes.filter(q => q.type === filterType);
                 }
 
-                // Update global search count
                 function updateGlobalSearchCount() {
                     const globalCountEl = document.getElementById('globalSearchCount');
                     if (currentSearch) {
@@ -1687,14 +1724,12 @@
                     }
                 }
 
-                // Get mini autocomplete suggestions for a specific subject
                 function getMiniAutocompleteSuggestions(query, subjectData) {
                     if (!query || query.length < 1) return [];
                     
                     const lowercaseQuery = query.toLowerCase();
                     const suggestions = [];
                     
-                    // Search in quiz titles within this subject
                     subjectData.quizzes.forEach(quiz => {
                         if (quiz.title.toLowerCase().includes(lowercaseQuery)) {
                             suggestions.push({
@@ -1708,7 +1743,6 @@
                         }
                     });
                     
-                    // Search by quiz type within this subject
                     ['practice', 'exam', 'quizlet'].forEach(type => {
                         if (type.includes(lowercaseQuery)) {
                             const count = subjectData.quizzes.filter(q => q.type === type).length;
@@ -1725,23 +1759,6 @@
                         }
                     });
                     
-                    // Search by difficulty within this subject
-                    ['beginner', 'intermediate', 'advanced'].forEach(difficulty => {
-                        if (difficulty.includes(lowercaseQuery)) {
-                            const count = subjectData.quizzes.filter(q => q.difficulty === difficulty).length;
-                            if (count > 0) {
-                                suggestions.push({
-                                    type: 'difficulty',
-                                    title: difficulty.charAt(0).toUpperCase() + difficulty.slice(1),
-                                    subtitle: `${count} quizzes`,
-                                    icon: 'fas fa-signal',
-                                    difficulty: difficulty
-                                });
-                            }
-                        }
-                    });
-                    
-                    // Remove duplicates and limit
                     const unique = suggestions.filter((v, i, a) => 
                         a.findIndex(t => t.title === v.title) === i
                     ).slice(0, 5);
@@ -1749,7 +1766,6 @@
                     return unique;
                 }
 
-                // Render mini autocomplete dropdown
                 function renderMiniAutocompleteDropdown(subject, suggestions, query, dropdownId, hintId) {
                     const dropdown = document.getElementById(dropdownId);
                     const hint = document.getElementById(hintId);
@@ -1760,7 +1776,6 @@
                         return;
                     }
                     
-                    // Show first suggestion as hint
                     if (suggestions.length > 0 && hint) {
                         hint.querySelector('span').textContent = suggestions[0].title;
                         hint.classList.add('show');
@@ -1793,24 +1808,12 @@
                                     <span class="mini-autocomplete-category">Filter</span>
                                 </div>
                             `;
-                        } else if (suggestion.type === 'difficulty') {
-                            html += `
-                                <div class="mini-autocomplete-item ${selectedClass}" data-type="difficulty" data-difficulty="${suggestion.difficulty}" data-subject="${subject}">
-                                    <div class="mini-autocomplete-icon"><i class="${suggestion.icon}"></i></div>
-                                    <div class="mini-autocomplete-content">
-                                        <div class="mini-autocomplete-title">${highlightText(suggestion.title, query)}</div>
-                                        <div class="mini-autocomplete-subtitle">${suggestion.subtitle}</div>
-                                    </div>
-                                    <span class="mini-autocomplete-category">Difficulty</span>
-                                </div>
-                            `;
                         }
                     });
                     
                     dropdown.innerHTML = html;
                     dropdown.classList.add('show');
                     
-                    // Add click handlers to mini autocomplete items
                     document.querySelectorAll(`#${dropdownId} .mini-autocomplete-item`).forEach(item => {
                         item.addEventListener('click', () => {
                             const type = item.dataset.type;
@@ -1819,24 +1822,12 @@
                             if (type === 'quiz') {
                                 window.location.href = item.dataset.href;
                             } else if (type === 'filter') {
-                                // Apply filter to this subject
                                 miniFilterStates[subject] = item.dataset.filter;
-                                // Clear the mini search
                                 const input = document.querySelector(`.mini-search-input[data-subject="${subject}"]`);
                                 if (input) {
                                     input.value = '';
                                     miniSearchStates[subject] = '';
                                 }
-                                // Update just this subject
-                                updateSubjectQuizzes(subject, '');
-                            } else if (type === 'difficulty') {
-                                // Clear the search
-                                const input = document.querySelector(`.mini-search-input[data-subject="${subject}"]`);
-                                if (input) {
-                                    input.value = '';
-                                    miniSearchStates[subject] = '';
-                                }
-                                // Update just this subject
                                 updateSubjectQuizzes(subject, '');
                             }
                             
@@ -1846,14 +1837,12 @@
                     });
                 }
 
-                // Global autocomplete functions
                 function getAutocompleteSuggestions(query) {
                     if (!query || query.length < 2) return [];
                     
                     const lowercaseQuery = query.toLowerCase();
                     const suggestions = [];
                     
-                    // Search in quiz titles
                     quizData.forEach(subject => {
                         subject.quizzes.forEach(quiz => {
                             if (quiz.title.toLowerCase().includes(lowercaseQuery)) {
@@ -1870,7 +1859,6 @@
                         });
                     });
                     
-                    // Search in subject names
                     quizData.forEach(subject => {
                         if (subject.display.toLowerCase().includes(lowercaseQuery)) {
                             suggestions.push({
@@ -1883,38 +1871,6 @@
                         }
                     });
                     
-                    // Search by quiz type
-                    ['practice', 'exam', 'quizlet'].forEach(type => {
-                        if (type.includes(lowercaseQuery)) {
-                            const count = quizData.reduce((acc, subject) => 
-                                acc + subject.quizzes.filter(q => q.type === type).length, 0);
-                            suggestions.push({
-                                type: 'filter',
-                                title: type.charAt(0).toUpperCase() + type.slice(1),
-                                subtitle: `${count} quizzes of this type`,
-                                icon: type === 'practice' ? 'fas fa-play-circle' : 
-                                      type === 'exam' ? 'fas fa-file-alt' : 'fas fa-code',
-                                filter: type
-                            });
-                        }
-                    });
-                    
-                    // Search by difficulty
-                    ['beginner', 'intermediate', 'advanced'].forEach(difficulty => {
-                        if (difficulty.includes(lowercaseQuery)) {
-                            const count = quizData.reduce((acc, subject) => 
-                                acc + subject.quizzes.filter(q => q.difficulty === difficulty).length, 0);
-                            suggestions.push({
-                                type: 'difficulty',
-                                title: difficulty.charAt(0).toUpperCase() + difficulty.slice(1),
-                                subtitle: `${count} quizzes with this difficulty`,
-                                icon: 'fas fa-signal',
-                                difficulty: difficulty
-                            });
-                        }
-                    });
-                    
-                    // Remove duplicates (by title) and limit
                     const unique = suggestions.filter((v, i, a) => 
                         a.findIndex(t => t.title === v.title) === i
                     ).slice(0, 8);
@@ -1933,7 +1889,6 @@
                         return;
                     }
                     
-                    // Show first suggestion as hint
                     if (suggestions.length > 0) {
                         hintText.textContent = suggestions[0].title;
                         hint.classList.add('show');
@@ -1968,35 +1923,12 @@
                                     <span class="autocomplete-category">Subject</span>
                                 </div>
                             `;
-                        } else if (suggestion.type === 'filter') {
-                            html += `
-                                <div class="autocomplete-item ${selectedClass}" data-type="filter" data-filter="${suggestion.filter}">
-                                    <div class="autocomplete-icon"><i class="${suggestion.icon}"></i></div>
-                                    <div class="autocomplete-content">
-                                        <div class="autocomplete-title">${highlightText(suggestion.title, query)} quizzes</div>
-                                        <div class="autocomplete-subtitle">${suggestion.subtitle}</div>
-                                    </div>
-                                    <span class="autocomplete-category">Filter</span>
-                                </div>
-                            `;
-                        } else if (suggestion.type === 'difficulty') {
-                            html += `
-                                <div class="autocomplete-item ${selectedClass}" data-type="difficulty" data-difficulty="${suggestion.difficulty}">
-                                    <div class="autocomplete-icon"><i class="${suggestion.icon}"></i></div>
-                                    <div class="autocomplete-content">
-                                        <div class="autocomplete-title">${highlightText(suggestion.title, query)} level</div>
-                                        <div class="autocomplete-subtitle">${suggestion.subtitle}</div>
-                                    </div>
-                                    <span class="autocomplete-category">Difficulty</span>
-                                </div>
-                            `;
                         }
                     });
                     
                     dropdown.innerHTML = html;
                     dropdown.classList.add('show');
                     
-                    // Add click handlers to autocomplete items
                     document.querySelectorAll('.autocomplete-item').forEach(item => {
                         item.addEventListener('click', () => {
                             const type = item.dataset.type;
@@ -2008,14 +1940,6 @@
                                 document.getElementById('smartSearch').value = '';
                                 currentSearch = '';
                                 renderCards();
-                            } else if (type === 'filter') {
-                                document.getElementById('smartSearch').value = '';
-                                currentSearch = '';
-                                renderCards();
-                            } else if (type === 'difficulty') {
-                                document.getElementById('smartSearch').value = '';
-                                currentSearch = '';
-                                renderCards();
                             }
                             
                             dropdown.classList.remove('show');
@@ -2024,12 +1948,10 @@
                     });
                 }
 
-                // NEW FUNCTION: Update only a specific subject's quizzes without full re-render
                 function updateSubjectQuizzes(subjectKey, searchTerm) {
                     const subject = quizData.find(s => s.subject === subjectKey);
                     if (!subject) return;
                     
-                    // Find the card container for this subject
                     const cards = document.querySelectorAll('.subject-card');
                     let targetCard = null;
                     
@@ -2043,12 +1965,10 @@
                     
                     if (!targetCard) return;
                     
-                    // Get current filters
                     const miniTerm = searchTerm.toLowerCase();
                     const filterType = miniFilterStates[subjectKey] || 'all';
                     const sortType = miniSortStates[subjectKey] || 'default';
                     
-                    // Filter and sort quizzes
                     let filtered = subject.quizzes;
                     
                     if (miniTerm) {
@@ -2058,19 +1978,16 @@
                     filtered = filterByType(filtered, filterType);
                     filtered = sortQuizzes(filtered, sortType);
                     
-                    // Update the badge count
                     const badge = targetCard.querySelector('.badge.bg-primary');
                     if (badge) {
                         badge.textContent = `${filtered.length}/${subject.quizzes.length}`;
                     }
                     
-                    // Update the quiz list
                     const quizList = targetCard.querySelector('.quiz-list');
                     if (!quizList) return;
                     
                     const itemsHtml = filtered.map(q => {
-                        const highlightTerm = miniTerm;
-                        const titleDisplay = highlightTerm ? highlightText(q.title, highlightTerm) : q.title;
+                        const titleDisplay = miniTerm ? highlightText(q.title, miniTerm) : q.title;
                         
                         let badgeClass = 'bg-secondary';
                         if (q.type === 'exam') badgeClass = 'badge-exam';
@@ -2100,14 +2017,12 @@
                     
                     quizList.innerHTML = itemsHtml || noResultsHtml;
                     
-                    // Update search stats
                     const existingStats = targetCard.querySelector('.search-stats');
                     if (miniTerm) {
                         if (existingStats) {
                             const span = existingStats.querySelector('span:first-child');
                             if (span) span.innerHTML = `<i class="fas fa-search"></i> ${filtered.length} results`;
                         } else {
-                            // Create search stats if it doesn't exist
                             const statsDiv = document.createElement('div');
                             statsDiv.className = 'search-stats';
                             statsDiv.innerHTML = `
@@ -2115,13 +2030,11 @@
                                 <span class="clear-search" data-subject="${subjectKey}">Clear ✕</span>
                             `;
                             
-                            // Insert after sort select
                             const sortDiv = targetCard.querySelector('.mini-sort');
                             if (sortDiv) {
                                 sortDiv.insertAdjacentElement('afterend', statsDiv);
                             }
                             
-                            // Add clear handler
                             statsDiv.querySelector('.clear-search').addEventListener('click', () => {
                                 miniSearchStates[subjectKey] = '';
                                 const input = document.querySelector(`.mini-search-input[data-subject="${subjectKey}"]`);
@@ -2129,13 +2042,11 @@
                                     input.value = '';
                                 }
                                 
-                                // Hide dropdown and hint
                                 const dropdown = document.getElementById(`miniDropdown-${subjectKey}`);
                                 const hint = document.getElementById(`miniHint-${subjectKey}`);
                                 if (dropdown) dropdown.classList.remove('show');
                                 if (hint) hint.classList.remove('show');
                                 
-                                // Update this subject only
                                 updateSubjectQuizzes(subjectKey, '');
                             });
                         }
@@ -2152,22 +2063,17 @@
                     quizData.forEach(subject => {
                         if (currentFilter !== 'all' && subject.subject !== currentFilter) return;
                         
-                        // Apply global search filter
                         let filtered = subject.quizzes;
                         if (term) {
                             filtered = filtered.filter(q => q.title.toLowerCase().includes(term));
                         }
                         
-                        // Apply mini search
                         const miniTerm = miniSearchStates[subject.subject]?.toLowerCase() || '';
                         if (miniTerm) {
                             filtered = filtered.filter(q => q.title.toLowerCase().includes(miniTerm));
                         }
                         
-                        // Apply mini filter
                         filtered = filterByType(filtered, miniFilterStates[subject.subject] || 'all');
-                        
-                        // Apply mini sort
                         filtered = sortQuizzes(filtered, miniSortStates[subject.subject] || 'default');
                         
                         if (filtered.length === 0 && term === '' && miniTerm === '') return;
@@ -2175,7 +2081,6 @@
                         anyVisible = true;
 
                         const itemsHtml = filtered.map(q => {
-                            // Determine which search term to highlight (prioritize mini search, then global)
                             const highlightTerm = miniTerm || term;
                             const titleDisplay = highlightTerm ? highlightText(q.title, highlightTerm) : q.title;
                             
@@ -2217,7 +2122,6 @@
                                     <span class="badge bg-primary rounded-pill ms-auto">${filtered.length}/${subject.quizzes.length}</span>
                                 </div>
                                 
-                                <!-- Mini Search with Autocomplete -->
                                 <div class="mini-search-container">
                                     <div class="mini-search-wrapper">
                                         <input type="text" class="mini-search-input" 
@@ -2231,11 +2135,9 @@
                                         </span>
                                     </div>
                                     
-                                    <!-- Mini Autocomplete Dropdown -->
                                     <div class="mini-autocomplete-dropdown" id="${dropdownId}"></div>
                                 </div>
                                 
-                                <!-- Mini Filters -->
                                 <div class="mini-filters">
                                     <button class="mini-filter-btn ${miniFilterStates[subject.subject] === 'all' ? 'active' : ''}" data-subject="${subject.subject}" data-filter="all">
                                         <i class="fas fa-list"></i> All
@@ -2251,7 +2153,6 @@
                                     </button>
                                 </div>
                                 
-                                <!-- Mini Sort -->
                                 <div class="mini-sort">
                                     <select class="mini-sort-select" data-subject="${subject.subject}">
                                         <option value="default" ${miniSortStates[subject.subject] === 'default' ? 'selected' : ''}>📊 Default order</option>
@@ -2259,12 +2160,8 @@
                                         <option value="title-desc" ${miniSortStates[subject.subject] === 'title-desc' ? 'selected' : ''}>📝 Title Z-A</option>
                                         <option value="qcount-asc" ${miniSortStates[subject.subject] === 'qcount-asc' ? 'selected' : ''}>🔢 Questions (low to high)</option>
                                         <option value="qcount-desc" ${miniSortStates[subject.subject] === 'qcount-desc' ? 'selected' : ''}>🔢 Questions (high to low)</option>
-                                        <option value="type" ${miniSortStates[subject.subject] === 'type' ? 'selected' : ''}>🏷️ By type</option>
-                                        <option value="difficulty" ${miniSortStates[subject.subject] === 'difficulty' ? 'selected' : ''}>⭐ By difficulty</option>
                                     </select>
                                 </div>
-                                
-                                <!-- Search Stats will be dynamically added here -->
                                 
                                 <div class="p-3">
                                     <ul class="list-unstyled quiz-list ${tooMany?'collapsed':''}">
@@ -2280,10 +2177,9 @@
                     document.getElementById('subjectsGrid').innerHTML = cardsHtml;
                     document.getElementById('noResultsRow').style.display = anyVisible ? 'none' : 'flex';
                     
-                    // Update global search count
                     updateGlobalSearchCount();
                     
-                    // Attach mini search event listeners
+                    // Mini search event listeners
                     document.querySelectorAll('.mini-search-input').forEach(input => {
                         const subject = input.dataset.subject;
                         const dropdownId = `miniDropdown-${subject}`;
@@ -2297,15 +2193,12 @@
                         input.addEventListener('input', (e) => {
                             const query = e.target.value;
                             
-                            // Reset selection for this subject
                             miniSelectedSuggestionIndices[subject] = -1;
                             
-                            // Clear previous timeouts
                             clearTimeout(suggestionTimeout);
                             clearTimeout(hideDropdownTimeout);
                             
                             if (query.length === 0) {
-                                // If query is empty, hide dropdown after a short delay
                                 hideDropdownTimeout = setTimeout(() => {
                                     if (dropdown) dropdown.classList.remove('show');
                                     const hint = document.getElementById(hintId);
@@ -2314,25 +2207,19 @@
                                 return;
                             }
                             
-                            // Get and show suggestions with a slight delay
                             suggestionTimeout = setTimeout(() => {
                                 const subjectData = quizData.find(s => s.subject === subject);
                                 const suggestions = getMiniAutocompleteSuggestions(query, subjectData);
                                 renderMiniAutocompleteDropdown(subject, suggestions, query, dropdownId, hintId);
                             }, 100);
                             
-                            // Update search results with debounce
                             clearTimeout(timeout);
                             timeout = setTimeout(() => {
-                                // Only update the state
                                 miniSearchStates[subject] = query;
-                                
-                                // Update just the quiz list for this subject
                                 updateSubjectQuizzes(subject, query);
                             }, 400);
                         });
 
-                        // Handle focus to show suggestions if there's already text
                         input.addEventListener('focus', (e) => {
                             const query = e.target.value;
                             if (query.length > 0) {
@@ -2343,32 +2230,6 @@
                             }
                         });
 
-                        // Keyboard navigation for mini autocomplete
-                        input.addEventListener('keydown', (e) => {
-                            const dropdown = document.getElementById(dropdownId);
-                            const items = dropdown ? dropdown.querySelectorAll('.mini-autocomplete-item') : [];
-                            
-                            if (items.length === 0) return;
-                            
-                            if (e.key === 'ArrowDown') {
-                                e.preventDefault();
-                                miniSelectedSuggestionIndices[subject] = (miniSelectedSuggestionIndices[subject] + 1) % items.length;
-                                updateMiniSelectedSuggestion(subject, dropdownId, hintId);
-                            } else if (e.key === 'ArrowUp') {
-                                e.preventDefault();
-                                miniSelectedSuggestionIndices[subject] = miniSelectedSuggestionIndices[subject] <= 0 ? items.length - 1 : miniSelectedSuggestionIndices[subject] - 1;
-                                updateMiniSelectedSuggestion(subject, dropdownId, hintId);
-                            } else if (e.key === 'Enter' && miniSelectedSuggestionIndices[subject] >= 0) {
-                                e.preventDefault();
-                                items[miniSelectedSuggestionIndices[subject]].click();
-                            } else if (e.key === 'Escape') {
-                                if (dropdown) dropdown.classList.remove('show');
-                                const hint = document.getElementById(hintId);
-                                if (hint) hint.classList.remove('show');
-                            }
-                        });
-
-                        // Handle input blur
                         input.addEventListener('blur', (e) => {
                             hideDropdownTimeout = setTimeout(() => {
                                 const dropdown = document.getElementById(dropdownId);
@@ -2380,48 +2241,31 @@
                             }, 300);
                         });
 
-                        // Prevent dropdown from hiding when clicking on it
                         if (dropdown) {
                             dropdown.addEventListener('mousedown', (e) => {
                                 e.preventDefault();
                             });
-                            
-                            dropdown.addEventListener('click', (e) => {
-                                clearTimeout(hideDropdownTimeout);
-                            });
                         }
-
-                        // Close dropdown when clicking outside
-                        document.addEventListener('click', (e) => {
-                            if (!input.contains(e.target) && dropdown && !dropdown.contains(e.target)) {
-                                clearTimeout(hideDropdownTimeout);
-                                dropdown.classList.remove('show');
-                                const hint = document.getElementById(hintId);
-                                if (hint) hint.classList.remove('show');
-                            }
-                        });
                     });
                     
-                    // Attach mini filter event listeners
+                    // Mini filter event listeners
                     document.querySelectorAll('.mini-filter-btn').forEach(btn => {
                         btn.addEventListener('click', (e) => {
                             const subject = e.target.dataset.subject;
                             const filter = e.target.dataset.filter;
                             miniFilterStates[subject] = filter;
                             
-                            // Update just this subject
                             const searchTerm = miniSearchStates[subject] || '';
                             updateSubjectQuizzes(subject, searchTerm);
                         });
                     });
                     
-                    // Attach mini sort event listeners
+                    // Mini sort event listeners
                     document.querySelectorAll('.mini-sort-select').forEach(select => {
                         select.addEventListener('change', (e) => {
                             const subject = e.target.dataset.subject;
                             miniSortStates[subject] = e.target.value;
                             
-                            // Update just this subject
                             const searchTerm = miniSearchStates[subject] || '';
                             updateSubjectQuizzes(subject, searchTerm);
                         });
@@ -2432,7 +2276,6 @@
                         const card = btn.closest('.subject-card');
                         const list = card.querySelector('.quiz-list');
                         
-                        // Remove existing listener to prevent duplicates
                         btn.replaceWith(btn.cloneNode(true));
                         const newBtn = card.querySelector('.view-all-btn');
                         
@@ -2446,29 +2289,7 @@
                     });
                 }
 
-                function updateMiniSelectedSuggestion(subject, dropdownId, hintId) {
-                    const dropdown = document.getElementById(dropdownId);
-                    if (!dropdown) return;
-                    
-                    const items = dropdown.querySelectorAll('.mini-autocomplete-item');
-                    const hint = document.getElementById(hintId);
-                    
-                    items.forEach((item, index) => {
-                        if (index === miniSelectedSuggestionIndices[subject]) {
-                            item.classList.add('selected');
-                            // Update hint
-                            const title = item.querySelector('.mini-autocomplete-title').innerText.replace(/<[^>]*>/g, '');
-                            if (hint) {
-                                hint.querySelector('span').textContent = title;
-                                hint.classList.add('show');
-                            }
-                        } else {
-                            item.classList.remove('selected');
-                        }
-                    });
-                }
-
-                // Global search with autocomplete
+                // Global search
                 const searchInput = document.getElementById('smartSearch');
                 const dropdown = document.getElementById('autocompleteDropdown');
                 const hint = document.getElementById('autocompleteHint');
@@ -2478,21 +2299,17 @@
                     clearTimeout(timeout);
                     const query = searchInput.value;
                     
-                    // Reset selection
                     selectedSuggestionIndex = -1;
                     
-                    // Get and show suggestions
                     const suggestions = getAutocompleteSuggestions(query);
                     renderAutocompleteDropdown(suggestions, query);
                     
-                    // Update search results
                     timeout = setTimeout(() => {
                         currentSearch = query;
                         renderCards();
                     }, 150);
                 });
 
-                // Keyboard navigation for autocomplete
                 searchInput.addEventListener('keydown', (e) => {
                     const items = document.querySelectorAll('.autocomplete-item');
                     
@@ -2520,7 +2337,6 @@
                     items.forEach((item, index) => {
                         if (index === selectedSuggestionIndex) {
                             item.classList.add('selected');
-                            // Update hint
                             const title = item.querySelector('.autocomplete-title').innerText.replace(/<[^>]*>/g, '');
                             document.getElementById('hintText').textContent = title;
                         } else {
@@ -2529,7 +2345,6 @@
                     });
                 }
 
-                // Close dropdown when clicking outside
                 document.addEventListener('click', (e) => {
                     if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
                         dropdown.classList.remove('show');
@@ -2539,12 +2354,22 @@
 
                 document.getElementById('logoHome').addEventListener('click', () => window.scrollTo({ top:0, behavior:'smooth' }));
 
-                // init
                 renderAllFilters();
                 renderCards();
                 setFilter('all');
             }
-        })();
+        }
+
+        // Initialize the app
+        const appManager = new AppManager();
+
+        // Handle registration modal
+        document.getElementById('goToRegisterBtn').addEventListener('click', () => {
+            window.location.href = 'register.html';
+        });
+
+        // Start the app
+        appManager.initialize();
     </script>
 </body>
 </html>
