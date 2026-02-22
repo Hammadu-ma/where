@@ -1170,6 +1170,32 @@
         .cache-info i {
             color: var(--primary);
         }
+        /* Add these Bootstrap-like utility classes */
+.bg-surface {
+    background-color: var(--surface);
+}
+
+.border-custom {
+    border-color: var(--border) !important;
+}
+
+.text-primary-custom {
+    color: var(--primary) !important;
+}
+
+/* Make sure the skeleton loader has proper positioning */
+#skeletonLoader {
+    position: relative;
+    z-index: 1000;
+    background: var(--background);
+    min-height: 100vh;
+    padding: 1rem 0;
+}
+
+/* Ensure the skeleton loader is visible when shown */
+#skeletonLoader[style*="display: block"] {
+    display: block !important;
+}
     </style>
 </head>
 <body class="light-mode">
@@ -1200,7 +1226,49 @@
         </div>
     </div>
 
-    <!-- Main Content (Initially Hidden) -->
+    <!-- Skeleton Loader - MOVED OUTSIDE mainApp -->
+    <div id="skeletonLoader" style="display: none;">
+        <div class="container-lg py-3 py-md-4">
+            <!-- Main Search Skeleton -->
+            <div class="row g-3 align-items-center mb-4">
+                <div class="col-12">
+                    <div class="skeleton-loader" style="height: 56px; border-radius: 50px;"></div>
+                </div>
+            </div>
+
+            <!-- Mobile filter bar skeleton -->
+            <div class="d-flex d-lg-none align-items-center gap-3 mb-4">
+                <div class="skeleton-loader" style="width: 150px; height: 40px; border-radius: 30px;"></div>
+                <div class="skeleton-loader" style="width: 100px; height: 20px; border-radius: 30px;"></div>
+            </div>
+
+            <!-- Desktop sidebar skeleton (hidden on mobile) -->
+            <div class="row g-4">
+                <aside class="col-lg-3 d-none d-lg-block">
+                    <div class="bg-surface p-4 rounded-4 border border-custom">
+                        <div class="skeleton-loader" style="width: 100px; height: 24px; margin-bottom: 1rem;"></div>
+                        <div class="skeleton-filter-btn"></div>
+                        <div class="skeleton-filter-btn" style="width: 120px;"></div>
+                        <div class="skeleton-filter-btn" style="width: 90px;"></div>
+                        <div class="skeleton-filter-btn" style="width: 110px;"></div>
+                        <div class="skeleton-filter-btn" style="width: 130px;"></div>
+                        <div class="skeleton-filter-btn" style="width: 80px;"></div>
+                    </div>
+                </aside>
+
+                <!-- Cards skeleton grid -->
+                <main class="col-lg-9">
+                    <div class="skeleton-grid">
+                        <div class="skeleton-card skeleton-loader"></div>
+                        <div class="skeleton-card skeleton-loader"></div>
+                        <div class="skeleton-card skeleton-loader"></div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
     <div id="mainApp" style="display: none;">
         <!-- New Header with Back Button and Profile -->
         <header class="app-header">
@@ -1262,46 +1330,6 @@
                         <p class="mb-0 opacity-75">smart · adaptive · bootstrap</p>
                     </div>
                     <div class="d-flex gap-3" id="statsDisplay"></div>
-                </div>
-            </div>
-
-            <!-- Skeleton Loader (shown during loading) -->
-            <div id="skeletonLoader" style="display: none;">
-                <!-- Main Search Skeleton -->
-                <div class="row g-3 align-items-center mb-4">
-                    <div class="col-12">
-                        <div class="skeleton-loader" style="height: 56px; border-radius: 50px;"></div>
-                    </div>
-                </div>
-
-                <!-- Mobile filter bar skeleton -->
-                <div class="d-flex d-lg-none align-items-center gap-3 mb-4">
-                    <div class="skeleton-loader" style="width: 150px; height: 40px; border-radius: 30px;"></div>
-                    <div class="skeleton-loader" style="width: 100px; height: 20px; border-radius: 30px;"></div>
-                </div>
-
-                <!-- Desktop sidebar skeleton (hidden on mobile) -->
-                <div class="row g-4">
-                    <aside class="col-lg-3 d-none d-lg-block">
-                        <div class="bg-surface p-4 rounded-4 border border-custom">
-                            <div class="skeleton-loader" style="width: 100px; height: 24px; margin-bottom: 1rem;"></div>
-                            <div class="skeleton-filter-btn"></div>
-                            <div class="skeleton-filter-btn" style="width: 120px;"></div>
-                            <div class="skeleton-filter-btn" style="width: 90px;"></div>
-                            <div class="skeleton-filter-btn" style="width: 110px;"></div>
-                            <div class="skeleton-filter-btn" style="width: 130px;"></div>
-                            <div class="skeleton-filter-btn" style="width: 80px;"></div>
-                        </div>
-                    </aside>
-
-                    <!-- Cards skeleton grid -->
-                    <main class="col-lg-9">
-                        <div class="skeleton-grid">
-                            <div class="skeleton-card skeleton-loader"></div>
-                            <div class="skeleton-card skeleton-loader"></div>
-                            <div class="skeleton-card skeleton-loader"></div>
-                        </div>
-                    </main>
                 </div>
             </div>
 
