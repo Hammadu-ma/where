@@ -36,7 +36,6 @@
             --text-tertiary: #9ca3af;
             --border: #d1d5db;
             --placeholder: #9ca3af;
-            --input-bg: #ffffff;
         }
         
         .dark-mode {
@@ -44,10 +43,9 @@
             --surface: #1e293b;
             --text-primary: #f9fafb;
             --text-secondary: #d1d5db;
-            --text-tertiary: #6b7280;
+            --text-tertiary: #94a3b8;
             --border: #334155;
-            --placeholder: #6b7280;
-            --input-bg: #0f172a;
+            --placeholder: #94a3b8;
         }
 
         body {
@@ -55,6 +53,20 @@
             color: var(--text-primary);
             transition: var(--transition);
             min-height: 100vh;
+        }
+
+        /* Fix for placeholder visibility in dark mode */
+        input::placeholder {
+            color: var(--placeholder) !important;
+            opacity: 0.8 !important;
+        }
+        
+        input:-ms-input-placeholder {
+            color: var(--placeholder) !important;
+        }
+        
+        input::-ms-input-placeholder {
+            color: var(--placeholder) !important;
         }
 
         /* Custom Header with Back Button and Profile */
@@ -259,111 +271,26 @@
             margin-top: 1rem;
         }
 
-        /* Search Styles - Consolidated and Consistent */
+        /* Autocomplete Search Container */
         .search-container {
             position: relative;
             width: 100%;
         }
         
-        /* Main Search */
-        .main-search-wrapper {
-            background: var(--surface);
-            border: 2px solid var(--border);
-            border-radius: 50px;
-            transition: var(--transition);
-            overflow: hidden;
-        }
-        
-        .main-search-wrapper:focus-within {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.2);
-        }
-        
-        .main-search-input {
-            background: transparent !important;
-            color: var(--text-primary) !important;
-            font-size: 1rem;
-            padding: 0.75rem 1rem;
-            border: none;
-            outline: none;
-            width: 100%;
-        }
-        
-        .main-search-input::placeholder {
-            color: var(--placeholder);
-            opacity: 0.8;
-            font-weight: 400;
-        }
-        
-        .main-search-input:-ms-input-placeholder {
-            color: var(--placeholder);
-        }
-        
-        .main-search-input::-ms-input-placeholder {
-            color: var(--placeholder);
-        }
-        
-        .search-icon-wrapper {
-            background: transparent;
-            border: none;
-            padding: 0 1rem 0 1.5rem;
-            color: var(--text-tertiary);
-        }
-        
-        /* Mini Search - Same style as main */
-        .mini-search {
-            padding: 0.5rem;
-            border-bottom: 1px solid var(--border);
-            background: var(--surface);
-        }
-        
-        .mini-search-input {
-            width: 100%;
-            padding: 0.6rem 1rem;
-            border-radius: 50px;
-            border: 2px solid var(--border);
-            background: var(--input-bg);
-            color: var(--text-primary);
-            font-size: 0.9rem;
-            transition: var(--transition);
-        }
-        
-        .mini-search-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
-            background: var(--surface);
-        }
-        
-        .mini-search-input::placeholder {
-            color: var(--placeholder);
-            opacity: 0.8;
-        }
-        
-        .dark-mode .mini-search-input {
-            background: var(--background);
-        }
-        
-        .dark-mode .mini-search-input:focus {
-            background: var(--surface);
-        }
-        
-        /* Autocomplete Dropdown */
         .autocomplete-dropdown {
             position: absolute;
             top: 100%;
             left: 0;
             right: 0;
             background: var(--surface);
-            border: 2px solid var(--border);
-            border-radius: 20px;
-            max-height: 400px;
+            border: 1px solid var(--border);
+            border-radius: 0 0 var(--radius) var(--radius);
+            max-height: 300px;
             overflow-y: auto;
             z-index: 1000;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
             display: none;
-            margin-top: 10px;
-            padding: 0.5rem;
+            margin-top: 5px;
         }
         
         .autocomplete-dropdown.show {
@@ -375,37 +302,36 @@
             padding: 0.75rem 1rem;
             cursor: pointer;
             transition: var(--transition);
-            border-radius: 12px;
-            margin-bottom: 0.25rem;
+            border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
             gap: 0.75rem;
         }
         
         .autocomplete-item:last-child {
-            margin-bottom: 0;
+            border-bottom: none;
         }
         
         .autocomplete-item:hover {
-            background: var(--primary-light);
-            background-color: rgba(96, 165, 250, 0.15);
+            background: var(--hover);
+            background-color: rgba(96, 165, 250, 0.1);
         }
         
         .autocomplete-item.selected {
-            background: rgba(96, 165, 250, 0.25);
-            border-left: 4px solid var(--primary);
+            background: rgba(96, 165, 250, 0.2);
+            border-left: 3px solid var(--primary);
         }
         
         .autocomplete-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
             background: var(--gradient);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 1rem;
+            font-size: 0.9rem;
         }
         
         .autocomplete-content {
@@ -414,12 +340,12 @@
         
         .autocomplete-title {
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: var(--text-primary);
         }
         
         .autocomplete-subtitle {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--text-tertiary);
             display: flex;
             gap: 1rem;
@@ -429,60 +355,60 @@
         .autocomplete-match {
             background: rgba(96, 165, 250, 0.3);
             color: var(--primary);
-            font-weight: 700;
+            font-weight: 600;
             padding: 0 2px;
-            border-radius: 4px;
+            border-radius: 3px;
         }
         
         .autocomplete-category {
             font-size: 0.7rem;
-            padding: 0.25rem 0.75rem;
+            padding: 0.25rem 0.5rem;
             background: var(--border);
-            border-radius: 30px;
+            border-radius: 12px;
             color: var(--text-secondary);
-            font-weight: 500;
         }
         
         .autocomplete-badge {
-            padding: 0.2rem 0.6rem;
-            border-radius: 30px;
-            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.65rem;
             font-weight: 600;
         }
         
         .autocomplete-badge.exam {
-            background: rgba(239, 68, 68, 0.15);
+            background: rgba(239, 68, 68, 0.1);
             color: #ef4444;
         }
         
         .autocomplete-badge.practice {
-            background: rgba(34, 197, 94, 0.15);
+            background: rgba(34, 197, 94, 0.1);
             color: #22c55e;
         }
         
         .autocomplete-badge.quizlet {
-            background: rgba(139, 92, 246, 0.15);
+            background: rgba(139, 92, 246, 0.1);
             color: #8b5cf6;
+        }
+        
+        /* Search input with autocomplete indicator */
+        .search-with-autocomplete {
+            position: relative;
         }
         
         .autocomplete-hint {
             position: absolute;
-            right: 50px;
+            right: 40px;
             top: 50%;
             transform: translateY(-50%);
             color: var(--text-tertiary);
             font-size: 0.8rem;
             background: var(--surface);
-            padding: 0.25rem 0.75rem;
-            border-radius: 30px;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
             border: 1px solid var(--border);
             pointer-events: none;
             opacity: 0;
             transition: opacity 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-            z-index: 10;
         }
         
         .autocomplete-hint.show {
@@ -490,24 +416,14 @@
         }
         
         .autocomplete-hint i {
+            margin-right: 0.25rem;
             color: var(--primary);
-            font-size: 0.75rem;
         }
-
-        .global-search-count {
-            background: var(--primary);
-            color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 30px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            margin-right: 0.5rem;
-        }
-
+        
         /* Subject Cards */
         .subject-card { 
             background-color: var(--surface); 
-            border: 2px solid var(--border); 
+            border: 1px solid var(--border); 
             transition: var(--transition); 
             height: 100%; 
             display: flex; 
@@ -522,21 +438,161 @@
             box-shadow: 0 15px 30px rgba(0,0,0,0.2);
         }
 
-        /* Mini Filters */
+        /* Mini Search Bar with Autocomplete */
+        .mini-search {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface);
+            position: relative;
+        }
+        
+        .mini-search-wrapper {
+            position: relative;
+            width: 100%;
+        }
+        
+        .mini-search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-tertiary);
+            font-size: 0.8rem;
+            pointer-events: none;
+            z-index: 2;
+        }
+        
+        .mini-search-input {
+            width: 100%;
+            padding: 0.6rem 1rem 0.6rem 32px;
+            border-radius: 30px;
+            border: 1px solid var(--border);
+            background: var(--background);
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+        
+        .mini-search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+        }
+        
+        .mini-search-input::placeholder {
+            color: var(--placeholder);
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+        
+        /* Mini Autocomplete Dropdown */
+        .mini-autocomplete-dropdown {
+            position: absolute;
+            top: calc(100% - 5px);
+            left: 0.75rem;
+            right: 0.75rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 100;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            display: none;
+        }
+        
+        .mini-autocomplete-dropdown.show {
+            display: block;
+            animation: slideDown 0.2s ease-out;
+        }
+        
+        .mini-autocomplete-item {
+            padding: 0.6rem 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .mini-autocomplete-item:last-child {
+            border-bottom: none;
+        }
+        
+        .mini-autocomplete-item:hover {
+            background-color: rgba(96, 165, 250, 0.1);
+        }
+        
+        .mini-autocomplete-item.selected {
+            background: rgba(96, 165, 250, 0.2);
+            border-left: 3px solid var(--primary);
+        }
+        
+        .mini-autocomplete-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.7rem;
+        }
+        
+        .mini-autocomplete-content {
+            flex: 1;
+        }
+        
+        .mini-autocomplete-title {
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: var(--text-primary);
+        }
+        
+        .mini-autocomplete-subtitle {
+            font-size: 0.65rem;
+            color: var(--text-tertiary);
+        }
+        
+        .mini-autocomplete-badge {
+            padding: 0.15rem 0.4rem;
+            border-radius: 10px;
+            font-size: 0.6rem;
+            font-weight: 600;
+        }
+        
+        .mini-autocomplete-badge.exam {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+        
+        .mini-autocomplete-badge.practice {
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+        }
+        
+        .mini-autocomplete-badge.quizlet {
+            background: rgba(139, 92, 246, 0.1);
+            color: #8b5cf6;
+        }
+
+        /* Mini Filter Buttons */
         .mini-filters {
             display: flex;
-            gap: 0.3rem;
-            padding: 0.5rem;
+            gap: 0.4rem;
+            padding: 0.75rem;
             border-bottom: 1px solid var(--border);
             flex-wrap: wrap;
             background: var(--surface);
         }
         
         .mini-filter-btn {
-            padding: 0.25rem 0.75rem;
-            border-radius: 30px;
-            border: 2px solid var(--border);
-            background: transparent;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: var(--background);
             color: var(--text-secondary);
             font-size: 0.75rem;
             cursor: pointer;
@@ -559,10 +615,14 @@
             color: white;
             border-color: transparent;
         }
+        
+        .mini-filter-btn i {
+            font-size: 0.7rem;
+        }
 
-        /* Mini Sort */
+        /* Mini Sort - Matching Main Style */
         .mini-sort {
-            padding: 0.5rem;
+            padding: 0.75rem;
             border-bottom: 1px solid var(--border);
             background: var(--surface);
         }
@@ -571,27 +631,22 @@
             width: 100%;
             padding: 0.5rem 1rem;
             border-radius: 30px;
-            border: 2px solid var(--border);
-            background: var(--input-bg);
+            border: 1px solid var(--border);
+            background: var(--background);
             color: var(--text-primary);
             font-size: 0.8rem;
             cursor: pointer;
-            transition: var(--transition);
-            font-weight: 500;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
         }
         
         .mini-sort-select:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
-        }
-        
-        .dark-mode .mini-sort-select {
-            background: var(--background);
-        }
-        
-        .dark-mode .mini-sort-select:focus {
-            background: var(--surface);
         }
         
         .mini-sort-select option {
@@ -608,22 +663,24 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(96, 165, 250, 0.05);
+            background: var(--surface);
         }
         
         .clear-search {
             color: var(--primary);
             cursor: pointer;
-            font-size: 0.7rem;
-            font-weight: 600;
+            font-size: 0.75rem;
             padding: 0.2rem 0.5rem;
-            border-radius: 30px;
-            background: rgba(96, 165, 250, 0.1);
+            border-radius: 12px;
+            background: var(--background);
+            border: 1px solid var(--border);
             transition: var(--transition);
         }
         
         .clear-search:hover {
-            background: rgba(96, 165, 250, 0.2);
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
         }
 
         .quiz-list { 
@@ -640,7 +697,7 @@
         .quiz-item { 
             border-radius: var(--radius); 
             transition: var(--transition); 
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.2rem;
         }
         
         .quiz-item:hover { 
@@ -654,19 +711,18 @@
             display: flex; 
             align-items: center; 
             justify-content: space-between; 
-            padding: 0.6rem 0.75rem; 
+            padding: 0.5rem 0.75rem; 
         }
         
         .quiz-icon { 
-            width: 32px; 
-            height: 32px; 
+            width: 28px; 
+            height: 28px; 
             background: var(--surface); 
             border-radius: 8px; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
             color: var(--primary); 
-            border: 1px solid var(--border);
         }
         
         .quiz-title mark { 
@@ -835,6 +891,16 @@
             from { opacity: 1; }
             to { opacity: 0; }
         }
+
+        /* Main search input fix */
+        #smartSearch {
+            color: var(--text-primary);
+        }
+        
+        #smartSearch::placeholder {
+            color: var(--placeholder);
+            opacity: 1;
+        }
     </style>
 </head>
 <body class="dark-mode">
@@ -925,20 +991,18 @@
                 </div>
             </div>
 
-            <!-- Main Search with Autocomplete - Redesigned -->
+            <!-- Main Search with Autocomplete -->
             <div class="row g-3 align-items-center mb-4">
                 <div class="col-12">
                     <div class="search-container">
-                        <div class="main-search-wrapper d-flex align-items-center">
-                            <span class="search-icon-wrapper">
-                                <i class="fas fa-search"></i>
-                            </span>
-                            <input type="text" class="main-search-input" id="smartSearch" placeholder="Search quizzes, topics, subjects..." autocomplete="off">
+                        <div class="input-group rounded-pill bg-surface border border-custom search-with-autocomplete">
+                            <span class="input-group-text bg-transparent border-0 text-secondary"><i class="fas fa-search"></i></span>
+                            <input type="text" class="form-control bg-transparent border-0 ps-0" id="smartSearch" placeholder="🔍 Search quizzes, topics, subjects..." autocomplete="off">
                             <span class="autocomplete-hint" id="autocompleteHint">
                                 <i class="fas fa-lightbulb"></i>
                                 <span id="hintText"></span>
                             </span>
-                            <span id="globalSearchCount" class="me-2"></span>
+                            <span class="input-group-text bg-transparent border-0" id="globalSearchCount" style="display: none;"></span>
                         </div>
                         
                         <!-- Autocomplete Dropdown -->
@@ -1121,12 +1185,14 @@
                 const miniSearchStates = {};
                 const miniFilterStates = {};
                 const miniSortStates = {};
+                const miniSelectedSuggestionIndex = {};
 
                 // Initialize states for each subject
                 quizData.forEach(subject => {
                     miniSearchStates[subject.subject] = '';
                     miniFilterStates[subject.subject] = 'all';
                     miniSortStates[subject.subject] = 'default';
+                    miniSelectedSuggestionIndex[subject.subject] = -1;
                 });
 
                 // Back button functionality
@@ -1287,15 +1353,16 @@
                                 totalMatches += matches;
                             }
                         });
-                        globalCountEl.innerHTML = `<span class="global-search-count">${totalMatches} matches</span>`;
+                        globalCountEl.innerHTML = `<span class="badge bg-primary">${totalMatches} matches</span>`;
+                        globalCountEl.style.display = 'inline';
                     } else {
-                        globalCountEl.innerHTML = '';
+                        globalCountEl.style.display = 'none';
                     }
                 }
 
-                // Autocomplete functions
+                // Autocomplete functions for main search
                 function getAutocompleteSuggestions(query) {
-                    if (!query || query.length < 2) return [];
+                    if (!query || query.length < 1) return []; // Changed from 2 to 1 for faster suggestions
                     
                     const lowercaseQuery = query.toLowerCase();
                     const suggestions = [];
@@ -1369,6 +1436,117 @@
                     return unique;
                 }
 
+                // Mini autocomplete for subject-specific search
+                function getMiniAutocompleteSuggestions(subject, query) {
+                    if (!query || query.length < 1) return [];
+                    
+                    const lowercaseQuery = query.toLowerCase();
+                    const subjectData = quizData.find(s => s.subject === subject);
+                    if (!subjectData) return [];
+                    
+                    const suggestions = [];
+                    
+                    // Search in quiz titles for this subject
+                    subjectData.quizzes.forEach(quiz => {
+                        if (quiz.title.toLowerCase().includes(lowercaseQuery)) {
+                            suggestions.push({
+                                title: quiz.title,
+                                subtitle: `${quiz.qCount} questions • ${quiz.difficulty}`,
+                                icon: subjectData.icon,
+                                badge: quiz.type,
+                                href: quiz.href
+                            });
+                        }
+                    });
+                    
+                    // Search by type
+                    ['practice', 'exam', 'quizlet'].forEach(type => {
+                        if (type.includes(lowercaseQuery)) {
+                            const count = subjectData.quizzes.filter(q => q.type === type).length;
+                            if (count > 0) {
+                                suggestions.push({
+                                    title: type.charAt(0).toUpperCase() + type.slice(1),
+                                    subtitle: `${count} quizzes of this type`,
+                                    icon: type === 'practice' ? 'fas fa-play-circle' : 
+                                          type === 'exam' ? 'fas fa-file-alt' : 'fas fa-code',
+                                    isFilter: true,
+                                    filter: type
+                                });
+                            }
+                        }
+                    });
+                    
+                    // Search by difficulty
+                    ['beginner', 'intermediate', 'advanced'].forEach(difficulty => {
+                        if (difficulty.includes(lowercaseQuery)) {
+                            const count = subjectData.quizzes.filter(q => q.difficulty === difficulty).length;
+                            if (count > 0) {
+                                suggestions.push({
+                                    title: difficulty.charAt(0).toUpperCase() + difficulty.slice(1),
+                                    subtitle: `${count} quizzes at this level`,
+                                    icon: 'fas fa-signal',
+                                    isDifficulty: true,
+                                    difficulty: difficulty
+                                });
+                            }
+                        }
+                    });
+                    
+                    return suggestions.slice(0, 5);
+                }
+
+                function renderMiniAutocompleteDropdown(subject, suggestions, query, dropdownId) {
+                    const dropdown = document.getElementById(dropdownId);
+                    
+                    if (!suggestions || suggestions.length === 0) {
+                        dropdown.classList.remove('show');
+                        return;
+                    }
+                    
+                    let html = '';
+                    suggestions.forEach((suggestion, index) => {
+                        const isSelected = index === miniSelectedSuggestionIndex[subject];
+                        const selectedClass = isSelected ? 'selected' : '';
+                        
+                        if (suggestion.isFilter) {
+                            html += `
+                                <div class="mini-autocomplete-item ${selectedClass}" data-type="filter" data-filter="${suggestion.filter}" data-subject="${subject}">
+                                    <div class="mini-autocomplete-icon"><i class="${suggestion.icon}"></i></div>
+                                    <div class="mini-autocomplete-content">
+                                        <div class="mini-autocomplete-title">${highlightText(suggestion.title, query)}</div>
+                                        <div class="mini-autocomplete-subtitle">${suggestion.subtitle}</div>
+                                    </div>
+                                </div>
+                            `;
+                        } else if (suggestion.isDifficulty) {
+                            html += `
+                                <div class="mini-autocomplete-item ${selectedClass}" data-type="difficulty" data-difficulty="${suggestion.difficulty}" data-subject="${subject}">
+                                    <div class="mini-autocomplete-icon"><i class="${suggestion.icon}"></i></div>
+                                    <div class="mini-autocomplete-content">
+                                        <div class="mini-autocomplete-title">${highlightText(suggestion.title, query)} level</div>
+                                        <div class="mini-autocomplete-subtitle">${suggestion.subtitle}</div>
+                                    </div>
+                                </div>
+                            `;
+                        } else {
+                            html += `
+                                <div class="mini-autocomplete-item ${selectedClass}" data-type="quiz" data-href="${suggestion.href}">
+                                    <div class="mini-autocomplete-icon"><i class="${suggestion.icon}"></i></div>
+                                    <div class="mini-autocomplete-content">
+                                        <div class="mini-autocomplete-title">${highlightText(suggestion.title, query)}</div>
+                                        <div class="mini-autocomplete-subtitle">${suggestion.subtitle}</div>
+                                    </div>
+                                    <span class="mini-autocomplete-badge ${suggestion.badge}">${suggestion.badge}</span>
+                                </div>
+                            `;
+                        }
+                    });
+                    
+                    dropdown.innerHTML = html;
+                    dropdown.classList.add('show');
+                }
+
+                // Main search autocomplete
                 function renderAutocompleteDropdown(suggestions, query) {
                     const dropdown = document.getElementById('autocompleteDropdown');
                     const hint = document.getElementById('autocompleteHint');
@@ -1456,12 +1634,10 @@
                                 currentSearch = '';
                                 renderCards();
                             } else if (type === 'filter') {
-                                // Apply filter to all cards (you can implement this)
                                 document.getElementById('smartSearch').value = '';
                                 currentSearch = '';
                                 renderCards();
                             } else if (type === 'difficulty') {
-                                // You can implement difficulty filtering
                                 document.getElementById('smartSearch').value = '';
                                 currentSearch = '';
                                 renderCards();
@@ -1544,12 +1720,20 @@
                                     <span class="badge bg-primary rounded-pill ms-auto">${filtered.length}/${subject.quizzes.length}</span>
                                 </div>
                                 
-                                <!-- Mini Search Bar - Now matches main search style -->
+                                <!-- Mini Search Bar with Autocomplete -->
                                 <div class="mini-search">
-                                    <input type="text" class="mini-search-input" 
-                                        placeholder="Search in ${subject.display}..." 
-                                        data-subject="${subject.subject}"
-                                        value="${miniSearchStates[subject.subject] || ''}">
+                                    <div class="mini-search-wrapper">
+                                        <i class="fas fa-search mini-search-icon"></i>
+                                        <input type="text" class="mini-search-input" 
+                                            placeholder="🔍 Search in ${subject.display}..." 
+                                            data-subject="${subject.subject}"
+                                            id="miniSearch-${subject.subject}"
+                                            value="${miniSearchStates[subject.subject] || ''}"
+                                            autocomplete="off">
+                                    </div>
+                                    
+                                    <!-- Mini Autocomplete Dropdown -->
+                                    <div class="mini-autocomplete-dropdown" id="miniDropdown-${subject.subject}"></div>
                                 </div>
                                 
                                 <!-- Mini Filters -->
@@ -1606,13 +1790,113 @@
                     // Update global search count
                     updateGlobalSearchCount();
                     
-                    // Attach mini search event listeners
+                    // Attach mini search event listeners with autocomplete
                     document.querySelectorAll('.mini-search-input').forEach(input => {
-                        input.addEventListener('input', (e) => {
-                            const subject = e.target.dataset.subject;
-                            miniSearchStates[subject] = e.target.value;
-                            renderCards();
+                        const subject = input.dataset.subject;
+                        const dropdownId = `miniDropdown-${subject}`;
+                        let miniTimeout;
+                        
+                        // Remove existing listeners to prevent duplicates
+                        input.removeEventListener('input', handleMiniInput);
+                        input.removeEventListener('keydown', handleMiniKeydown);
+                        
+                        // Add input listener
+                        input.addEventListener('input', handleMiniInput);
+                        
+                        // Add keyboard navigation
+                        input.addEventListener('keydown', handleMiniKeydown);
+                        
+                        function handleMiniInput(e) {
+                            const query = e.target.value;
+                            miniSearchStates[subject] = query;
+                            
+                            // Clear previous timeout
+                            if (miniTimeout) clearTimeout(miniTimeout);
+                            
+                            // Get suggestions
+                            const suggestions = getMiniAutocompleteSuggestions(subject, query);
+                            
+                            // Reset selection
+                            miniSelectedSuggestionIndex[subject] = -1;
+                            
+                            // Render dropdown
+                            renderMiniAutocompleteDropdown(subject, suggestions, query, dropdownId);
+                            
+                            // Update search results with debounce
+                            miniTimeout = setTimeout(() => {
+                                renderCards();
+                            }, 150);
+                        }
+                        
+                        function handleMiniKeydown(e) {
+                            const dropdown = document.getElementById(dropdownId);
+                            const items = dropdown.querySelectorAll('.mini-autocomplete-item');
+                            
+                            if (items.length === 0) return;
+                            
+                            if (e.key === 'ArrowDown') {
+                                e.preventDefault();
+                                miniSelectedSuggestionIndex[subject] = (miniSelectedSuggestionIndex[subject] + 1) % items.length;
+                                updateMiniSelectedSuggestion(subject);
+                            } else if (e.key === 'ArrowUp') {
+                                e.preventDefault();
+                                miniSelectedSuggestionIndex[subject] = miniSelectedSuggestionIndex[subject] <= 0 ? items.length - 1 : miniSelectedSuggestionIndex[subject] - 1;
+                                updateMiniSelectedSuggestion(subject);
+                            } else if (e.key === 'Enter' && miniSelectedSuggestionIndex[subject] >= 0) {
+                                e.preventDefault();
+                                items[miniSelectedSuggestionIndex[subject]].click();
+                            } else if (e.key === 'Escape') {
+                                dropdown.classList.remove('show');
+                            }
+                        }
+                        
+                        function updateMiniSelectedSuggestion(subject) {
+                            const dropdown = document.getElementById(dropdownId);
+                            const items = dropdown.querySelectorAll('.mini-autocomplete-item');
+                            items.forEach((item, index) => {
+                                if (index === miniSelectedSuggestionIndex[subject]) {
+                                    item.classList.add('selected');
+                                } else {
+                                    item.classList.remove('selected');
+                                }
+                            });
+                        }
+                        
+                        // Close dropdown when clicking outside
+                        document.addEventListener('click', (e) => {
+                            const dropdown = document.getElementById(dropdownId);
+                            if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+                                dropdown.classList.remove('show');
+                            }
                         });
+                        
+                        // Add click handlers to mini autocomplete items
+                        setTimeout(() => {
+                            const dropdown = document.getElementById(dropdownId);
+                            if (dropdown) {
+                                dropdown.querySelectorAll('.mini-autocomplete-item').forEach(item => {
+                                    item.addEventListener('click', (e) => {
+                                        const type = item.dataset.type;
+                                        
+                                        if (type === 'quiz') {
+                                            window.location.href = item.dataset.href;
+                                        } else if (type === 'filter') {
+                                            miniFilterStates[subject] = item.dataset.filter;
+                                            miniSearchStates[subject] = '';
+                                            input.value = '';
+                                            renderCards();
+                                        } else if (type === 'difficulty') {
+                                            // You can implement difficulty filtering here
+                                            miniSearchStates[subject] = '';
+                                            input.value = '';
+                                            renderCards();
+                                        }
+                                        
+                                        dropdown.classList.remove('show');
+                                    });
+                                });
+                            }
+                        }, 100);
                     });
                     
                     // Attach mini filter event listeners
@@ -1639,6 +1923,8 @@
                         clear.addEventListener('click', (e) => {
                             const subject = e.target.dataset.subject;
                             miniSearchStates[subject] = '';
+                            const input = document.getElementById(`miniSearch-${subject}`);
+                            if (input) input.value = '';
                             renderCards();
                         });
                     });
@@ -1662,9 +1948,9 @@
                 const dropdown = document.getElementById('autocompleteDropdown');
                 const hint = document.getElementById('autocompleteHint');
                 
-                let timeout;
+                let globalTimeout;
                 searchInput.addEventListener('input', () => {
-                    clearTimeout(timeout);
+                    clearTimeout(globalTimeout);
                     const query = searchInput.value;
                     
                     // Reset selection
@@ -1675,13 +1961,13 @@
                     renderAutocompleteDropdown(suggestions, query);
                     
                     // Update search results
-                    timeout = setTimeout(() => {
+                    globalTimeout = setTimeout(() => {
                         currentSearch = query;
                         renderCards();
                     }, 150);
                 });
 
-                // Keyboard navigation for autocomplete
+                // Keyboard navigation for main autocomplete
                 searchInput.addEventListener('keydown', (e) => {
                     const items = document.querySelectorAll('.autocomplete-item');
                     
@@ -1718,7 +2004,7 @@
                     });
                 }
 
-                // Close dropdown when clicking outside
+                // Close main dropdown when clicking outside
                 document.addEventListener('click', (e) => {
                     if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
                         dropdown.classList.remove('show');
